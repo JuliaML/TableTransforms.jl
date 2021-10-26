@@ -1,0 +1,13 @@
+name = "TableTransforms"
+uuid = "0d432bfd-3ee1-4ac1-886a-39f05cc69a3e"
+authors = ["Júlio Hoffimann <julio.hoffimann@gmail.com> and contributors"]
+version = "0.1.0"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
