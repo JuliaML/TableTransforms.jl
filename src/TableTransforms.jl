@@ -18,6 +18,8 @@ export
   backward,
 
   # built-in
-  ZScore
+  ZScore,
+  Sequential,
+  →
 
 end
