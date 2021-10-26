@@ -42,12 +42,12 @@ function forward(::ZScore, table)
   ztable, stats
 end
 
-function backward(::ZScore, table, cache)
-  names = Tables.columnnames(table)
+function backward(::ZScore, newtable, cache)
+  names = Tables.columnnames(newtable)
   @assert length(names) == length(cache) "invalid cache for table"
 
   # modified columns
-  cols  = Tables.columns(table)
+  cols  = Tables.columns(newtable)
 
   # original columns
   oldcols = map(1:length(names)) do i
@@ -58,5 +58,5 @@ function backward(::ZScore, table, cache)
 
   # table with original columns
   𝒯 = (; zip(names, oldcols)...)
-  𝒯 |> Tables.materializer(table)
+  𝒯 |> Tables.materializer(newtable)
 end

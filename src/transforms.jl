@@ -35,10 +35,10 @@ Return the new table and a cache, which is often set to `nothing`.
 function forward end
 
 """
-    oldtable = backward(transform, table, cache)
+    table = backward(transform, newtable, cache)
 
-Apply the `transform` in the backward direction on the `table` using
-a `cache` from the [`forward`](@ref) evaluation. Return the old table.
+Apply the `transform` in the backward direction on the `newtable` using
+a `cache` from the [`forward`](@ref) evaluation. Return the original table.
 Only defined when the transform [`isinvertible`](@ref).
 """
 function backward end
@@ -55,3 +55,4 @@ function backward end
 # ----------------
 
 include("transforms/zscore.jl")
+include("transforms/inverse.jl")
