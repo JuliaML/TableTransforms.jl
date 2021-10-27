@@ -44,7 +44,7 @@ function apply(transform::Scaling, table)
   newtable, factors
 end
 
-function revert(transform::Scaling, newtable, cache)
+function revert(::Scaling, newtable, cache)
   names = Tables.columnnames(newtable)
   @assert length(names) == length(cache) "invalid cache for table"
 
