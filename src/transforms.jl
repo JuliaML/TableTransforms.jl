@@ -55,6 +55,7 @@ function backward end
 # ----------------
 
 include("transforms/identity.jl")
+include("transforms/scaling.jl")
 include("transforms/zscore.jl")
 include("transforms/quantile.jl")
 include("transforms/functional.jl")

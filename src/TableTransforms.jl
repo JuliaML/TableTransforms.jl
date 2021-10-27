@@ -24,6 +24,9 @@ export
 
   # built-in
   Identity,
+  Scaling,
+  MinMax,
+  Interquartile,
   ZScore,
   Quantile,
   Functional,
