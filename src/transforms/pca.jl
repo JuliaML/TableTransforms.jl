@@ -5,9 +5,7 @@
 """
     PCA()
 
-The PCA transform returns a table with covariance matrix
-having the properties: cov(Xᵢ, Xⱼ) = 0, for i != j, and
-0 ≤ cov(Xᵢ, Xᵢ) ≤ 1, for i == j.
+The PCA transform returns a table with uncorrelated variables.
 """
 struct PCA <: Transform end
 
@@ -29,7 +27,7 @@ function apply(::PCA, table)
   𝒯 = (; zip(names, eachcol(Y))...)
   newtable = 𝒯 |> Tables.materializer(table)
 
-  newtable, inv(V)
+  newtable, V'
 end
 
 function revert(::PCA, newtable, cache)
