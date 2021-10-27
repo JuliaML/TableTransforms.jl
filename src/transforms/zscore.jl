@@ -5,8 +5,8 @@
 """
     ZScore()
 
-The z-score (a.k.a. normal score) of a column `x` with mean `μ` and
-standard deviation `σ` is the column `(x .- μ) ./ σ`.
+The z-score (a.k.a. normal score) of `x` with mean `μ` and
+standard deviation `σ` is the value `(x .- μ) ./ σ`.
 """
 struct ZScore <: Transform end
 
