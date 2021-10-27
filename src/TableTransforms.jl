@@ -18,6 +18,7 @@ export
   backward,
 
   # built-in
+  Identity,
   ZScore,
   Sequential,
   →

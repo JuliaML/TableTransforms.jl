@@ -54,5 +54,6 @@ function backward end
 # IMPLEMENTATIONS
 # ----------------
 
+include("transforms/identity.jl")
 include("transforms/zscore.jl")
 include("transforms/sequential.jl")
