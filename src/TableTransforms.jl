@@ -6,6 +6,7 @@ module TableTransforms
 
 using Tables
 using ScientificTypes
+using Distributions: Normal
 using Statistics
 
 import Distributions: ContinuousUnivariateDistribution
@@ -24,6 +25,7 @@ export
   # built-in
   Identity,
   ZScore,
+  Quantile,
   Sequential,
   →
 
