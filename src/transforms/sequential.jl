@@ -38,3 +38,6 @@ Create a [`Sequential`](@ref) transform with
 `[transform₁, transform₂, …, transformₙ]`.
 """
 →(t1, t2) = Sequential([t1, t2])
+→(t1, t2::Sequential) = Sequential([t1; t2.transforms])
+→(t1::Sequential, t2) = Sequential([t1.transforms; t2])
+→(t1::Sequential, t2::Sequential) = Sequential([t1.transforms; t2.transforms])
