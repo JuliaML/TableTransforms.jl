@@ -47,8 +47,7 @@ function revert end
 # AUTOMATICALLY GENERATED
 # ------------------------
 
-(transform::Transform)(table) =
-  apply(transform, table) |> first
+(transform::Transform)(table) = apply(transform, table) |> first
 
 # ----------------
 # IMPLEMENTATIONS
