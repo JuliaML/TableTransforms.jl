@@ -8,6 +8,7 @@ using Tables
 using ScientificTypes
 using Distributions: Normal
 using Statistics
+using LinearAlgebra
 
 import Distributions: ContinuousUnivariateDistribution
 import Distributions: quantile, cdf
@@ -29,6 +30,7 @@ export
   ZScore,
   Quantile,
   Functional,
+  PCA,
   Sequential,
   Parallel,
   →, ∥
