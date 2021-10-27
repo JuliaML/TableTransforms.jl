@@ -42,7 +42,10 @@ function apply(p::Parallel, table)
   𝒯 = (; zip(allvars, allvals)...)
   newtable = 𝒯 |> Tables.materializer(table)
 
-  newtable, caches
+  # number of columns for each subtable
+  ncols = tables .|> Tables.columnnames .|> length
+
+  newtable, (ncols, caches)
 end
 
 function revert(p::Parallel, newtable, cache)
