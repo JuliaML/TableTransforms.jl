@@ -24,7 +24,7 @@ function forward(::ZScore, table)
     x = Tables.getcolumn(table, name)
     μ = mean(x)
     σ = std(x, mean=μ)
-    z = ((x .- μ) ./ σ)
+    z = (x .- μ) ./ σ
     z, (μ=μ, σ=σ)
   end
 
@@ -44,7 +44,7 @@ function backward(::ZScore, newtable, cache)
   @assert length(names) == length(cache) "invalid cache for table"
 
   # modified columns
-  cols  = Tables.columns(newtable)
+  cols = Tables.columns(newtable)
 
   # original columns
   oldcols = map(1:length(names)) do i
