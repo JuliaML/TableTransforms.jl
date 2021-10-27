@@ -1,6 +1,14 @@
 using TableTransforms
+using Distributions
 using Test
 
+# list of tests
+testfiles = [
+  "distributions.jl"
+]
+
 @testset "TableTransforms.jl" begin
-    # Write your tests here.
+  for testfile in testfiles
+    include(testfile)
+  end
 end

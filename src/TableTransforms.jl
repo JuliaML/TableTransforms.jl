@@ -8,6 +8,10 @@ using Tables
 using ScientificTypes
 using Statistics
 
+import Distributions: ContinuousUnivariateDistribution
+import Distributions: quantile, cdf
+
+include("distributions.jl")
 include("transforms.jl")
 
 export
