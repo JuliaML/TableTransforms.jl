@@ -26,6 +26,7 @@ export
   Identity,
   ZScore,
   Quantile,
+  Functional,
   Sequential,
   →
 
