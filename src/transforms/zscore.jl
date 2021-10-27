@@ -19,9 +19,6 @@ function forward(::ZScore, table)
   types = sch.scitypes
   @assert all(T <: Continuous for T in types) "columns must hold continuous variables"
 
-  # original columns
-  cols = Tables.columns(table)
-
   # normal scores and stats
   vals = map(names) do name
     x = Tables.getcolumn(table, name)
