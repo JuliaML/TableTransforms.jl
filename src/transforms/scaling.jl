@@ -15,9 +15,9 @@ end
 
 Scaling(; low=0.25, high=0.75) = Scaling(low, high)
 
-isinvertible(::Type{<:Scaling}) = true
+isrevertible(::Type{<:Scaling}) = true
 
-function forward(transform::Scaling, table)
+function apply(transform::Scaling, table)
   # sanity checks
   sch = schema(table)
   names = sch.names
@@ -44,7 +44,7 @@ function forward(transform::Scaling, table)
   newtable, factors
 end
 
-function backward(transform::Scaling, newtable, cache)
+function revert(transform::Scaling, newtable, cache)
   names = Tables.columnnames(newtable)
   @assert length(names) == length(cache) "invalid cache for table"
 

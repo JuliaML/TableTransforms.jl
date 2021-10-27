@@ -9,8 +9,8 @@ The identity transform `x -> x`.
 """
 struct Identity <: Transform end
 
-isinvertible(::Type{Identity}) = true
+isrevertible(::Type{Identity}) = true
 
-forward(::Identity, table) = table, nothing
+apply(::Identity, table) = table, nothing
 
-backward(::Identity, newtable, cache) = newtable
+revert(::Identity, newtable, cache) = newtable

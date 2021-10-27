@@ -7,8 +7,8 @@
 
 A transform that takes a table as input and produces a new table.
 Any transform implementing the `Transform` trait should implement the
-[`forward`](@ref) function. If the transform [`isinvertible`](@ref),
-then it should also implement the [`backward`](@ref) function.
+[`apply`](@ref) function. If the transform [`isrevertible`](@ref),
+then it should also implement the [`revert`](@ref) function.
 
 A functor interface is automatically generated from the functions
 above, which means that any transform implementing the `Transform`
@@ -18,37 +18,37 @@ trait can be evaluated directly at any table implementing the
 abstract type Transform end
 
 """
-    isinvertible(transform)
+    isrevertible(transform)
 
-Tells whether or not the `transform` is invertible, i.e. supports a
-[`backward`](@ref) evaluation. Defaults to `false` for new types.
+Tells whether or not the `transform` is revertible, i.e. supports a
+[`revert`](@ref) function. Defaults to `false` for new types.
 """
-isinvertible(transform) = isinvertible(typeof(transform))
-isinvertible(::Type{Transform}) = false
-
-"""
-    newtable, cache = forward(transform, table)
-
-Apply the `transform` in the forward direction on the `table`.
-Return the new table and a cache, which is often set to `nothing`.
-"""
-function forward end
+isrevertible(transform) = isrevertible(typeof(transform))
+isrevertible(::Type{Transform}) = false
 
 """
-    table = backward(transform, newtable, cache)
+    newtable, cache = apply(transform, table)
 
-Apply the `transform` in the backward direction on the `newtable` using
-a `cache` from the [`forward`](@ref) evaluation. Return the original table.
-Only defined when the transform [`isinvertible`](@ref).
+Apply the `transform` on the `table`. Return the new table and a cache,
+which can be (and sometimes is) set to `nothing`.
 """
-function backward end
+function apply end
+
+"""
+    table = revert(transform, newtable, cache)
+
+Revert the `transform` on the `newtable` using the `cache` from the
+corresponding [`apply`](@ref) call. Return the original table. Only
+defined when the transform [`isrevertible`](@ref).
+"""
+function revert end
 
 # ------------------------
 # AUTOMATICALLY GENERATED
 # ------------------------
 
 (transform::Transform)(table) =
-  forward(transform, table) |> first
+  apply(transform, table) |> first
 
 # ----------------
 # IMPLEMENTATIONS

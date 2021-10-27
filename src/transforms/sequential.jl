@@ -11,22 +11,22 @@ struct Sequential <: Transform
   transforms::Vector{Transform}
 end
 
-isinvertible(s::Sequential) = all(isinvertible, s.transforms)
+isrevertible(s::Sequential) = all(isrevertible, s.transforms)
 
-function forward(s::Sequential, table)
+function apply(s::Sequential, table)
   allcache = []
   current  = table
   for transform in s.transforms
-    current, cache = forward(transform, current)
+    current, cache = apply(transform, current)
     push!(allcache, cache)
   end
   current, allcache
 end
 
-function backward(s::Sequential, newtable, cache)
+function revert(s::Sequential, newtable, cache)
   current = newtable
   for transform in reverse(s.transforms)
-    current = backward(transform, current, pop!(cache))
+    current = revert(transform, current, pop!(cache))
   end
   current
 end

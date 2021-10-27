@@ -10,9 +10,9 @@ standard deviation `σ` is the value `(x .- μ) ./ σ`.
 """
 struct ZScore <: Transform end
 
-isinvertible(::Type{ZScore}) = true
+isrevertible(::Type{ZScore}) = true
 
-function forward(::ZScore, table)
+function apply(::ZScore, table)
   # sanity checks
   sch = schema(table)
   names = sch.names
@@ -39,7 +39,7 @@ function forward(::ZScore, table)
   ztable, stats
 end
 
-function backward(::ZScore, newtable, cache)
+function revert(::ZScore, newtable, cache)
   names = Tables.columnnames(newtable)
   @assert length(names) == length(cache) "invalid cache for table"
 

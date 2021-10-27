@@ -11,7 +11,7 @@ struct Functional <: Transform
   func::Function
 end
 
-isinvertible(transform::Functional) =
+isrevertible(transform::Functional) =
   !isnothing(inverse(transform.func))
 
 # known invertible functions
@@ -25,7 +25,7 @@ inverse(::typeof(asin)) = sin
 # fallback to nothing
 inverse(::Function) = nothing
 
-function forward(transform::Functional, table)
+function apply(transform::Functional, table)
   f = transform.func
   X = Tables.matrix(table)
   Y = f.(X)
@@ -38,7 +38,7 @@ function forward(transform::Functional, table)
   newtable, nothing
 end
 
-function backward(transform::Functional, newtable, cache)
+function revert(transform::Functional, newtable, cache)
   g = inverse(transform.func)
   Y = Tables.matrix(newtable)
   X = g.(Y)

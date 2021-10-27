@@ -18,9 +18,8 @@ include("transforms.jl")
 export
   # interface
   Transform,
-  isinvertible,
-  forward,
-  backward,
+  isrevertible,
+  apply, revert,
 
   # built-in
   Identity,

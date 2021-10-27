@@ -13,9 +13,9 @@ end
 
 Quantile() = Quantile(Normal())
 
-isinvertible(::Type{<:Quantile}) = true
+isrevertible(::Type{<:Quantile}) = true
 
-function forward(transform::Quantile, table)
+function apply(transform::Quantile, table)
   # sanity checks
   sch = schema(table)
   names = sch.names
@@ -42,7 +42,7 @@ function forward(transform::Quantile, table)
   newtable, origindists
 end
 
-function backward(transform::Quantile, newtable, cache)
+function revert(transform::Quantile, newtable, cache)
   names = Tables.columnnames(newtable)
   @assert length(names) == length(cache) "invalid cache for table"
 
