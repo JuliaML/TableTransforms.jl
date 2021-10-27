@@ -74,6 +74,21 @@ newtable, cache = apply(pipeline, table)
 original = revert(pipeline, newtable, cache)
 ```
 
+## Available transforms
+
+| Transform | Description |
+|-----------|-------------|
+| `Identity` | Identity transform |
+| `ZScore` | Z-score (a.k.a. normal score) |
+| `Scaling` | Interval scaling |
+| `MinMax` | Shortcut for `Scaling(low=0.0, high=1.0)` |
+| `Interquartile` | Shortcut for `Scaling(low=0.25, high=0.75)` |
+| `Quantile` | Quantile-quantile transform |
+| `EigenAnalysis` | Eigenanalysis (e.g. PCA, DRS) |
+| `PCA` | Shortcut for `EigenAnalysis(:PCA)` |
+| `DRS` | Shortcut for `EigenAnalysis(:DRS)` |
+| `SDS` | Shortcut for `EigenAnalysis(:SDS)` |
+
 ## Custom transforms
 
 It is easy to integrate custom transforms into existing
