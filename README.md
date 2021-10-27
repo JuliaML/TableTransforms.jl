@@ -88,6 +88,10 @@ original = revert(pipeline, newtable, cache)
 | `PCA` | Shortcut for `EigenAnalysis(:PCA)` |
 | `DRS` | Shortcut for `EigenAnalysis(:DRS)` |
 | `SDS` | Shortcut for `EigenAnalysis(:SDS)` |
+| `Sequential` | Transform created with `→` (\to in LaTeX) |
+| `Parallel` | Transform created with `∥` (\parallel in LaTeX) |
+
+Please check the docstrings for additional information.
 
 ## Custom transforms
 
