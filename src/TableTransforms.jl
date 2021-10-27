@@ -30,6 +30,7 @@ export
   Quantile,
   Functional,
   Sequential,
-  →
+  Parallel,
+  →, ∥
 
 end
