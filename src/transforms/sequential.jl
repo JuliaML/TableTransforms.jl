@@ -31,4 +31,10 @@ function backward(s::Sequential, newtable, cache)
   current
 end
 
+"""
+    transform₁ → transform₂ → ⋯ → transformₙ
+
+Create a [`Sequential`](@ref) transform with
+`[transform₁, transform₂, …, transformₙ]`.
+"""
 →(t1, t2) = Sequential([t1, t2])
