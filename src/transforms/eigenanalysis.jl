@@ -59,7 +59,7 @@ function apply(E::EigenAnalysis, table)
   X = Tables.matrix(table)
   means = mean(X, dims=1)
   X = X .- means
-  Γ, Γ⁻¹ = compute(E, X)
+  Γ, Γ⁻¹ = perform(E, X)
   Y = X * Γ
 
   # table with transformed columns
