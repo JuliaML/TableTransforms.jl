@@ -39,14 +39,14 @@ function sdsmatrices(X)
 end
 
 function compute(E::EigenAnalysis, X)
-  @assert E.proj ∈ [:V, :VD, :VDV] "eigen analysis not suported"
-
   E.proj == :V && return pcamatrices(X)
   E.proj == :VD && return drsmatrices(X)
   E.proj == :VDV && return sdsmatrices(X)
 end
 
 function apply(E::EigenAnalysis, table)
+  @assert E.proj ∈ [:V, :VD, :VDV] "eigen analysis not suported"
+
   # sanity checks
   sch = schema(table)
   names = sch.names
