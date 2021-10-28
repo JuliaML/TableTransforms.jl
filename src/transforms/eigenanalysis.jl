@@ -21,7 +21,7 @@ isrevertible(::Type{EigenAnalysis}) = true
 
 function pcamatrices(X)
   Σ = cov(X)
-  V = eigvecs(Σ)
+  λ, V = eigen(Σ)
   V, transpose(V)
 end
 
@@ -57,8 +57,8 @@ function apply(E::EigenAnalysis, table)
   @assert all(T <: Continuous for T in types) "columns must hold continuous variables"
 
   X = Tables.matrix(table)
-  means = mean(X, dims=1)
-  X = X .- means
+  μ = mean(X, dims=1)
+  X = X .- μ
   Γ, Γ⁻¹ = perform(E, X)
   Y = X * Γ
 
@@ -66,7 +66,7 @@ function apply(E::EigenAnalysis, table)
   𝒯 = (; zip(names, eachcol(Y))...)
   newtable = 𝒯 |> Tables.materializer(table)
 
-  newtable, (Γ⁻¹, means)
+  newtable, (Γ⁻¹, μ)
 end
 
 function revert(::EigenAnalysis, newtable, cache)
@@ -76,11 +76,11 @@ function revert(::EigenAnalysis, newtable, cache)
   types = sch.scitypes
   @assert all(T <: Continuous for T in types) "columns must hold continuous variables"
 
-  Γ⁻¹, means = first(cache), last(cache)
+  Γ⁻¹, μ = first(cache), last(cache)
 
   Y = Tables.matrix(newtable)
   X = Y * Γ⁻¹
-  X = X .+ means
+  X = X .+ μ
 
   # table with original columns
   𝒯 = (; zip(names, eachcol(X))...)
