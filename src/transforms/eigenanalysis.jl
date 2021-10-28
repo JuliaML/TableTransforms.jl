@@ -67,7 +67,7 @@ function apply(transform::EigenAnalysis, table)
   X = X .- μ
   Σ = cov(X)
   λ, V = eigen(Σ)
-  Γ, Γ⁻¹ = perform(transform, λ, V)
+  Γ, Γ⁻¹ = matrices(transform, λ, V)
   Y = X * Γ
 
   # table with transformed columns
