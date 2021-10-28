@@ -4,7 +4,8 @@ using Test
 
 # list of tests
 testfiles = [
-  "distributions.jl"
+  "distributions.jl",
+  "transforms.jl"
 ]
 
 @testset "TableTransforms.jl" begin
