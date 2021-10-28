@@ -13,19 +13,19 @@ The eigenanalysis of the covariance with a given projection `proj`.
 * `:VD` - Uncorrelated variables and variance one (DRS transform)
 * `:VDV` - Uncorrelated variables and variance one (SDS transformation)
 
-The `:V` projection, also called PCA transform, rotates the multivariate data
-so that the resultant principal components in the data matrix are uncorrelated,
-where off-diagonal entries of its correlation matrix Σ are zero.
+The `:V` projection, also called PCA transform, use the covariance matrix,
+performs the eigenvalues decomposition and take the eigenvectors matrix to
+project the data on the directions that make the data uncorrelated.
 
-The `:VD` projection, also known as DRS transform, is a technique that belongs to
-a class of rotations that are close extensions of PCA, yielding variables that
-in addition to being uncorrelated, also have a variance of one. The combination
-of these properties yields an identity covariance matrix.
+The `:VD` projection, also known as DRS transform, is closely related to PCA
+transform, the difference between PCA and DRS is the additional step that multiplies
+the eigenvectors matrix by the squared inverse of the eigenvalues diagonal
+matrix, then transform the data, making it uncorrelated and having variance one.
 
-The `:VDV` projection, or SDS transform, is also a technique that rotates the data.
-The difference between the two sphereing methods, SDS and DRS, is the additional
-multiplication by Vᵀ, which projects the orthogonal variables back onto the basis of the
-original variables. As in DRS, the D is the inverse of the squared root of eigenvalues matrix.
+The `:VDV` projection, or SDS transform, is also related to PCA transform,
+making the data uncorrelated and having variance one. The difference between DRS
+transform and SDS transform is that the data is projected back to the basis
+of the original variables using the Vᵀ matrix.
 """
 struct EigenAnalysis <: Transform
   proj::Symbol
@@ -33,32 +33,26 @@ end
 
 isrevertible(::Type{EigenAnalysis}) = true
 
-function pcamatrices(X)
-  Σ = cov(X)
-  λ, V = eigen(Σ)
+function pcaproj(λ, V)
   V, transpose(V)
 end
 
-function drsmatrices(X)
-  Σ = cov(X)
-  λ, V = eigen(Σ)
+function drsproj(λ, V)
   Λ = Diagonal(sqrt.(λ))
   S = V * inv(Λ)
   S, inv(S)
 end
 
-function sdsmatrices(X)
-  Σ = cov(X)
-  λ, V = eigen(Σ)
+function sdsproj(λ, V)
   Λ = Diagonal(sqrt.(λ))
   S = V * inv(Λ) * transpose(V)
   S, inv(S)
 end
 
-function perform(transform::EigenAnalysis, X)
-  transform.proj == :V && return pcamatrices(X)
-  transform.proj == :VD && return drsmatrices(X)
-  transform.proj == :VDV && return sdsmatrices(X)
+function perform(transform::EigenAnalysis, λ, V)
+  transform.proj == :V && return pcaproj(λ, V)
+  transform.proj == :VD && return drsproj(λ, V)
+  transform.proj == :VDV && return sdsproj(λ, V)
 end
 
 function apply(transform::EigenAnalysis, table)
@@ -73,7 +67,9 @@ function apply(transform::EigenAnalysis, table)
   X = Tables.matrix(table)
   μ = mean(X, dims=1)
   X = X .- μ
-  Γ, Γ⁻¹ = perform(transform, X)
+  Σ = cov(X)
+  λ, V = eigen(Σ)
+  Γ, Γ⁻¹ = perform(transform, λ, V)
   Y = X * Γ
 
   # table with transformed columns
