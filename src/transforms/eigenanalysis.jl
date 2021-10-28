@@ -26,6 +26,8 @@ The `:VDV` projection, or SDS transform, is also related to PCA transform,
 making the data uncorrelated and having variance one. The difference between DRS
 transform and SDS transform is that the data is projected back to the basis
 of the original variables using the Vᵀ matrix.
+
+refs: https://geostatisticslessons.com/lessons/sphereingmaf
 """
 struct EigenAnalysis <: Transform
   proj::Symbol
