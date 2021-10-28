@@ -25,7 +25,7 @@ export
   # built-in
   Identity,
   Center,
-  Scaling,
+  Scale,
   MinMax,
   Interquartile,
   ZScore,

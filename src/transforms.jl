@@ -55,7 +55,7 @@ function revert end
 
 include("transforms/identity.jl")
 include("transforms/center.jl")
-include("transforms/scaling.jl")
+include("transforms/scale.jl")
 include("transforms/zscore.jl")
 include("transforms/quantile.jl")
 include("transforms/functional.jl")

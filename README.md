@@ -58,7 +58,7 @@ table = (a = rand(100), b = rand(100))
 
 # create a transform pipeline
 f1 = ZScore()
-f2 = Scaling()
+f2 = Scale()
 f3 = Quantile()
 f4 = Functional(log)
 f5 = Interquartile()
@@ -80,15 +80,15 @@ original = revert(pipeline, newtable, cache)
 |-----------|-------------|
 | `Identity` | Identity transform |
 | `Center` | Mean removal |
+| `Scale` | Interval scaling |
+| `MinMax` | Shortcut for `Scale(low=0.0, high=1.0)` |
+| `Interquartile` | Shortcut for `Scale(low=0.25, high=0.75)` |
 | `ZScore` | Z-score (a.k.a. normal score) |
-| `Scaling` | Interval scaling |
-| `MinMax` | Shortcut for `Scaling(low=0.0, high=1.0)` |
-| `Interquartile` | Shortcut for `Scaling(low=0.25, high=0.75)` |
 | `Quantile` | Quantile-quantile transform |
-| `EigenAnalysis` | Eigenanalysis (e.g. PCA, DRS) |
-| `PCA` | Shortcut for `EigenAnalysis(:PCA)` |
-| `DRS` | Shortcut for `EigenAnalysis(:DRS)` |
-| `SDS` | Shortcut for `EigenAnalysis(:SDS)` |
+| `EigenAnalysis` | Eigenanalysis of covariance |
+| `PCA` | Shortcut for `ZScore() → EigenAnalysis(:V)` |
+| `DRS` | Shortcut for `ZScore() → EigenAnalysis(:VD)` |
+| `SDS` | Shortcut for `ZScore() → EigenAnalysis(:VDV)` |
 | `Sequential` | Transform created with `→` (\to in LaTeX) |
 | `Parallel` | Transform created with `∥` (\parallel in LaTeX) |
 

@@ -3,21 +3,21 @@
 # ------------------------------------------------------------------
 
 """
-    Scaling(; low=0.25, high=0.75)
+    Scale(; low=0.25, high=0.75)
 
-The scaling transform of `x` is the value `(x .- xl) ./ (xh .- xl))`
+The scale transform of `x` is the value `(x .- xl) ./ (xh .- xl))`
 where `xl = quantile(x, low)` and `xh = quantile(x, high)`.
 """
-struct Scaling <: Transform
+struct Scale <: Transform
   low::Float64
   high::Float64
 end
 
-Scaling(; low=0.25, high=0.75) = Scaling(low, high)
+Scale(; low=0.25, high=0.75) = Scale(low, high)
 
-isrevertible(::Type{<:Scaling}) = true
+isrevertible(::Type{Scale}) = true
 
-function apply(transform::Scaling, table)
+function apply(transform::Scale, table)
   # sanity checks
   check_continuous(table)
 
@@ -44,7 +44,7 @@ function apply(transform::Scaling, table)
   newtable, factors
 end
 
-function revert(::Scaling, newtable, cache)
+function revert(::Scale, newtable, cache)
   names = Tables.columnnames(newtable)
   @assert length(names) == length(cache) "invalid cache for table"
 
@@ -66,13 +66,13 @@ end
 """
     MinMax()
 
-The transform that is equivalent to `Scaling(low=0, high=1)`.
+The transform that is equivalent to `Scale(low=0, high=1)`.
 """
-MinMax() = Scaling(low=0.0, high=1.0)
+MinMax() = Scale(low=0.0, high=1.0)
 
 """
     Interquartile()
 
-The transform that is equivalent to `Scaling(low=0.25, high=0.75)`.
+The transform that is equivalent to `Scale(low=0.25, high=0.75)`.
 """
-Interquartile() = Scaling(low=0.25, high=0.75)
+Interquartile() = Scale(low=0.25, high=0.75)
