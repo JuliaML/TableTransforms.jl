@@ -35,7 +35,7 @@ end
 
 function sdsmatrices(X)
   Σ = cov(X)
-  λ,  V = eigen(Σ)
+  λ, V = eigen(Σ)
   Λ = Diagonal(sqrt.(λ))
   S = V * inv(Λ) * transpose(V)
   S, inv(S)
