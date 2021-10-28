@@ -25,7 +25,7 @@
     p = scatter(n[:, :x], n[:, :y], aspect_ratio=:equal, markersize=0.5)
     
     if visualtests
-      @test_reference datadir * "/center.png" plot(p)
+      @test_reference joinpath(datadir,  "center.png") plot(p)
     end
   end
 
@@ -52,7 +52,7 @@
     p = scatter(n[:, :x], n[:, :y], aspect_ratio=:equal, markersize=0.5)
     
     if visualtests
-      @test_reference datadir * "/zscore.png" plot(p)
+      @test_reference joinpath(datadir,  "zscore.png") plot(p)
     end
   end
 
@@ -107,9 +107,9 @@
     p₃ = scatter(t₃[:, :x], t₃[:, :y], aspect_ratio=:equal, markersize=0.5)
     
     if visualtests
-      @test_reference datadir * "/pca.png" plot(p₁)
-      @test_reference datadir * "/drs.png" plot(p₂)
-      @test_reference datadir * "/sds.png" plot(p₃)
+      @test_reference joinpath(datadir,  "pca.png") plot(p₁)
+      @test_reference joinpath(datadir,  "drs.png") plot(p₂)
+      @test_reference joinpath(datadir,  "sds.png") plot(p₃)
     end
   end
 
