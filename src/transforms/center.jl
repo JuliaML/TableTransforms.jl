@@ -16,7 +16,7 @@ function apply(::Center, table)
   assert_continuous(table)
 
   # variable names
-  names = schema(table).names
+  names = Tables.columnnames(table)
 
   # normal scores and stats
   vals = map(names) do name
@@ -38,11 +38,9 @@ function apply(::Center, table)
 end
 
 function revert(::Center, newtable, cache)
+  # transformed columns
   names = Tables.columnnames(newtable)
-  @assert length(names) == length(cache) "invalid cache for table"
-
-  # modified columns
-  cols = Tables.columns(newtable)
+  cols  = Tables.columns(newtable)
 
   # original columns
   oldcols = map(1:length(names)) do i
