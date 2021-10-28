@@ -79,7 +79,7 @@ original = revert(pipeline, newtable, cache)
 | Transform | Description |
 |-----------|-------------|
 | `Identity` | Identity transform |
-| `Detrend` | Trend removal |
+| `Center` | Mean removal |
 | `ZScore` | Z-score (a.k.a. normal score) |
 | `Scaling` | Interval scaling |
 | `MinMax` | Shortcut for `Scaling(low=0.0, high=1.0)` |

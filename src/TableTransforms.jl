@@ -24,7 +24,7 @@ export
 
   # built-in
   Identity,
-  Detrend,
+  Center,
   Scaling,
   MinMax,
   Interquartile,

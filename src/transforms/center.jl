@@ -3,15 +3,15 @@
 # ------------------------------------------------------------------
 
 """
-    Detrend()
+    Center()
 
 The transform that removes trends in the variables.
 """
-struct Detrend <: Transform end
+struct Center <: Transform end
 
-isrevertible(::Type{Detrend}) = true
+isrevertible(::Type{Center}) = true
 
-function apply(::Detrend, table)
+function apply(::Center, table)
   # sanity checks
   check_continuous(table)
 
@@ -37,7 +37,7 @@ function apply(::Detrend, table)
   ztable, stats
 end
 
-function revert(::Detrend, newtable, cache)
+function revert(::Center, newtable, cache)
   names = Tables.columnnames(newtable)
   @assert length(names) == length(cache) "invalid cache for table"
 
