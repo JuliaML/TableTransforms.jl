@@ -76,6 +76,10 @@ original = revert(pipeline, newtable, cache)
 
 ## Available transforms
 
+Please check the docstrings for additional information.
+
+### Builtin
+
 | Transform | Description |
 |-----------|-------------|
 | `Identity` | Identity transform |
@@ -92,7 +96,11 @@ original = revert(pipeline, newtable, cache)
 | `Sequential` | Transform created with `→` (\to in LaTeX) |
 | `Parallel` | Transform created with `∥` (\parallel in LaTeX) |
 
-Please check the docstrings for additional information.
+### External
+
+| Transform | Description |
+|-----------|-------------|
+| `LogRatio` | Log-ratio transforms (see [CoDa.jl](https://github.com/JuliaEarth/CoDa.jl)) |
 
 ## Custom transforms
 
