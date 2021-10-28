@@ -1,9 +1,17 @@
 using TableTransforms
 using Distributions
-using Test
 using Tables
-using Statistics
 using LinearAlgebra
+using Statistics
+using DataFrames
+using Test, Random, Plots
+using ReferenceTests, ImageIO
+
+# environment settings
+isCI = "CI" ∈ keys(ENV)
+islinux = Sys.islinux()
+visualtests = !isCI || (isCI && islinux)
+datadir = joinpath(@__DIR__,"data")
 
 # list of tests
 testfiles = [
