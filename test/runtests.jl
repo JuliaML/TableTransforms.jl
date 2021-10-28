@@ -7,6 +7,9 @@ using DataFrames
 using Test, Random, Plots
 using ReferenceTests, ImageIO
 
+# workaround GR warnings
+ENV["GKSwstype"] = "100"
+
 # environment settings
 isCI = "CI" ∈ keys(ENV)
 islinux = Sys.islinux()
