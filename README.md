@@ -124,7 +124,7 @@ Contributions are very welcome. Please [open an issue](https://github.com/JuliaM
   as `MeanStdScaling` are constructed for a specific table and cannot be
   inserted in the middle of a pipeline.
 - [AutoMLPipeline.jl](https://github.com/IBM/AutoMLPipeline.jl) relies on
-  a Python stack via [PyCall.jl](https://github.com/JuliaPy/PyCall.jl).
+  the Python stack via [PyCall.jl](https://github.com/JuliaPy/PyCall.jl).
   They provide pipelines with Julia's pipe `|>` operator and follow a
   more "Pythonic" interface. They do not support general
   [Tables.jl](https://github.com/JuliaData/Tables.jl).
