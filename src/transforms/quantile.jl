@@ -16,30 +16,13 @@ Quantile() = Quantile(Normal())
 isrevertible(::Type{<:Quantile}) = true
 
 function apply(transform::Quantile, table)
-  # sanity checks
   assert_continuous(table)
-
-  # variable names
-  names = schema(table).names
-
-  # transformed samples and original distributions
-  vals = map(names) do name
-    samples = Tables.getcolumn(table, name)
-    origin  = EmpiricalDistribution(samples)
-    target  = transform.dist
-    transf  = _qtransform(samples, origin, target)
-    transf, origin
+  colwise(table) do x
+    origin = EmpiricalDistribution(x)
+    target = transform.dist
+    y = qqtransform(x, origin, target)
+    y, origin
   end
-
-  # table with normal scores
-  𝒯 = (; zip(names, first.(vals))...)
-  newtable = 𝒯 |> Tables.materializer(table)
-
-  # vector with original distributions
-  origindists = last.(vals)
-
-  # return new table and original distributions
-  newtable, origindists
 end
 
 function revert(transform::Quantile, newtable, cache)
@@ -52,7 +35,7 @@ function revert(transform::Quantile, newtable, cache)
     samples = Tables.getcolumn(cols, i)
     origin  = transform.dist
     target  = cache[i]
-    _qtransform(samples, origin, target)
+    qqtransform(samples, origin, target)
   end
 
   # table with original columns
@@ -61,7 +44,7 @@ function revert(transform::Quantile, newtable, cache)
 end
 
 # transform samples from original to target distribution
-function _qtransform(samples, origin, target)
+function qqtransform(samples, origin, target)
   map(samples) do sample
     prob = cdf(origin, sample)
     quantile(target, prob - eps())

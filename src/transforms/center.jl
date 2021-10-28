@@ -12,10 +12,7 @@ struct Center <: Transform end
 isrevertible(::Type{Center}) = true
 
 function apply(::Center, table)
-  # sanity checks
   assert_continuous(table)
-
-  # center the columns
   colwise(table) do x
     μ = mean(x)
     z = (x .- μ)
