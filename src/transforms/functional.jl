@@ -27,24 +27,14 @@ inverse(::Function) = nothing
 
 function apply(transform::Functional, table)
   f = transform.func
-  X = Tables.matrix(table)
-  Y = f.(X)
-
-  # table with transformed columns
-  n = Tables.columnnames(table)
-  𝒯 = (; zip(n, eachcol(Y))...)
-  newtable = 𝒯 |> Tables.materializer(table)
-
-  newtable, nothing
+  colwise(table) do x
+    f.(x), nothing
+  end
 end
 
 function revert(transform::Functional, newtable, cache)
-  g = inverse(transform.func)
-  Y = Tables.matrix(newtable)
-  X = g.(Y)
-
-  # table with original columns
-  n = Tables.columnnames(newtable)
-  𝒯 = (; zip(n, eachcol(X))...)
-  𝒯 |> Tables.materializer(newtable)
+  f = inverse(transform.func)
+  colwise(newtable) do x
+    f.(x), nothing
+  end |> first
 end
