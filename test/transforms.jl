@@ -22,10 +22,11 @@
     @test t ≈ tₒ
 
     # visual tests
-    p = scatter(n[:, :x], n[:, :y], aspect_ratio=:equal, markersize=0.5)
+    pₒ = scatter(t[:, :x], t[:, :y], label="Original")
+    p = scatter(n[:, :x], n[:, :y], label="Center")
     
     if visualtests
-      @test_reference joinpath(datadir,  "center.png") plot(p)
+      @test_reference joinpath(datadir,  "center.png") plot(pₒ, p, layout=(1,2))
     end
   end
 
@@ -49,10 +50,11 @@
     @test t ≈ tₒ
 
     # visual tests
-    p = scatter(n[:, :x], n[:, :y], aspect_ratio=:equal, markersize=0.5)
+    pₒ = scatter(t[:, :x], t[:, :y], label="Original")
+    p = scatter(n[:, :x], n[:, :y], label="ZScore")
     
     if visualtests
-      @test_reference joinpath(datadir,  "zscore.png") plot(p)
+      @test_reference joinpath(datadir,  "zscore.png") plot(pₒ, p, layout=(1,2))
     end
   end
 
@@ -104,12 +106,13 @@
     t₁, c₁ = apply(EigenAnalysis(:V), t)
     t₂, c₂ = apply(EigenAnalysis(:VD), t)
     t₃, c₃ = apply(EigenAnalysis(:VDV), t)
-    p₁ = scatter(t₁[:, :x], t₁[:, :y], aspect_ratio=:equal, markersize=0.5)
-    p₂ = scatter(t₂[:, :x], t₂[:, :y], aspect_ratio=:equal, markersize=0.5)
-    p₃ = scatter(t₃[:, :x], t₃[:, :y], aspect_ratio=:equal, markersize=0.5)
+    pₒ = scatter(t[:, :x], t[:, :y], label="Original")
+    p₁ = scatter(t₁[:, :x], t₁[:, :y], label="PCA")
+    p₂ = scatter(t₂[:, :x], t₂[:, :y], label="DRS")
+    p₃ = scatter(t₃[:, :x], t₃[:, :y], label="SDS")
     
     if visualtests
-      @test_reference joinpath(datadir,  "eigenanalysis.png") plot(p₁, p₂, p₃, layout=(3,1))
+      @test_reference joinpath(datadir,  "eigenanalysis.png") plot(pₒ, p₁, p₂, p₃, layout=(2,2))
     end
   end
 
