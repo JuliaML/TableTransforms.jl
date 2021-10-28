@@ -47,7 +47,7 @@ function sdsproj(λ, V)
   S, inv(S)
 end
 
-function perform(transform::EigenAnalysis, λ, V)
+function matrices(transform::EigenAnalysis, λ, V)
   transform.proj == :V && return pcaproj(λ, V)
   transform.proj == :VD && return drsproj(λ, V)
   transform.proj == :VDV && return sdsproj(λ, V)
