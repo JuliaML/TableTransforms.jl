@@ -11,7 +11,7 @@ struct Parallel <: Transform
   transforms::Vector{Transform}
 end
 
-isrevertible(p::Parallel) = all(isrevertible, p.transforms)
+isrevertible(p::Parallel) = any(isrevertible, p.transforms)
 
 function apply(p::Parallel, table)
   # apply transforms in parallel
