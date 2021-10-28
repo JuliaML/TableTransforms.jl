@@ -54,6 +54,7 @@ function revert end
 # ----------------
 
 include("transforms/identity.jl")
+include("transforms/detrend.jl")
 include("transforms/scaling.jl")
 include("transforms/zscore.jl")
 include("transforms/quantile.jl")
