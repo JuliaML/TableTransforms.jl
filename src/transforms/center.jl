@@ -15,26 +15,12 @@ function apply(::Center, table)
   # sanity checks
   assert_continuous(table)
 
-  # variable names
-  names = Tables.columnnames(table)
-
-  # normal scores and stats
-  vals = map(names) do name
-    x = Tables.getcolumn(table, name)
+  # center the columns
+  colwise(table) do x
     μ = mean(x)
     z = (x .- μ)
     z, μ
   end
-
-  # table with normal scores
-  𝒯 = (; zip(names, first.(vals))...)
-  ztable = 𝒯 |> Tables.materializer(table)
-
-  # vector with stats
-  stats = last.(vals)
-
-  # return scores and stats
-  ztable, stats
 end
 
 function revert(::Center, newtable, cache)
