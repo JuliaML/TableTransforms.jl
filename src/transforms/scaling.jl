@@ -19,10 +19,10 @@ isrevertible(::Type{<:Scaling}) = true
 
 function apply(transform::Scaling, table)
   # sanity checks
-  sch = schema(table)
-  names = sch.names
-  types = sch.scitypes
-  @assert all(T <: Continuous for T in types) "columns must hold continuous variables"
+  check_continuous(table)
+
+  # variable names
+  names = schema(table).names
 
   # scaled values and factors
   vals = map(names) do name

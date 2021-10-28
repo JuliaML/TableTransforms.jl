@@ -14,10 +14,10 @@ isrevertible(::Type{ZScore}) = true
 
 function apply(::ZScore, table)
   # sanity checks
-  sch = schema(table)
-  names = sch.names
-  types = sch.scitypes
-  @assert all(T <: Continuous for T in types) "columns must hold continuous variables"
+  check_continuous(table)
+
+  # variable names
+  names = schema(table).names
 
   # normal scores and stats
   vals = map(names) do name
