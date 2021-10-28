@@ -5,7 +5,7 @@
 """
     Center()
 
-The transform that removes trends in the variables.
+The transform that removes the mean of the variables.
 """
 struct Center <: Transform end
 
