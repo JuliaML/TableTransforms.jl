@@ -13,30 +13,13 @@ struct ZScore <: Transform end
 isrevertible(::Type{ZScore}) = true
 
 function apply(::ZScore, table)
-  # sanity checks
   assert_continuous(table)
-
-  # variable names
-  names = schema(table).names
-
-  # normal scores and stats
-  vals = map(names) do name
-    x = Tables.getcolumn(table, name)
+  colwise(table) do x
     μ = mean(x)
     σ = std(x, mean=μ)
     z = (x .- μ) ./ σ
     z, (μ=μ, σ=σ)
   end
-
-  # table with normal scores
-  𝒯 = (; zip(names, first.(vals))...)
-  ztable = 𝒯 |> Tables.materializer(table)
-
-  # vector with stats
-  stats = last.(vals)
-
-  # return scores and stats
-  ztable, stats
 end
 
 function revert(::ZScore, newtable, cache)
