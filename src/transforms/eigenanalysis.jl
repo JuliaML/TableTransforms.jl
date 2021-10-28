@@ -7,9 +7,11 @@
 
 The eigenanalysis of the covariance with a given projection `proj`.
 
-* proj = :V: A table with uncorrelated variables (PCA transformation).
-* proj = :VD: A table with uncorrelated variables and variance 1, where D is the inverse of squared root eigenvalues matrix and V is the eigenvectors matrix (DRS transformation).
-* proj = :VDV: A table with uncorrelated variables and variance 1, where D is the inverse of squared root eigenvalues matrix and V is the eigenvectors matrix (SDS transformation, which projects the orthogonal variables back onto the basis of the original variables).
+## Projections
+
+* `:V` - Uncorrelated variables (PCA transform)
+* `:VD` - Uncorrelated variables and variance one (DRS transform)
+* `:VDV` - Uncorrelated variables and variance one (SDS transformation)
 """
 struct EigenAnalysis <: Transform
   proj::Symbol
