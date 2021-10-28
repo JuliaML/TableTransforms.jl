@@ -118,8 +118,8 @@
     p₆ = scatter(t₆[:, :x], t₆[:, :y], label="SDS")
     
     if visualtests
-      @test_reference joinpath(datadir,  "eigenanalysis-1.png") plot(pₒ, p₁, p₂, p₃, layout=(2,2))
-      @test_reference joinpath(datadir,  "eigenanalysis-2.png") plot(p₁, p₂, p₃, p₄, p₅, p₆, layout=(2,3))
+      @test_reference joinpath(datadir,"eigenanalysis-1.png") plot(pₒ, p₁, p₂, p₃, layout=(2,2))
+      @test_reference joinpath(datadir,"eigenanalysis-2.png") plot(p₁, p₂, p₃, p₄, p₅, p₆, layout=(2,3))
     end
   end
 
