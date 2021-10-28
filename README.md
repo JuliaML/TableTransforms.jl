@@ -9,11 +9,16 @@ address specific needs in feature engineering and works
 with general [Tables.jl](https://github.com/JuliaData/Tables.jl)
 tables.
 
-Here are some unique features:
+Past attempts to model transforms in Julia such as
+[FeatureTransforms.jl](https://github.com/invenia/FeatureTransforms.jl)
+served as inspiration for this package. We are happy to absorb any
+missing transform, and contributions are very welcome.
 
-- Transforms are **revertible** meaning that one can apply a `ZScore()`
-  transform and undo the transformation without having to do all the
-  manual work.
+Here are some unique features of `TableTranforms.jl`:
+
+- Transforms are **revertible** meaning that one can apply a transform
+  and undo the transformation without having to do all the manual work
+  keeping constants around.
 
 - Pipelines can be easily constructed with clean syntax
   `(f1 → f2 → f3) ∥ (f4 → f5)`, and they are automatically
@@ -21,11 +26,6 @@ Here are some unique features:
 
 - Branches of a pipeline are run in parallel using multiple threads
   with [Transducers.jl](https://github.com/JuliaFolds/Transducers.jl).
-
-Past attempts to model transforms in Julia such as
-[FeatureTransforms.jl](https://github.com/invenia/FeatureTransforms.jl)
-served as inspiration for this package. We are happy to absorb any
-missing transform, and contributions are very welcome.
 
 ## Rationale
 
