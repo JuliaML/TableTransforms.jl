@@ -29,11 +29,11 @@
 
     tₒ = revert(EigenAnalysis(:V), tₙ, c)
     Xₒ = Tables.matrix(tₒ)
-    @test Xₙ ≈ (X .- μ) * V
-    @test first(c) ≈ Vᵀ
-    @test last(c) ≈ μ
-    @test Xₒ ≈ (Xₙ * Vᵀ .+ μ)
-    @test X ≈ Xₒ
+    @test Xₙ ≈ (X .- μ) * V   # test the result matrix manually
+    @test first(c) ≈ Vᵀ       # test if the inverse matrix is computed correctly
+    @test last(c) ≈ μ         # test if the means is computed correctly
+    @test Xₒ ≈ (Xₙ * Vᵀ .+ μ) # test the revert is working fine
+    @test X ≈ Xₒ              # test the back-transform is giving X back, the pattern follows for DRS and SDS tests
 
     # test DRS direct and inverse transformation
     t = (a = rand(1000), b = rand(1000))
@@ -50,11 +50,11 @@
 
     tₒ = revert(EigenAnalysis(:VD), tₙ, c)
     Xₒ = Tables.matrix(tₒ)
-    @test Xₙ ≈ (X .- μ) * S   # test the result matrix manually
-    @test first(c) ≈ Sⁱ       # test if the inverse matrix is computed correctly
-    @test last(c) ≈ μ         # test if the means is computed correctly
-    @test Xₒ ≈ (Xₙ * Sⁱ .+ μ) # test the revert is working fine
-    @test X ≈ Xₒ              # test the back-transform is giving X back
+    @test Xₙ ≈ (X .- μ) * S
+    @test first(c) ≈ Sⁱ
+    @test last(c) ≈ μ
+    @test Xₒ ≈ (Xₙ * Sⁱ .+ μ)
+    @test X ≈ Xₒ
 
     # test SDS direct and inverse transformation
     t = (a = rand(1000), b = rand(1000))
@@ -72,11 +72,11 @@
 
     tₒ = revert(EigenAnalysis(:VDV), tₙ, c)
     Xₒ = Tables.matrix(tₒ)
-    @test Xₙ ≈ (X .- μ) * S   # test the result matrix manually
-    @test first(c) ≈ Sⁱ       # test if the inverse matrix is computed correctly
-    @test last(c) ≈ μ         # test if the means is computed correctly
-    @test Xₒ ≈ (Xₙ * Sⁱ .+ μ) # test the revert is working fine
-    @test X ≈ Xₒ              # test the back-transform is giving X back
+    @test Xₙ ≈ (X .- μ) * S
+    @test first(c) ≈ Sⁱ
+    @test last(c) ≈ μ
+    @test Xₒ ≈ (Xₙ * Sⁱ .+ μ)
+    @test X ≈ Xₒ
   end
 
   @testset "Sequential" begin
