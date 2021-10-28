@@ -107,9 +107,7 @@
     p₃ = scatter(t₃[:, :x], t₃[:, :y], aspect_ratio=:equal, markersize=0.5)
     
     if visualtests
-      @test_reference joinpath(datadir,  "pca.png") plot(p₁)
-      @test_reference joinpath(datadir,  "drs.png") plot(p₂)
-      @test_reference joinpath(datadir,  "sds.png") plot(p₃)
+      @test_reference joinpath(datadir,  "eigenanalysis.png") plot(p₁, p₂, p₃, layout=(3,1))
     end
   end
 
