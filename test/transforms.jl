@@ -63,8 +63,10 @@
     t = DataFrame(:x => x, :y => y)
     n, c = apply(EigenAnalysis(:V), t)
     Σ = cov(Tables.matrix(n))
+    @test Σ[1,1] > 0.5
     @test isapprox(Σ[1,2], 0; atol=1e-6)
     @test isapprox(Σ[2,1], 0; atol=1e-6)
+    @test Σ[1,1] > 0.5
     tₒ = revert(EigenAnalysis(:V), n, c)
     @test t ≈ tₒ
 
