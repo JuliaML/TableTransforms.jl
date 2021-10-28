@@ -19,7 +19,7 @@ isrevertible(::Type{Scale}) = true
 
 function apply(transform::Scale, table)
   # sanity checks
-  check_continuous(table)
+  assert_continuous(table)
 
   # variable names
   names = schema(table).names

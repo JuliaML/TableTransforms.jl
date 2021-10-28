@@ -13,7 +13,7 @@ isrevertible(::Type{Center}) = true
 
 function apply(::Center, table)
   # sanity checks
-  check_continuous(table)
+  assert_continuous(table)
 
   # variable names
   names = schema(table).names

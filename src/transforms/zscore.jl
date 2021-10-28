@@ -14,7 +14,7 @@ isrevertible(::Type{ZScore}) = true
 
 function apply(::ZScore, table)
   # sanity checks
-  check_continuous(table)
+  assert_continuous(table)
 
   # variable names
   names = schema(table).names
