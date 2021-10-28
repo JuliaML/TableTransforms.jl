@@ -13,21 +13,17 @@ The eigenanalysis of the covariance with a given projection `proj`.
 * `:VD` - Uncorrelated variables and variance one (DRS transform)
 * `:VDV` - Uncorrelated variables and variance one (SDS transformation)
 
-The `:V` projection, also called PCA transform, use the covariance matrix,
-performs the eigenvalues decomposition and take the eigenvectors matrix to
-project the data on the directions that make the data uncorrelated.
+The `:V` projection used in the PCA transform projects the data on the eigenvectors
+V of the covariance matrix.
 
-The `:VD` projection, also known as DRS transform, is closely related to PCA
-transform, the difference between PCA and DRS is the additional step that multiplies
-the eigenvectors matrix by the squared inverse of the eigenvalues diagonal
-matrix, then transform the data, making it uncorrelated and having variance one.
+The `:VD` projection used in the DRS transform. Similar to the `:V` projection,
+but the eigenvectors are multiplied by the squared inverse of the eigenvalues D.
 
-The `:VDV` projection, or SDS transform, is also related to PCA transform,
-making the data uncorrelated and having variance one. The difference between DRS
-transform and SDS transform is that the data is projected back to the basis
-of the original variables using the Vᵀ matrix.
+The `:VDV` projection used in the SDS transform. Similar to the `:VD` transform,
+but the data is projected back to the basis of the original variables using the Vᵀ matrix.
 
-refs: https://geostatisticslessons.com/lessons/sphereingmaf
+See [https://geostatisticslessons.com/lessons/sphereingmaf](https://geostatisticslessons.com/lessons/sphereingmaf)
+for more details about these three variants of eigenanalysis.
 """
 struct EigenAnalysis <: Transform
   proj::Symbol
