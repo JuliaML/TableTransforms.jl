@@ -13,6 +13,7 @@ using LinearAlgebra
 import Distributions: ContinuousUnivariateDistribution
 import Distributions: quantile, cdf
 
+include("utils.jl")
 include("distributions.jl")
 include("transforms.jl")
 
