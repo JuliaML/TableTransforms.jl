@@ -116,3 +116,18 @@ transform `isrevertible`, then it should also implement
 ## Contributing
 
 Contributions are very welcome. Please [open an issue](https://github.com/JuliaML/TableTransforms.jl/issues) if you have questions.
+
+## Related packages
+
+- [FeatureTransforms.jl](https://github.com/invenia/FeatureTransforms.jl)
+  has transforms, but they are not fully revertible. Some transforms such
+  as `MeanStdScaling` are constructed for a specific table and cannot be
+  fed in the middle of a pipeline.
+- [AutoMLPipeline.jl](https://github.com/IBM/AutoMLPipeline.jl) relies on
+  a Python stack via [PyCall.jl](https://github.com/JuliaPy/PyCall.jl).
+  They provide pipelines with Julia's pipe `|>` operator and follow a
+  more "Pythonic" interface. They do not support general
+  [Tables.jl](https://github.com/JuliaData/Tables.jl).
+- [Chain.jl](https://github.com/jkrumbiegel/Chain.jl) is a general package
+  to execute functions in sequence given an input data frame. This package
+  is suitable for more low-level operations, it is not intended for statistical transformations such as `PCA`, `ZScore`, etc.
