@@ -122,7 +122,7 @@ Contributions are very welcome. Please [open an issue](https://github.com/JuliaM
 - [FeatureTransforms.jl](https://github.com/invenia/FeatureTransforms.jl)
   has transforms, but they are not fully revertible. Some transforms such
   as `MeanStdScaling` are constructed for a specific table and cannot be
-  fed in the middle of a pipeline.
+  inserted in the middle of a pipeline.
 - [AutoMLPipeline.jl](https://github.com/IBM/AutoMLPipeline.jl) relies on
   a Python stack via [PyCall.jl](https://github.com/JuliaPy/PyCall.jl).
   They provide pipelines with Julia's pipe `|>` operator and follow a
