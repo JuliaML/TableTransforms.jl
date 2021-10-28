@@ -22,7 +22,7 @@ a class of rotations that are close extensions of PCA, yielding variables that
 in addition to being uncorrelated, also have a variance of one. The combination
 of these properties yields an identity covariance matrix.
 
-The `:VDV` projection, or SDS transform, is also a technique that that rotates the data.
+The `:VDV` projection, or SDS transform, is also a technique that rotates the data.
 The difference between the two sphereing methods, SDS and DRS, is the additional
 multiplication by Vᵀ, which projects the orthogonal variables back onto the basis of the
 original variables. As in DRS, the D is the inverse of the squared root of eigenvalues matrix.
