@@ -14,7 +14,7 @@ Past attempts to model transforms in Julia such as
 served as inspiration for this package. We are happy to absorb any
 missing transform, and contributions are very welcome.
 
-Here are some unique features of `TableTranforms.jl`:
+Here are some unique features:
 
 - Transforms are **revertible** meaning that one can apply a transform
   and undo the transformation without having to do all the manual work
