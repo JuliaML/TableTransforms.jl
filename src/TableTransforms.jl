@@ -33,7 +33,7 @@ export
   ZScore,
   Quantile,
   Functional,
-  PCA,
+  EigenAnalysis,
   Sequential,
   Parallel,
   →, ∥
