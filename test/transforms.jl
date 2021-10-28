@@ -1,10 +1,32 @@
 @testset "Transforms" begin
   @testset "Identity" begin
-    # TODO
+    x = rand(4000)
+    y = rand(4000)
+    t = DataFrame(:x => x, :y => y)
+    n, c = apply(Identity(), t)
+    @test t == n
+    tₒ = revert(Identity(), n, c)
+    @test t == tₒ
   end
 
   @testset "Center" begin
-    # TODO
+    Random.seed!(42) # to reproduce the results
+    x = rand(Normal(2,1), 4000)
+    y = rand(Normal(5,1), 4000)
+    t = DataFrame(:x => x, :y => y)
+    n, c = apply(Center(), t)
+    μ = mean(Tables.matrix(n), dims=1)
+    @test isapprox(μ[1], 0; atol=1e-6)
+    @test isapprox(μ[2], 0; atol=1e-6)
+    tₒ = revert(Center(), n, c)
+    @test t ≈ tₒ
+
+    # visual tests
+    p = scatter(n[:, :x], n[:, :y], aspect_ratio=:equal, markersize=0.5)
+    
+    if visualtests
+      @test_reference datadir * "/center.png" plot(p)
+    end
   end
 
   @testset "Scale" begin
