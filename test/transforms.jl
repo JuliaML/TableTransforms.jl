@@ -106,13 +106,20 @@
     t₁, c₁ = apply(EigenAnalysis(:V), t)
     t₂, c₂ = apply(EigenAnalysis(:VD), t)
     t₃, c₃ = apply(EigenAnalysis(:VDV), t)
+    t₄, c₄ = apply(PCA(), t)
+    t₅, c₅ = apply(DRS(), t)
+    t₆, c₆ = apply(SDS(), t)
     pₒ = scatter(t[:, :x], t[:, :y], label="Original")
-    p₁ = scatter(t₁[:, :x], t₁[:, :y], label="PCA")
-    p₂ = scatter(t₂[:, :x], t₂[:, :y], label="DRS")
-    p₃ = scatter(t₃[:, :x], t₃[:, :y], label="SDS")
+    p₁ = scatter(t₁[:, :x], t₁[:, :y], label="V")
+    p₂ = scatter(t₂[:, :x], t₂[:, :y], label="VD")
+    p₃ = scatter(t₃[:, :x], t₃[:, :y], label="VDV")
+    p₄ = scatter(t₄[:, :x], t₄[:, :y], label="PCA")
+    p₅ = scatter(t₅[:, :x], t₅[:, :y], label="DRS")
+    p₆ = scatter(t₆[:, :x], t₆[:, :y], label="SDS")
     
     if visualtests
-      @test_reference joinpath(datadir,  "eigenanalysis.png") plot(pₒ, p₁, p₂, p₃, layout=(2,2))
+      @test_reference joinpath(datadir,  "eigenanalysis-1.png") plot(pₒ, p₁, p₂, p₃, layout=(2,2))
+      @test_reference joinpath(datadir,  "eigenanalysis-2.png") plot(p₁, p₂, p₃, p₄, p₅, p₆, layout=(2,3))
     end
   end
 
