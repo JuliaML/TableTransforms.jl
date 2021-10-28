@@ -12,6 +12,20 @@ The eigenanalysis of the covariance with a given projection `proj`.
 * `:V` - Uncorrelated variables (PCA transform)
 * `:VD` - Uncorrelated variables and variance one (DRS transform)
 * `:VDV` - Uncorrelated variables and variance one (SDS transformation)
+
+The `:V` projection, also called PCA transform, rotates the multivariate data
+so that the resultant principal components in the data matrix are uncorrelated,
+where off-diagonal entries of its correlation matrix Σ are zero.
+
+The `:VD` projection, also known as DRS transform, is a technique that belongs to
+a class of rotations that are close extensions of PCA, yielding variables that
+in addition to being uncorrelated, also have a variance of one. The combination
+of these properties yields an identity covariance matrix.
+
+The `:VDV` projection, or SDS transform, is also a technique that that rotates the data.
+The difference between the two sphereing methods, SDS and DRS, is the additional
+multiplication by Vᵀ, which projects the orthogonal variables back onto the basis of the
+original variables. As in DRS, the D is the inverse of the squared root of eigenvalues matrix.
 """
 struct EigenAnalysis <: Transform
   proj::Symbol
