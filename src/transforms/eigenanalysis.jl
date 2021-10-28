@@ -41,14 +41,14 @@ function sdsmatrices(X)
   S, inv(S)
 end
 
-function perform(E::EigenAnalysis, X)
-  E.proj == :V && return pcamatrices(X)
-  E.proj == :VD && return drsmatrices(X)
-  E.proj == :VDV && return sdsmatrices(X)
+function perform(transform::EigenAnalysis, X)
+  transform.proj == :V && return pcamatrices(X)
+  transform.proj == :VD && return drsmatrices(X)
+  transform.proj == :VDV && return sdsmatrices(X)
 end
 
-function apply(E::EigenAnalysis, table)
-  @assert E.proj ∈ [:V, :VD, :VDV] "eigen analysis not suported"
+function apply(transform::EigenAnalysis, table)
+  @assert transform.proj ∈ [:V, :VD, :VDV] "eigen analysis not suported"
 
   # sanity checks
   sch = schema(table)
@@ -59,7 +59,7 @@ function apply(E::EigenAnalysis, table)
   X = Tables.matrix(table)
   μ = mean(X, dims=1)
   X = X .- μ
-  Γ, Γ⁻¹ = perform(E, X)
+  Γ, Γ⁻¹ = perform(transform, X)
   Y = X * Γ
 
   # table with transformed columns
