@@ -1,9 +1,9 @@
 using TableTransforms
 using Distributions
 using Tables
+using DataFrames
 using LinearAlgebra
 using Statistics
-using DataFrames
 using Test, Random, Plots
 using ReferenceTests, ImageIO
 
