@@ -7,8 +7,9 @@ module TableTransforms
 using Tables
 using ScientificTypes
 using Distributions: Normal
-using Statistics
+using Transducers: Map, foldxt
 using LinearAlgebra
+using Statistics
 
 import Distributions: ContinuousUnivariateDistribution
 import Distributions: quantile, cdf
