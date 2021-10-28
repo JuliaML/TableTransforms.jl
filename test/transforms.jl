@@ -54,7 +54,7 @@
     p = scatter(n[:, :x], n[:, :y], label="ZScore")
     
     if visualtests
-      @test_reference joinpath(datadir,  "zscore.png") plot(pₒ, p, layout=(1,2))
+      @test_reference joinpath(datadir,"zscore.png") plot(pₒ, p, layout=(1,2))
     end
   end
 
