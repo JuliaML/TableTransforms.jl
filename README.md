@@ -70,7 +70,10 @@ newtable = pipeline(table)
 # alternatively save cache and revert later
 newtable, cache = apply(pipeline, table)
 
-# revert pipeline after additional processing
+# learn a model with newtable
+# ...
+
+# revert pipeline when done learning
 original = revert(pipeline, newtable, cache)
 ```
 
