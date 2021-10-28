@@ -65,6 +65,7 @@ function apply(p::Parallel, table)
 end
 
 function revert(p::Parallel, newtable, cache)
+  # sanity checks
   @assert !isnothing(cache) "transform is not revertible"
 
   # retrieve subtable range and cache
@@ -75,10 +76,9 @@ function revert(p::Parallel, newtable, cache)
   start, finish = range
 
   # columns of transformed table
-  cols  = Tables.columns(newtable)
-  names = Tables.columnnames(newtable)
+  cols = Tables.columns(newtable)
 
-  # retrieve first subtable
+  # retrieve subtable for revert transform
   rcols = [Tables.getcolumn(cols, j) for j in start:finish]
   𝒯 = (; zip(onames, rcols)...)
   rtable = 𝒯 |> Tables.materializer(newtable)
