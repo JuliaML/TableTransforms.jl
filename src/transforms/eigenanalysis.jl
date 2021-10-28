@@ -41,7 +41,7 @@ function sdsmatrices(X)
   S, inv(S)
 end
 
-function compute(E::EigenAnalysis, X)
+function perform(E::EigenAnalysis, X)
   E.proj == :V && return pcamatrices(X)
   E.proj == :VD && return drsmatrices(X)
   E.proj == :VDV && return sdsmatrices(X)
