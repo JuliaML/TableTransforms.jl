@@ -129,5 +129,9 @@ Contributions are very welcome. Please [open an issue](https://github.com/JuliaM
   more "Pythonic" interface. They do not support general
   [Tables.jl](https://github.com/JuliaData/Tables.jl).
 - [Chain.jl](https://github.com/jkrumbiegel/Chain.jl) is a general package
-  to execute functions in sequence given an input data frame. This package
-  is suitable for more low-level operations, it is not intended for statistical transformations such as `PCA`, `ZScore`, etc.
+  to execute functions in sequence given a
+  [DataFrames.jl](https://github.com/JuliaData/DataFrames.jl) as input.
+  This package is suitable for more low-level manipulation of tables, it
+  is not intended for statistical transforms such as `PCA`, `ZScore`, etc.
+  Additionally, the syntax of the package promotes greedy transforms instead
+  of lazily building a pipeline and then applying to multiple tables.
