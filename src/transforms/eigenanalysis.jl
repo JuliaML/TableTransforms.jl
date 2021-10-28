@@ -94,3 +94,27 @@ function revert(::EigenAnalysis, newtable, cache)
   𝒯 = (; zip(names, eachcol(X))...)
   𝒯 |> Tables.materializer(newtable)
 end
+
+"""
+    PCA()
+
+The PCA transform is a shortcut for
+`ZScore() → EigenAnalysis(:V)`.
+"""
+PCA() = ZScore() → EigenAnalysis(:V)
+
+"""
+    DRS()
+
+The DRS transform is a shortcut for
+`ZScore() → EigenAnalysis(:VD)`.
+"""
+DRS() = ZScore() → EigenAnalysis(:VD)
+
+"""
+    SDS()
+
+The SDS transform is a shortcut for
+`ZScore() → EigenAnalysis(:VDV)`.
+"""
+SDS() = ZScore() → EigenAnalysis(:VDV)

@@ -34,6 +34,7 @@ export
   Quantile,
   Functional,
   EigenAnalysis,
+  PCA, DRS, SDS,
   Sequential,
   Parallel,
   →, ∥
