@@ -15,11 +15,11 @@
     c = rand(4000)
     d = rand(4000)
     t = Table(; a, b, c, d)
-    n, c = apply(Select(:a, :b), t)
-    s₁ = Set(Tables.columnnames(n))
-    s₂ = Set([:a, :b])
-    @test s₁ == s₂
-    tₒ = revert(Select(:a, :b), n, c)
+    n, c = apply(Select(:b, :d), t)
+    u₁ = Tables.columnnames(n)
+    u₂ = (:b, :d)
+    @test u₁ == u₂
+    tₒ = revert(Select(:b, :d), n, c)
     @test t == tₒ
   end
 
@@ -29,11 +29,11 @@
     c = rand(4000)
     d = rand(4000)
     t = Table(; a, b, c, d)
-    n, c = apply(Reject(:a, :b), t)
-    s₁ = Set(Tables.columnnames(n))
-    s₂ = Set([:c, :d])
-    @test s₁ == s₂
-    tₒ = revert(Reject(:a, :b), n, c)
+    n, c = apply(Reject(:b, :d), t)
+    u₁ = Tables.columnnames(n)
+    u₂ = (:a, :c)
+    @test u₁ == u₂
+    tₒ = revert(Reject(:b, :d), n, c)
     @test t == tₒ
   end
 
