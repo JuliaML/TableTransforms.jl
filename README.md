@@ -124,6 +124,7 @@ Please check the docstrings for additional information.
 | `Interquartile` | Shortcut for `Scale(low=0.25, high=0.75)` |
 | `ZScore` | Z-score (a.k.a. normal score) |
 | `Quantile` | Quantile-quantile transform |
+| `Functional` | Colwise function application |
 | `EigenAnalysis` | Eigenanalysis of covariance |
 | `PCA` | Shortcut for `ZScore() → EigenAnalysis(:V)` |
 | `DRS` | Shortcut for `ZScore() → EigenAnalysis(:VD)` |
