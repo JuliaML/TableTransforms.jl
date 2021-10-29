@@ -223,10 +223,47 @@
   end
 
   @testset "Sequential" begin
-    # TODO
+    x = rand(Normal(0,10), 1500)
+    y = x + rand(Normal(0,2), 1500)
+    z = y + rand(Normal(0,5), 1500)
+    t = Table(; x, y, z)
+    S = Scale(low=0.2, high=0.8) → EigenAnalysis(:VDV)
+    n, c = apply(S, t)
+    tₒ = revert(S, n, c)
+    @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+
+    x = rand(Normal(0,10), 1500)
+    y = x + rand(Normal(0,2), 1500)
+    z = y + rand(Normal(0,5), 1500)
+    t = Table(; x, y, z)
+    S = Select(:x, :z) → ZScore() → EigenAnalysis(:V) → Scale(low=0, high=1)
+    n, c = apply(S, t)
+    tₒ = revert(S, n, c)
+    @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
   end
 
   @testset "Parallel" begin
-    # TODO
+    x = rand(Normal(0,10), 1500)
+    y = x + rand(Normal(0,2), 1500)
+    z = y + rand(Normal(0,5), 1500)
+    t = Table(; x, y, z)
+    S = Scale(low=0.3, high=0.6) ∥ EigenAnalysis(:VDV)
+    n, c = apply(S, t)
+    tₒ = revert(S, n, c)
+    @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+
+    # distributivity with respect to Sequential
+    x = rand(Normal(0,10), 1500)
+    y = x + rand(Normal(0,2), 1500)
+    z = y + rand(Normal(0,5), 1500)
+    t = Table(; x, y, z)
+    T₁ = Center()
+    T₂ = Scale(low=0.2, high=0.8)
+    T₃ = EigenAnalysis(:VD)
+    S₁ = T₁ → (T₂ ∥ T₃)
+    S₂ = (T₁ → T₂) ∥ (T₁ →T₃)
+    n₁, c₁ = apply(S₁, t)
+    n₂, c₂ = apply(S₂, t)
+    @test Tables.matrix(n₂) ≈ Tables.matrix(n₂)
   end
 end
