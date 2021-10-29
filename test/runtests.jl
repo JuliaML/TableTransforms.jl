@@ -1,7 +1,7 @@
 using TableTransforms
 using Distributions
 using Tables
-using DataFrames
+using TypedTables
 using LinearAlgebra
 using Statistics
 using Test, Random, Plots
