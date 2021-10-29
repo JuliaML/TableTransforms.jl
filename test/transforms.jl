@@ -264,6 +264,6 @@
     S₂ = (T₁ → T₂) ∥ (T₁ →T₃)
     n₁, c₁ = apply(S₁, t)
     n₂, c₂ = apply(S₂, t)
-    @test Tables.matrix(n₂) ≈ Tables.matrix(n₂)
+    @test Tables.matrix(n₁) ≈ Tables.matrix(n₂)
   end
 end
