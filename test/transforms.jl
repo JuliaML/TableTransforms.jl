@@ -18,30 +18,29 @@
     f = rand(4000)
     t = Table(; a, b, c, d, e, f)
 
-    n₁, c₁ = apply(Select(:f, :d), t)
-    n₂, c₂ = apply(Select(:f, :d, :b), t)
-    n₃, c₃ = apply(Select(:d, :c, :b), t)
-    n₄, c₄ = apply(Select(:e, :c, :b, :a), t)
+    n, c = apply(Select(:f, :d), t)
+    u = Tables.columnnames(n)
+    @test u == (:f, :d)
+    tₒ = revert(Select(:f, :d), n, c)
+    @test t == tₒ
 
-    u₁ = Tables.columnnames(n₁)
-    u₂ = Tables.columnnames(n₂)
-    u₃ = Tables.columnnames(n₃)
-    u₄ = Tables.columnnames(n₄)
+    n, c = apply(Select(:f, :d, :b), t)
+    u = Tables.columnnames(n)
+    @test u == (:f, :d, :b)
+    tₒ = revert(Select(:f, :d, :b), n, c)
+    @test t == tₒ
 
-    @test u₁ == (:f, :d)
-    @test u₂ == (:f, :d, :b)
-    @test u₃ == (:d, :c, :b)
-    @test u₄ == (:e, :c, :b, :a)
+    n, c = apply(Select(:d, :c, :b), t)
+    u = Tables.columnnames(n)
+    @test u == (:d, :c, :b)
+    tₒ = revert(Select(:d, :c, :b), n, c)
+    @test t == tₒ
 
-    tₒ₁ = revert(Select(:f, :d), n₁, c₁)
-    tₒ₂ = revert(Select(:f, :d, :b), n₂, c₂)
-    tₒ₃ = revert(Select(:d, :c, :b), n₃, c₃)
-    tₒ₄ = revert(Select(:e, :c, :b, :a), n₄, c₄)
-
-    @test t == tₒ₁
-    @test t == tₒ₂
-    @test t == tₒ₃
-    @test t == tₒ₄
+    n, c = apply(Select(:e, :c, :b, :a), t)
+    u = Tables.columnnames(n)
+    @test u == (:e, :c, :b, :a)
+    tₒ = revert(Select(:e, :c, :b, :a), n, c)
+    @test t == tₒ
   end
 
   @testset "Reject" begin
@@ -53,30 +52,29 @@
     f = rand(4000)
     t = Table(; a, b, c, d, e, f)
 
-    n₁, c₁ = apply(Reject(:f, :d), t)
-    n₂, c₂ = apply(Reject(:f, :d, :b), t)
-    n₃, c₃ = apply(Reject(:d, :c, :b), t)
-    n₄, c₄ = apply(Reject(:e, :c, :b, :a), t)
+    n, c = apply(Reject(:f, :d), t)
+    u = Tables.columnnames(n)
+    @test u == (:a, :b, :c, :e)
+    tₒ = revert(Reject(:f, :d), n, c)
+    @test t == tₒ
 
-    u₁ = Tables.columnnames(n₁)
-    u₂ = Tables.columnnames(n₂)
-    u₃ = Tables.columnnames(n₃)
-    u₄ = Tables.columnnames(n₄)
+    n, c = apply(Reject(:f, :d, :b), t)
+    u = Tables.columnnames(n)
+    @test u == (:a, :c, :e)
+    tₒ = revert(Reject(:f, :d, :b), n, c)
+    @test t == tₒ
 
-    @test u₁ == (:a, :b, :c, :e)
-    @test u₂ == (:a, :c, :e)
-    @test u₃ == (:a, :e, :f)
-    @test u₄ == (:d, :f)
+    n, c = apply(Reject(:d, :c, :b), t)
+    u = Tables.columnnames(n)
+    @test u == (:a, :e, :f)
+    tₒ = revert(Reject(:d, :c, :b), n, c)
+    @test t == tₒ
 
-    tₒ₁ = revert(Reject(:f, :d), n₁, c₁)
-    tₒ₂ = revert(Reject(:f, :d, :b), n₂, c₂)
-    tₒ₃ = revert(Reject(:d, :c, :b), n₃, c₃)
-    tₒ₄ = revert(Reject(:e, :c, :b, :a), n₄, c₄)
-
-    @test t == tₒ₁
-    @test t == tₒ₂
-    @test t == tₒ₃
-    @test t == tₒ₄
+    n, c = apply(Reject(:e, :c, :b, :a), t)
+    u = Tables.columnnames(n)
+    @test u == (:d, :f)
+    tₒ = revert(Reject(:e, :c, :b, :a), n, c)
+    @test t == tₒ
   end
 
   @testset "Center" begin
