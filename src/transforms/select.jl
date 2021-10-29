@@ -20,9 +20,18 @@ Select(cols...) = Select(cols)
 isrevertible(::Type{<:Select}) = true
 
 function apply(transform::Select, table)
-  allcols = Tables.columnnames(table)
+  # retrieve relevant column names
+  allcols = collect(Tables.columnnames(table))
   select  = collect(transform.cols)
   reject  = setdiff(allcols, select)
+
+  # keep track of indices to revert later
+  rinds = indexin(reject, allcols)
+
+  # sort indices to facilitate reinsertion
+  sorted = sortperm(rinds)
+  reject = reject[sorted]
+  rinds  = rinds[sorted]
 
   # original columns
   cols = Tables.columns(table)
@@ -37,7 +46,7 @@ function apply(transform::Select, table)
   𝒯 = (; zip(select, scols)...)
   stable = 𝒯 |> Tables.materializer(table)
 
-  stable, (reject, rcols)
+  stable, (reject, rinds, rcols)
 end
 
 function revert(::Select, newtable, cache)
@@ -47,11 +56,15 @@ function revert(::Select, newtable, cache)
   scols  = [Tables.getcolumn(cols, name) for name in select]
 
   # rejected columns
-  reject, rcols = cache
+  reject, rinds, rcols = cache
 
   # restore rejected columns
-  anames = [collect(select); collect(reject)]
-  acols  = [scols; rcols]
+  anames = collect(select)
+  acols  = collect(scols)
+  for (i, rind) in enumerate(rinds)
+    insert!(anames, rind, reject[i])
+    insert!(acols, rind, rcols[i])
+  end
   𝒯 = (; zip(anames, acols)...)
   𝒯 |> Tables.materializer(newtable)
 end
