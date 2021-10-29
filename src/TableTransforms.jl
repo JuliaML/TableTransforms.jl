@@ -25,6 +25,8 @@ export
   apply, revert,
 
   # built-in
+  Select,
+  Reject,
   Identity,
   Center,
   Scale,
