@@ -89,12 +89,12 @@ function revert(p::Parallel, newtable, cache)
 end
 
 """
-    transform₁ ∥ transform₂ ∥ ⋯ ∥ transformₙ
+    transform₁ ⊔ transform₂ ⊔ ⋯ ⊔ transformₙ
 
 Create a [`Parallel`](@ref) transform with
 `[transform₁, transform₂, …, transformₙ]`.
 """
-∥(t1::Transform, t2::Transform) = Parallel([t1, t2])
-∥(t1::Transform, t2::Parallel)  = Parallel([t1; t2.transforms])
-∥(t1::Parallel, t2::Transform)  = Parallel([t1.transforms; t2])
-∥(t1::Parallel, t2::Parallel)   = Parallel([t1.transforms; t2.transforms])
+⊔(t1::Transform, t2::Transform) = Parallel([t1, t2])
+⊔(t1::Transform, t2::Parallel)  = Parallel([t1; t2.transforms])
+⊔(t1::Parallel, t2::Transform)  = Parallel([t1.transforms; t2])
+⊔(t1::Parallel, t2::Parallel)   = Parallel([t1.transforms; t2.transforms])

@@ -307,7 +307,7 @@
     y = x + rand(Normal(0,2), 1500)
     z = y + rand(Normal(0,5), 1500)
     t = Table(; x, y, z)
-    T = Scale(low=0.3, high=0.6) ∥ EigenAnalysis(:VDV)
+    T = Scale(low=0.3, high=0.6) ⊔ EigenAnalysis(:VDV)
     n, c = apply(T, t)
     tₒ = revert(T, n, c)
     @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
@@ -317,7 +317,7 @@
     y = x + rand(Normal(0,2), 1500)
     z = y + rand(Normal(0,5), 1500)
     t = Table(; x, y, z)
-    T = ZScore() ∥ EigenAnalysis(:V)
+    T = ZScore() ⊔ EigenAnalysis(:V)
     n = T(t)
     @test length(Tables.columnnames(n)) == 6
 
@@ -329,8 +329,8 @@
     T₁ = Center()
     T₂ = Scale(low=0.2, high=0.8)
     T₃ = EigenAnalysis(:VD)
-    P₁ = T₁ → (T₂ ∥ T₃)
-    P₂ = (T₁ → T₂) ∥ (T₁ →T₃)
+    P₁ = T₁ → (T₂ ⊔ T₃)
+    P₂ = (T₁ → T₂) ⊔ (T₁ →T₃)
     n₁ = P₁(t)
     n₂ = P₂(t)
     @test Tables.matrix(n₁) ≈ Tables.matrix(n₂)

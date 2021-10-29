@@ -39,6 +39,6 @@ export
   PCA, DRS, SDS,
   Sequential,
   Parallel,
-  →, ∥
+  →, ⊔
 
 end

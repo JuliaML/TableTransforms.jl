@@ -21,7 +21,7 @@ Here are some unique features:
   keeping constants around.
 
 - Pipelines can be easily constructed with clean syntax
-  `(f1 → f2 → f3) ∥ (f4 → f5)`, and they are automatically
+  `(f1 → f2 → f3) ⊔ (f4 → f5)`, and they are automatically
   revertible when the individual transforms are revertible.
 
 - Branches of a pipeline are run in parallel using multiple threads
@@ -86,7 +86,7 @@ f2 = Scale()
 f3 = Quantile()
 f4 = Functional(cos)
 f5 = Interquartile()
-pipeline = (f1 → f2 → f3) ∥ (f4 → f5)
+pipeline = (f1 → f2 → f3) ⊔ (f4 → f5)
 
 # feed data into the pipeline
 table |> pipeline |> corner
@@ -130,7 +130,7 @@ Please check the docstrings for additional information.
 | `DRS` | Shortcut for `ZScore() → EigenAnalysis(:VD)` |
 | `SDS` | Shortcut for `ZScore() → EigenAnalysis(:VDV)` |
 | `Sequential` | Transform created with `→` (\to in LaTeX) |
-| `Parallel` | Transform created with `∥` (\parallel in LaTeX) |
+| `Parallel` | Transform created with `⊔` (\parallel in LaTeX) |
 
 ### External
 
