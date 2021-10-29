@@ -32,7 +32,26 @@
   end
 
   @testset "Scale" begin
-    # TODO
+    Random.seed!(42) # to reproduce the results
+    x = rand(Normal(4,3), 4000)
+    y = rand(Normal(7,5), 4000)
+    t = DataFrame(:x => x, :y => y)
+    n, c = apply(Scale(low=0, high=1), t)
+    @test all(x -> x <= 1, n.x)
+    @test all(x -> x >= 0, n.x)
+    @test all(y -> y <= 1, n.y)
+    @test all(y -> y >= 0, n.y)
+    tₒ = revert(Scale(low=0, high=1), n, c)
+    @test t ≈ tₒ
+
+    # visual tests   
+    if visualtests
+      p₁ = scatter(t.x, t.y, label="Original")
+      p₂ = scatter(n.x, n.y, label="Scale")
+      p = plot(p₁, p₂, layout=(1,2))
+
+      @test_reference joinpath(datadir,"scale.png") p
+    end
   end
 
   @testset "ZScore" begin
