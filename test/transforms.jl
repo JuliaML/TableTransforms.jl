@@ -19,26 +19,22 @@
     t = Table(; a, b, c, d, e, f)
 
     n, c = apply(Select(:f, :d), t)
-    u = Tables.columnnames(n)
-    @test u == (:f, :d)
+    @test Tables.columnnames(n) == (:f, :d)
     tₒ = revert(Select(:f, :d), n, c)
     @test t == tₒ
 
     n, c = apply(Select(:f, :d, :b), t)
-    u = Tables.columnnames(n)
-    @test u == (:f, :d, :b)
+    @test Tables.columnnames(n) == (:f, :d, :b)
     tₒ = revert(Select(:f, :d, :b), n, c)
     @test t == tₒ
 
     n, c = apply(Select(:d, :c, :b), t)
-    u = Tables.columnnames(n)
-    @test u == (:d, :c, :b)
+    @test Tables.columnnames(n) == (:d, :c, :b)
     tₒ = revert(Select(:d, :c, :b), n, c)
     @test t == tₒ
 
     n, c = apply(Select(:e, :c, :b, :a), t)
-    u = Tables.columnnames(n)
-    @test u == (:e, :c, :b, :a)
+    @test Tables.columnnames(n) == (:e, :c, :b, :a)
     tₒ = revert(Select(:e, :c, :b, :a), n, c)
     @test t == tₒ
   end
@@ -53,26 +49,22 @@
     t = Table(; a, b, c, d, e, f)
 
     n, c = apply(Reject(:f, :d), t)
-    u = Tables.columnnames(n)
-    @test u == (:a, :b, :c, :e)
+    @test Tables.columnnames(n) == (:a, :b, :c, :e)
     tₒ = revert(Reject(:f, :d), n, c)
     @test t == tₒ
 
     n, c = apply(Reject(:f, :d, :b), t)
-    u = Tables.columnnames(n)
-    @test u == (:a, :c, :e)
+    @test Tables.columnnames(n) == (:a, :c, :e)
     tₒ = revert(Reject(:f, :d, :b), n, c)
     @test t == tₒ
 
     n, c = apply(Reject(:d, :c, :b), t)
-    u = Tables.columnnames(n)
-    @test u == (:a, :e, :f)
+    @test Tables.columnnames(n) == (:a, :e, :f)
     tₒ = revert(Reject(:d, :c, :b), n, c)
     @test t == tₒ
 
     n, c = apply(Reject(:e, :c, :b, :a), t)
-    u = Tables.columnnames(n)
-    @test u == (:d, :f)
+    @test Tables.columnnames(n) == (:d, :f)
     tₒ = revert(Reject(:e, :c, :b, :a), n, c)
     @test t == tₒ
   end
