@@ -45,35 +45,65 @@ Get the latest stable release with Julia's package manager:
 
 ## Usage
 
-Below is a quick example of a pipeline with two parallel branches.
-The tables produced by these two branches are concatenated horizontally
-in the final table. Even though the pipeline is complex, we can still
-revert it:
+Below is a quick example with simple transforms:
 
 ```julia
 using TableTransforms
+using PairPlots
 
-# create a random table
-table = (a = rand(100), b = rand(100))
+# example table from PairPlots.jl
+N = 100_000
+a = [2randn(N÷2) .+ 6; randn(N÷2)]
+b = [3randn(N÷2); 2randn(N÷2)]
+c = randn(N)
+d = c .+ 0.6randn(N)
+table = (;a, b, c, d)
 
+# corner plot of original table
+table |> corner
+```
+![original](docs/original.png)
+
+```julia
+# convert to PCA scores
+table |> PCA() |> corner
+```
+![pca](docs/pca.png)
+
+```julia
+# convert to any Distributions.jl
+table |> Quantile(Normal()) |> corner
+```
+![quantile](docs/quantile.png)
+
+Below is a more sophisticated example with a pipeline that has
+two parallel branches. The tables produced by these two branches
+are concatenated horizontally in the final table:
+```julia
 # create a transform pipeline
 f1 = ZScore()
 f2 = Scale()
 f3 = Quantile()
-f4 = Functional(log)
+f4 = Functional(cos)
 f5 = Interquartile()
 pipeline = (f1 → f2 → f3) ∥ (f4 → f5)
 
 # feed data into the pipeline
-newtable = pipeline(table)
+table |> pipeline |> corner
+```
+![pipeline](docs/pipeline.png)
 
-# alternatively save cache and revert later
+To revert a pipeline or single transform, use the `apply` and `revert`
+functions instead:
+
+```julia
+# apply transform and save cache to revert later
 newtable, cache = apply(pipeline, table)
 
-# learn a model with newtable
+# perform additional modeling with newtable
 # ...
 
-# revert pipeline when done learning
+# revert pipeline when done with modeling
 original = revert(pipeline, newtable, cache)
 ```
 
