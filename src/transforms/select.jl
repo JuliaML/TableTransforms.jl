@@ -26,9 +26,11 @@ function apply(transform::Select, table)
   reject  = setdiff(allcols, select)
 
   # keep track of indices to revert later
+  sinds = indexin(select, allcols)
   rinds = indexin(reject, allcols)
 
   # sort indices to facilitate reinsertion
+  sperm  = sortperm(sinds)
   sorted = sortperm(rinds)
   reject = reject[sorted]
   rinds  = rinds[sorted]
@@ -46,7 +48,7 @@ function apply(transform::Select, table)
   𝒯 = (; zip(select, scols)...)
   stable = 𝒯 |> Tables.materializer(table)
 
-  stable, (reject, rinds, rcols)
+  stable, (reject, rcols, sperm, rinds)
 end
 
 function revert(::Select, newtable, cache)
@@ -56,11 +58,11 @@ function revert(::Select, newtable, cache)
   scols  = [Tables.getcolumn(cols, name) for name in select]
 
   # rejected columns
-  reject, rinds, rcols = cache
+  reject, rcols, sperm, rinds = cache
 
   # restore rejected columns
-  anames = collect(select)
-  acols  = collect(scols)
+  anames = collect(select[sperm])
+  acols  = collect(scols[sperm])
   for (i, rind) in enumerate(rinds)
     insert!(anames, rind, reject[i])
     insert!(acols, rind, rcols[i])
