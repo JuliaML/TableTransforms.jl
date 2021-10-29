@@ -151,6 +151,66 @@
     end
   end
 
+  @testset "Functional" begin
+    x = π*rand(1500)
+    y = π*rand(1500)
+    t = Table(; x, y)
+    T = Functional(cos)
+    n, c = apply(T, t)
+    @test all(x -> -1 <= x <= 1, n.x)
+    @test all(y -> -1 <= y <= 1, n.y)
+    tₒ = revert(T, n, c)
+    @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+
+    x = 2*(rand(1500) .- 0.5)
+    y = 2*(rand(1500) .- 0.5)
+    t = Table(; x, y)
+    T = Functional(acos)
+    n, c = apply(T, t)
+    @test all(x -> 0 <= x <= π, n.x)
+    @test all(y -> 0 <= y <= π, n.y)
+    tₒ = revert(T, n, c)
+    @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+
+    x = π*(rand(1500) .- 0.5)
+    y = π*(rand(1500) .- 0.5)
+    t = Table(; x, y)
+    T = Functional(sin)
+    n, c = apply(T, t)
+    @test all(x -> -1 <= x <= 1, n.x)
+    @test all(y -> -1 <= y <= 1, n.y)
+    tₒ = revert(T, n, c)
+    @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+
+    x = 2*(rand(1500) .- 0.5)
+    y = 2*(rand(1500) .- 0.5)
+    t = Table(; x, y)
+    T = Functional(asin)
+    n, c = apply(T, t)
+    @test all(x -> -π/2 <= x <= π/2, n.x)
+    @test all(y -> -π/2 <= y <= π/2, n.y)
+    tₒ = revert(T, n, c)
+    @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+
+    x = rand(Normal(0,25), 1500)
+    y = x + rand(Normal(10,2), 1500)
+    t = Table(; x, y)
+    T = Functional(exp)
+    n, c = apply(T, t)
+    @test all(x -> x > 0, n.x)
+    @test all(y -> y > 0, n.y)
+    tₒ = revert(T, n, c)
+    @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+
+    x = rand(Normal(0,25), 1500)
+    y = x + rand(Normal(10,2), 1500)
+    t = Table(; x, y)
+    T = Functional(x -> x)
+    n, c = apply(T, t)
+    @test t == n
+    @test isrevertible(T) == false
+  end
+
   @testset "EigenAnalysis" begin
     # PCA test
     x = rand(Normal(0,10), 1500)
