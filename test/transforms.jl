@@ -23,10 +23,11 @@
 
     # visual tests    
     if visualtests
-      pₒ = scatter(t.x, t.y, label="Original")
-      p = scatter(n.x, n.y, label="Center")
+      p₁ = scatter(t.x, t.y, label="Original")
+      p₂ = scatter(n.x, n.y, label="Center")
+      p = plot(p₁, p₂, layout=(1,2))
 
-      @test_reference joinpath(datadir,  "center.png") plot(pₒ, p, layout=(1,2))
+      @test_reference joinpath(datadir,  "center.png") p
     end
   end
 
@@ -51,10 +52,11 @@
 
     # visual tests   
     if visualtests
-      pₒ = scatter(t.x, t.y, label="Original")
-      p = scatter(n.x, n.y, label="ZScore")
+      p₁ = scatter(t.x, t.y, label="Original")
+      p₂ = scatter(n.x, n.y, label="ZScore")
+      p = plot(p₁, p₂, layout=(1,2))
 
-      @test_reference joinpath(datadir,"zscore.png") plot(pₒ, p, layout=(1,2))
+      @test_reference joinpath(datadir,"zscore.png") p
     end
   end
 
@@ -98,29 +100,31 @@
     tₒ = revert(EigenAnalysis(:VDV), n, c)
     @test t ≈ tₒ
 
+    Random.seed!(42) # to reproduce the results
+    x = rand(Normal(0,10), 4000)
+    y = x + rand(Normal(0,2), 4000)
+    t₁ = DataFrame(:x => x, :y => y)
+    t₂, c₂ = apply(EigenAnalysis(:V), t₁)
+    t₃, c₃ = apply(EigenAnalysis(:VD), t₁)
+    t₄, c₄ = apply(EigenAnalysis(:VDV), t₁)
+    t₅, c₅ = apply(PCA(), t₁)
+    t₆, c₆ = apply(DRS(), t₁)
+    t₇, c₇ = apply(SDS(), t₁)
+
     # visual tests    
     if visualtests
-      Random.seed!(42) # to reproduce the results
-      x = rand(Normal(0,10), 4000)
-      y = x + rand(Normal(0,2), 4000)
-      t = DataFrame(:x => x, :y => y)
-      t₁, c₁ = apply(EigenAnalysis(:V), t)
-      t₂, c₂ = apply(EigenAnalysis(:VD), t)
-      t₃, c₃ = apply(EigenAnalysis(:VDV), t)
-      t₄, c₄ = apply(PCA(), t)
-      t₅, c₅ = apply(DRS(), t)
-      t₆, c₆ = apply(SDS(), t)
+      p₁ = scatter(t₁.x, t₁.y, label="Original")
+      p₂ = scatter(t₂.x, t₂.y, label="V")
+      p₃ = scatter(t₃.x, t₃.y, label="VD")
+      p₄ = scatter(t₄.x, t₄.y, label="VDV")
+      p₅ = scatter(t₅.x, t₅.y, label="PCA")
+      p₆ = scatter(t₆.x, t₆.y, label="DRS")
+      p₇ = scatter(t₇.x, t₇.y, label="SDS")
+      p = plot(p₁, p₂, p₃, p₄, layout=(2,2))
+      q = plot(p₂, p₃, p₄, p₅, p₆, p₇, layout=(2,3))
 
-      pₒ = scatter(t.x, t.y, label="Original")
-      p₁ = scatter(t₁.x, t₁.y, label="V")
-      p₂ = scatter(t₂.x, t₂.y, label="VD")
-      p₃ = scatter(t₃.x, t₃.y, label="VDV")
-      p₄ = scatter(t₄.x, t₄.y, label="PCA")
-      p₅ = scatter(t₅.x, t₅.y, label="DRS")
-      p₆ = scatter(t₆.x, t₆.y, label="SDS")
-
-      @test_reference joinpath(datadir,"eigenanalysis-1.png") plot(pₒ, p₁, p₂, p₃, layout=(2,2))
-      @test_reference joinpath(datadir,"eigenanalysis-2.png") plot(p₁, p₂, p₃, p₄, p₅, p₆, layout=(2,3))
+      @test_reference joinpath(datadir,"eigenanalysis-1.png") p
+      @test_reference joinpath(datadir,"eigenanalysis-2.png") q
     end
   end
 
