@@ -14,13 +14,34 @@
     b = rand(4000)
     c = rand(4000)
     d = rand(4000)
-    t = Table(; a, b, c, d)
-    n, c = apply(Select(:b, :d), t)
-    u₁ = Tables.columnnames(n)
-    u₂ = (:b, :d)
-    @test u₁ == u₂
-    tₒ = revert(Select(:b, :d), n, c)
-    @test t == tₒ
+    e = rand(4000)
+    f = rand(4000)
+    t = Table(; a, b, c, d, e, f)
+
+    n₁, c₁ = apply(Select(:f, :d), t)
+    n₂, c₂ = apply(Select(:f, :d, :b), t)
+    n₃, c₃ = apply(Select(:d, :c, :b), t)
+    n₄, c₄ = apply(Select(:e, :c, :b, :a), t)
+
+    u₁ = Tables.columnnames(n₁)
+    u₂ = Tables.columnnames(n₂)
+    u₃ = Tables.columnnames(n₃)
+    u₄ = Tables.columnnames(n₄)
+
+    @test u₁ == (:f, :d)
+    @test u₂ == (:f, :d, :b)
+    @test u₃ == (:d, :c, :b)
+    @test u₄ == (:e, :c, :b, :a)
+
+    tₒ₁ = revert(Select(:f, :d), n₁, c₁)
+    tₒ₂ = revert(Select(:f, :d, :b), n₂, c₂)
+    tₒ₃ = revert(Select(:d, :c, :b), n₃, c₃)
+    tₒ₄ = revert(Select(:e, :c, :b, :a), n₄, c₄)
+
+    @test t == tₒ₁
+    @test t == tₒ₂
+    @test t == tₒ₃
+    @test t == tₒ₄
   end
 
   @testset "Reject" begin
@@ -28,13 +49,34 @@
     b = rand(4000)
     c = rand(4000)
     d = rand(4000)
-    t = Table(; a, b, c, d)
-    n, c = apply(Reject(:b, :d), t)
-    u₁ = Tables.columnnames(n)
-    u₂ = (:a, :c)
-    @test u₁ == u₂
-    tₒ = revert(Reject(:b, :d), n, c)
-    @test t == tₒ
+    e = rand(4000)
+    f = rand(4000)
+    t = Table(; a, b, c, d, e, f)
+
+    n₁, c₁ = apply(Reject(:f, :d), t)
+    n₂, c₂ = apply(Reject(:f, :d, :b), t)
+    n₃, c₃ = apply(Reject(:d, :c, :b), t)
+    n₄, c₄ = apply(Reject(:e, :c, :b, :a), t)
+
+    u₁ = Tables.columnnames(n₁)
+    u₂ = Tables.columnnames(n₂)
+    u₃ = Tables.columnnames(n₃)
+    u₄ = Tables.columnnames(n₄)
+
+    @test u₁ == (:a, :b, :c, :e)
+    @test u₂ == (:a, :c, :e)
+    @test u₃ == (:a, :e, :f)
+    @test u₄ == (:d, :f)
+
+    tₒ₁ = revert(Reject(:f, :d), n₁, c₁)
+    tₒ₂ = revert(Reject(:f, :d, :b), n₂, c₂)
+    tₒ₃ = revert(Reject(:d, :c, :b), n₃, c₃)
+    tₒ₄ = revert(Reject(:e, :c, :b, :a), n₄, c₄)
+
+    @test t == tₒ₁
+    @test t == tₒ₂
+    @test t == tₒ₃
+    @test t == tₒ₄
   end
 
   @testset "Center" begin
