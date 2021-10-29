@@ -3,9 +3,10 @@
     x = rand(4000)
     y = rand(4000)
     t = Table(; x, y)
-    n, c = apply(Identity(), t)
+    T = Identity()
+    n, c = apply(T, t)
     @test t == n
-    tₒ = revert(Identity(), n, c)
+    tₒ = revert(T, n, c)
     @test t == tₒ
   end
 
@@ -18,24 +19,28 @@
     f = rand(4000)
     t = Table(; a, b, c, d, e, f)
 
-    n, c = apply(Select(:f, :d), t)
+    T = Select(:f, :d)
+    n, c = apply(T, t)
     @test Tables.columnnames(n) == (:f, :d)
-    tₒ = revert(Select(:f, :d), n, c)
+    tₒ = revert(T, n, c)
     @test t == tₒ
 
-    n, c = apply(Select(:f, :d, :b), t)
+    T = Select(:f, :d, :b)
+    n, c = apply(T, t)
     @test Tables.columnnames(n) == (:f, :d, :b)
-    tₒ = revert(Select(:f, :d, :b), n, c)
+    tₒ = revert(T, n, c)
     @test t == tₒ
 
-    n, c = apply(Select(:d, :c, :b), t)
+    T = Select(:d, :c, :b)
+    n, c = apply(T, t)
     @test Tables.columnnames(n) == (:d, :c, :b)
-    tₒ = revert(Select(:d, :c, :b), n, c)
+    tₒ = revert(T, n, c)
     @test t == tₒ
 
-    n, c = apply(Select(:e, :c, :b, :a), t)
+    T = Select(:e, :c, :b, :a)
+    n, c = apply(T, t)
     @test Tables.columnnames(n) == (:e, :c, :b, :a)
-    tₒ = revert(Select(:e, :c, :b, :a), n, c)
+    tₒ = revert(T, n, c)
     @test t == tₒ
   end
 
@@ -48,24 +53,28 @@
     f = rand(4000)
     t = Table(; a, b, c, d, e, f)
 
-    n, c = apply(Reject(:f, :d), t)
+    T = Reject(:f, :d)
+    n, c = apply(T, t)
     @test Tables.columnnames(n) == (:a, :b, :c, :e)
-    tₒ = revert(Reject(:f, :d), n, c)
+    tₒ = revert(T, n, c)
     @test t == tₒ
 
-    n, c = apply(Reject(:f, :d, :b), t)
+    T = Reject(:f, :d, :b)
+    n, c = apply(T, t)
     @test Tables.columnnames(n) == (:a, :c, :e)
-    tₒ = revert(Reject(:f, :d, :b), n, c)
+    tₒ = revert(T, n, c)
     @test t == tₒ
 
-    n, c = apply(Reject(:d, :c, :b), t)
+    T = Reject(:d, :c, :b)
+    n, c = apply(T, t)
     @test Tables.columnnames(n) == (:a, :e, :f)
-    tₒ = revert(Reject(:d, :c, :b), n, c)
+    tₒ = revert(T, n, c)
     @test t == tₒ
 
-    n, c = apply(Reject(:e, :c, :b, :a), t)
+    T = Reject(:e, :c, :b, :a)
+    n, c = apply(T, t)
     @test Tables.columnnames(n) == (:d, :f)
-    tₒ = revert(Reject(:e, :c, :b, :a), n, c)
+    tₒ = revert(T, n, c)
     @test t == tₒ
   end
 
@@ -74,11 +83,12 @@
     x = rand(Normal(2,1), 4000)
     y = rand(Normal(5,1), 4000)
     t = Table(; x, y)
-    n, c = apply(Center(), t)
+    T = Center()
+    n, c = apply(T, t)
     μ = mean(Tables.matrix(n), dims=1)
     @test isapprox(μ[1], 0; atol=1e-6)
     @test isapprox(μ[2], 0; atol=1e-6)
-    tₒ = revert(Center(), n, c)
+    tₒ = revert(T, n, c)
     @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
     # visual tests    
@@ -96,12 +106,13 @@
     x = rand(Normal(4,3), 4000)
     y = rand(Normal(7,5), 4000)
     t = Table(; x, y)
-    n, c = apply(Scale(low=0, high=1), t)
+    T = Scale(low=0, high=1)
+    n, c = apply(T, t)
     @test all(x -> x <= 1, n.x)
     @test all(x -> x >= 0, n.x)
     @test all(y -> y <= 1, n.y)
     @test all(y -> y >= 0, n.y)
-    tₒ = revert(Scale(low=0, high=1), n, c)
+    tₒ = revert(T, n, c)
     @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
     # visual tests   
@@ -119,14 +130,15 @@
     x = rand(Normal(7,10), 4000)
     y = rand(Normal(15,2), 4000)
     t = Table(; x, y)
-    n, c = apply(ZScore(), t)
+    T = ZScore()
+    n, c = apply(T, t)
     μ = mean(Tables.matrix(n), dims=1)
     σ = std(Tables.matrix(n), dims=1)
     @test isapprox(μ[1], 0; atol=1e-6)
     @test isapprox(σ[1], 1; atol=1e-6)
     @test isapprox(μ[2], 0; atol=1e-6)
     @test isapprox(σ[2], 1; atol=1e-6)
-    tₒ = revert(ZScore(), n, c)
+    tₒ = revert(T, n, c)
     @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
     # visual tests   
@@ -144,39 +156,42 @@
     x = rand(Normal(0,10), 1500)
     y = x + rand(Normal(0,2), 1500)
     t = Table(; x, y)
-    n, c = apply(EigenAnalysis(:V), t)
+    T = EigenAnalysis(:V)
+    n, c = apply(T, t)
     Σ = cov(Tables.matrix(n))
     @test Σ[1,1] > 1
     @test isapprox(Σ[1,2], 0; atol=1e-6)
     @test isapprox(Σ[2,1], 0; atol=1e-6)
     @test Σ[2,2] > 1
-    tₒ = revert(EigenAnalysis(:V), n, c)
+    tₒ = revert(T, n, c)
     @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
     # DRS test
     x = rand(Normal(0,10), 1500)
     y = x + rand(Normal(0,2), 1500)
     t = Table(; x, y)
-    n, c = apply(EigenAnalysis(:VD), t)
+    T = EigenAnalysis(:VD)
+    n, c = apply(T, t)
     Σ = cov(Tables.matrix(n))
     @test isapprox(Σ[1,2], 0; atol=1e-6)
     @test isapprox(Σ[2,1], 0; atol=1e-6)
     @test isapprox(Σ[1,1], 1; atol=1e-6)
     @test isapprox(Σ[2,2], 1; atol=1e-6)
-    tₒ = revert(EigenAnalysis(:VD), n, c)
+    tₒ = revert(T, n, c)
     @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
     # SDS test
     x = rand(Normal(0,10), 1500)
     y = x + rand(Normal(0,2), 1500)
     t = Table(; x, y)
-    n, c = apply(EigenAnalysis(:VDV), t)
+    T = EigenAnalysis(:VDV)
+    n, c = apply(T, t)
     Σ = cov(Tables.matrix(n))
     @test isapprox(Σ[1,2], 0; atol=1e-6)
     @test isapprox(Σ[2,1], 0; atol=1e-6)
     @test isapprox(Σ[1,1], 1; atol=1e-6)
     @test isapprox(Σ[2,2], 1; atol=1e-6)
-    tₒ = revert(EigenAnalysis(:VDV), n, c)
+    tₒ = revert(T, n, c)
     @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
     Random.seed!(42) # to reproduce the results
