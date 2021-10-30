@@ -1,7 +1,15 @@
-# TableTransforms.jl
-
-[![Build Status](https://github.com/JuliaML/TableTransforms.jl/workflows/CI/badge.svg)](https://github.com/JuliaML/TableTransforms.jl/actions)
-[![Coverage](https://codecov.io/gh/JuliaML/TableTransforms.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/JuliaML/TableTransforms.jl)
+<p align="center">
+  <img src="docs/logo.png" height="200"><br>
+  <a href="https://github.com/JuliaML/TableTransforms.jl/actions">
+    <img src="https://img.shields.io/github/workflow/status/JuliaML/TableTransforms.jl/CI?style=flat-square">
+  </a>
+  <a href="https://codecov.io/gh/JuliaML/TableTransforms.jl">
+    <img src="https://img.shields.io/codecov/c/github/JuliaML/TableTransforms.jl?style=flat-square">
+  </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square">
+  </a>
+</p>
 
 This package provides transforms that are commonly used in statistics
 and machine learning. It was developed to address specific needs in
