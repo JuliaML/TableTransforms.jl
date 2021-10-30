@@ -189,9 +189,9 @@ Below are a few transforms that you can contribute:
 ## Related packages
 
 - [FeatureTransforms.jl](https://github.com/invenia/FeatureTransforms.jl)
-  has transforms, but they are not fully revertible. Some transforms such
-  as `MeanStdScaling` are constructed for a specific table and cannot be
-  inserted in the middle of a pipeline for example.
+  has transforms, but they are not fully revertible. Some of their
+  transforms such as `MeanStdScaling` are constructed for a specific
+  table and cannot be inserted in the middle of a pipeline for example.
 - [AutoMLPipeline.jl](https://github.com/IBM/AutoMLPipeline.jl) relies on
   the Python stack via [PyCall.jl](https://github.com/JuliaPy/PyCall.jl).
   They provide pipelines with Julia's pipe `|>` operator and follow a
