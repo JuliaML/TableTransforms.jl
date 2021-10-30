@@ -7,7 +7,7 @@
 
 The identity transform `x -> x`.
 """
-struct Identity <: Transform end
+struct Identity <: Stateless end
 
 isrevertible(::Type{Identity}) = true
 

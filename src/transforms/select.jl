@@ -8,7 +8,7 @@
 
 The transform that selects columns `col₁`, `col₂`, ..., `colₙ`.
 """
-struct Select{N} <: Transform
+struct Select{N} <: Stateless
   cols::NTuple{N,Symbol}
 end
 
@@ -77,7 +77,7 @@ end
 
 The transform that discards columns `col₁`, `col₂`, ..., `colₙ`.
 """
-struct Reject{N} <: Transform
+struct Reject{N} <: Stateless
   cols::NTuple{N,Symbol}
 end
 

@@ -29,8 +29,8 @@ isrevertible(::Type{Transform}) = false
 """
     newtable, cache = apply(transform, table)
 
-Apply the `transform` on the `table`. Return the new table and a cache,
-which can be (and sometimes is) set to `nothing`.
+Apply the `transform` on the `table`. Return the `newtable` and a
+`cache` to revert the transform later.
 """
 function apply end
 
@@ -38,15 +38,35 @@ function apply end
     table = revert(transform, newtable, cache)
 
 Revert the `transform` on the `newtable` using the `cache` from the
-corresponding [`apply`](@ref) call. Return the original table. Only
-defined when the transform [`isrevertible`](@ref).
+corresponding [`apply`](@ref) call and return the original `table`.
+Only defined when the transform [`isrevertible`](@ref).
 """
 function revert end
 
-# ------------------------
-# AUTOMATICALLY GENERATED
-# ------------------------
+"""
+    Stateless
 
+A stateless transform, i.e. a transform for which the `cache` is not
+a function of the input `table` used in a previous [`apply`](@ref) call.
+This trait is useful to signal that we can [`reapply`](@ref) a transform
+"fitted" with training data to "test" data without relying on the `cache`.
+"""
+abstract type Stateless <: Transform end
+
+"""
+    reapply(transform, table, cache)
+
+Reapply the `transform` to (a possibly different) `table` using a `cache`
+that was created with a previous [`apply`](@ref) call.
+"""
+reapply(transform::Stateless, table, cache) = apply(transform, table)
+
+"""
+    transform(table)
+
+Automatically generated functor interface that calls [`apply`](@ref)
+with `transform` and `table`.
+"""
 (transform::Transform)(table) = apply(transform, table) |> first
 
 # ----------------

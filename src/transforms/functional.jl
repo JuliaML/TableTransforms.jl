@@ -7,7 +7,7 @@
 
 The transform that applies a `function` elementwise.
 """
-struct Functional <: Transform
+struct Functional <: Stateless
   func::Function
 end
 

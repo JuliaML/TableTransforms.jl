@@ -21,8 +21,11 @@ include("transforms.jl")
 export
   # interface
   Transform,
+  Stateless,
   isrevertible,
-  apply, revert,
+  apply,
+  reapply,
+  revert,
 
   # built-in
   Select,
