@@ -182,7 +182,7 @@ Contributions are very welcome. Please [open an issue](https://github.com/JuliaM
 
 Below are a few transforms that you can contribute:
 
-- [ ] Standardadization of column names
+- [ ] Standardization of column names
 - [ ] Imputation of missing entries
 - [ ] ...any transform that is useful
 
