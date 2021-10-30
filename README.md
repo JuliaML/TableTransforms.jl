@@ -142,7 +142,7 @@ Please check the docstrings for additional information.
 | `DRS` | Shortcut for `ZScore() → EigenAnalysis(:VD)` |
 | `SDS` | Shortcut for `ZScore() → EigenAnalysis(:VDV)` |
 | `Sequential` | Transform created with `→` (\to in LaTeX) |
-| `Parallel` | Transform created with `⊔` (\parallel in LaTeX) |
+| `Parallel` | Transform created with `⊔` (\sqcup in LaTeX) |
 
 ### External
 
