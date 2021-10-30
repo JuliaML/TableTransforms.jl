@@ -113,10 +113,22 @@ functions instead:
 newtable, cache = apply(pipeline, table)
 
 # perform additional modeling with newtable
-# ...
+# newtable = ...
 
 # revert pipeline when done with modeling
 original = revert(pipeline, newtable, cache)
+```
+
+Finally, it is sometimes useful to `reapply` a transform that was
+"fitted" with training data to unseen test data. In this case, the
+cache from a previous `apply` call is used:
+
+```julia
+# ZScore transform "fits" μ and σ using training data
+newtable, cache = apply(ZScore(), traintable)
+
+# we can reuse the same values of μ and σ with test data
+newtable = reapply(ZScore(), testtable, cache)
 ```
 
 ## Available transforms
