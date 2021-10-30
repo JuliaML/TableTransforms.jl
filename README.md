@@ -31,8 +31,14 @@ missing transform, and contributions are very welcome.
   `(f1 → f2 → f3) ⊔ (f4 → f5)`, and they are automatically
   revertible when the individual transforms are revertible.
 
-- Branches of a pipeline are run in parallel using multiple threads
-  with [Transducers.jl](https://github.com/JuliaFolds/Transducers.jl).
+- Branches of a pipeline and colwise transforms are run in parallel
+  using multiple threads with the awesome
+  [Transducers.jl](https://github.com/JuliaFolds/Transducers.jl)
+  framework.
+
+- Pipelines can be reapplied to unseen "test" data using the same cache
+  (e.g. constants) fitted with "training" data. For example, `ZScore()`
+  relies on "fitting" `μ` and `σ` once at training time.
 
 ## Rationale
 
