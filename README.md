@@ -205,10 +205,10 @@ Below are a few transforms that you can contribute:
 - [DataFramesMeta.jl](https://github.com/jkrumbiegel/Chain.jl) is a package
   to manipulate [DataFrames.jl](https://github.com/JuliaData/DataFrames.jl)
   tables. It is not intended for statistical transforms such as `PCA`,
-  `ZScore`, `Quantile`, etc, which rely on complex interactions between
-  the rows and columns of a table. The usage of macros in the package
-  promotes one-shot scripts as opposed to general pipelines that can be
-  passed around to different places in the program.
+  `Quantile`, etc, which rely on complex interactions between the rows and
+  columns of a table. The usage of macros in the package promotes one-shot
+  scripts as opposed to general pipelines that can be passed around to
+  different places in the program.
 - [Query.jl](https://github.com/queryverse/Query.jl) is a package to query
   [IterableTables.jl](https://github.com/queryverse/IterableTables.jl).
   Similar to other alternatives above, the package is not intended for
