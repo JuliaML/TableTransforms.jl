@@ -162,6 +162,12 @@ transform `isrevertible`, then it should also implement
 
 Contributions are very welcome. Please [open an issue](https://github.com/JuliaML/TableTransforms.jl/issues) if you have questions.
 
+Below are a few transforms that you can contribute:
+
+- [ ] Standardadization of column names
+- [ ] Imputation of missing entries
+- [ ] ...any transform that is useful
+
 ## Related packages
 
 - [FeatureTransforms.jl](https://github.com/invenia/FeatureTransforms.jl)
