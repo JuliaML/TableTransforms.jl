@@ -22,10 +22,11 @@ export
   # interface
   Transform,
   Stateless,
+  Colwise,
   isrevertible,
-  apply,
+  apply, colapply,
+  revert, colrevert,
   reapply,
-  revert,
 
   # built-in
   Select,

@@ -18,6 +18,14 @@ trait can be evaluated directly at any table implementing the
 abstract type Transform end
 
 """
+    transform(table)
+
+Automatically generated functor interface that calls [`apply`](@ref)
+with `transform` and `table`. New types don't need to implement this.
+"""
+(transform::Transform)(table) = apply(transform, table) |> first
+
+"""
     isrevertible(transform)
 
 Tells whether or not the `transform` is revertible, i.e. supports a
@@ -39,7 +47,7 @@ function apply end
 
 Revert the `transform` on the `newtable` using the `cache` from the
 corresponding [`apply`](@ref) call and return the original `table`.
-Only defined when the transform [`isrevertible`](@ref).
+Only defined when the `transform` [`isrevertible`](@ref).
 """
 function revert end
 
@@ -62,12 +70,38 @@ that was created with a previous [`apply`](@ref) call.
 reapply(transform::Stateless, table, cache) = apply(transform, table)
 
 """
-    transform(table)
+    Colwise
 
-Automatically generated functor interface that calls [`apply`](@ref)
-with `transform` and `table`.
+A transform that is applied column-by-column. In this case, the new type
+only needs to implement [`colapply`](@ref), [`colrevert`](@ref) and
+[`colcache`](@ref). Efficient fallbacks are provided that execute these
+functions in parallel for all columns with multiple threads.
 """
-(transform::Transform)(table) = apply(transform, table) |> first
+abstract type Colwise <: Transform end
+
+"""
+    y = colapply(transform, x, c)
+
+Apply `transform` to column `x` with cache `c` and return new column `y`.
+"""
+function colapply end
+
+"""
+    x = colrevert(transform, y, c)
+
+Revert `transform` starting from column `y` with cache `c` and return
+original column `x`. Only defined when the `transform` [`isrevertible`](@ref).
+"""
+function colrevert end
+
+"""
+    c = colcache(transform, x)
+
+Produce cache `c` necessary to [`colapply`](@ref) the `transform` on `x`.
+If the `transform` [`isrevertible`](@ref) then the cache `c` can also be
+used in [`colrevert`](@ref).
+"""
+function colcache end
 
 # ----------------
 # IMPLEMENTATIONS
