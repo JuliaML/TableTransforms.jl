@@ -37,7 +37,7 @@ missing transform, and contributions are very welcome.
   framework.
 
 - Pipelines can be reapplied to unseen "test" data using the same cache
-  (e.g. constants) fitted with "training" data. For example, `ZScore()`
+  (e.g. constants) fitted with "training" data. For example, a `ZScore`
   relies on "fitting" `μ` and `σ` once at training time.
 
 ## Rationale
