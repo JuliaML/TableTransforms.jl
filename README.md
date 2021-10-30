@@ -3,18 +3,17 @@
 [![Build Status](https://github.com/JuliaML/TableTransforms.jl/workflows/CI/badge.svg)](https://github.com/JuliaML/TableTransforms.jl/actions)
 [![Coverage](https://codecov.io/gh/JuliaML/TableTransforms.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/JuliaML/TableTransforms.jl)
 
-This package provides transforms that are commonly used
-in statistics and machine learning. It was developed to
-address specific needs in feature engineering and works
-with general [Tables.jl](https://github.com/JuliaData/Tables.jl)
-tables.
+This package provides transforms that are commonly used in statistics
+and machine learning. It was developed to address specific needs in
+feature engineering and works with general
+[Tables.jl](https://github.com/JuliaData/Tables.jl) tables.
 
 Past attempts to model transforms in Julia such as
 [FeatureTransforms.jl](https://github.com/invenia/FeatureTransforms.jl)
 served as inspiration for this package. We are happy to absorb any
 missing transform, and contributions are very welcome.
 
-Here are some unique features:
+## Features
 
 - Transforms are **revertible** meaning that one can apply a transform
   and undo the transformation without having to do all the manual work
@@ -34,6 +33,11 @@ the variables of a problem to achieve better convergence or to apply methods
 that rely on multivariate Gaussian distributions. This process can be quite
 tedious to implement by hand and very error-prone. We provide a consistent
 and clean API to combine statistical transforms into pipelines.
+
+*Although most transforms discussed here come from the statistical domain,
+our long term vision is more ambitious. We aim to provide a complete
+user experience with fully-featured pipelines that include standardization
+of column names, imputation of missing data, and more.*
 
 ## Installation
 
@@ -155,16 +159,25 @@ Contributions are very welcome. Please [open an issue](https://github.com/JuliaM
 - [FeatureTransforms.jl](https://github.com/invenia/FeatureTransforms.jl)
   has transforms, but they are not fully revertible. Some transforms such
   as `MeanStdScaling` are constructed for a specific table and cannot be
-  inserted in the middle of a pipeline.
+  inserted in the middle of a pipeline for example.
 - [AutoMLPipeline.jl](https://github.com/IBM/AutoMLPipeline.jl) relies on
   the Python stack via [PyCall.jl](https://github.com/JuliaPy/PyCall.jl).
   They provide pipelines with Julia's pipe `|>` operator and follow a
   more "Pythonic" interface. They do not support general
   [Tables.jl](https://github.com/JuliaData/Tables.jl).
-- [Chain.jl](https://github.com/jkrumbiegel/Chain.jl) is a general package
-  to execute functions in sequence given a
-  [DataFrames.jl](https://github.com/JuliaData/DataFrames.jl) as input.
-  This package is suitable for more low-level manipulation of tables, it
-  is not intended for statistical transforms such as `PCA`, `ZScore`, etc.
-  Additionally, the syntax of the package promotes greedy transforms instead
-  of lazily building a pipeline and then applying to multiple tables.
+- [Impute.jl](https://github.com/invenia/Impute.jl),
+  [Cleaner.jl](https://github.com/TheRoniOne/Cleaner.jl),
+  [DataConvenience.jl](https://github.com/xiaodaigh/DataConvenience.jl)
+  all have a small set of transforms related to fixing column names as
+  well as other basic transforms that we plan to absorb in the long term.
+- [DataFramesMeta.jl](https://github.com/jkrumbiegel/Chain.jl) is a package
+  to manipulate [DataFrames.jl](https://github.com/JuliaData/DataFrames.jl)
+  tables. It is not intended for statistical transforms such as `PCA`,
+  `ZScore`, `Quantile`, etc, which rely on complex interactions between
+  the rows and columns of a table. The usage of macros in the package
+  promotes one-shot scripts as opposed to general pipelines that can be
+  passed around to different places in the program.
+- [Query.jl](https://github.com/queryverse/Query.jl) is a package to query
+  [IterableTables.jl](https://github.com/queryverse/IterableTables.jl).
+  Similar to other alternatives above, the package is not intended for
+  advanced statistical transforms.
