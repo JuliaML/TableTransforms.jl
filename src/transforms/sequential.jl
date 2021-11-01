@@ -32,6 +32,19 @@ function revert(s::Sequential, newtable, cache)
   current
 end
 
+function reapply(s::Sequential, table, cache)
+  # basic checks
+  ntrans = length(s.transforms)
+  ncache = length(cache)
+  @assert ntrans == ncache "invalid cache for transform"
+
+  current = table
+  for (ctransform, ccache) in zip(s.transforms, cache)
+    current, _ = reapply(ctransform, current, ccache)
+  end
+  current, cache
+end
+
 """
     transform₁ → transform₂ → ⋯ → transformₙ
 
