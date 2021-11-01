@@ -27,7 +27,14 @@ for more details about these three variants of eigenanalysis.
 """
 struct EigenAnalysis <: Transform
   proj::Symbol
+
+  function EigenAnalysis(proj)
+    @assert proj ∈ (:V, :VD, :VDV) "invalid projection"
+    new(proj)
+  end
 end
+
+assertions(::Type{EigenAnalysis}) = [assert_continuous]
 
 isrevertible(::Type{EigenAnalysis}) = true
 
@@ -56,13 +63,13 @@ function matrices(transform::EigenAnalysis, λ, V)
 end
 
 function apply(transform::EigenAnalysis, table)
-  @assert transform.proj ∈ [:V, :VD, :VDV] "eigen analysis not suported"
+  # basic checks
+  for assertion in assertions(transform)
+    assertion(table)
+  end
 
-  # sanity checks
-  sch = schema(table)
-  names = sch.names
-  types = sch.scitypes
-  @assert all(T <: Continuous for T in types) "columns must hold continuous variables"
+  # original columns names
+  names = Tables.columnnames(table)
 
   X = Tables.matrix(table)
   μ = mean(X, dims=1)
@@ -80,15 +87,11 @@ function apply(transform::EigenAnalysis, table)
 end
 
 function revert(::EigenAnalysis, newtable, cache)
-  # sanity checks
-  sch = schema(newtable)
-  names = sch.names
-  types = sch.scitypes
-  @assert all(T <: Continuous for T in types) "columns must hold continuous variables"
-
-  Γ⁻¹, μ = first(cache), last(cache)
+  # transformed column names
+  names = Tables.columnnames(newtable)
 
   Y = Tables.matrix(newtable)
+  Γ⁻¹, μ = cache
   X = Y * Γ⁻¹
   X = X .+ μ
 

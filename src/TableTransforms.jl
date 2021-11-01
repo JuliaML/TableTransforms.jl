@@ -23,6 +23,7 @@ export
   Transform,
   Stateless,
   Colwise,
+  assertions,
   isrevertible,
   apply, revert, reapply,
   colapply, colrevert,

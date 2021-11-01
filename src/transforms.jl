@@ -18,6 +18,15 @@ trait can be evaluated directly at any table implementing the
 abstract type Transform end
 
 """
+    assertions(transform)
+
+Returns a list of assertion functions for the `transform`. An assertion
+function is a function that takes a table as input and checks if the table
+is valid for the `transform`.
+"""
+function assertions end
+
+"""
     isrevertible(transform)
 
 Tells whether or not the `transform` is revertible, i.e. supports a
@@ -98,8 +107,11 @@ function colcache end
 # TRANSFORM FALLBACKS
 # --------------------
 
-isrevertible(transform) = isrevertible(typeof(transform))
-isrevertible(::Type{Transform}) = false
+assertions(transform::Transform) = assertions(typeof(transform))
+assertions(::Type{<:Transform}) = []
+
+isrevertible(transform::Transform) = isrevertible(typeof(transform))
+isrevertible(::Type{<:Transform}) = false
 
 (transform::Transform)(table) = apply(transform, table) |> first
 
@@ -114,6 +126,11 @@ reapply(transform::Stateless, table, cache) = apply(transform, table)
 # ------------------
 
 function apply(transform::Colwise, table)
+  # basic checks
+  for assertion in assertions(transform)
+    assertion(table)
+  end
+
   # retrieve column names and values
   names = Tables.columnnames(table)
   cols  = Tables.columns(table)

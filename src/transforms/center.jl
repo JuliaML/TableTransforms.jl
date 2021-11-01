@@ -9,6 +9,8 @@ The transform that removes the mean of the variables.
 """
 struct Center <: Colwise end
 
+assertions(::Type{Center}) = [assert_continuous]
+
 isrevertible(::Type{Center}) = true
 
 colcache(::Center, x) = mean(x)

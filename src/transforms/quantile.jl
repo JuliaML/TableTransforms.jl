@@ -13,6 +13,8 @@ end
 
 Quantile() = Quantile(Normal())
 
+assertions(::Type{Quantile}) = [assert_continuous]
+
 isrevertible(::Type{<:Quantile}) = true
 
 colcache(::Quantile, x) = EmpiricalDistribution(x)

@@ -10,6 +10,8 @@ standard deviation `σ` is the value `(x .- μ) ./ σ`.
 """
 struct ZScore <: Colwise end
 
+assertions(::Type{ZScore}) = [assert_continuous]
+
 isrevertible(::Type{ZScore}) = true
 
 function colcache(::ZScore, x)

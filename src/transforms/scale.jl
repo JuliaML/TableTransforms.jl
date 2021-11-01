@@ -11,9 +11,16 @@ where `xl = quantile(x, low)` and `xh = quantile(x, high)`.
 struct Scale <: Colwise
   low::Float64
   high::Float64
+
+  function Scale(low, high)
+    @assert 0 ≤ low ≤ high ≤ 1 "invalid quantiles"
+    new(low, high)
+  end
 end
 
 Scale(; low=0.25, high=0.75) = Scale(low, high)
+
+assertions(::Type{Scale}) = [assert_continuous]
 
 isrevertible(::Type{Scale}) = true
 
