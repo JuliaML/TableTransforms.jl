@@ -64,7 +64,7 @@ function apply(transform::EigenAnalysis, table)
   𝒯 = (; zip(names, eachcol(Z))...)
   newtable = 𝒯 |> Tables.materializer(table)
 
-  newtable, (μ, S⁻¹)
+  newtable, (μ, S, S⁻¹)
 end
 
 function revert(::EigenAnalysis, newtable, cache)
@@ -75,7 +75,7 @@ function revert(::EigenAnalysis, newtable, cache)
   Z = Tables.matrix(newtable)
 
   # retrieve cache
-  μ, S⁻¹ = cache
+  μ, S, S⁻¹ = cache
 
   # undo projection
   Y = Z * S⁻¹
@@ -86,6 +86,34 @@ function revert(::EigenAnalysis, newtable, cache)
   # table with original columns
   𝒯 = (; zip(names, eachcol(X))...)
   𝒯 |> Tables.materializer(newtable)
+end
+
+function reapply(transform::EigenAnalysis, table, cache)
+  # basic checks
+  for assertion in assertions(transform)
+    assertion(table)
+  end
+
+  # original columns names
+  names = Tables.columnnames(table)
+
+  # table as matrix
+  X = Tables.matrix(table)
+
+  # retrieve cache
+  μ, S, S⁻¹ = cache
+
+  # center the data
+  Y = X .- μ
+
+  # project the data
+  Z = Y * S
+
+  # table with transformed columns
+  𝒯 = (; zip(names, eachcol(Z))...)
+  newtable = 𝒯 |> Tables.materializer(table)
+
+  newtable, cache
 end
 
 function eigenmatrices(transform, Y)
