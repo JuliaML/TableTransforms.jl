@@ -199,20 +199,17 @@ function reapply(transform::Colwise, table, cache)
     c = cache[i]
     x = Tables.getcolumn(cols, n)
     y = colapply(transform, x, c)
-    (n => y), c
+    n => y
   end
 
   # parallel map with multiple threads
   vals = foldxt(vcat, Map(colfunc), 1:length(names))
 
   # new table with transformed columns
-  𝒯 = (; first.(vals)...) |> Tables.materializer(table)
-
-  # cache values for each column
-  𝒞 = last.(vals)
+  newtable = (; vals...) |> Tables.materializer(table)
 
   # return new table and cache
-  𝒯, 𝒞
+  newtable, cache
 end
 
 # ----------------
