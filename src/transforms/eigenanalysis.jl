@@ -38,35 +38,14 @@ assertions(::Type{EigenAnalysis}) = [assert_continuous]
 
 isrevertible(::Type{EigenAnalysis}) = true
 
-function pcaproj(λ, V)
-  V, transpose(V)
-end
-
-function drsproj(λ, V)
-  Λ = Diagonal(sqrt.(λ))
-  S = V * inv(Λ)
-  S⁻¹ = Λ * transpose(V)
-  S, S⁻¹
-end
-
-function sdsproj(λ, V)
-  Λ = Diagonal(sqrt.(λ))
-  S = V * inv(Λ) * transpose(V)
-  S⁻¹ = V * Λ * transpose(V)
-  S, S⁻¹
-end
-
-function matrices(transform::EigenAnalysis, λ, V)
-  transform.proj == :V && return pcaproj(λ, V)
-  transform.proj == :VD && return drsproj(λ, V)
-  transform.proj == :VDV && return sdsproj(λ, V)
-end
-
 function apply(transform::EigenAnalysis, table)
   # basic checks
   for assertion in assertions(transform)
     assertion(table)
   end
+
+  # projection
+  proj = transform.proj
 
   # original columns names
   names = Tables.columnnames(table)
@@ -76,7 +55,7 @@ function apply(transform::EigenAnalysis, table)
   X = X .- μ
   Σ = cov(X)
   λ, V = eigen(Σ)
-  Γ, Γ⁻¹ = matrices(transform, λ, V)
+  Γ, Γ⁻¹ = matrices(proj, λ, V)
   Y = X * Γ
 
   # table with transformed columns
@@ -98,6 +77,30 @@ function revert(::EigenAnalysis, newtable, cache)
   # table with original columns
   𝒯 = (; zip(names, eachcol(X))...)
   𝒯 |> Tables.materializer(newtable)
+end
+
+function matrices(proj, λ, V)
+  proj == :V   && return pcaproj(λ, V)
+  proj == :VD  && return drsproj(λ, V)
+  proj == :VDV && return sdsproj(λ, V)
+end
+
+function pcaproj(λ, V)
+  V, transpose(V)
+end
+
+function drsproj(λ, V)
+  Λ = Diagonal(sqrt.(λ))
+  S = V * inv(Λ)
+  S⁻¹ = Λ * transpose(V)
+  S, S⁻¹
+end
+
+function sdsproj(λ, V)
+  Λ = Diagonal(sqrt.(λ))
+  S = V * inv(Λ) * transpose(V)
+  S⁻¹ = V * Λ * transpose(V)
+  S, S⁻¹
 end
 
 """
