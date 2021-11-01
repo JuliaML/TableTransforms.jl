@@ -44,25 +44,25 @@ function apply(transform::EigenAnalysis, table)
     assertion(table)
   end
 
-  # projection
-  proj = transform.proj
-
   # original columns names
   names = Tables.columnnames(table)
+
+  # projection
+  proj = transform.proj
 
   X = Tables.matrix(table)
   μ = mean(X, dims=1)
   X = X .- μ
   Σ = cov(X)
   λ, V = eigen(Σ)
-  Γ, Γ⁻¹ = matrices(proj, λ, V)
-  Y = X * Γ
+  S, S⁻¹ = matrices(proj, λ, V)
+  Y = X * S
 
   # table with transformed columns
   𝒯 = (; zip(names, eachcol(Y))...)
   newtable = 𝒯 |> Tables.materializer(table)
 
-  newtable, (Γ⁻¹, μ)
+  newtable, (S⁻¹, μ)
 end
 
 function revert(::EigenAnalysis, newtable, cache)
