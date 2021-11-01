@@ -16,11 +16,11 @@ isrevertible(p::Parallel) = any(isrevertible, p.transforms)
 function apply(p::Parallel, table)
   # apply transforms in parallel
   f(transform) = apply(transform, table)
-  result = foldxt(vcat, Map(f), p.transforms)
+  vals = foldxt(vcat, Map(f), p.transforms)
 
   # retrieve tables and caches
-  tables = first.(result)
-  caches = last.(result)
+  tables = first.(vals)
+  caches = last.(vals)
 
   # concatenate columns
   allvars, allvals = [], []
@@ -43,49 +43,52 @@ function apply(p::Parallel, table)
   𝒯 = (; zip(allvars, allvals)...)
   newtable = 𝒯 |> Tables.materializer(table)
 
+  # save original column names
+  onames = Tables.columnnames(table)
+
   # find first revertible transform
   ind = findfirst(isrevertible, p.transforms)
 
-  # save cache if any transform is revertible
-  if isnothing(ind)
-    cache = nothing
+  # save info to revert transform
+  rinfo = if isnothing(ind)
+    nothing
   else
-    onames = Tables.columnnames(table)
     tnames = Tables.columnnames.(tables)
     ncols  = length.(tnames)
-    rcache = caches[ind]
     nrcols = ncols[ind]
     start  = sum(ncols[1:ind-1]) + 1
     finish = start + nrcols - 1
-    range  = (start, finish)
-    cache  = (ind, range, rcache, onames)
+    range  = start:finish
+    (ind, range)
   end
 
-  newtable, cache
+  newtable, (onames, caches, rinfo)
 end
 
 function revert(p::Parallel, newtable, cache)
-  # sanity checks
-  @assert !isnothing(cache) "transform is not revertible"
+  # retrieve cache
+  onames = cache[1]
+  caches = cache[2]
+  rinfo  = cache[3]
 
-  # retrieve subtable range and cache
-  ind    = cache[1]
-  range  = cache[2]
-  rcache = cache[3]
-  onames = cache[4]
-  start, finish = range
+  @assert !isnothing(rinfo) "transform is not revertible"
+
+  # retrieve info to revert transform
+  ind    = rinfo[1]
+  range  = rinfo[2]
+  rtrans = p.transforms[ind]
+  rcache = caches[ind]
 
   # columns of transformed table
   cols = Tables.columns(newtable)
 
-  # retrieve subtable for revert transform
-  rcols = [Tables.getcolumn(cols, j) for j in start:finish]
+  # retrieve subtable to revert
+  rcols = [Tables.getcolumn(cols, j) for j in range]
   𝒯 = (; zip(onames, rcols)...)
   rtable = 𝒯 |> Tables.materializer(newtable)
 
   # revert transform on subtable
-  rtransform = p.transforms[ind]
-  revert(rtransform, rtable, rcache)
+  revert(rtrans, rtable, rcache)
 end
 
 """
