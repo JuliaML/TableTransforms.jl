@@ -36,15 +36,21 @@ function pcaproj(λ, V)
 end
 
 function drsproj(λ, V)
-  Λ = Diagonal(sqrt.(λ))
-  S = V * inv(Λ)
-  S, inv(S)
+  λₛ = sqrt.(λ)
+  Λᵢ = Diagonal(1 ./ λₛ)
+  Λₛ = Diagonal(λₛ)
+  S = V * Λᵢ
+  Sᵢ = Λₛ * transpose(V)
+  S, Sᵢ
 end
 
 function sdsproj(λ, V)
-  Λ = Diagonal(sqrt.(λ))
-  S = V * inv(Λ) * transpose(V)
-  S, inv(S)
+  λₛ = sqrt.(λ)
+  Λᵢ = Diagonal(1 ./ λₛ)
+  Λₛ = Diagonal(λₛ)
+  S = V * Λᵢ * transpose(V)
+  Sᵢ = V * Λₛ * transpose(V)
+  S, Sᵢ
 end
 
 function matrices(transform::EigenAnalysis, λ, V)
