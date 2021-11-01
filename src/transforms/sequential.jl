@@ -24,9 +24,10 @@ function apply(s::Sequential, table)
 end
 
 function revert(s::Sequential, newtable, cache)
-  current = newtable
+  allcache = deepcopy(cache)
+  current  = newtable
   for transform in reverse(s.transforms)
-    current = revert(transform, current, pop!(cache))
+    current = revert(transform, current, pop!(allcache))
   end
   current
 end
