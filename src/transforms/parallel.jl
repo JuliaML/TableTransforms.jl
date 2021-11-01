@@ -22,26 +22,8 @@ function apply(p::Parallel, table)
   tables = first.(vals)
   caches = last.(vals)
 
-  # concatenate columns
-  allvars, allvals = [], []
-  varsdict = Set{Symbol}()
-  for 𝒯 in tables
-    cols = Tables.columns(𝒯)
-    vars = Tables.columnnames(𝒯)
-    vals = [Tables.getcolumn(cols, var) for var in vars]
-    for (var, val) in zip(vars, vals)
-      while var ∈ varsdict
-        var = Symbol(var,:_)
-      end
-      push!(varsdict, var)
-      push!(allvars, var)
-      push!(allvals, val)
-    end
-  end
-
   # table with concatenated columns
-  𝒯 = (; zip(allvars, allvals)...)
-  newtable = 𝒯 |> Tables.materializer(table)
+  newtable = tablehcat(tables)
 
   # save original column names
   onames = Tables.columnnames(table)
@@ -89,6 +71,44 @@ function revert(p::Parallel, newtable, cache)
 
   # revert transform on subtable
   revert(rtrans, rtable, rcache)
+end
+
+function reapply(p::Parallel, table, cache)
+  # retrieve caches
+  caches = cache[2]
+
+  # reapply transforms in parallel
+  f((t,c)) = reapply(t, table, c) |> first
+  itr      = zip(p.transforms, caches)
+  tables   = foldxt(vcat, Map(f), itr)
+
+  # table with concatenated columns
+  newtable = tablehcat(tables)
+
+  newtable, cache
+end
+
+function tablehcat(tables)
+  # concatenate columns
+  allvars, allvals = [], []
+  varsdict = Set{Symbol}()
+  for 𝒯 in tables
+    cols = Tables.columns(𝒯)
+    vars = Tables.columnnames(𝒯)
+    vals = [Tables.getcolumn(cols, var) for var in vars]
+    for (var, val) in zip(vars, vals)
+      while var ∈ varsdict
+        var = Symbol(var,:_)
+      end
+      push!(varsdict, var)
+      push!(allvars, var)
+      push!(allvals, val)
+    end
+  end
+
+  # table with concatenated columns
+  𝒯 = (; zip(allvars, allvals)...)
+  𝒯 |> Tables.materializer(first(tables))
 end
 
 """
