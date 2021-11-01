@@ -38,13 +38,15 @@ end
 function drsproj(λ, V)
   Λ = Diagonal(sqrt.(λ))
   S = V * inv(Λ)
-  S, inv(S)
+  S⁻¹ = Λ * transpose(V)
+  S, S⁻¹
 end
 
 function sdsproj(λ, V)
   Λ = Diagonal(sqrt.(λ))
   S = V * inv(Λ) * transpose(V)
-  S, inv(S)
+  S⁻¹ = V * Λ * transpose(V)
+  S, S⁻¹
 end
 
 function matrices(transform::EigenAnalysis, λ, V)
