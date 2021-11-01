@@ -164,9 +164,13 @@ Please check the docstrings for additional information.
 
 ### External
 
+#### [CoDa.jl](https://github.com/JuliaEarth/CoDa.jl) provides:
+
 | Transform | Description |
 |-----------|-------------|
-| `LogRatio` | Log-ratio transforms (see [CoDa.jl](https://github.com/JuliaEarth/CoDa.jl)) |
+| `ALR` | Additive log-ratio |
+| `CLR` | Centered log-ratio |
+| `ILR` | Isometric log-ratio |
 
 ## Custom transforms
 
