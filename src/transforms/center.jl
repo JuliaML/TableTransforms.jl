@@ -7,32 +7,12 @@
 
 The transform that removes the mean of the variables.
 """
-struct Center <: Transform end
+struct Center <: Colwise end
 
 isrevertible(::Type{Center}) = true
 
-function apply(::Center, table)
-  assert_continuous(table)
-  colwise(table) do x
-    μ = mean(x)
-    z = (x .- μ)
-    z, μ
-  end
-end
+colcache(::Center, x) = mean(x)
 
-function revert(::Center, newtable, cache)
-  # transformed columns
-  names = Tables.columnnames(newtable)
-  cols  = Tables.columns(newtable)
+colapply(::Center, x, μ)  = @. x - μ
 
-  # original columns
-  oldcols = map(1:length(names)) do i
-    x = Tables.getcolumn(cols, i)
-    μ = cache[i]
-    μ .+ x
-  end
-
-  # table with original columns
-  𝒯 = (; zip(names, oldcols)...)
-  𝒯 |> Tables.materializer(newtable)
-end
+colrevert(::Center, y, μ) = @. y + μ

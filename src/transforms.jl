@@ -18,21 +18,12 @@ trait can be evaluated directly at any table implementing the
 abstract type Transform end
 
 """
-    transform(table)
-
-Automatically generated functor interface that calls [`apply`](@ref)
-with `transform` and `table`. New types don't need to implement this.
-"""
-(transform::Transform)(table) = apply(transform, table) |> first
-
-"""
     isrevertible(transform)
 
 Tells whether or not the `transform` is revertible, i.e. supports a
 [`revert`](@ref) function. Defaults to `false` for new types.
 """
-isrevertible(transform) = isrevertible(typeof(transform))
-isrevertible(::Type{Transform}) = false
+function isrevertible end
 
 """
     newtable, cache = apply(transform, table)
@@ -67,7 +58,7 @@ abstract type Stateless <: Transform end
 Reapply the `transform` to (a possibly different) `table` using a `cache`
 that was created with a previous [`apply`](@ref) call.
 """
-reapply(transform::Stateless, table, cache) = apply(transform, table)
+function reapply end
 
 """
     Colwise
@@ -102,6 +93,75 @@ If the `transform` [`isrevertible`](@ref) then the cache `c` can also be
 used in [`colrevert`](@ref).
 """
 function colcache end
+
+# --------------------
+# TRANSFORM FALLBACKS
+# --------------------
+
+isrevertible(transform) = isrevertible(typeof(transform))
+isrevertible(::Type{Transform}) = false
+
+(transform::Transform)(table) = apply(transform, table) |> first
+
+# --------------------
+# STATELESS FALLBACKS
+# --------------------
+
+reapply(transform::Stateless, table, cache) = apply(transform, table)
+
+# ------------------
+# COLWISE FALLBACKS
+# ------------------
+
+function apply(transform::Colwise, table)
+  # retrieve column names and values
+  names = Tables.columnnames(table)
+  cols  = Tables.columns(table)
+
+  # function to transform a single column
+  function colfunc(n)
+    x = Tables.getcolumn(cols, n)
+    c = colcache(transform, x)
+    y = colapply(transform, x, c)
+    (n => y), c
+  end
+
+  # parallel map with multiple threads
+  vals = foldxt(vcat, Map(colfunc), names)
+
+  # new table with transformed columns
+  𝒯 = (; first.(vals)...) |> Tables.materializer(table)
+
+  # cache values for each column
+  𝒞 = last.(vals)
+
+  # return new table and cache
+  𝒯, 𝒞
+end
+
+function revert(transform::Colwise, newtable, cache)
+  # basic checks
+  @assert isrevertible(transform) "transform is not revertible"
+
+  # transformed columns
+  names = Tables.columnnames(newtable)
+  cols  = Tables.columns(newtable)
+
+  # function to transform a single column
+  function colfunc(i)
+    n = names[i]
+    c = cache[i]
+    y = Tables.getcolumn(cols, n)
+    x = colrevert(transform, y, c)
+    n => x
+  end
+
+  # parallel map with multiple threads
+  vals = foldxt(vcat, Map(colfunc), 1:length(names))
+
+  # new table with transformed columns
+  (; vals...) |> Tables.materializer(newtable)
+end
 
 # ----------------
 # IMPLEMENTATIONS

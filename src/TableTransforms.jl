@@ -14,7 +14,7 @@ using Statistics
 import Distributions: ContinuousUnivariateDistribution
 import Distributions: quantile, cdf
 
-include("utils.jl")
+include("assertions.jl")
 include("distributions.jl")
 include("transforms.jl")
 
@@ -24,9 +24,8 @@ export
   Stateless,
   Colwise,
   isrevertible,
-  apply, colapply,
-  revert, colrevert,
-  reapply,
+  apply, revert, reapply,
+  colapply, colrevert,
 
   # built-in
   Select,

@@ -1,15 +1,4 @@
 @testset "Transforms" begin
-  @testset "Identity" begin
-    x = rand(4000)
-    y = rand(4000)
-    t = Table(; x, y)
-    T = Identity()
-    n, c = apply(T, t)
-    @test t == n
-    tₒ = revert(T, n, c)
-    @test t == tₒ
-  end
-
   @testset "Select" begin
     a = rand(4000)
     b = rand(4000)
@@ -74,6 +63,17 @@
     T = Reject(:e, :c, :b, :a)
     n, c = apply(T, t)
     @test Tables.columnnames(n) == (:d, :f)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+  end
+
+  @testset "Identity" begin
+    x = rand(4000)
+    y = rand(4000)
+    t = Table(; x, y)
+    T = Identity()
+    n, c = apply(T, t)
+    @test t == n
     tₒ = revert(T, n, c)
     @test t == tₒ
   end
@@ -149,6 +149,10 @@
 
       @test_reference joinpath(datadir,"zscore.png") p
     end
+  end
+
+  @testset "Quantile" begin
+    # TODO
   end
 
   @testset "Functional" begin

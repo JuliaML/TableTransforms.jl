@@ -8,7 +8,7 @@
 The scale transform of `x` is the value `(x .- xl) ./ (xh .- xl))`
 where `xl = quantile(x, low)` and `xh = quantile(x, high)`.
 """
-struct Scale <: Transform
+struct Scale <: Colwise
   low::Float64
   high::Float64
 end
@@ -17,32 +17,15 @@ Scale(; low=0.25, high=0.75) = Scale(low, high)
 
 isrevertible(::Type{Scale}) = true
 
-function apply(transform::Scale, table)
-  assert_continuous(table)
-  colwise(table) do x
-    levels = (transform.low, transform.high)
-    xl, xh = quantile(x, levels)
-    z = (x .- xl) ./ (xh .- xl)
-    z, (xl=xl, xh=xh)
-  end
+function colcache(transform::Scale, x)
+  levels = (transform.low, transform.high)
+  xl, xh = quantile(x, levels)
+  (xl=xl, xh=xh)
 end
 
-function revert(::Scale, newtable, cache)
-  # transformed columns
-  names = Tables.columnnames(newtable)
-  cols  = Tables.columns(newtable)
+colapply(::Scale, x, c)  = @. (x - c.xl) / (c.xh - c.xl)
 
-  # original columns
-  oldcols = map(1:length(names)) do i
-    x = Tables.getcolumn(cols, i)
-    xl, xh = cache[i]
-    xl .+ (xh .- xl)*x
-  end
-
-  # table with original columns
-  𝒯 = (; zip(names, oldcols)...)
-  𝒯 |> Tables.materializer(newtable)
-end
+colrevert(::Scale, y, c) = @. (c.xh - c.xl) * y + c.xl
 
 """
     MinMax()

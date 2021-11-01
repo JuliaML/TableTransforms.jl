@@ -7,7 +7,7 @@
 
 The transform that applies a `function` elementwise.
 """
-struct Functional <: Stateless
+struct Functional <: Colwise
   func::Function
 end
 
@@ -25,16 +25,14 @@ inverse(::typeof(asin)) = sin
 # fallback to nothing
 inverse(::Function) = nothing
 
-function apply(transform::Functional, table)
+colcache(::Functional, x) = nothing
+
+function colapply(transform::Functional, x, c)
   f = transform.func
-  colwise(table) do x
-    f.(x), nothing
-  end
+  f.(x)
 end
 
-function revert(transform::Functional, newtable, cache)
-  f = inverse(transform.func)
-  colwise(newtable) do x
-    f.(x), nothing
-  end |> first
+function colrevert(transform::Functional, y, c)
+  g = inverse(transform.func)
+  g.(y)
 end
