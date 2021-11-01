@@ -180,6 +180,41 @@ function revert(transform::Colwise, newtable, cache)
   (; vals...) |> Tables.materializer(newtable)
 end
 
+function reapply(transform::Colwise, table, cache)
+  # basic checks
+  for assertion in assertions(transform)
+    assertion(table)
+  end
+
+  # retrieve column names and values
+  names = Tables.columnnames(table)
+  cols  = Tables.columns(table)
+
+  # check that cache is valid
+  @assert length(names) == length(cache) "invalid cache for table"
+
+  # function to transform a single column
+  function colfunc(i)
+    n = names[i]
+    c = cache[i]
+    x = Tables.getcolumn(cols, n)
+    y = colapply(transform, x, c)
+    (n => y), c
+  end
+
+  # parallel map with multiple threads
+  vals = foldxt(vcat, Map(colfunc), 1:length(names))
+
+  # new table with transformed columns
+  𝒯 = (; first.(vals)...) |> Tables.materializer(table)
+
+  # cache values for each column
+  𝒞 = last.(vals)
+
+  # return new table and cache
+  𝒯, 𝒞
+end
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------
