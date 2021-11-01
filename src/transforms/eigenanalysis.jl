@@ -47,59 +47,66 @@ function apply(transform::EigenAnalysis, table)
   # original columns names
   names = Tables.columnnames(table)
 
-  # projection
-  proj = transform.proj
-
+  # table as matrix
   X = Tables.matrix(table)
+
+  # center the data
   μ = mean(X, dims=1)
-  X = X .- μ
-  Σ = cov(X)
-  λ, V = eigen(Σ)
-  S, S⁻¹ = matrices(proj, λ, V)
-  Y = X * S
+  Y = X .- μ
+
+  # eigenanalysis of covariance
+  S, S⁻¹ = eigenmatrices(transform, Y)
+
+  # project the data
+  Z = Y * S
 
   # table with transformed columns
-  𝒯 = (; zip(names, eachcol(Y))...)
+  𝒯 = (; zip(names, eachcol(Z))...)
   newtable = 𝒯 |> Tables.materializer(table)
 
-  newtable, (S⁻¹, μ)
+  newtable, (μ, S⁻¹)
 end
 
 function revert(::EigenAnalysis, newtable, cache)
   # transformed column names
   names = Tables.columnnames(newtable)
 
-  Y = Tables.matrix(newtable)
-  Γ⁻¹, μ = cache
-  X = Y * Γ⁻¹
-  X = X .+ μ
+  # table as matrix
+  Z = Tables.matrix(newtable)
+
+  # retrieve cache
+  μ, S⁻¹ = cache
+
+  # undo projection
+  Y = Z * S⁻¹
+
+  # undo centering
+  X = Y .+ μ
 
   # table with original columns
   𝒯 = (; zip(names, eachcol(X))...)
   𝒯 |> Tables.materializer(newtable)
 end
 
-function matrices(proj, λ, V)
-  proj == :V   && return pcaproj(λ, V)
-  proj == :VD  && return drsproj(λ, V)
-  proj == :VDV && return sdsproj(λ, V)
-end
+function eigenmatrices(transform, Y)
+  proj = transform.proj
 
-function pcaproj(λ, V)
-  V, transpose(V)
-end
+  Σ = cov(Y)
+  λ, V = eigen(Σ)
 
-function drsproj(λ, V)
-  Λ = Diagonal(sqrt.(λ))
-  S = V * inv(Λ)
-  S⁻¹ = Λ * transpose(V)
-  S, S⁻¹
-end
+  if proj == :V
+    S   = V
+    S⁻¹ = transpose(V)
+  elseif proj == :VD
+    Λ   = Diagonal(sqrt.(λ))
+    S   = V * inv(Λ)
+    S⁻¹ = Λ * transpose(V)
+  elseif proj == :VDV
+    Λ   = Diagonal(sqrt.(λ))
+    S   = V * inv(Λ) * transpose(V)
+    S⁻¹ = V * Λ * transpose(V)
+  end
 
-function sdsproj(λ, V)
-  Λ = Diagonal(sqrt.(λ))
-  S = V * inv(Λ) * transpose(V)
-  S⁻¹ = V * Λ * transpose(V)
   S, S⁻¹
 end
 
