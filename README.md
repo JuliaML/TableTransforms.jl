@@ -168,6 +168,7 @@ Please check the docstrings for additional information.
 
 | Transform | Description |
 |-----------|-------------|
+| `Closure` | Compositional closure |
 | `ALR` | Additive log-ratio |
 | `CLR` | Centered log-ratio |
 | `ILR` | Isometric log-ratio |
