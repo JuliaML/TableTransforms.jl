@@ -54,8 +54,6 @@ function revert end
 """
     Stateless
 
-A stateless transform, i.e. a transform for which the `cache` is not
-a function of the input `table` used in a previous [`apply`](@ref) call.
 This trait is useful to signal that we can [`reapply`](@ref) a transform
 "fitted" with training data to "test" data without relying on the `cache`.
 """
