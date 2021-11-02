@@ -134,7 +134,7 @@ cache from a previous `apply` call is used:
 newtable, cache = apply(ZScore(), traintable)
 
 # we can reuse the same values of μ and σ with test data
-newtable = reapply(ZScore(), testtable, cache)
+newtable, cache = reapply(ZScore(), testtable, cache)
 ```
 
 ## Available transforms
