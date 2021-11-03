@@ -31,6 +31,32 @@
     @test Tables.columnnames(n) == (:e, :c, :b, :a)
     tₒ = revert(T, n, c)
     @test t == tₒ
+
+    # selection with tuples
+    T = Select((:e, :c, :b, :a))
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:e, :c, :b, :a)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # selection with vectors
+    T = Select([:e, :c, :b, :a])
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:e, :c, :b, :a)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # selection with strings
+    T = Select("d", "c", "b")
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:d, :c, :b)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # selection with single column
+    @test (Select(:a) == Select("a") ==
+           Select((:a,)) == Select(("a",)) ==
+           Select([:a]) == Select(["a"]))
   end
 
   @testset "Reject" begin
@@ -65,6 +91,32 @@
     @test Tables.columnnames(n) == (:d, :f)
     tₒ = revert(T, n, c)
     @test t == tₒ
+
+    # rejection with tuples
+    T = Reject((:e, :c, :b, :a))
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:d, :f)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # rejection with vectors
+    T = Reject([:e, :c, :b, :a])
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:d, :f)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # rejection with strings
+    T = Reject("d", "c", "b")
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:a, :e, :f)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # rejection with single column
+    @test (Reject(:a) == Reject("a") ==
+           Reject((:a,)) == Reject(("a",)) ==
+           Reject([:a]) == Reject(["a"]))
   end
 
   @testset "Identity" begin

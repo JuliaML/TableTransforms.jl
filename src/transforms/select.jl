@@ -15,6 +15,8 @@ end
 Select(cols::NTuple{N,AbstractString}) where {N} =
   Select(Symbol.(cols))
 
+Select(cols::AbstractVector) = Select(Tuple(cols))
+
 Select(cols...) = Select(cols)
 
 isrevertible(::Type{<:Select}) = true
@@ -83,6 +85,8 @@ end
 
 Reject(cols::NTuple{N,AbstractString}) where {N} =
   Reject(Symbol.(cols))
+
+Reject(cols::AbstractVector) = Reject(Tuple(cols))
 
 Reject(cols...) = Reject(cols)
 
