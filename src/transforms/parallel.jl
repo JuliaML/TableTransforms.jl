@@ -16,7 +16,7 @@ isrevertible(p::Parallel) = any(isrevertible, p.transforms)
 function apply(p::Parallel, table)
   # apply transforms in parallel
   f(transform) = apply(transform, table)
-  vals = foldxt(vcat, Map(f), p.transforms)
+  vals = tcollect(f(t) for t in p.transforms)
 
   # retrieve tables and caches
   tables = first.(vals)

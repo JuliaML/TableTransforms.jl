@@ -339,4 +339,16 @@
     n₂ = P₂(t)
     @test Tables.matrix(n₁) ≈ Tables.matrix(n₂)
   end
+
+  @testset "Miscellaneous" begin
+    # make sure transforms work with
+    # single-column tables
+    t = Table(x=rand(10000))
+    n, c = apply(ZScore(), t)
+    r = revert(ZScore(), n, c)
+    @test isapprox(mean(n.x), 0.0, atol=1e-8)
+    @test isapprox(std(n.x), 1.0, atol=1e-8)
+    @test isapprox(mean(r.x), mean(t.x), atol=1e-8)
+    @test isapprox(std(r.x), std(t.x), atol=1e-8)
+  end
 end

@@ -7,7 +7,7 @@ module TableTransforms
 using Tables
 using ScientificTypes
 using Distributions: Normal
-using Transducers: Map, foldxt
+using Transducers: tcollect
 using LinearAlgebra
 using Statistics
 
