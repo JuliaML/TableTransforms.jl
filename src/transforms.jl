@@ -201,7 +201,7 @@ function reapply(transform::Colwise, table, cache)
   end
 
   # parallel map with multiple threads
-  vals = foldxt(vcat, Map(colfunc), 1:length(names))
+  vals = tcollect(colfunc(i) for i in 1:length(names))
 
   # new table with transformed columns
   newtable = (; vals...) |> Tables.materializer(table)

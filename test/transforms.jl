@@ -406,5 +406,13 @@
     @test isapprox(std(n.x), 1.0, atol=1e-8)
     @test isapprox(mean(r.x), mean(t.x), atol=1e-8)
     @test isapprox(std(r.x), std(t.x), atol=1e-8)
+
+    # reapply with Parallel transform
+    t = Table(x=rand(1000))
+    T = ZScore() ⊔ Quantile()
+    n1, c1 = apply(T, t)
+    n2, c2 = reapply(T, t, c1)
+    @test n1 == n2
+    @test c1 == c2
   end
 end
