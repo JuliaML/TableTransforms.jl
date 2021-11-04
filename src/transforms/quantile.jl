@@ -31,8 +31,12 @@ end
 
 # transform samples from original to target distribution
 function qqtransform(samples, origin, target)
+  # avoid evaluating the quantile at 0 or 1
+  T = eltype(samples)
+  low = zero(T) + T(0.001)
+  high = one(T) - T(0.001)
   map(samples) do sample
     prob = cdf(origin, sample)
-    quantile(target, prob - eps())
+    quantile(target, clamp(prob, low, high))
   end
 end

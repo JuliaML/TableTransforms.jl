@@ -22,9 +22,9 @@ quantile(d::EmpiricalDistribution, p::Real) = quantile(d.values, p, sorted=true)
 
 function cdf(d::EmpiricalDistribution{T}, x::T) where {T<:Real}
   v = d.values
-  N = length(v)
+  n = length(v)
 
-  head, mid, tail = 1, 1, N
+  head, mid, tail = 1, 1, n
   while tail - head > 1
     mid = (head + tail) ÷ 2
     if x < v[mid]
@@ -37,14 +37,14 @@ function cdf(d::EmpiricalDistribution{T}, x::T) where {T<:Real}
   l, u = v[head], v[tail]
 
   if x < l
-    return 0.
+    return zero(T)
   elseif x > u
-    return 1.
+    return one(T)
   else
     if head == tail
-      return head / N
+      return head / n
     else
-      pl, pu = head / N, tail / N
+      pl, pu = head / n, tail / n
       return (pu - pl) * (x - l) / (u - l) + pl
     end
   end

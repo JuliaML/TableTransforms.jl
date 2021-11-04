@@ -204,7 +204,11 @@
   end
 
   @testset "Quantile" begin
-    # TODO
+    t = (z=rand(1000),)
+    n, c = apply(Quantile(), t)
+    r = revert(Quantile(), n, c)
+    @test all(-4 .< extrema(n.z) .< 4)
+    @test all(0 .≤ extrema(r.z) .≤ 1)
   end
 
   @testset "Functional" begin
