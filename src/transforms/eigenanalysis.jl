@@ -111,9 +111,7 @@ function reapply(transform::EigenAnalysis, table, cache)
 
   # table with transformed columns
   𝒯 = (; zip(names, eachcol(Z))...)
-  newtable = 𝒯 |> Tables.materializer(table)
-
-  newtable, cache
+  𝒯 |> Tables.materializer(table)
 end
 
 function eigenmatrices(transform, Y)

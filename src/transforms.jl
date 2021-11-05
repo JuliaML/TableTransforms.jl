@@ -204,10 +204,7 @@ function reapply(transform::Colwise, table, cache)
   vals = tcollect(colfunc(i) for i in 1:length(names))
 
   # new table with transformed columns
-  newtable = (; vals...) |> Tables.materializer(table)
-
-  # return new table and cache
-  newtable, cache
+  (; vals...) |> Tables.materializer(table)
 end
 
 # ----------------

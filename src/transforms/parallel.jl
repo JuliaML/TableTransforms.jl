@@ -78,14 +78,12 @@ function reapply(p::Parallel, table, cache)
   caches = cache[2]
 
   # reapply transforms in parallel
-  f(t, c)  = reapply(t, table, c) |> first
-  itr      = zip(p.transforms, caches)
-  tables   = tcollect(f(t, c) for (t, c) in itr)
+  f(t, c) = reapply(t, table, c)
+  itr     = zip(p.transforms, caches)
+  tables  = tcollect(f(t, c) for (t, c) in itr)
 
   # table with concatenated columns
-  newtable = tablehcat(tables)
-
-  newtable, cache
+  tablehcat(tables)
 end
 
 function tablehcat(tables)
