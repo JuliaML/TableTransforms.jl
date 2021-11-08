@@ -40,7 +40,7 @@ function reapply(s::Sequential, table, cache)
 
   current = table
   for (ctransform, ccache) in zip(s.transforms, cache)
-    current, _ = reapply(ctransform, current, ccache)
+    current = reapply(ctransform, current, ccache)
   end
   current
 end
