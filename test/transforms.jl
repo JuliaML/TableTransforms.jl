@@ -57,6 +57,12 @@
     @test (Select(:a) == Select("a") ==
            Select((:a,)) == Select(("a",)) ==
            Select([:a]) == Select(["a"]))
+
+    # reapply test
+    T = Select(:b, :c, :d)
+    n1, c1 = apply(T, t)
+    n2 = reapply(T, t, c1)
+    @test n1 == n2
   end
 
   @testset "Reject" begin
@@ -117,6 +123,12 @@
     @test (Reject(:a) == Reject("a") ==
            Reject((:a,)) == Reject(("a",)) ==
            Reject([:a]) == Reject(["a"]))
+
+    # reapply test
+    T = Reject(:b, :c, :d)
+    n1, c1 = apply(T, t)
+    n2 = reapply(T, t, c1)
+    @test n1 == n2
   end
 
   @testset "Identity" begin
@@ -360,6 +372,13 @@
     n, c = apply(T, t)
     tₒ = revert(T, n, c)
     @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+
+    # reapply with Sequential transform
+    t = Table(x=rand(1000))
+    T = ZScore() → Quantile()
+    n1, c1 = apply(T, t)
+    n2 = reapply(T, t, c1)
+    @test n1 == n2
   end
 
   @testset "Parallel" begin
@@ -394,6 +413,13 @@
     n₁ = P₁(t)
     n₂ = P₂(t)
     @test Tables.matrix(n₁) ≈ Tables.matrix(n₂)
+
+    # reapply with Parallel transform
+    t = Table(x=rand(1000))
+    T = ZScore() ⊔ Quantile()
+    n1, c1 = apply(T, t)
+    n2 = reapply(T, t, c1)
+    @test n1 == n2
   end
 
   @testset "Miscellaneous" begin
@@ -406,19 +432,5 @@
     @test isapprox(std(n.x), 1.0, atol=1e-8)
     @test isapprox(mean(r.x), mean(t.x), atol=1e-8)
     @test isapprox(std(r.x), std(t.x), atol=1e-8)
-
-    # reapply with Sequential transform
-    t = Table(x=rand(1000))
-    T = ZScore() → Quantile()
-    n1, c1 = apply(T, t)
-    n2 = reapply(T, t, c1)
-    @test n1 == n2
-
-    # reapply with Parallel transform
-    t = Table(x=rand(1000))
-    T = ZScore() ⊔ Quantile()
-    n1, c1 = apply(T, t)
-    n2 = reapply(T, t, c1)
-    @test n1 == n2
   end
 end

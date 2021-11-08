@@ -117,7 +117,7 @@ isrevertible(::Type{<:Transform}) = false
 # STATELESS FALLBACKS
 # --------------------
 
-reapply(transform::Stateless, table, cache) = apply(transform, table)
+reapply(transform::Stateless, table, cache) = apply(transform, table) |> first
 
 # ------------------
 # COLWISE FALLBACKS
