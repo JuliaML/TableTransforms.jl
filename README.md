@@ -219,3 +219,10 @@ Below are a few transforms that you can contribute:
   [IterableTables.jl](https://github.com/queryverse/IterableTables.jl).
   Similar to other alternatives above, the package is not intended for
   advanced statistical transforms.
+- [MLJ.jl](https://github.com/alan-turing-institute/MLJ.jl) is one of the
+  most popular packages for machine learning in Julia. They provide pipelines
+  and other types of composite models using Julia macros in order to access
+  internal fields of the transforms for hyperparameter tuning. The usage of
+  macros can be daunting, specially for first-time users of the language.
+  They are hard to implement and can silently break Julia code in specific
+  environments (e.g. Pluto).
