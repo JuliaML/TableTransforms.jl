@@ -7,7 +7,7 @@ module TableTransforms
 using Tables
 using ScientificTypes
 using Distributions: Normal
-using Transducers: tcollect
+using Transducers: tcollect, push!!
 using LinearAlgebra
 using Statistics
 
@@ -29,9 +29,10 @@ export
   colapply, colrevert,
 
   # built-in
+  Identity,
   Select,
   Reject,
-  Identity,
+  Rename3,
   Center,
   Scale,
   MinMax,
