@@ -29,10 +29,10 @@ export
   colapply, colrevert,
 
   # built-in
+  Identity,
   Select,
   Reject,
-  Rename,
-  Identity,
+  Rename3,
   Center,
   Scale,
   MinMax,
