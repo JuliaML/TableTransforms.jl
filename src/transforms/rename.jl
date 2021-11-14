@@ -3,9 +3,9 @@
 # ------------------------------------------------------------------
 
 """ 
-  Rename(:col₁ => :newcol₁, :col₂ => :newcol₂, ..., :col₁ => :newcolₙ))
+  Rename(:col₁ => :newcol₁, :col₂ => :newcol₂, ..., :col₁ => :newcolₙ)
 
-Tha transform that renames `col₁` to `newcol₁`, `col₂` to `newcol₂`, ...
+The transform that renames `col₁` to `newcol₁`, `col₂` to `newcol₂`, ...
 """
 struct Rename <: Stateless
   names::Dict{Symbol,Symbol}
@@ -21,12 +21,9 @@ function apply(transform::Rename, table)
     end
   end
   acols = [i for i in Tables.columns(table)]
-  𝒯 = (; zip(newnames, acols)...)
-  𝒯 |> Tables.materializer(table)
+  𝒯 = (; zip(newnames, acols)...) |> Tables.materializer(table)
   𝒯, nothing
 end
-
-
 
 function revert(transform::Rename, table)
   # reversing the key-value pairs of the Dict
