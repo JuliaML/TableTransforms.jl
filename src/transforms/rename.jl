@@ -2,7 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-""" 
+"""
   Rename(:col₁ => :newcol₁, :col₂ => :newcol₂, ..., :col₁ => :newcolₙ)
 
 The transform that renames `col₁` to `newcol₁`, `col₂` to `newcol₂`, ...
@@ -14,10 +14,10 @@ end
 function apply(transform::Rename, table)
   oldnames = Tables.columnnames(table)
   newnames = map(oldnames) do oldname
-    if oldname in keys(transform.names)
-      return transform.names[oldname]
+    if oldname in keys(transform.names) 
+      transform.names[oldname]
     else
-      return oldname
+      oldname
     end
   end
   acols = [i for i in Tables.columns(table)]
