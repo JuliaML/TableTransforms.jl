@@ -11,27 +11,34 @@ struct Rename <: Stateless
   names::Dict{Symbol,Symbol}
 end
 
+function Rename(names...)
+  sympair(x) = Symbol(first(x)) => Symbol(last(x))
+  map(sympair , names) |> Dict |> Rename
+end
+
 function apply(transform::Rename, table)
-  oldnames = Tables.columnnames(table)
-  newnames = map(oldnames) do oldname
-    if oldname in keys(transform.names) 
-      transform.names[oldname]
-    else
-      oldname
-    end
+  _rename(transform.names, table)
+end
+
+function revert(transform::Rename, table, cache)
+  # reversing the key-value pairs of the Dict
+  new_names = Dict()
+  for (old, new) in transform.names
+    new_names[new] = old
   end
+
+  _rename(new_names, table) |> first
+end
+
+
+function _rename(names, table)
+  oldnames = Tables.columnnames(table)
+
+  newnames = map(oldnames) do oldname
+    oldname in keys(names) ? names[oldname] : oldname
+  end
+  
   acols = [i for i in Tables.columns(table)]
   𝒯 = (; zip(newnames, acols)...) |> Tables.materializer(table)
   𝒯, nothing
-end
-
-function revert(transform::Rename, table)
-  # reversing the key-value pairs of the Dict
-  new_names = Dict()
-  for (new, old) in transform.names
-    new_names[old] = new
-  end
-
-  reversed_transform = Rename(new_names)
-  apply(reversed_transform, table) |> first
 end
