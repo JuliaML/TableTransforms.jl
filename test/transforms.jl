@@ -138,6 +138,12 @@
     d = rand(4000)
     t = Table(; a, b, c, d)
 
+    T = Rename(Dict(:a => :x))
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:x, :b, :c, :d)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
     T = Rename(Dict(:a => :x, :c => :y))
     n, c = apply(T, t)
     @test Tables.columnnames(n) == (:x, :b, :y, :d)
@@ -159,6 +165,12 @@
     @test t == tₒ
 
     # rename with mixed pairs
+    T = Rename("a" => :x)
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:x, :b, :c, :d)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+    
     T = Rename("a" => :x, :c => "y")
     n, c = apply(T, t)
     @test Tables.columnnames(n) == (:x, :b, :y, :d)
