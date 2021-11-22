@@ -16,6 +16,7 @@ function Rename(names...)
   map(sympair, names) |> Dict |> Rename
 end
 
+
 function apply(transform::Rename, table)
   _rename(transform.names, table)
 end
@@ -33,10 +34,9 @@ end
 
 function _rename(names, table)
   oldnames = Tables.columnnames(table)
-  @show  oldnames, names
 
-  dif = setdiff(keys(names), oldnames) |> Tuple
-  @assert length(dif) == 0 "The following column[s] were not found in the source table $dif"
+  dif = setdiff(keys(names), oldnames) .|> String |> Tuple
+  @assert length(dif) == 0 "The following column[s] were not found in the source table: $dif"
 
   newnames = map(oldnames) do oldname
     oldname in keys(names) ? names[oldname] : oldname
