@@ -13,7 +13,7 @@ end
 
 function Rename(names...)
   sympair(x) = Symbol(first(x)) => Symbol(last(x))
-  map(sympair , names) |> Dict |> Rename
+  map(sympair, names) |> Dict |> Rename
 end
 
 function apply(transform::Rename, table)
@@ -33,6 +33,10 @@ end
 
 function _rename(names, table)
   oldnames = Tables.columnnames(table)
+  @show  oldnames, names
+
+  dif = setdiff(keys(names), oldnames) |> Tuple
+  @assert length(dif) == 0 "The following column[s] were not found in the source table $dif"
 
   newnames = map(oldnames) do oldname
     oldname in keys(names) ? names[oldname] : oldname
