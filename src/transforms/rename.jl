@@ -37,8 +37,9 @@ function _rename(names, table)
   newnames = map(oldnames) do oldname
     oldname in keys(names) ? names[oldname] : oldname
   end
-  
-  acols = [i for i in Tables.columns(table)]
+
+  cols = Tables.columns(table)
+  acols = [Tables.getcolumn(cols, name) for name in oldnames]
   𝒯 = (; zip(newnames, acols)...) |> Tables.materializer(table)
   𝒯, nothing
 end
