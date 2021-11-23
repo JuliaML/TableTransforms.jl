@@ -33,6 +33,7 @@ function _rename(names, table)
   # check if requested renames exist in the table
   @assert keys(names) ⊆ oldnames "invalid column names"
 
+  # use new names if necessary
   newnames = map(oldnames) do oldname
     oldname in keys(names) ? names[oldname] : oldname
   end
