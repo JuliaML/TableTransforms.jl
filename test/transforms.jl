@@ -131,6 +131,59 @@
     @test n1 == n2
   end
 
+  @testset "Rename" begin
+    a = rand(4000)
+    b = rand(4000)
+    c = rand(4000)
+    d = rand(4000)
+    t = Table(; a, b, c, d)
+
+    T = Rename(Dict(:a => :x))
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:x, :b, :c, :d)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    T = Rename(Dict(:a => :x, :c => :y))
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:x, :b, :y, :d)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # rename with string pairs
+    T = Rename("a" => "x", "c" => "y")
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:x, :b, :y, :d)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # rename with symbol pairs
+    T = Rename(:a => :x, :c => :y)
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:x, :b, :y, :d)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # rename with mixed pairs
+    T = Rename("a" => :x)
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:x, :b, :c, :d)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+    
+    T = Rename("a" => :x, :c => "y")
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:x, :b, :y, :d)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # reapply test
+    T = Rename(:b => :x, :d => :y)
+    n1, c1 = apply(T, t)
+    n2 = reapply(T, t, c1)
+    @test n1 == n2
+  end
+
   @testset "Identity" begin
     x = rand(4000)
     y = rand(4000)

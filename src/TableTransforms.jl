@@ -31,6 +31,7 @@ export
   # built-in
   Select,
   Reject,
+  Rename,
   Identity,
   Center,
   Scale,
