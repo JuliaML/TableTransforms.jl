@@ -146,7 +146,8 @@ Please check the docstrings for additional information.
 | Transform | Description |
 |-----------|-------------|
 | `Select` | Column selection |
-| `Reject` | Column rejection  |
+| `Reject` | Column rejection |
+| `Rename` | Column renaming |
 | `Identity` | Identity transform |
 | `Center` | Mean removal |
 | `Scale` | Interval scaling |
