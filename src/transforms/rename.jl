@@ -11,10 +11,10 @@ struct Rename <: Stateless
   names::Dict{Symbol,Symbol}
 end
 
-pairsyms(x::Pair) = Symbol(first(x)) => Symbol(last(x))
+Rename(names::Pair) = _pairsyms(names) |> Dict |> Rename
+Rename(names...) = _pairsyms.(names) |> Dict |> Rename
 
-Rename(names::Pair) = pairsyms(names) |> Dict |> Rename
-Rename(names...) = pairsyms.(names) |> Dict |> Rename
+_pairsyms(x::Pair) = Symbol(first(x)) => Symbol(last(x))
 
 function apply(transform::Rename, table)
   _rename(transform.names, table)
@@ -38,6 +38,7 @@ function _rename(names, table)
     oldname in keys(names) ? names[oldname] : oldname
   end
 
+  # table with new tables
   cols = Tables.columns(table)
   vals = [Tables.getcolumn(cols, name) for name in oldnames]
   𝒯 = (; zip(newnames, vals)...) |> Tables.materializer(table)

@@ -211,9 +211,9 @@ end
 # IMPLEMENTATIONS
 # ----------------
 
-include("transforms/identity.jl")
 include("transforms/select.jl")
 include("transforms/rename.jl")
+include("transforms/identity.jl")
 include("transforms/center.jl")
 include("transforms/scale.jl")
 include("transforms/zscore.jl")
