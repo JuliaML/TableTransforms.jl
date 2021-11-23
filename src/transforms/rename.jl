@@ -31,9 +31,7 @@ function _rename(names, table)
   oldnames = Tables.columnnames(table)
 
   # check if requested renames exist in the table
-  diff = setdiff(keys(names), oldnames) .|> String |> Tuple
-  @assert length(diff) == 0
-    "The following column[s] were not found in the source table: $diff"
+  @assert keys(names) ⊆ oldnames "invalid column names"
 
   newnames = map(oldnames) do oldname
     oldname in keys(names) ? names[oldname] : oldname
