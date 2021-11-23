@@ -34,16 +34,17 @@ function _rename(names, table)
   oldnames = Tables.columnnames(table)
 
   # check if requested renames exist in the table
-  dif = setdiff(keys(names), oldnames) .|> String |> Tuple
-  @assert length(dif) == 0
-    "The following column[s] were not found in the source table: $dif"
+  diff = setdiff(keys(names), oldnames) .|> String |> Tuple
+  @assert length(diff) == 0
+    "The following column[s] were not found in the source table: $diff"
 
   newnames = map(oldnames) do oldname
     oldname in keys(names) ? names[oldname] : oldname
   end
 
   cols = Tables.columns(table)
-  acols = [Tables.getcolumn(cols, name) for name in oldnames]
-  𝒯 = (; zip(newnames, acols)...) |> Tables.materializer(table)
+  vals = [Tables.getcolumn(cols, name) for name in oldnames]
+  𝒯 = (; zip(newnames, vals)...) |> Tables.materializer(table)
+  
   𝒯, nothing
 end
