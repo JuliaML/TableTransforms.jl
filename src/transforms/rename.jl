@@ -22,10 +22,7 @@ end
 
 function revert(transform::Rename, table, cache)
   # reversing the key-value pairs of the Dict
-  newnames = Dict()
-  for (old, new) in transform.names
-    newnames[new] = old
-  end
+  newnames = Dict(new => old for (old, new) in transform.names)
   _rename(newnames, table) |> first
 end
 
