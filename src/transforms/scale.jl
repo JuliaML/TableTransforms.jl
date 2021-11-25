@@ -27,6 +27,7 @@ isrevertible(::Type{Scale}) = true
 function colcache(transform::Scale, x)
   levels = (transform.low, transform.high)
   xl, xh = quantile(x, levels)
+  xl == xh && ((xl, xh) = (zero(xl), one(xh)))
   (xl=xl, xh=xh)
 end
 

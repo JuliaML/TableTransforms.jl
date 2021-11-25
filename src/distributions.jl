@@ -41,8 +41,8 @@ function cdf(d::EmpiricalDistribution{T}, x::T) where {T<:Real}
   elseif x > u
     return one(T)
   else
-    if head == tail
-      return head / n
+    if l == u
+      return tail / n
     else
       pl, pu = head / n, tail / n
       return (pu - pl) * (x - l) / (u - l) + pl

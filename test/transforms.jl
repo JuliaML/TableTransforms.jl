@@ -219,6 +219,17 @@
   end
 
   @testset "Scale" begin
+    # constant column
+    x = fill(3.0, 10)
+    y = rand(10)
+    t = Table(; x, y)
+    T = MinMax()
+    n, c = apply(T, t)
+    @test n.x == x
+    @test n.y != y
+    tₒ = revert(T, n, c)
+    @test tₒ == t
+
     Random.seed!(42) # to reproduce the results
     x = rand(Normal(4,3), 4000)
     y = rand(Normal(7,5), 4000)
@@ -274,6 +285,17 @@
     r = revert(Quantile(), n, c)
     @test all(-4 .< extrema(n.z) .< 4)
     @test all(0 .≤ extrema(r.z) .≤ 1)
+
+    # constant column
+    x = fill(3.0, 10)
+    y = rand(10)
+    t = Table(; x, y)
+    T = Quantile()
+    n, c = apply(T, t)
+    @test maximum(abs, n.x - x) < 0.1
+    @test n.y != y
+    tₒ = revert(T, n, c)
+    @test tₒ.x == t.x
   end
 
   @testset "Functional" begin
