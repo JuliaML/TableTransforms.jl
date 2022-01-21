@@ -216,10 +216,14 @@ We have open issues with missing transforms that you can contribute.
   [IterableTables.jl](https://github.com/queryverse/IterableTables.jl).
   Similar to other alternatives above, the package is not intended for
   advanced statistical transforms.
-- [MLJ.jl](https://github.com/alan-turing-institute/MLJ.jl) is one of the
-  most popular packages for machine learning in Julia. They provide pipelines
-  and other types of composite models using Julia macros in order to access
-  internal fields of the transforms for hyperparameter tuning. The usage of
-  macros can be daunting, specially for first-time users of the language.
-  They are hard to implement and can silently break Julia code in specific
-  environments (e.g. Pluto).
+- [MLJ.jl](https://alan-turing-institute.github.io/MLJ.jl/dev/) is one
+  of the most popular packages for machine learning in Julia. The
+  package provides a facility for readily creating [non-branching
+  pipelines](https://alan-turing-institute.github.io/MLJ.jl/dev/linear_pipelines/#Linear-Pipelines)
+  which can include supervised learners, as well as the flexibility to
+  create more complicated composite machine learning models using
+  so-called [learning
+  networks](https://alan-turing-institute.github.io/MLJ.jl/dev/composing_models/#Learning-Networks). These composites
+  have the advantage that the hyper-parameters of the component models
+  appear as nested fields of the composite, which is useful in
+  hyper-parameter optimization.
