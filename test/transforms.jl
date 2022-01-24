@@ -404,6 +404,7 @@
     rng = MersenneTwister(42) # to reproduce the results
     x = rand(rng, Normal(0, 10), 4000)
     y = x + rand(rng, Normal(0, 2), 4000)
+    println("sum(x): $(sum(x)), sum(y): $(sum(y)))")
     t₁ = Table(; x, y)
     t₂, c₂ = apply(EigenAnalysis(:V), t₁)
     t₃, c₃ = apply(EigenAnalysis(:VD), t₁)
