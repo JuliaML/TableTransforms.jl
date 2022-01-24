@@ -410,6 +410,7 @@
     t₄, c₄ = apply(EigenAnalysis(:VDV), t₁)
     t₅, c₅ = apply(PCA(), t₁)
     t₆, c₆ = apply(DRS(), t₁)
+    println("DRS sum(x): $(sum(t₆.x)), DRS sum(y): $(sum(t₆.y))")
     t₇, c₇ = apply(SDS(), t₁)
 
     # visual tests    
