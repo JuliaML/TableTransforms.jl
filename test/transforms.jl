@@ -1,4 +1,5 @@
 @testset "Transforms" begin
+  rng = MersenneTwister(42)
   @testset "Select" begin
     a = rand(4000)
     b = rand(4000)
@@ -196,7 +197,7 @@
   end
 
   @testset "Center" begin
-    rng = MersenneTwister(42) # to reproduce the results
+    # to reproduce the results
     x = rand(rng, Normal(2, 1), 4000)
     y = rand(rng, Normal(5, 1), 4000)
     t = Table(; x, y)
@@ -214,7 +215,8 @@
       p₂ = scatter(n.x, n.y, label="Center")
       p = plot(p₁, p₂, layout=(1,2))
 
-      @test_reference joinpath(datadir,  "center.png") p
+      @test_reference joinpath(datadir, "center.png") p
+      # savefig(p, joinpath(datadir,  "center.png"))
     end
   end
 
@@ -230,7 +232,7 @@
     tₒ = revert(T, n, c)
     @test tₒ == t
 
-    rng = MersenneTwister(42) # to reproduce the results
+    # to reproduce the results
     x = rand(rng, Normal(4, 3), 4000)
     y = rand(rng, Normal(7, 5), 4000)
     t = Table(; x, y)
@@ -249,12 +251,13 @@
       p₂ = scatter(n.x, n.y, label="Scale")
       p = plot(p₁, p₂, layout=(1,2))
 
-      @test_reference joinpath(datadir,"scale.png") p
+      @test_reference joinpath(datadir, "scale.png") p
+      # savefig(p, joinpath(datadir, "scale.png"))
     end
   end
 
   @testset "ZScore" begin
-    rng = MersenneTwister(42) # to reproduce the results
+    # to reproduce the results
     x = rand(rng, Normal(7, 10), 4000)
     y = rand(rng, Normal(15, 2), 4000)
     t = Table(; x, y)
@@ -275,7 +278,8 @@
       p₂ = scatter(n.x, n.y, label="ZScore")
       p = plot(p₁, p₂, layout=(1,2))
 
-      @test_reference joinpath(datadir,"zscore.png") p
+      @test_reference joinpath(datadir, "zscore.png") p
+      # savefig(p, joinpath(datadir, "zscore.png"))
     end
   end
 
@@ -401,17 +405,15 @@
     tₒ = revert(T, n, c)
     @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
-    rng = MersenneTwister(42) # to reproduce the results
+    # to reproduce the results
     x = rand(rng, Normal(0, 10), 4000)
     y = x + rand(rng, Normal(0, 2), 4000)
-    println("sum(x): $(sum(x)), sum(y): $(sum(y)))")
     t₁ = Table(; x, y)
     t₂, c₂ = apply(EigenAnalysis(:V), t₁)
     t₃, c₃ = apply(EigenAnalysis(:VD), t₁)
     t₄, c₄ = apply(EigenAnalysis(:VDV), t₁)
     t₅, c₅ = apply(PCA(), t₁)
     t₆, c₆ = apply(DRS(), t₁)
-    println("DRS sum(x): $(sum(t₆.x)), DRS sum(y): $(sum(t₆.y))")
     t₇, c₇ = apply(SDS(), t₁)
 
     # visual tests    
@@ -426,8 +428,10 @@
       p = plot(p₁, p₂, p₃, p₄, layout=(2,2))
       q = plot(p₂, p₃, p₄, p₅, p₆, p₇, layout=(2,3))
 
-      @test_reference joinpath(datadir,"eigenanalysis-1.png") p
-      @test_reference joinpath(datadir,"eigenanalysis-2.png") q
+      @test_reference joinpath(datadir, "eigenanalysis-1.png") p
+      @test_reference joinpath(datadir, "eigenanalysis-2.png") q
+      # savefig(p, joinpath(datadir, "eigenanalysis-1.png"))
+      # savefig(q, joinpath(datadir, "eigenanalysis-2.png"))
     end
   end
 
