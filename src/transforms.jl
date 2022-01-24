@@ -142,7 +142,7 @@ function apply(transform::Colwise, table)
   end
 
   # parallel map with multiple threads
-  vals = tcollect(colfunc(n) for n in names)
+  vals = (colfunc(n) for n in names)
 
   # new table with transformed columns
   𝒯 = (; first.(vals)...) |> Tables.materializer(table)
@@ -172,7 +172,7 @@ function revert(transform::Colwise, newtable, cache)
   end
 
   # parallel map with multiple threads
-  vals = tcollect(colfunc(i) for i in 1:length(names))
+  vals = (colfunc(i) for i in 1:length(names))
 
   # new table with transformed columns
   (; vals...) |> Tables.materializer(newtable)
@@ -201,7 +201,7 @@ function reapply(transform::Colwise, table, cache)
   end
 
   # parallel map with multiple threads
-  vals = tcollect(colfunc(i) for i in 1:length(names))
+  vals = (colfunc(i) for i in 1:length(names))
 
   # new table with transformed columns
   (; vals...) |> Tables.materializer(table)
