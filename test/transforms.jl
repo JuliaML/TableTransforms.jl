@@ -196,9 +196,9 @@
   end
 
   @testset "Center" begin
-    Random.seed!(42) # to reproduce the results
-    x = rand(Normal(2,1), 4000)
-    y = rand(Normal(5,1), 4000)
+    rng = MersenneTwister(42) # to reproduce the results
+    x = rand(rng, Normal(2, 1), 4000)
+    y = rand(rng, Normal(5, 1), 4000)
     t = Table(; x, y)
     T = Center()
     n, c = apply(T, t)
@@ -230,9 +230,9 @@
     tₒ = revert(T, n, c)
     @test tₒ == t
 
-    Random.seed!(42) # to reproduce the results
-    x = rand(Normal(4,3), 4000)
-    y = rand(Normal(7,5), 4000)
+    rng = MersenneTwister(42) # to reproduce the results
+    x = rand(rng, Normal(4, 3), 4000)
+    y = rand(rng, Normal(7, 5), 4000)
     t = Table(; x, y)
     T = Scale(low=0, high=1)
     n, c = apply(T, t)
@@ -254,9 +254,9 @@
   end
 
   @testset "ZScore" begin
-    Random.seed!(42) # to reproduce the results
-    x = rand(Normal(7,10), 4000)
-    y = rand(Normal(15,2), 4000)
+    rng = MersenneTwister(42) # to reproduce the results
+    x = rand(rng, Normal(7, 10), 4000)
+    y = rand(rng, Normal(15, 2), 4000)
     t = Table(; x, y)
     T = ZScore()
     n, c = apply(T, t)
@@ -401,9 +401,9 @@
     tₒ = revert(T, n, c)
     @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
-    Random.seed!(42) # to reproduce the results
-    x = rand(Normal(0,10), 4000)
-    y = x + rand(Normal(0,2), 4000)
+    rng = MersenneTwister(42) # to reproduce the results
+    x = rand(rng, Normal(0, 10), 4000)
+    y = x + rand(rng, Normal(0, 2), 4000)
     t₁ = Table(; x, y)
     t₂, c₂ = apply(EigenAnalysis(:V), t₁)
     t₃, c₃ = apply(EigenAnalysis(:VD), t₁)
