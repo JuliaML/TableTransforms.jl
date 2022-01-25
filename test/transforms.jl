@@ -217,7 +217,6 @@
       p = plot(p₁, p₂, layout=(1,2))
 
       @test_reference joinpath(datadir, "center.png") p
-      # savefig(p, joinpath(datadir,  "center.png"))
     end
   end
 
@@ -253,7 +252,6 @@
       p = plot(p₁, p₂, layout=(1,2))
 
       @test_reference joinpath(datadir, "scale.png") p
-      # savefig(p, joinpath(datadir, "scale.png"))
     end
   end
 
@@ -280,7 +278,6 @@
       p = plot(p₁, p₂, layout=(1,2))
 
       @test_reference joinpath(datadir, "zscore.png") p
-      # savefig(p, joinpath(datadir, "zscore.png"))
     end
   end
 
@@ -431,8 +428,6 @@
 
       @test_reference joinpath(datadir, "eigenanalysis-1.png") p
       @test_reference joinpath(datadir, "eigenanalysis-2.png") q
-      # savefig(p, joinpath(datadir, "eigenanalysis-1.png"))
-      # savefig(q, joinpath(datadir, "eigenanalysis-2.png"))
     end
   end
 
