@@ -231,7 +231,7 @@
     @test n.x == x
     @test n.y != y
     tₒ = revert(T, n, c)
-    @test tₒ == t
+    @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
     # using rng for reproducible results
     x = rand(rng, Normal(4, 3), 4000)
@@ -464,9 +464,9 @@
   end
 
   @testset "Parallel" begin
-    x = rand(Normal(0,10), 1500)
-    y = x + rand(Normal(0,2), 1500)
-    z = y + rand(Normal(0,5), 1500)
+    x = rand(Normal(0, 10), 1500)
+    y = x + rand(Normal(0, 2), 1500)
+    z = y + rand(Normal(0, 5), 1500)
     t = Table(; x, y, z)
     T = Scale(low=0.3, high=0.6) ⊔ EigenAnalysis(:VDV)
     n, c = apply(T, t)
@@ -474,24 +474,24 @@
     @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
     # check cardinality of Parallel
-    x = rand(Normal(0,10), 1500)
-    y = x + rand(Normal(0,2), 1500)
-    z = y + rand(Normal(0,5), 1500)
+    x = rand(Normal(0, 10), 1500)
+    y = x + rand(Normal(0, 2), 1500)
+    z = y + rand(Normal(0, 5), 1500)
     t = Table(; x, y, z)
     T = ZScore() ⊔ EigenAnalysis(:V)
     n = T(t)
     @test length(Tables.columnnames(n)) == 6
 
     # distributivity with respect to Sequential
-    x = rand(Normal(0,10), 1500)
-    y = x + rand(Normal(0,2), 1500)
-    z = y + rand(Normal(0,5), 1500)
+    x = rand(Normal(0, 10), 1500)
+    y = x + rand(Normal(0, 2), 1500)
+    z = y + rand(Normal(0, 5), 1500)
     t = Table(; x, y, z)
     T₁ = Center()
     T₂ = Scale(low=0.2, high=0.8)
     T₃ = EigenAnalysis(:VD)
     P₁ = T₁ → (T₂ ⊔ T₃)
-    P₂ = (T₁ → T₂) ⊔ (T₁ →T₃)
+    P₂ = (T₁ → T₂) ⊔ (T₁ → T₃)
     n₁ = P₁(t)
     n₂ = P₂(t)
     @test Tables.matrix(n₁) ≈ Tables.matrix(n₂)
