@@ -7,8 +7,8 @@
 
 The transform that applies a `function` elementwise.
 """
-struct Functional <: Colwise
-  func::Function
+struct Functional{F<:Function} <: Colwise
+  func::F
 end
 
 isrevertible(transform::Functional) =
