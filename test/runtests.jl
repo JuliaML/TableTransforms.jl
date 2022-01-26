@@ -20,13 +20,7 @@ islinux = Sys.islinux()
 visualtests = !isCI || (isCI && islinux)
 datadir = joinpath(@__DIR__,"data")
 
-# list of tests
-testfiles = [
-  "distributions.jl",
-  "transforms.jl"
-]
-
-# For Functor tests in Functional testset
+# for functor tests in Functional testset
 struct Polynomial{T<:Real}
   coeffs::Vector{T}
 end
@@ -37,6 +31,12 @@ function (p::Polynomial)(x)
     a * x^i
   end
 end
+
+# list of tests
+testfiles = [
+  "distributions.jl",
+  "transforms.jl"
+]
 
 @testset "TableTransforms.jl" begin
   for testfile in testfiles

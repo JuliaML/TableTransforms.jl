@@ -359,7 +359,7 @@
     @test t == n
     @test isrevertible(T) == false
 
-    # Functor tests
+    # functor tests
     x = rand(1500)
     y = rand(1500)
     t = Table(; x, y)
