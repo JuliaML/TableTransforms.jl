@@ -376,11 +376,11 @@
     t = Table(; x, y)
     f = Polynomial(1, 2, 3) # f(x) = 1 + 2x + 3x²
     T = Functional(f)
-    n, c = apply(T, t)
-    @test f.(x) == n.x
-    @test f.(y) == n.y
-    @test all(≥(1), n.x)
-    @test all(≥(1), n.y)
+    nt, c = apply(T, t)
+    @test f.(x) == nt.x
+    @test f.(y) == nt.y
+    @test all(≥(1), nt.x)
+    @test all(≥(1), nt.y)
     @test isrevertible(T) == false
   end
 
