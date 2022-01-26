@@ -358,6 +358,30 @@
     n, c = apply(T, t)
     @test t == n
     @test isrevertible(T) == false
+
+    # Functor tests
+    struct Polynomial{T<:Real}
+      aₙ::Vector{T}
+    end
+    Polynomial(args::T...) where {T<:Real} = Polynomial(collect(args))
+    function (p::Polynomial)(x)
+      n = length(p.aₙ) - 1
+      sum(zip(p.aₙ, 0:n)) do (a, i)
+        a * x^i
+      end
+    end
+
+    x = rand(1500)
+    y = rand(1500)
+    t = Table(; x, y)
+    f = Polynomial(1, 2, 3) # f(x) = 1 + 2x + 3x²
+    T = Functional(f)
+    n, c = apply(T, t)
+    @test f.(x) == n.x
+    @test f.(y) == n.y
+    @test all(≥(1), n.x)
+    @test all(≥(1), n.y)
+    @test isrevertible(T) == false
   end
 
   @testset "EigenAnalysis" begin
