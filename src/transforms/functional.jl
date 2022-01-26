@@ -7,8 +7,8 @@
 
 The transform that applies a `function` elementwise.
 """
-struct Functional <: Colwise
-  func::Function
+struct Functional{F} <: Colwise
+  func::F
 end
 
 isrevertible(transform::Functional) =
@@ -23,7 +23,7 @@ inverse(::typeof(sin))  = asin
 inverse(::typeof(asin)) = sin
 
 # fallback to nothing
-inverse(::Function) = nothing
+inverse(::Any) = nothing
 
 colcache(::Functional, x) = nothing
 

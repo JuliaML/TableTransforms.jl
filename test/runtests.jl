@@ -20,6 +20,13 @@ islinux = Sys.islinux()
 visualtests = !isCI || (isCI && islinux)
 datadir = joinpath(@__DIR__,"data")
 
+# for functor tests in Functional testset
+struct Polynomial{T<:Real}
+  coeffs::Vector{T}
+end
+Polynomial(args::T...) where {T<:Real} = Polynomial(collect(args))
+(p::Polynomial)(x) = sum(a * x^(i-1) for (i, a) in enumerate(p.coeffs))
+
 # list of tests
 testfiles = [
   "distributions.jl",
