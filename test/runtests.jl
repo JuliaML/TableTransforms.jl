@@ -25,12 +25,7 @@ struct Polynomial{T<:Real}
   coeffs::Vector{T}
 end
 Polynomial(args::T...) where {T<:Real} = Polynomial(collect(args))
-function (p::Polynomial)(x)
-  n = length(p.coeffs) - 1
-  sum(zip(p.coeffs, 0:n)) do (a, i)
-    a * x^i
-  end
-end
+(p::Polynomial)(x) = sum(a * x^(i-1) for (i, a) in enumerate(p.coeffs))
 
 # list of tests
 testfiles = [
