@@ -11,7 +11,8 @@ struct Functional{F} <: Colwise
   func::F
 end
 
-isrevertible(transform::Functional) = !isnothing(inverse(transform.func))
+isrevertible(transform::Functional) =
+  !isnothing(inverse(transform.func))
 
 # known invertible functions
 inverse(::typeof(log))  = exp
