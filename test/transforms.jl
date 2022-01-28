@@ -99,7 +99,7 @@
     # selection with single column
     @test (Select(:a).cols == Select("a").cols ==
            Select((:a,)).cols == Select(("a",)).cols ==
-           Select([:a]).cols == Select(["a"])).cols
+           Select([:a]).cols == Select(["a"]).cols)
 
     # reapply test
     T = Select(:b, :c, :d)
