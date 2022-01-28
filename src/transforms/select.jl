@@ -2,29 +2,42 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+const ColSelector = Union{Vector{Symbol}, Regex}
+
 """
     Select(col₁, col₂, ..., colₙ)
     Select([col₁, col₂, ..., colₙ])
+    Select((col₁, col₂, ..., colₙ))
+    
 
 The transform that selects columns `col₁`, `col₂`, ..., `colₙ`.
+    
+    Select(Regex)
+Selects the columns that match with Regex.
 """
-struct Select{N} <: Stateless
-  cols::NTuple{N,Symbol}
+struct Select{S<:ColSelector} <: Stateless
+  cols::S
 end
 
-Select(cols::NTuple{N,AbstractString}) where {N} =
+Select(cols::T...) where {T<:Union{AbstractString, Symbol}} = 
+  Select(cols)
+
+Select(cols::NTuple{N, T}) where {N, T<:Union{AbstractString, Symbol}} =
+  Select(collect(cols))
+
+Select(cols::Vector{T}) where {T<:AbstractString} =
   Select(Symbol.(cols))
 
-Select(cols::AbstractVector) = Select(Tuple(cols))
-
-Select(cols...) = Select(cols)
-
 isrevertible(::Type{<:Select}) = true
+
+_selectedcols(cols::Vector{Symbol}, allcols) = cols
+_selectedcols(cols::Regex, allcols) = 
+  filter(col -> occursin(cols, String(col)), allcols)
 
 function apply(transform::Select, table)
   # retrieve relevant column names
   allcols = collect(Tables.columnnames(table))
-  select  = collect(transform.cols)
+  select  = _selectedcols(transform.cols, allcols)
   reject  = setdiff(allcols, select)
 
   # keep track of indices to revert later
