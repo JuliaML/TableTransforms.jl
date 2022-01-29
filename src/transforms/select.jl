@@ -2,7 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-const ColSelector = Union{Vector{Symbol}, Regex}
+const ColSpec = Union{Vector{Symbol}, Regex}
 
 """
     Select(col₁, col₂, ..., colₙ)
@@ -11,10 +11,11 @@ const ColSelector = Union{Vector{Symbol}, Regex}
     
 The transform that selects columns `col₁`, `col₂`, ..., `colₙ`.
     
-    Select(Regex)
-Selects the columns that match with Regex.
+    Select(regex)
+
+Selects the columns that match with `regex`.
 """
-struct Select{S<:ColSelector} <: Stateless
+struct Select{S<:ColSpec} <: Stateless
   cols::S
 end
 
@@ -31,14 +32,14 @@ Base.:(==)(a::Select, b::Select) = a.cols == b.cols
 
 isrevertible(::Type{<:Select}) = true
 
-_selectedcols(cols::Vector{Symbol}, allcols) = cols
-_selectedcols(cols::Regex, allcols) = 
+_select(cols::Vector{Symbol}, allcols) = cols
+_select(cols::Regex, allcols) = 
   filter(col -> occursin(cols, String(col)), allcols)
 
 function apply(transform::Select, table)
   # retrieve relevant column names
   allcols = collect(Tables.columnnames(table))
-  select  = _selectedcols(transform.cols, allcols)
+  select  = _select(transform.cols, allcols)
   reject  = setdiff(allcols, select)
 
   # keep track of indices to revert later
@@ -94,10 +95,11 @@ end
 
 The transform that discards columns `col₁`, `col₂`, ..., `colₙ`.
 
-    Reject(Regex)
-Discards the columns that match with Regex.
+    Reject(regex)
+
+Discards the columns that match with `regex`.
 """
-struct Reject{S<:ColSelector} <: Stateless
+struct Reject{S<:ColSpec} <: Stateless
   cols::S
 end
 
@@ -116,7 +118,7 @@ isrevertible(::Type{<:Reject}) = true
 
 function apply(transform::Reject, table)
   allcols = Tables.columnnames(table)
-  reject  = _selectedcols(transform.cols, allcols)
+  reject  = _select(transform.cols, allcols)
   select  = setdiff(allcols, reject)
   strans  = Select(select)
   newtable, scache = apply(strans, table)
