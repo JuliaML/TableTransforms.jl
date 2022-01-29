@@ -10,12 +10,6 @@
     f = rand(4000)
     t = Table(; a, b, c, d, e, f)
 
-    x1 = rand(4000)
-    x2 = rand(4000)
-    y1 = rand(4000)
-    y2 = rand(4000)
-    t₂ = Table(; x1, x2, y1, y2)
-
     T = Select(:f, :d)
     n, c = apply(T, t)
     @test Tables.columnnames(n) == (:f, :d)
@@ -68,44 +62,50 @@
     tₒ = revert(T, n, c)
     @test t == tₒ
 
-    # selection with vector strings
+    # selection with vector of strings
     T = Select(["d", "c", "b"])
     n, c = apply(T, t)
     @test Tables.columnnames(n) == (:d, :c, :b)
     tₒ = revert(T, n, c)
     @test t == tₒ
 
-    # selection with Regex
-    T = Select(r"[dcb]")
-    n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:b, :c, :d) # a ordem das colunas é a mesma da table original - obs: traduzir
-    tₒ = revert(T, n, c)
-    @test t == tₒ
-
-    # Select columns whose names contain the character x
-    T = Select(r"x")
-    n, c = apply(T, t₂)
-    @test Tables.columnnames(n) == (:x1, :x2)
-    tₒ = revert(T, n, c)
-    @test t₂ == tₒ
-
-    # Select columns whose names contain the character y
-    T = Select(r"y")
-    n, c = apply(T, t₂)
-    @test Tables.columnnames(n) == (:y1, :y2)
-    tₒ = revert(T, n, c)
-    @test t₂ == tₒ
-
     # selection with single column
-    @test (Select(:a).cols == Select("a").cols ==
-           Select((:a,)).cols == Select(("a",)).cols ==
-           Select([:a]).cols == Select(["a"]).cols)
+    @test (Select(:a) == Select("a") ==
+           Select((:a,)) == Select(("a",)) ==
+           Select([:a]) == Select(["a"]))
 
     # reapply test
     T = Select(:b, :c, :d)
     n1, c1 = apply(T, t)
     n2 = reapply(T, t, c1)
     @test n1 == n2
+
+    # selection with Regex
+    T = Select(r"[dcb]")
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:b, :c, :d) # the order of columns is preserved
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    x1 = rand(4000)
+    x2 = rand(4000)
+    y1 = rand(4000)
+    y2 = rand(4000)
+    t = Table(; x1, x2, y1, y2)
+
+    # select columns whose names contain the character x
+    T = Select(r"x")
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:x1, :x2)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # select columns whose names contain the character y
+    T = Select(r"y")
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:y1, :y2)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
   end
 
   @testset "Reject" begin
@@ -162,6 +162,20 @@
     tₒ = revert(T, n, c)
     @test t == tₒ
 
+    # rejection with tuple of strings
+    T = Reject(("d", "c", "b"))
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:a, :e, :f)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # rejection with vector of strings
+    T = Reject(["d", "c", "b"])
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:a, :e, :f)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
     # rejection with single column
     @test (Reject(:a) == Reject("a") ==
            Reject((:a,)) == Reject(("a",)) ==
@@ -172,6 +186,33 @@
     n1, c1 = apply(T, t)
     n2 = reapply(T, t, c1)
     @test n1 == n2
+
+    # rejection with Regex
+    T = Reject(r"[dcb]")
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:a, :e, :f) # the order of columns is preserved
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    x1 = rand(4000)
+    x2 = rand(4000)
+    y1 = rand(4000)
+    y2 = rand(4000)
+    t = Table(; x1, x2, y1, y2)
+
+    # reject columns whose names contain the character x
+    T = Reject(r"x")
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:y1, :y2)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # reject columns whose names contain the character y
+    T = Reject(r"y")
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:x1, :x2)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
   end
 
   @testset "Rename" begin

@@ -9,7 +9,6 @@ const ColSelector = Union{Vector{Symbol}, Regex}
     Select([col₁, col₂, ..., colₙ])
     Select((col₁, col₂, ..., colₙ))
     
-
 The transform that selects columns `col₁`, `col₂`, ..., `colₙ`.
     
     Select(Regex)
@@ -27,6 +26,8 @@ Select(cols::NTuple{N, T}) where {N, T<:Union{AbstractString, Symbol}} =
 
 Select(cols::Vector{T}) where {T<:AbstractString} =
   Select(Symbol.(cols))
+
+Base.:(==)(a::Select, b::Select) = a.cols == b.cols
 
 isrevertible(::Type{<:Select}) = true
 
@@ -89,26 +90,34 @@ end
 """
     Reject(col₁, col₂, ..., colₙ)
     Reject([col₁, col₂, ..., colₙ])
+    Reject((col₁, col₂, ..., colₙ))
 
 The transform that discards columns `col₁`, `col₂`, ..., `colₙ`.
+
+    Reject(Regex)
+Discards the columns that match with Regex.
 """
-struct Reject{N} <: Stateless
-  cols::NTuple{N,Symbol}
+struct Reject{S<:ColSelector} <: Stateless
+  cols::S
 end
 
-Reject(cols::NTuple{N,AbstractString}) where {N} =
+Reject(cols::T...) where {T<:Union{AbstractString, Symbol}} = 
+  Reject(cols)
+
+Reject(cols::NTuple{N, T}) where {N, T<:Union{AbstractString, Symbol}} =
+  Reject(collect(cols))
+
+Reject(cols::Vector{T}) where {T<:AbstractString} =
   Reject(Symbol.(cols))
 
-Reject(cols::AbstractVector) = Reject(Tuple(cols))
-
-Reject(cols...) = Reject(cols)
+Base.:(==)(a::Reject, b::Reject) = a.cols == b.cols
 
 isrevertible(::Type{<:Reject}) = true
 
 function apply(transform::Reject, table)
   allcols = Tables.columnnames(table)
-  reject  = collect(transform.cols)
-  select  = Tuple(setdiff(allcols, reject))
+  reject  = _selectedcols(transform.cols, allcols)
+  select  = setdiff(allcols, reject)
   strans  = Select(select)
   newtable, scache = apply(strans, table)
   newtable, (strans, scache)
