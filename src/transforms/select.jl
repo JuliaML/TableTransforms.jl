@@ -2,6 +2,32 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+struct TableSelection{T} 
+  table::T
+  cols::Vector{Symbol}
+end
+
+function Base.getproperty(ts::TableSelection, col::Symbol)
+  if col ∈ ts.cols
+    Tables.getcolumn(ts.table, col)
+  else
+    error("This table has no column $(col).")
+  end
+end
+
+Base.getindex(ts::TableSelection, row::Int, col::Symbol) =
+  getproperty(ts, col)[row]
+
+Base.getindex(ts::TableSelection, row::Int, col::Int) =
+  getproperty(ts, ts.cols[col])[row]
+
+Tables.istable(::Type{<:TableSelection}) = true
+Tables.columnaccess(::Type{<:TableSelection}) = true
+Tables.columns(ts::Type{<:TableSelection}) = ts
+Tables.columnnames(ts::TableSelection) = ts.cols
+Tables.getcolumn(ts::TableSelection, col::Symbol) = getproperty(ts, col)
+Tables.getcolumn(ts::TableSelection, col::Int) = getproperty(ts, ts.cols[col])
+
 const ColSpec = Union{Vector{Symbol}, Regex}
 
 """
