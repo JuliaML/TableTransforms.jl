@@ -24,8 +24,13 @@ function Tables.schema(ts::TableSelection)
   return Tables.Schema(ts.cols, selecttypes)
 end
 
+Tables.materializer(::Type{TableSelection{T}}) where {T} = 
+  Tables.materializer(T)
+
+Base.:(==)(a::TableSelection, b::TableSelection) = a.table == b.table
+
 function Base.show(io::IO, ts::TableSelection{T}) where {T}
-  println(io, "TableSelection of $(T)")
+  println(io, "TableSelection")
   pretty_table(io, ts, vcrop_mode=:middle)
 end
 
@@ -89,11 +94,13 @@ function apply(transform::Select, table)
   rcols = [Tables.getcolumn(cols, name) for name in reject]
 
   # table with selected columns
-  𝒯 = (; zip(select, scols)...)
-  stable = 𝒯 |> Tables.materializer(table)
+  # 𝒯 = (; zip(select, scols)...)
+  # stable = 𝒯 |> Tables.materializer(table)
 
-  stable, (reject, rcols, sperm, rinds)
+  TableSelection(table, select), (reject, rcols, sperm, rinds)
 end
+
+revert(::Select, newtable::TableSelection, cache) = newtable.table
 
 function revert(::Select, newtable, cache)
   # selected columns

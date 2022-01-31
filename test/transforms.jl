@@ -12,60 +12,60 @@
 
     T = Select(:f, :d)
     n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:f, :d)
+    @test Tables.columnnames(Table(n)) == (:f, :d)
     tₒ = revert(T, n, c)
     @test t == tₒ
 
     T = Select(:f, :d, :b)
     n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:f, :d, :b)
+    @test Tables.columnnames(Table(n)) == (:f, :d, :b)
     tₒ = revert(T, n, c)
     @test t == tₒ
 
     T = Select(:d, :c, :b)
     n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:d, :c, :b)
+    @test Tables.columnnames(Table(n)) == (:d, :c, :b)
     tₒ = revert(T, n, c)
     @test t == tₒ
 
     T = Select(:e, :c, :b, :a)
     n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:e, :c, :b, :a)
+    @test Tables.columnnames(Table(n)) == (:e, :c, :b, :a)
     tₒ = revert(T, n, c)
     @test t == tₒ
 
     # selection with tuples
     T = Select((:e, :c, :b, :a))
     n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:e, :c, :b, :a)
+    @test Tables.columnnames(Table(n)) == (:e, :c, :b, :a)
     tₒ = revert(T, n, c)
     @test t == tₒ
 
     # selection with vectors
     T = Select([:e, :c, :b, :a])
     n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:e, :c, :b, :a)
+    @test Tables.columnnames(Table(n)) == (:e, :c, :b, :a)
     tₒ = revert(T, n, c)
     @test t == tₒ
 
     # selection with strings
     T = Select("d", "c", "b")
     n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:d, :c, :b)
+    @test Tables.columnnames(Table(n)) == (:d, :c, :b)
     tₒ = revert(T, n, c)
     @test t == tₒ
 
     # selection with tuple of strings
     T = Select(("d", "c", "b"))
     n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:d, :c, :b)
+    @test Tables.columnnames(Table(n)) == (:d, :c, :b)
     tₒ = revert(T, n, c)
     @test t == tₒ
 
     # selection with vector of strings
     T = Select(["d", "c", "b"])
     n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:d, :c, :b)
+    @test Tables.columnnames(Table(n)) == (:d, :c, :b)
     tₒ = revert(T, n, c)
     @test t == tₒ
 
@@ -83,7 +83,7 @@
     # selection with Regex
     T = Select(r"[dcb]")
     n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:b, :c, :d) # the order of columns is preserved
+    @test Tables.columnnames(Table(n)) == (:b, :c, :d) # the order of columns is preserved
     tₒ = revert(T, n, c)
     @test t == tₒ
 
@@ -96,14 +96,14 @@
     # select columns whose names contain the character x
     T = Select(r"x")
     n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:x1, :x2)
+    @test Tables.columnnames(Table(n)) == (:x1, :x2)
     tₒ = revert(T, n, c)
     @test t == tₒ
 
     # select columns whose names contain the character y
     T = Select(r"y")
     n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:y1, :y2)
+    @test Tables.columnnames(Table(n)) == (:y1, :y2)
     tₒ = revert(T, n, c)
     @test t == tₒ
   end
@@ -119,60 +119,60 @@
 
     T = Reject(:f, :d)
     n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:a, :b, :c, :e)
+    @test Tables.columnnames(Table(n)) == (:a, :b, :c, :e)
     tₒ = revert(T, n, c)
     @test t == tₒ
 
     T = Reject(:f, :d, :b)
     n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:a, :c, :e)
+    @test Tables.columnnames(Table(n)) == (:a, :c, :e)
     tₒ = revert(T, n, c)
     @test t == tₒ
 
     T = Reject(:d, :c, :b)
     n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:a, :e, :f)
+    @test Tables.columnnames(Table(n)) == (:a, :e, :f)
     tₒ = revert(T, n, c)
     @test t == tₒ
 
     T = Reject(:e, :c, :b, :a)
     n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:d, :f)
+    @test Tables.columnnames(Table(n)) == (:d, :f)
     tₒ = revert(T, n, c)
     @test t == tₒ
 
     # rejection with tuples
     T = Reject((:e, :c, :b, :a))
     n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:d, :f)
+    @test Tables.columnnames(Table(n)) == (:d, :f)
     tₒ = revert(T, n, c)
     @test t == tₒ
 
     # rejection with vectors
     T = Reject([:e, :c, :b, :a])
     n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:d, :f)
+    @test Tables.columnnames(Table(n)) == (:d, :f)
     tₒ = revert(T, n, c)
     @test t == tₒ
 
     # rejection with strings
     T = Reject("d", "c", "b")
     n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:a, :e, :f)
+    @test Tables.columnnames(Table(n)) == (:a, :e, :f)
     tₒ = revert(T, n, c)
     @test t == tₒ
 
     # rejection with tuple of strings
     T = Reject(("d", "c", "b"))
     n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:a, :e, :f)
+    @test Tables.columnnames(Table(n)) == (:a, :e, :f)
     tₒ = revert(T, n, c)
     @test t == tₒ
 
     # rejection with vector of strings
     T = Reject(["d", "c", "b"])
     n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:a, :e, :f)
+    @test Tables.columnnames(Table(n)) == (:a, :e, :f)
     tₒ = revert(T, n, c)
     @test t == tₒ
 
@@ -190,7 +190,7 @@
     # rejection with Regex
     T = Reject(r"[dcb]")
     n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:a, :e, :f) # the order of columns is preserved
+    @test Tables.columnnames(Table(n)) == (:a, :e, :f) # the order of columns is preserved
     tₒ = revert(T, n, c)
     @test t == tₒ
 
@@ -203,14 +203,14 @@
     # reject columns whose names contain the character x
     T = Reject(r"x")
     n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:y1, :y2)
+    @test Tables.columnnames(Table(n)) == (:y1, :y2)
     tₒ = revert(T, n, c)
     @test t == tₒ
 
     # reject columns whose names contain the character y
     T = Reject(r"y")
     n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:x1, :x2)
+    @test Tables.columnnames(Table(n)) == (:x1, :x2)
     tₒ = revert(T, n, c)
     @test t == tₒ
   end
