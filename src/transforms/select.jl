@@ -9,10 +9,25 @@ end
 
 Tables.istable(::Type{<:TableSelection}) = true
 Tables.columnaccess(::Type{<:TableSelection}) = true
-Tables.columns(ts::Type{<:TableSelection}) = ts
+Tables.columns(ts::TableSelection) = ts
 Tables.columnnames(ts::TableSelection) = ts.cols
-Tables.getcolumn(ts::TableSelection, col::Union{Symbol, Int}) = 
+Tables.getcolumn(ts::TableSelection, col::Int) =
+  Tables.getcolumn(ts.table, ts.cols[col])
+Tables.getcolumn(ts::TableSelection, col::Symbol) = 
   Tables.getcolumn(ts.table, col)
+
+function Tables.schema(ts::TableSelection)
+  schema = Tables.schema(ts.table)
+  tbtypes = schema.types
+  tbnames = collect(schema.names)
+  selecttypes = tbtypes[indexin(ts.cols, tbnames)]
+  return Tables.Schema(ts.cols, selecttypes)
+end
+
+function Base.show(io::IO, ts::TableSelection{T}) where {T}
+  println(io, "TableSelection of $(T)")
+  pretty_table(io, ts, vcrop_mode=:middle)
+end
 
 const ColSpec = Union{Vector{Symbol}, Regex}
 
