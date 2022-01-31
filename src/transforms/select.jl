@@ -11,8 +11,8 @@ Tables.istable(::Type{<:TableSelection}) = true
 Tables.columnaccess(::Type{<:TableSelection}) = true
 Tables.columns(ts::Type{<:TableSelection}) = ts
 Tables.columnnames(ts::TableSelection) = ts.cols
-Tables.getcolumn(ts::TableSelection, col::Symbol) = getproperty(ts, col)
-Tables.getcolumn(ts::TableSelection, col::Int) = getproperty(ts, ts.cols[col])
+Tables.getcolumn(ts::TableSelection, col::Union{Symbol, Int}) = 
+  Tables.getcolumn(ts.table, col)
 
 const ColSpec = Union{Vector{Symbol}, Regex}
 
