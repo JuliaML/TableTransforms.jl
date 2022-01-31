@@ -7,38 +7,6 @@ struct TableSelection{T}
   cols::Vector{Symbol}
 end
 
-function Base.getproperty(ts::TableSelection, col::Symbol)
-  if col ∈ ts.cols
-    Tables.getcolumn(ts.table, col)
-  else
-    error("This table does not have a column named $(col).")
-  end
-end
-
-# const Index{T} = Union{AbstractVector{T}, T}
-
-# Base.getindex(ts::TableSelection, row::Colon, col::Symbol) =
-#   getproperty(ts, col)
-
-# Base.getindex(ts::TableSelection, row::Colon, col::Int) =
-#   ts[:, ts.cols[col]]
-
-# Base.getindex(ts::TableSelection, row::Index{Int}, col::Union{Symbol, Int}) =
-#   ts[:, col][row]
-
-# function Base.getindex(
-#   ts::TableSelection, 
-#   row::Index{Int}, 
-#   cols::AbstractVector{T}
-# ) where {T<:Union{Symbol, Int}}
-#   names = cols
-#   columns = [ts[row, col] for col in cols]
-#   (; zip(names, columns)...) |> Tables.materializer(ts.table)
-# end
-
-# Base.getindex(ts::TableSelection, row::Index{Int}, cols::Colon) = 
-#   ts[row, ts.cols]
-
 Tables.istable(::Type{<:TableSelection}) = true
 Tables.columnaccess(::Type{<:TableSelection}) = true
 Tables.columns(ts::Type{<:TableSelection}) = ts
