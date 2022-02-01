@@ -123,7 +123,7 @@
     d = rand(4000)
     e = rand(4000)
     f = rand(4000)
-    t = (; a, b, c, d, e, f)
+    t = Table(; a, b, c, d, e, f)
 
     T = Reject(:f, :d)
     n, c = apply(T, t)
