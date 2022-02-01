@@ -5,14 +5,15 @@
 struct TableSelection{T} 
   table::T
   cols::Vector{Symbol}
+  function TableSelection(table::T, cols::Vector{Symbol}) where {T}
+    @assert cols ⊆ Tables.columnnames(table)
+    new{T}(table, cols)
+  end
 end
 
 function Base.:(==)(a::TableSelection, b::TableSelection)
-  if a.cols == b.cols
-    all(Tables.getcolumn(a, col) == Tables.getcolumn(b, col) for col in a.cols)
-  else
-    false
-  end
+  a.cols != b.cols && return false
+  all(Tables.getcolumn(a, col) == Tables.getcolumn(b, col) for col in a.cols)
 end
 
 function Base.show(io::IO, ts::TableSelection)
@@ -38,8 +39,8 @@ function Tables.schema(t::TableSelection)
   Tables.Schema(t.cols, types[inds])
 end
 
-Tables.materializer(::Type{TableSelection{T}}) where {T} = 
-  Tables.materializer(T)
+Tables.materializer(t::TableSelection) = 
+  Tables.materializer(t.table)
 
 const ColSpec = Union{Vector{Symbol}, Regex}
 
@@ -80,6 +81,8 @@ function apply(transform::Select, table)
   allcols = collect(Tables.columnnames(table))
   select  = _select(transform.cols, allcols)
   reject  = setdiff(allcols, select)
+
+  @assert select ⊆ Tables.columnnames(table)
 
   # keep track of indices to revert later
   sinds = indexin(select, allcols)
