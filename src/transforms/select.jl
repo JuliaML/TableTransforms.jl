@@ -16,12 +16,12 @@ Tables.getcolumn(ts::TableSelection, col::Int) =
 Tables.getcolumn(ts::TableSelection, col::Symbol) = 
   Tables.getcolumn(ts.table, col)
 
-function Tables.schema(ts::TableSelection)
-  schema = Tables.schema(ts.table)
-  tbtypes = schema.types
-  tbnames = collect(schema.names)
-  selecttypes = tbtypes[indexin(ts.cols, tbnames)]
-  return Tables.Schema(ts.cols, selecttypes)
+function Tables.schema(t::TableSelection)
+  schema = Tables.schema(t.table)
+  names = schema.names
+  types = schema.types
+  inds = indexin(t.cols, collect(names))
+  Tables.Schema(t.cols, types[inds])
 end
 
 Tables.materializer(::Type{TableSelection{T}}) where {T} = 
