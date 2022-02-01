@@ -7,14 +7,28 @@ struct TableSelection{T}
   cols::Vector{Symbol}
 end
 
+function Base.:(==)(a::TableSelection, b::TableSelection)
+  if a.cols == b.cols
+    all(Tables.getcolumn(a, col) == Tables.getcolumn(b, col) for col in a.cols)
+  else
+    false
+  end
+end
+
+function Base.show(io::IO, ts::TableSelection)
+  println(io, "TableSelection")
+  pretty_table(io, ts, vcrop_mode=:middle)
+end
+
+# Tables.jl interface
 Tables.istable(::Type{<:TableSelection}) = true
 Tables.columnaccess(::Type{<:TableSelection}) = true
-Tables.columns(ts::TableSelection) = ts
-Tables.columnnames(ts::TableSelection) = ts.cols
-Tables.getcolumn(ts::TableSelection, col::Int) =
-  Tables.getcolumn(ts.table, ts.cols[col])
-Tables.getcolumn(ts::TableSelection, col::Symbol) = 
-  Tables.getcolumn(ts.table, col)
+Tables.columns(t::TableSelection) = t
+Tables.columnnames(t::TableSelection) = t.cols
+Tables.getcolumn(t::TableSelection, col::Int) =
+  Tables.getcolumn(t.table, t.cols[col])
+Tables.getcolumn(t::TableSelection, col::Symbol) = 
+  Tables.getcolumn(t.table, col)
 
 function Tables.schema(t::TableSelection)
   schema = Tables.schema(t.table)
@@ -26,13 +40,6 @@ end
 
 Tables.materializer(::Type{TableSelection{T}}) where {T} = 
   Tables.materializer(T)
-
-Base.:(==)(a::TableSelection, b::TableSelection) = a.table == b.table
-
-function Base.show(io::IO, ts::TableSelection{T}) where {T}
-  println(io, "TableSelection")
-  pretty_table(io, ts, vcrop_mode=:middle)
-end
 
 const ColSpec = Union{Vector{Symbol}, Regex}
 
@@ -87,15 +94,8 @@ function apply(transform::Select, table)
   # original columns
   cols = Tables.columns(table)
 
-  # selected columns
-  scols = [Tables.getcolumn(cols, name) for name in select]
-
   # rejected columns
   rcols = [Tables.getcolumn(cols, name) for name in reject]
-
-  # table with selected columns
-  # 𝒯 = (; zip(select, scols)...)
-  # stable = 𝒯 |> Tables.materializer(table)
 
   TableSelection(table, select), (reject, rcols, sperm, rinds)
 end
