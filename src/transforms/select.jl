@@ -2,6 +2,46 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+struct TableSelection{T} 
+  table::T
+  cols::Vector{Symbol}
+  function TableSelection(table::T, cols::Vector{Symbol}) where {T}
+    @assert cols ⊆ Tables.columnnames(table)
+    new{T}(table, cols)
+  end
+end
+
+function Base.:(==)(a::TableSelection, b::TableSelection)
+  a.cols != b.cols && return false
+  all(Tables.getcolumn(a, col) == Tables.getcolumn(b, col) for col in a.cols)
+end
+
+function Base.show(io::IO, t::TableSelection)
+  println(io, "TableSelection")
+  pretty_table(io, t, vcrop_mode=:middle)
+end
+
+# Tables.jl interface
+Tables.istable(::Type{<:TableSelection}) = true
+Tables.columnaccess(::Type{<:TableSelection}) = true
+Tables.columns(t::TableSelection) = t
+Tables.columnnames(t::TableSelection) = t.cols
+Tables.getcolumn(t::TableSelection, col::Int) =
+  Tables.getcolumn(t.table, t.cols[col])
+Tables.getcolumn(t::TableSelection, col::Symbol) = 
+  Tables.getcolumn(t.table, col)
+
+function Tables.schema(t::TableSelection)
+  schema = Tables.schema(t.table)
+  names = schema.names
+  types = schema.types
+  inds = indexin(t.cols, collect(names))
+  Tables.Schema(t.cols, types[inds])
+end
+
+Tables.materializer(t::TableSelection) = 
+  Tables.materializer(t.table)
+
 const ColSpec = Union{Vector{Symbol}, Regex}
 
 """
@@ -18,6 +58,9 @@ Selects the columns that match with `regex`.
 struct Select{S<:ColSpec} <: Stateless
   cols::S
 end
+
+# to avoid StackOverflowError in Select() and Select(())
+Select(::Tuple{}) = throw(ArgumentError("Cannot create a Select object without arguments."))
 
 Select(cols::T...) where {T<:Union{AbstractString, Symbol}} = 
   Select(cols)
@@ -42,6 +85,10 @@ function apply(transform::Select, table)
   select  = _select(transform.cols, allcols)
   reject  = setdiff(allcols, select)
 
+  # validate selections
+  @assert !isempty(select) "Invalid selection"
+  @assert select ⊆ Tables.columnnames(table) "Invalid selection"
+
   # keep track of indices to revert later
   sinds = indexin(select, allcols)
   rinds = indexin(reject, allcols)
@@ -55,17 +102,10 @@ function apply(transform::Select, table)
   # original columns
   cols = Tables.columns(table)
 
-  # selected columns
-  scols = [Tables.getcolumn(cols, name) for name in select]
-
   # rejected columns
   rcols = [Tables.getcolumn(cols, name) for name in reject]
 
-  # table with selected columns
-  𝒯 = (; zip(select, scols)...)
-  stable = 𝒯 |> Tables.materializer(table)
-
-  stable, (reject, rcols, sperm, rinds)
+  TableSelection(table, select), (reject, rcols, sperm, rinds)
 end
 
 function revert(::Select, newtable, cache)
@@ -88,6 +128,9 @@ function revert(::Select, newtable, cache)
   𝒯 |> Tables.materializer(newtable)
 end
 
+# reverting a single TableSelection is trivial
+revert(::Select, newtable::TableSelection, cache) = newtable.table
+
 """
     Reject(col₁, col₂, ..., colₙ)
     Reject([col₁, col₂, ..., colₙ])
@@ -102,6 +145,9 @@ Discards the columns that match with `regex`.
 struct Reject{S<:ColSpec} <: Stateless
   cols::S
 end
+
+# to avoid StackOverflowError in Reject() and Reject(())
+Reject(::Tuple{}) = throw(ArgumentError("Cannot create a Reject object with no arguments."))
 
 Reject(cols::T...) where {T<:Union{AbstractString, Symbol}} = 
   Reject(cols)

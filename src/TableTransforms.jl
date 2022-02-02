@@ -10,6 +10,7 @@ using Distributions: Normal
 using Transducers: tcollect
 using LinearAlgebra
 using Statistics
+using PrettyTables
 
 import Distributions: ContinuousUnivariateDistribution
 import Distributions: quantile, cdf
