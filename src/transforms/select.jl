@@ -16,9 +16,9 @@ function Base.:(==)(a::TableSelection, b::TableSelection)
   all(Tables.getcolumn(a, col) == Tables.getcolumn(b, col) for col in a.cols)
 end
 
-function Base.show(io::IO, ts::TableSelection)
+function Base.show(io::IO, t::TableSelection)
   println(io, "TableSelection")
-  pretty_table(io, ts, vcrop_mode=:middle)
+  pretty_table(io, t, vcrop_mode=:middle)
 end
 
 # Tables.jl interface
