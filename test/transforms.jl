@@ -234,6 +234,15 @@
     # throws: Reject without arguments
     @test_throws ArgumentError Reject()
     @test_throws ArgumentError Reject(())
+
+    # throws: reject all columns
+    @test_throws AssertionError apply(Reject(r"[xy]"), t)
+    @test_throws AssertionError apply(Reject(:x1, :x2, :y1, :y2), t)
+    @test_throws AssertionError apply(Reject([:x1, :x2, :y1, :y2]), t)
+    @test_throws AssertionError apply(Reject((:x1, :x2, :y1, :y2)), t)
+    @test_throws AssertionError apply(Reject("x1", "x2", "y1", "y2"), t)
+    @test_throws AssertionError apply(Reject(["x1", "x2", "y1", "y2"]), t)
+    @test_throws AssertionError apply(Reject(["x1", "x2", "y1", "y2"]), t)
   end
 
   @testset "TableSelection" begin
