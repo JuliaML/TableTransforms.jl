@@ -107,7 +107,16 @@
     tₒ = revert(T, n, c)
     @test t == tₒ
 
-    # throws
+    # throws: Select without arguments
+    @test_throws ArgumentError Select()
+    @test_throws ArgumentError Select(())
+
+    # throws: empty selection
+    @test_throws AssertionError apply(Select(r"a"), t)
+    @test_throws AssertionError apply(Select(Symbol[]), t)
+    @test_throws AssertionError apply(Select(String[]), t)
+
+    # throws: columns that do not exist in the original table
     @test_throws AssertionError apply(Select(:x3, :y3), t)
     @test_throws AssertionError apply(Select([:x3, :y3]), t)
     @test_throws AssertionError apply(Select((:x3, :y3)), t)
@@ -221,6 +230,10 @@
     @test Tables.columnnames(n) == [:x1, :x2]
     tₒ = revert(T, n, c)
     @test t == tₒ
+
+    # throws: Reject without arguments
+    @test_throws ArgumentError Reject()
+    @test_throws ArgumentError Reject(())
   end
 
   @testset "TableSelection" begin

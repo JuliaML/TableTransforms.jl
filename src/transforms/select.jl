@@ -59,6 +59,9 @@ struct Select{S<:ColSpec} <: Stateless
   cols::S
 end
 
+# to avoid StackOverflowError in Select() and Select(())
+Select(::Tuple{}) = throw(ArgumentError("Cannot create a Select object without arguments."))
+
 Select(cols::T...) where {T<:Union{AbstractString, Symbol}} = 
   Select(cols)
 
@@ -82,7 +85,9 @@ function apply(transform::Select, table)
   select  = _select(transform.cols, allcols)
   reject  = setdiff(allcols, select)
 
-  @assert select ⊆ Tables.columnnames(table)
+  # validate selections
+  @assert !isempty(select) "Invalid selection"
+  @assert select ⊆ Tables.columnnames(table) "Invalid selection"
 
   # keep track of indices to revert later
   sinds = indexin(select, allcols)
@@ -102,8 +107,6 @@ function apply(transform::Select, table)
 
   TableSelection(table, select), (reject, rcols, sperm, rinds)
 end
-
-revert(::Select, newtable::TableSelection, cache) = newtable.table
 
 function revert(::Select, newtable, cache)
   # selected columns
@@ -125,6 +128,9 @@ function revert(::Select, newtable, cache)
   𝒯 |> Tables.materializer(newtable)
 end
 
+# reverting a single TableSelection is trivial
+revert(::Select, newtable::TableSelection, cache) = newtable.table
+
 """
     Reject(col₁, col₂, ..., colₙ)
     Reject([col₁, col₂, ..., colₙ])
@@ -139,6 +145,9 @@ Discards the columns that match with `regex`.
 struct Reject{S<:ColSpec} <: Stateless
   cols::S
 end
+
+# to avoid StackOverflowError in Reject() and Reject(())
+Reject(::Tuple{}) = throw(ArgumentError("Cannot create a Reject object with no arguments."))
 
 Reject(cols::T...) where {T<:Union{AbstractString, Symbol}} = 
   Reject(cols)
