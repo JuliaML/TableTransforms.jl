@@ -677,6 +677,11 @@
     # Test with more_than_15
     f2 = table |> Filter(row -> sum(skipmissing(row)) > 15)
     @test length(f2) == 2
+
+    # Test revert function
+    newtable, cache = apply(Filter(_check_no_missing_in_row), table)
+    reverted_table = revert(Filter, newtable, cache)
+    @test table == reverted_table
   end
 
   @testset "Miscellaneous" begin
