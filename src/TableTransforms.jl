@@ -45,7 +45,7 @@ export
   PCA, DRS, SDS,
   Sequential,
   Parallel,
-  DropMissing,
+  Filter,
   →, ⊔
 
 end

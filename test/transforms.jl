@@ -654,6 +654,31 @@
     @test n1 == n2
   end
 
+  @testset "Filter" begin
+    # Test with _check_no_missing_in_row
+    col1 = [1, 2, 3, 4, 5]
+    col2 = [missing, 2, 3, 4, 5]
+    col3 = [5, 5, 5, 5, 5]
+    col4 = [1, 2, 3, 4, 5]
+    col5 = [1, 2, missing, 4, 5]
+    table = Table(;col1, col2, col3, col4, col5)
+
+    function _check_no_missing_in_row(row)
+      for el in row
+          el === missing && return false
+      end
+  
+      return true
+    end
+
+    f1 = table |> Filter(_check_no_missing_in_row)
+    @test length(f1) == 3
+
+    # Test with more_than_15
+    f2 = table |> Filter(row -> sum(skipmissing(row)) > 15)
+    @test length(f2) == 2
+  end
+
   @testset "Miscellaneous" begin
     # make sure transforms work with
     # single-column tables
