@@ -15,7 +15,7 @@ isrevertible(::Type{Filter}) = true
 
 function apply(transform::Filter, table)
     indices = [i for i in range(1,length(table)) if transform.f(table[i])]
-    table[indices], (indices, table[Not(indices)])
+    table[indices], (indices, table[minus(indices, table)])
 end
 
 function revert(::Type{Filter}, newtable, cache)
@@ -28,3 +28,6 @@ function revert(::Type{Filter}, newtable, cache)
 
     org_table
 end
+
+# Exclude the given indices
+minus(indx, x) = setdiff(1:length(x), indx)

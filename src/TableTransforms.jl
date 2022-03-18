@@ -11,7 +11,6 @@ using Transducers: tcollect
 using LinearAlgebra
 using Statistics
 using PrettyTables
-using InvertedIndices
 
 import Distributions: ContinuousUnivariateDistribution
 import Distributions: quantile, cdf
