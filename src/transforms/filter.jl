@@ -7,20 +7,24 @@
 
 The transform that filters the rows based on a given function.
 """
-struct Filter <: Stateless
+struct Filter <: Transform
     f::Base.Callable
 end
 
 isrevertible(::Type{Filter}) = true
 
+
+#Ideally, this function would also work without a given function, as follows:
+#[item for item in iterable if item]
 function apply(transform::Filter, table)
     indices = [i for i in range(1,length(table)) if transform.f(table[i])]
-    table[indices], (indices, table[minus(indices, table)])
+    table[indices], (indices, table[_minus(indices, table)])
 end
 
+
 function revert(::Type{Filter}, newtable, cache)
-    indices = cache[1]
-    org_table = cache[2]
+    indices = copy(cache[1])
+    org_table = copy(cache[2])
 
     for i in range(1, length(indices))
         insert!(org_table, indices[i], newtable[i])
@@ -30,4 +34,4 @@ function revert(::Type{Filter}, newtable, cache)
 end
 
 # Exclude the given indices
-minus(indx, x) = setdiff(1:length(x), indx)
+_minus(indx, x) = setdiff(1:length(x), indx)

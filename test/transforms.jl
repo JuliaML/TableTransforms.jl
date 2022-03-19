@@ -682,6 +682,12 @@
     newtable, cache = apply(Filter(_check_no_missing_in_row), table)
     reverted_table = revert(Filter, newtable, cache)
     @test isequal(table, reverted_table)
+
+    # Repeating the revert function
+    newtable, cache = apply(Filter(_check_no_missing_in_row), table)
+    reverted_table_1 = revert(Filter, newtable, cache)
+    reverted_table_2 = revert(Filter, newtable, cache)
+    @test isequal(reverted_table_1, reverted_table_2)
   end
 
   @testset "Miscellaneous" begin
