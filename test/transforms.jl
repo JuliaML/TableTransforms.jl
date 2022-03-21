@@ -688,6 +688,14 @@
     reverted_table_1 = revert(Filter, newtable, cache)
     reverted_table_2 = revert(Filter, newtable, cache)
     @test isequal(reverted_table_1, reverted_table_2)
+
+    # Default filter
+    col1 = [true, true, false]
+    col2 = [missing, true, false]
+    col3 = [false, false, false]
+    bool_table = TypedTables.Table(;col1, col2, col3)
+    @test length(bool_table |> Filter()) == 2
+    @test_throws TypeError table |> Filter()
   end
 
   @testset "Miscellaneous" begin
