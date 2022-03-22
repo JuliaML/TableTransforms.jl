@@ -25,7 +25,7 @@ function revert(::Type{Filter}, newtable, cache)
   indices = copy(cache[1])
   orgtable = copy(cache[2])
 
-  for i in range(1, length(indices))
+  for i in range(1, length=length(indices))
     insert!(orgtable, indices[i], newtable[i])
   end
 
