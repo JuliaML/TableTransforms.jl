@@ -213,6 +213,7 @@ end
 
 include("transforms/select.jl")
 include("transforms/rename.jl")
+include("transforms/filter.jl")
 include("transforms/identity.jl")
 include("transforms/center.jl")
 include("transforms/scale.jl")
@@ -222,4 +223,3 @@ include("transforms/functional.jl")
 include("transforms/eigenanalysis.jl")
 include("transforms/sequential.jl")
 include("transforms/parallel.jl")
-include("transforms/filter.jl")

@@ -328,6 +328,50 @@
     @test n1 == n2
   end
 
+  @testset "Filter" begin
+    # Test with _check_no_missing_in_row
+    x1 = [1, 2, 3, 4, 5]
+    x2 = [missing, 2, 3, 4, 5]
+    x3 = [5, 5, 5, 5, 5]
+    x4 = [1, 2, 3, 4, 5]
+    x5 = [1, 2, missing, 4, 5]
+    table = Tables.table([x1 x2 x3 x4 x5])
+
+    function no_missing_in_row(row)
+      for el in row
+          el === missing && return false
+      end
+  
+      return true
+    end
+
+    f1 = table |> Filter(no_missing_in_row)
+    @test length(Tables.rowtable(f1)) == 3
+
+    # Test with more_than_15
+    f2 = table |> Filter(row -> sum(skipmissing(row)) > 15)
+    @test length(Tables.rowtable(f2)) == 2
+
+    # Test revert function
+    newtable, cache = apply(Filter(no_missing_in_row), table)
+    reverted_table = revert(Filter, newtable, cache)
+    @test isequal(table, reverted_table)
+
+    # Repeating the revert function
+    newtable, cache = apply(Filter(no_missing_in_row), table)
+    reverted_table_1 = revert(Filter, newtable, cache)
+    reverted_table_2 = revert(Filter, newtable, cache)
+    @test isequal(reverted_table_1, reverted_table_2)
+
+    # Default filter
+    x1 = [true, true, false]
+    x2 = [missing, true, false]
+    x3 = [false, false, false]
+    bool_table = Tables.table([x1 x2 x3])
+    @test length(Tables.rowtable(bool_table |> Filter())) == 2
+    @test_throws TypeError table |> Filter()
+  end
+
   @testset "Identity" begin
     x = rand(4000)
     y = rand(4000)
@@ -652,50 +696,6 @@
     n1, c1 = apply(T, t)
     n2 = reapply(T, t, c1)
     @test n1 == n2
-  end
-
-  @testset "Filter" begin
-    # Test with _check_no_missing_in_row
-    col1 = [1, 2, 3, 4, 5]
-    col2 = [missing, 2, 3, 4, 5]
-    col3 = [5, 5, 5, 5, 5]
-    col4 = [1, 2, 3, 4, 5]
-    col5 = [1, 2, missing, 4, 5]
-    table = Table(;col1, col2, col3, col4, col5)
-
-    function _check_no_missing_in_row(row)
-      for el in row
-          el === missing && return false
-      end
-  
-      return true
-    end
-
-    f1 = table |> Filter(_check_no_missing_in_row)
-    @test length(f1) == 3
-
-    # Test with more_than_15
-    f2 = table |> Filter(row -> sum(skipmissing(row)) > 15)
-    @test length(f2) == 2
-
-    # Test revert function
-    newtable, cache = apply(Filter(_check_no_missing_in_row), table)
-    reverted_table = revert(Filter, newtable, cache)
-    @test isequal(table, reverted_table)
-
-    # Repeating the revert function
-    newtable, cache = apply(Filter(_check_no_missing_in_row), table)
-    reverted_table_1 = revert(Filter, newtable, cache)
-    reverted_table_2 = revert(Filter, newtable, cache)
-    @test isequal(reverted_table_1, reverted_table_2)
-
-    # Default filter
-    col1 = [true, true, false]
-    col2 = [missing, true, false]
-    col3 = [false, false, false]
-    bool_table = TypedTables.Table(;col1, col2, col3)
-    @test length(bool_table |> Filter()) == 2
-    @test_throws TypeError table |> Filter()
   end
 
   @testset "Miscellaneous" begin

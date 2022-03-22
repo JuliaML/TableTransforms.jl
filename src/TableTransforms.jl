@@ -33,6 +33,7 @@ export
   Select,
   Reject,
   Rename,
+  Filter,
   Identity,
   Center,
   Scale,
@@ -45,7 +46,6 @@ export
   PCA, DRS, SDS,
   Sequential,
   Parallel,
-  Filter,
   →, ⊔
 
 end
