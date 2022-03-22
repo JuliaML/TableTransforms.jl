@@ -17,7 +17,7 @@ isrevertible(::Type{Filter}) = true
 
 function apply(transform::Filter, input_table)
   table = Tables.rowtable(input_table)
-  indices = [i for i in range(1,length(table)) if transform.pred(table[i])]
+  indices = [i for i in range(1,length=length(table)) if transform.pred(table[i])]
   table[indices], (indices, table[setdiff(1:length(table), indices)])
 end
 

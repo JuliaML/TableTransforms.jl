@@ -329,7 +329,7 @@
   end
 
   @testset "Filter" begin
-    # Test with _check_no_missing_in_row
+    # Test with no_missing_in_row
     x1 = [1, 2, 3, 4, 5]
     x2 = [missing, 2, 3, 4, 5]
     x3 = [5, 5, 5, 5, 5]
