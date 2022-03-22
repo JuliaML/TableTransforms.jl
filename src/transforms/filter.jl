@@ -23,13 +23,13 @@ end
 
 function revert(::Type{Filter}, newtable, cache)
   indices = copy(cache[1])
-  org_table = copy(cache[2])
+  orgtable = copy(cache[2])
 
   for i in range(1, length(indices))
-    insert!(org_table, indices[i], newtable[i])
+    insert!(orgtable, indices[i], newtable[i])
   end
 
-  org_table
+  orgtable
 end
 
 # Exclude the given indices

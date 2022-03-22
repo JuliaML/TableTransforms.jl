@@ -355,7 +355,7 @@
     # Test revert function
     newtable, cache = apply(Filter(no_missing_in_row), table)
     reverted_table = revert(Filter, newtable, cache)
-    @test isequal(table, reverted_table)
+    @test isequal(Tables.rowtable(table), reverted_table)
 
     # Repeating the revert function
     newtable, cache = apply(Filter(no_missing_in_row), table)
