@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    Filter(f, table)
+    Filter(f)
 
 The transform that filters the rows based on a given function.
 """
@@ -11,23 +11,25 @@ struct Filter{F} <: Transform
   pred::F
 end
 
-# Default filter to be used when no input function is given
-# Returns true if any element in the row evaluates to true
-Filter() = Filter(row -> any(row))
-
 isrevertible(::Type{Filter}) = true
 
 function apply(transform::Filter, input_table)
   # Converting to Tables.rowtable to allow length function and indexing 
-  table = Tables.rowtable(input_table)
+  table = Tables.rows(input_table)
+
+  l = length(table)
+  f = transform.pred
 
   # Get indices of the desired rows
-  indices = [i for i in range(1,length=length(table)) if transform.pred(table[i])]
+  indices = [i for i in range(1,length=l) if f(table[i])]
 
   # Return:
   # - the desired rows as the new table,
   # - indices of these rows and the remaining rows as cache
-  table[indices], (indices, table[setdiff(1:length(table), indices)])
+  new_table = table[indices]
+  new_table |> Tables.materializer(input_table)
+  rem_rows = table[setdiff(1:length(table), indices)]
+  new_table, (indices, rem_rows)
 end
 
 function revert(::Type{Filter}, newtable, cache)

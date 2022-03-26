@@ -329,15 +329,16 @@
   end
 
   @testset "Filter" begin
-    # Test with no_missing_in_row
+    # Test 1: Filter the rows with missing values
     x1 = [1, 2, 3, 4, 5]
     x2 = [missing, 2, 3, 4, 5]
     x3 = [5, 5, 5, 5, 5]
     x4 = [1, 2, 3, 4, 5]
     x5 = [1, 2, missing, 4, 5]
-    table = Tables.table([x1 x2 x3 x4 x5])
+    t = Table(;x1, x2, x3, x4, x5)
 
-    function no_missing_in_row(row)
+    # Takes a row as an input returns false if there is a missing value. Otherwise, returns true.
+    function f(row)
       for el in row
           el === missing && return false
       end
@@ -345,31 +346,23 @@
       return true
     end
 
-    f1 = table |> Filter(no_missing_in_row)
+    f1 = t |> Filter(f)
     @test length(Tables.rowtable(f1)) == 3
 
-    # Test with more_than_15
-    f2 = table |> Filter(row -> sum(skipmissing(row)) > 15)
-    @test length(Tables.rowtable(f2)) == 2
+    # Test 2: Filter the rows with some lower than or equal to 15
+    f2 = t |> Filter(row -> sum(skipmissing(row)) > 15)
+    @test length(f2) == 2
 
     # Test revert function
-    newtable, cache = apply(Filter(no_missing_in_row), table)
-    reverted_table = revert(Filter, newtable, cache)
-    @test isequal(Tables.rowtable(table), reverted_table)
+    n, c = apply(Filter(f), t)
+    r = revert(Filter, n, c)
+    @test isequal(t, r)
 
     # Repeating the revert function
-    newtable, cache = apply(Filter(no_missing_in_row), table)
-    reverted_table_1 = revert(Filter, newtable, cache)
-    reverted_table_2 = revert(Filter, newtable, cache)
-    @test isequal(reverted_table_1, reverted_table_2)
-
-    # Default filter
-    x1 = [true, true, false]
-    x2 = [missing, true, false]
-    x3 = [false, false, false]
-    bool_table = Tables.table([x1 x2 x3])
-    @test length(Tables.rowtable(bool_table |> Filter())) == 2
-    @test_throws TypeError table |> Filter()
+    n, c = apply(Filter(f), t)
+    r1 = revert(Filter, n, c)
+    r2 = revert(Filter, n, c)
+    @test isequal(r1, r2)
   end
 
   @testset "Identity" begin
