@@ -13,32 +13,29 @@ end
 
 isrevertible(::Type{Filter}) = true
 
-function apply(transform::Filter, input_table)
+function apply(transform::Filter, table)
   # Converting to Tables.rowtable to allow length function and indexing 
-  table = Tables.rows(input_table)
+  rows = Tables.rows(table)
 
-  l = length(table)
+  l = length(rows)
   f = transform.pred
 
   # Get indices of the desired rows
-  indices = [i for i in range(1,length=l) if f(table[i])]
+  indices = [i for i in range(1,length=l) if f(rows[i])]
 
   # Return:
   # - the desired rows as the new table,
   # - indices of these rows and the remaining rows as cache
-  new_table = table[indices]
-  new_table |> Tables.materializer(input_table)
-  rem_rows = table[setdiff(1:length(table), indices)]
-  new_table, (indices, rem_rows)
+  newtable = rows[indices]
+  newtable |> Tables.materializer(table)
+  remrows = rows[setdiff(1:length(rows), indices)]
+  newtable, (indices, remrows)
 end
 
 function revert(::Type{Filter}, newtable, cache)
-  indices = copy(cache[1])
-  orgtable = copy(cache[2])
-
-  for i in range(1, length=length(indices))
-    insert!(orgtable, indices[i], newtable[i])
+  for i in range(1, length=length(cache[1]))
+    insert!(cache[2], cache[1][i], newtable[i])
   end
 
-  orgtable
+  cache[2]
 end
