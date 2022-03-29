@@ -30,10 +30,10 @@ export
   colapply, colrevert,
 
   # built-in
-  Filter,
-  DropMissing,
   Select,
   Reject,
+  Filter,
+  DropMissing,
   Rename,
   Identity,
   Center,
