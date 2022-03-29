@@ -31,6 +31,12 @@
     @test n.f == [3, 4, 5]
     tₒ = revert(T, n, c)
     @test t == tₒ
+
+    # reapply test
+    T = Filter(row -> all(≤(5), row))
+    n1, c1 = apply(T, t)
+    n2 = reapply(T, t, c1)
+    @test n1 == n2
   end
 
   @testset "DropMissing" begin
@@ -58,6 +64,12 @@
       @test map(!ismissing, col) == map(!ismissing, colₒ)
       @test findall(ismissing, col) == findall(ismissing, colₒ)
     end
+
+    # reapply test
+    T = DropMissing()
+    n1, c1 = apply(T, t)
+    n2 = reapply(T, t, c1)
+    @test n1 == n2
   end
 
   @testset "Select" begin
