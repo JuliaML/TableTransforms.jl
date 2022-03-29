@@ -211,6 +211,7 @@ end
 # IMPLEMENTATIONS
 # ----------------
 
+include("transforms/filter.jl")
 include("transforms/select.jl")
 include("transforms/rename.jl")
 include("transforms/identity.jl")
