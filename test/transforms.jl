@@ -384,9 +384,9 @@
     @test testmissing(n.a, [3, 2, 4, 5])
     @test testmissing(n.b, [missing, 4, 5, 8])
     @test testmissing(n.c, [1, 1, 2, 4])
-    @test testmissing(n.a, [4, 3, 5, 4])
-    @test testmissing(n.a, [missing, 5, 6, 5])
-    @test testmissing(n.a, [4, missing, 4, 5])
+    @test testmissing(n.d, [4, 3, 5, 4])
+    @test testmissing(n.e, [missing, 5, 6, 5])
+    @test testmissing(n.f, [4, missing, 4, 5])
 
     # symbols
     T = DropMissing(:a, :c, :d)
@@ -415,9 +415,9 @@
     @test testmissing(n.a, [3, 2, 4, 5])
     @test testmissing(n.b, [missing, 4, 5, 8])
     @test testmissing(n.c, [1, 1, 2, 4])
-    @test testmissing(n.a, [4, 3, 5, 4])
-    @test testmissing(n.a, [missing, 5, 6, 5])
-    @test testmissing(n.a, [4, missing, 4, 5])
+    @test testmissing(n.d, [4, 3, 5, 4])
+    @test testmissing(n.e, [missing, 5, 6, 5])
+    @test testmissing(n.f, [4, missing, 4, 5])
 
     # symbols
     T = DropMissing([:a, :c, :d])
@@ -446,9 +446,9 @@
     @test testmissing(n.a, [3, 2, 4, 5])
     @test testmissing(n.b, [missing, 4, 5, 8])
     @test testmissing(n.c, [1, 1, 2, 4])
-    @test testmissing(n.a, [4, 3, 5, 4])
-    @test testmissing(n.a, [missing, 5, 6, 5])
-    @test testmissing(n.a, [4, missing, 4, 5])
+    @test testmissing(n.d, [4, 3, 5, 4])
+    @test testmissing(n.e, [missing, 5, 6, 5])
+    @test testmissing(n.f, [4, missing, 4, 5])
 
     # symbols
     T = DropMissing((:a, :c, :d))
