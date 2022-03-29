@@ -147,7 +147,7 @@ Please check the docstrings for additional information.
 |-----------|-------------|
 | `Select` | Column selection |
 | `Reject` | Column rejection |
-| `Filter` | Filter rows |
+| `Filter` | Row filtering |
 | `DropMissing` | Drop rows with missings |
 | `Rename` | Column renaming |
 | `Identity` | Identity transform |
