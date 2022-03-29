@@ -27,6 +27,12 @@ end
 Polynomial(args::T...) where {T<:Real} = Polynomial(collect(args))
 (p::Polynomial)(x) = sum(a * x^(i-1) for (i, a) in enumerate(p.coeffs))
 
+function testmissing(vec1, vec2)
+  r1 = map(!ismissing, vec1) == map(!ismissing, vec2)
+  r2 = findall(ismissing, vec1) == findall(ismissing, vec2)
+  r1 && r2
+end
+
 # list of tests
 testfiles = [
   "distributions.jl",

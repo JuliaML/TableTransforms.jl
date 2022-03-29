@@ -355,17 +355,17 @@
     c = [1, 1, 6, 2, 4, missing]
     d = [4, 3, 7, 5, 4, missing]
     e = [missing, 5, 2, 6, 5, 2]
-    f = [4, 4, missing, 4, 5, 2]
+    f = [4, missing, 3, 4, 5, 2]
     t = Table(; a, b, c, d, e, f)
 
     T = DropMissing()
     n, c = apply(T, t)
-    @test n.a == [2, 4, 5]
-    @test n.b == [4, 5, 8]
-    @test n.c == [1, 2, 4]
-    @test n.d == [3, 5, 4]
-    @test n.e == [5, 6, 5]
-    @test n.f == [4, 4, 5]
+    @test n.a == [4, 5]
+    @test n.b == [5, 8]
+    @test n.c == [2, 4]
+    @test n.d == [5, 4]
+    @test n.e == [6, 5]
+    @test n.f == [4, 5]
 
     # revert test
     @test isrevertible(T) == true
@@ -374,9 +374,111 @@
     for colname in colnames
       col = Tables.getcolumn(t, colname)
       colₒ = Tables.getcolumn(tₒ, colname)
-      @test map(!ismissing, col) == map(!ismissing, colₒ)
-      @test findall(ismissing, col) == findall(ismissing, colₒ)
+      @test testmissing(col, colₒ)
     end
+
+    # args...
+    # integers
+    T = DropMissing(1, 3, 4)
+    n, c = apply(T, t)
+    @test testmissing(n.a, [3, 2, 4, 5])
+    @test testmissing(n.b, [missing, 4, 5, 8])
+    @test testmissing(n.c, [1, 1, 2, 4])
+    @test testmissing(n.a, [4, 3, 5, 4])
+    @test testmissing(n.a, [missing, 5, 6, 5])
+    @test testmissing(n.a, [4, missing, 4, 5])
+
+    # symbols
+    T = DropMissing(:a, :c, :d)
+    n, c = apply(T, t)
+    @test testmissing(n.a, [3, 2, 4, 5])
+    @test testmissing(n.b, [missing, 4, 5, 8])
+    @test testmissing(n.c, [1, 1, 2, 4])
+    @test testmissing(n.d, [4, 3, 5, 4])
+    @test testmissing(n.e, [missing, 5, 6, 5])
+    @test testmissing(n.f, [4, missing, 4, 5])
+
+    # strings
+    T = DropMissing("a", "c", "d")
+    n, c = apply(T, t)
+    @test testmissing(n.a, [3, 2, 4, 5])
+    @test testmissing(n.b, [missing, 4, 5, 8])
+    @test testmissing(n.c, [1, 1, 2, 4])
+    @test testmissing(n.d, [4, 3, 5, 4])
+    @test testmissing(n.e, [missing, 5, 6, 5])
+    @test testmissing(n.f, [4, missing, 4, 5])
+
+    # vector
+    # integers
+    T = DropMissing([1, 3, 4])
+    n, c = apply(T, t)
+    @test testmissing(n.a, [3, 2, 4, 5])
+    @test testmissing(n.b, [missing, 4, 5, 8])
+    @test testmissing(n.c, [1, 1, 2, 4])
+    @test testmissing(n.a, [4, 3, 5, 4])
+    @test testmissing(n.a, [missing, 5, 6, 5])
+    @test testmissing(n.a, [4, missing, 4, 5])
+
+    # symbols
+    T = DropMissing([:a, :c, :d])
+    n, c = apply(T, t)
+    @test testmissing(n.a, [3, 2, 4, 5])
+    @test testmissing(n.b, [missing, 4, 5, 8])
+    @test testmissing(n.c, [1, 1, 2, 4])
+    @test testmissing(n.d, [4, 3, 5, 4])
+    @test testmissing(n.e, [missing, 5, 6, 5])
+    @test testmissing(n.f, [4, missing, 4, 5])
+
+    # strings
+    T = DropMissing(["a", "c", "d"])
+    n, c = apply(T, t)
+    @test testmissing(n.a, [3, 2, 4, 5])
+    @test testmissing(n.b, [missing, 4, 5, 8])
+    @test testmissing(n.c, [1, 1, 2, 4])
+    @test testmissing(n.d, [4, 3, 5, 4])
+    @test testmissing(n.e, [missing, 5, 6, 5])
+    @test testmissing(n.f, [4, missing, 4, 5])
+
+    # tuple
+    # integers
+    T = DropMissing((1, 3, 4))
+    n, c = apply(T, t)
+    @test testmissing(n.a, [3, 2, 4, 5])
+    @test testmissing(n.b, [missing, 4, 5, 8])
+    @test testmissing(n.c, [1, 1, 2, 4])
+    @test testmissing(n.a, [4, 3, 5, 4])
+    @test testmissing(n.a, [missing, 5, 6, 5])
+    @test testmissing(n.a, [4, missing, 4, 5])
+
+    # symbols
+    T = DropMissing((:a, :c, :d))
+    n, c = apply(T, t)
+    @test testmissing(n.a, [3, 2, 4, 5])
+    @test testmissing(n.b, [missing, 4, 5, 8])
+    @test testmissing(n.c, [1, 1, 2, 4])
+    @test testmissing(n.d, [4, 3, 5, 4])
+    @test testmissing(n.e, [missing, 5, 6, 5])
+    @test testmissing(n.f, [4, missing, 4, 5])
+
+    # strings
+    T = DropMissing(("a", "c", "d"))
+    n, c = apply(T, t)
+    @test testmissing(n.a, [3, 2, 4, 5])
+    @test testmissing(n.b, [missing, 4, 5, 8])
+    @test testmissing(n.c, [1, 1, 2, 4])
+    @test testmissing(n.d, [4, 3, 5, 4])
+    @test testmissing(n.e, [missing, 5, 6, 5])
+    @test testmissing(n.f, [4, missing, 4, 5])
+
+    # regex
+    T = DropMissing(r"[acd]")
+    n, c = apply(T, t)
+    @test testmissing(n.a, [3, 2, 4, 5])
+    @test testmissing(n.b, [missing, 4, 5, 8])
+    @test testmissing(n.c, [1, 1, 2, 4])
+    @test testmissing(n.d, [4, 3, 5, 4])
+    @test testmissing(n.e, [missing, 5, 6, 5])
+    @test testmissing(n.f, [4, missing, 4, 5])
 
     # reapply test
     T = DropMissing()
