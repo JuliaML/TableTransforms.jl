@@ -18,6 +18,9 @@
     @test n.d == [4, 3, 1]
     @test n.e == [5, 5, 2]
     @test n.f == [4, 4, 2]
+
+    # revert test
+    @test isrevertible(T) == true
     tₒ = revert(T, n, c)
     @test t == tₒ
 
@@ -56,6 +59,9 @@
     @test n.d == [3, 5, 4]
     @test n.e == [5, 6, 5]
     @test n.f == [4, 4, 5]
+
+    # revert test
+    @test isrevertible(T) == true
     tₒ = revert(T, n, c)
     colnames = Tables.columnnames(t)
     for colname in colnames
