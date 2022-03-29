@@ -51,7 +51,13 @@
     @test n.e == [5, 6, 5]
     @test n.f == [4, 4, 5]
     tₒ = revert(T, n, c)
-    @test t == tₒ
+    colnames = Tables.columnnames(t)
+    for colname in colnames
+      col = Tables.getcolumn(t, colname)
+      colₒ = Tables.getcolumn(tₒ, colname)
+      @test map(!ismissing, col) == map(!ismissing, colₒ)
+      @test findall(ismissing, col) == findall(ismissing, colₒ)
+    end
   end
 
   @testset "Select" begin
