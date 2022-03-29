@@ -147,6 +147,8 @@ Please check the docstrings for additional information.
 |-----------|-------------|
 | `Select` | Column selection |
 | `Reject` | Column rejection |
+| `Filter` | Filter rows |
+| `DropMissing` | Drop rows with missings |
 | `Rename` | Column renaming |
 | `Identity` | Identity transform |
 | `Center` | Mean removal |
