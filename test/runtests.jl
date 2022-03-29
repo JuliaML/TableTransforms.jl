@@ -27,11 +27,14 @@ end
 Polynomial(args::T...) where {T<:Real} = Polynomial(collect(args))
 (p::Polynomial)(x) = sum(a * x^(i-1) for (i, a) in enumerate(p.coeffs))
 
-function testmissing(vec1, vec2)
-  r1 = filter(!ismissing, vec1) == filter(!ismissing, vec2)
-  r2 = findall(ismissing, vec1) == findall(ismissing, vec2)
-  r1 && r2
+function isequalmissing(v1, v2)
+  length(v1) == length(v2) || return false
+  for (x, y) in zip(v1, v2)
+    x === y || return false
+  end
+  return true
 end
+
 
 # list of tests
 testfiles = [
