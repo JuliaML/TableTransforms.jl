@@ -57,10 +57,9 @@ struct Select{S<:ColSpec} <: Stateless
   colspec::S
 end
 
-# to avoid StackOverflowError in Select(())
+# argument errors
 Select(::Tuple{}) = throw(ArgumentError("Cannot create a Select object with empty tuple."))
-
-Select() = Select(:)
+Select() = throw(ArgumentError("Cannot create a Select object without arguments."))
 
 Select(cols::T...) where {T<:ColSelector} = 
   Select(cols)
@@ -70,7 +69,7 @@ isrevertible(::Type{<:Select}) = true
 function apply(transform::Select, table)
   # retrieve relevant column names
   allcols = collect(Tables.columnnames(table))
-  select  = _select(transform.colspec, allcols)
+  select  = _filter(transform.colspec, allcols)
   reject  = setdiff(allcols, select)
 
   # validate selections
@@ -134,11 +133,10 @@ struct Reject{S<:ColSpec} <: Stateless
   colspec::S
 end
 
-# to avoid StackOverflowError in Reject(())
+# argumet erros
 Reject(::Tuple{}) = throw(ArgumentError("Cannot create a Reject object with empty tuple."))
-
 Reject(::Colon) = throw(ArgumentError("Is no possible reject all colls."))
-Reject() = Reject(:)
+Reject() = throw(ArgumentError("Cannot create a Reject object without arguments."))
 
 Reject(cols::T...) where {T<:ColSelector} = 
   Reject(cols)
@@ -147,7 +145,7 @@ isrevertible(::Type{<:Reject}) = true
 
 function apply(transform::Reject, table)
   allcols = Tables.columnnames(table)
-  reject  = _select(transform.colspec, allcols)
+  reject  = _filter(transform.colspec, allcols)
   select  = setdiff(allcols, reject)
   strans  = Select(select)
   newtable, scache = apply(strans, table)

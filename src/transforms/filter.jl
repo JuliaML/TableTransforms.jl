@@ -57,7 +57,7 @@ struct DropMissing{S<:ColSpec} <: Stateless
   colspec::S
 end
 
-# to avoid StackOverflowError in DropMissing(())
+# argument error
 DropMissing(::Tuple{}) = throw(ArgumentError("Cannot create a DropMissing object with empty tuple."))
 
 DropMissing() = DropMissing(:)
@@ -72,7 +72,12 @@ _ftrans(::DropMissing{Colon}, table) =
 
 function _ftrans(transform::DropMissing, table)
   allcols = collect(Tables.columnnames(table))
-  cols = _select(transform.colspec, allcols)
+  cols = _filter(transform.colspec, allcols)
+
+  # validate columns
+  @assert !isempty(cols) "Invalid selection"
+  @assert cols ⊆ Tables.columnnames(table) "Invalid selection"
+
   Filter(row -> all(!ismissing, getindex.(Ref(row), cols)))
 end
 
