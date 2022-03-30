@@ -62,7 +62,7 @@ DropMissing(::Tuple{}) = throw(ArgumentError("Cannot create a DropMissing object
 
 DropMissing() = DropMissing(:)
 
-DropMissing(cols::T...) where {T<:ColSelector} = 
+DropMissing(cols::T...) where {T<:ColSelector} =
   DropMissing(cols)
 
 isrevertible(::Type{<:DropMissing}) = true
