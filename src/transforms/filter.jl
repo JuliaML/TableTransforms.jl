@@ -38,9 +38,6 @@ end
 
 # DropMissing
 
-const VecOrTuple{T} = Union{Vector{T}, NTuple{N, T}} where {T, N}
-const ColSelector = Union{Symbol, Integer, AbstractString}
-
 """
     DropMissing()
 
@@ -56,20 +53,38 @@ Drop all rows with missing values in selects columns `col₁`, `col₂`, ..., `c
 
 Drop all rows with missing values in columns that match with `regex`.
 """
-DropMissing() = Filter(row -> all(!ismissing, row))
+struct DropMissing{S<:ColSpec} <: Stateless
+  colspec::S
+end
 
-DropMissing(cols::VecOrTuple{T}) where {T<:Union{Symbol, Integer}} =
-  Filter(row -> all(!ismissing, getindex.(Ref(row), cols)))
+# to avoid StackOverflowError in DropMissing(())
+DropMissing(::Tuple{}) = throw(ArgumentError("Cannot create a DropMissing object with empty tuple."))
 
-DropMissing(cols::VecOrTuple{T}) where {T<:AbstractString} =
-  DropMissing(Symbol.(cols))
+DropMissing() = DropMissing(:)
 
-DropMissing(cols::T...) where {T<:ColSelector} =
+DropMissing(cols::T...) where {T<:ColSelector} = 
   DropMissing(cols)
 
-function DropMissing(regex::Regex)
-  Filter() do row
-    cols = _select(regex, propertynames(row))
-    all(!ismissing, getindex.(Ref(row), cols))
-  end
+Base.:(==)(a::DropMissing, b::DropMissing) = a.colspec == b.colspec
+
+isrevertible(::Type{<:DropMissing}) = true
+
+_ftrans(::DropMissing{Colon}, table) =
+  Filter(row -> all(!ismissing, row))
+
+function _ftrans(transform::DropMissing, table)
+  allcols = collect(Tables.columnnames(table))
+  cols = _select(transform.colspec, allcols)
+  Filter(row -> all(!ismissing, getindex.(Ref(row), cols)))
+end
+
+function apply(transform::DropMissing, table)
+  ftrans = _ftrans(transform, table)
+  newtable, fcache = apply(ftrans, table)
+  newtable, (ftrans, fcache)
+end
+
+function revert(::DropMissing, newtable, cache)
+  ftrans, fcache = cache
+  revert(ftrans, newtable, fcache)
 end
