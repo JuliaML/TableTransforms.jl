@@ -65,8 +65,6 @@ DropMissing() = DropMissing(:)
 DropMissing(cols::T...) where {T<:ColSelector} = 
   DropMissing(cols)
 
-Base.:(==)(a::DropMissing, b::DropMissing) = a.colspec == b.colspec
-
 isrevertible(::Type{<:DropMissing}) = true
 
 _ftrans(::DropMissing{Colon}, table) =

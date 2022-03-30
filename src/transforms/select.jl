@@ -65,8 +65,6 @@ Select() = Select(:)
 Select(cols::T...) where {T<:ColSelector} = 
   Select(cols)
 
-Base.:(==)(a::Select, b::Select) = a.colspec == b.colspec
-
 isrevertible(::Type{<:Select}) = true
 
 function apply(transform::Select, table)
@@ -144,8 +142,6 @@ Reject() = Reject(:)
 
 Reject(cols::T...) where {T<:ColSelector} = 
   Reject(cols)
-
-Base.:(==)(a::Reject, b::Reject) = a.colspec == b.colspec
 
 isrevertible(::Type{<:Reject}) = true
 
