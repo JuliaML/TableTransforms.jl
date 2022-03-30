@@ -73,11 +73,6 @@ _ftrans(::DropMissing{Colon}, table) =
 function _ftrans(transform::DropMissing, table)
   allcols = collect(Tables.columnnames(table))
   cols = _filter(transform.colspec, allcols)
-
-  # validate columns
-  @assert !isempty(cols) "Invalid selection"
-  @assert cols ⊆ Tables.columnnames(table) "Invalid selection"
-
   Filter(row -> all(!ismissing, getindex.(Ref(row), cols)))
 end
 

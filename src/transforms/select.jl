@@ -35,7 +35,7 @@ function Tables.schema(t::TableSelection)
   schema = Tables.schema(t.table)
   names = schema.names
   types = schema.types
-  inds = indexin(t.cols, collect(names))
+  inds = _indexin(t.cols, names)
   Tables.Schema(t.cols, types[inds])
 end
 
@@ -68,17 +68,13 @@ isrevertible(::Type{<:Select}) = true
 
 function apply(transform::Select, table)
   # retrieve relevant column names
-  allcols = collect(Tables.columnnames(table))
+  allcols = Tables.columnnames(table)
   select  = _filter(transform.colspec, allcols)
   reject  = setdiff(allcols, select)
 
-  # validate selections
-  @assert !isempty(select) "Invalid selection"
-  @assert select ⊆ Tables.columnnames(table) "Invalid selection"
-
   # keep track of indices to revert later
-  sinds = indexin(select, allcols)
-  rinds = indexin(reject, allcols)
+  sinds = _indexin(select, allcols)
+  rinds = _indexin(reject, allcols)
 
   # sort indices to facilitate reinsertion
   sperm  = sortperm(sinds)
