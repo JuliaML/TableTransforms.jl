@@ -70,9 +70,8 @@
     @test t == tₒ
 
     # selection with single column
-    @test (Select(:a) == Select("a") ==
-           Select((:a,)) == Select(("a",)) ==
-           Select([:a]) == Select(["a"]))
+    @test Select(:a) == Select((:a,))
+    @test Select("a") == Select(("a",))
 
     # reapply test
     T = Select(:b, :c, :d)
@@ -108,7 +107,6 @@
     @test t == tₒ
 
     # throws: Select without arguments
-    @test_throws ArgumentError Select()
     @test_throws ArgumentError Select(())
 
     # throws: empty selection
@@ -194,9 +192,8 @@
     @test t == tₒ
 
     # rejection with single column
-    @test (Reject(:a) == Reject("a") ==
-           Reject((:a,)) == Reject(("a",)) ==
-           Reject([:a]) == Reject(["a"]))
+    @test Reject(:a) == Reject((:a,))
+    @test Reject("a") == Reject(("a",))
 
     # reapply test
     T = Reject(:b, :c, :d)
