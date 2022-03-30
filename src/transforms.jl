@@ -212,6 +212,7 @@ end
 # ----------------
 
 include("transforms/select.jl")
+include("transforms/filter.jl")
 include("transforms/rename.jl")
 include("transforms/identity.jl")
 include("transforms/center.jl")

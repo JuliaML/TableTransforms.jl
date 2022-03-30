@@ -32,6 +32,8 @@ export
   # built-in
   Select,
   Reject,
+  Filter,
+  DropMissing,
   Rename,
   Identity,
   Center,
