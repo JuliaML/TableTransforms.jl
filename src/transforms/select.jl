@@ -72,10 +72,6 @@ function apply(transform::Select, table)
   select  = _filter(transform.colspec, allcols)
   reject  = setdiff(allcols, select)
 
-  # validate selections
-  @assert !isempty(select) "Invalid selection"
-  @assert select ⊆ Tables.columnnames(table) "Invalid selection"
-
   # keep track of indices to revert later
   sinds = indexin(select, allcols)
   rinds = indexin(reject, allcols)
@@ -126,7 +122,7 @@ revert(::Select, newtable::TableSelection, cache) = newtable.table
 The transform that discards columns `col₁`, `col₂`, ..., `colₙ`.
 
     Reject(regex)
-    
+
 Discards the columns that match with `regex`.
 """
 struct Reject{S<:ColSpec} <: Stateless

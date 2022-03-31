@@ -8,11 +8,25 @@ const ColSelector = Union{Symbol, Integer, AbstractString}
 const ColSpec = Union{Vector{T}, NTuple{N,T}, Regex, Colon} where {N,T<:ColSelector}
 
 # filter table columns using colspec
-_filter(colspec::Vector{Symbol}, allcols) = colspec
-_filter(colspec::Vector{<:Integer}, allcols) = allcols[colspec]
-_filter(colspec::Vector{<:AbstractString}, allcols) = Symbol.(colspec)
+function _filter(colspec::Vector{Symbol}, allcols)
+  # validate columns
+  @assert !isempty(colspec) "Invalid selection"
+  @assert colspec ⊆ allcols "Invalid selection"
+  return colspec
+end
+
+_filter(colspec::Vector{<:Integer}, allcols) = 
+  _filter(allcols[colspec], allcols)
+
+_filter(colspec::Vector{<:AbstractString}, allcols) = 
+  _filter(Symbol.(colspec), allcols)
+
 _filter(colspec::NTuple{N,<:ColSelector}, allcols) where {N} =
   _filter(collect(colspec), allcols)
-_filter(colspec::Regex, allcols) = 
-  filter(col -> occursin(colspec, String(col)), allcols)
+
+function _filter(colspec::Regex, allcols)
+  cols = filter(col -> occursin(colspec, String(col)), allcols)
+  _filter(cols, allcols)
+end
+
 _filter(::Colon, allcols) = allcols
