@@ -39,7 +39,6 @@ end
 # DropMissing
 
 const VecOrTuple{T} = Union{Vector{T}, NTuple{N, T}} where {T, N}
-const ColSelector = Union{Symbol, Integer, AbstractString}
 
 """
     DropMissing()
