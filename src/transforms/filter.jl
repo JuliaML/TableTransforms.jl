@@ -4,7 +4,7 @@
 
 """
     Filter(function)
-
+    
 Filters the table returning only the rows where the `function` returns true.
 """
 struct Filter{F} <: Stateless
@@ -48,7 +48,7 @@ Drop all rows with missing values in table.
     DropMissing((col₁, col₂, ..., colₙ))
 
 Drop all rows with missing values in selects columns `col₁`, `col₂`, ..., `colₙ`.
-
+    
     DropMissing(regex)
 
 Drop all rows with missing values in columns that match with `regex`.
@@ -57,12 +57,12 @@ struct DropMissing{S<:ColSpec} <: Stateless
   colspec::S
 end
 
-# to avoid StackOverflowError in DropMissing(())
+# argument error
 DropMissing(::Tuple{}) = throw(ArgumentError("Cannot create a DropMissing object with empty tuple."))
 
 DropMissing() = DropMissing(:)
 
-DropMissing(cols::T...) where {T<:ColSelector} =
+DropMissing(cols::T...) where {T<:ColSelector} = 
   DropMissing(cols)
 
 isrevertible(::Type{<:DropMissing}) = true
@@ -72,7 +72,12 @@ _ftrans(::DropMissing{Colon}, table) =
 
 function _ftrans(transform::DropMissing, table)
   allcols = collect(Tables.columnnames(table))
-  cols = _select(transform.colspec, allcols)
+  cols = _filter(transform.colspec, allcols)
+
+  # validate columns
+  @assert !isempty(cols) "Invalid selection"
+  @assert cols ⊆ Tables.columnnames(table) "Invalid selection"
+
   Filter(row -> all(!ismissing, getindex.(Ref(row), cols)))
 end
 
