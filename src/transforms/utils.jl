@@ -1,34 +1,15 @@
-# ------------------------------------------------------------------ 
-# Licensed under the MIT License. See LICENSE in the project root. 
-# ------------------------------------------------------------------ 
- 
-# union of types used to select a column 
-const ColSelector = Union{Symbol, Integer, AbstractString} 
-const VecOrTuple{T} = Union{Vector{T}, NTuple{N,T}} where {N}
-# union of types used to filter columns 
-const ColSpec = Union{VecOrTuple{T}, Regex, Colon} where {T<:ColSelector} 
+# ------------------------------------------------------------------
+# Licensed under the MIT License. See LICENSE in the project root.
+# ------------------------------------------------------------------
 
-# _filter
-# filter table columns using colspec  
-function _filter(colspec::VecOrTuple{Symbol}, allcols)  
-  # validate column selection 
-  @assert !isempty(colspec) "Invalid column selection" 
-  @assert colspec ⊆ allcols "Invalid column selection" 
-  return colspec 
-end
- 
-_filter(colspec::VecOrTuple{<:Integer}, allcols) =  
-  _filter(allcols[colspec], allcols)
+const ColSelector = Union{Symbol, Integer, AbstractString}
+const ColSpec = Union{Vector{T}, NTuple{N, T}, Regex, Colon} where {N, T<:ColSelector}
 
-_filter(colspec::VecOrTuple{<:AbstractString}, allcols) =  
-  _filter(Symbol.(colspec), allcols)
-
-_filter(::Colon, allcols) = allcols
- 
-function _filter(colspec::Regex, allcols)
-  cols = filter(col -> occursin(colspec, String(col)), allcols)
-  _filter(cols, allcols)
-end
-
-# _indexin
-_indexin(a, b) = Union{Nothing,Int}[findfirst(==(x), b) for x in a]
+_select(colspec::Vector{Symbol}, allcols) = colspec
+_select(colspec::Vector{<:Integer}, allcols) = allcols[colspec]
+_select(colspec::Vector{<:AbstractString}, allcols) = Symbol.(colspec)
+_select(colspec::NTuple{N, <:ColSelector}, allcols) where {N} =
+  _select(collect(colspec), allcols)
+_select(colspec::Regex, allcols) = 
+  filter(col -> occursin(colspec, String(col)), allcols)
+_select(::Colon, allcols) = allcols
