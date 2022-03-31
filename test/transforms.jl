@@ -1,6 +1,74 @@
 @testset "Transforms" begin
   # using MersenneTwister for compatibility between Julia versions
   rng = MersenneTwister(42)
+  @testset "colspec" begin
+    veccols = [:a, :b, :c, :d, :e, :f]
+    tupcols = (:a, :b, :c, :d, :e, :f)
+    
+    # vector of symbols
+    colspec = [:a, :c, :e]
+    cols = TableTransforms._filter(colspec, veccols)
+    @test cols == [:a, :c, :e]
+    cols = TableTransforms._filter(colspec, tupcols)
+    @test cols == [:a, :c, :e]
+
+    # tuple of symbols
+    colspec = (:a, :c, :e)
+    cols = TableTransforms._filter(colspec, veccols)
+    @test cols == [:a, :c, :e]
+    cols = TableTransforms._filter(colspec, tupcols)
+    @test cols == [:a, :c, :e]
+
+    # vector of strings
+    colspec = ["a", "c", "e"]
+    cols = TableTransforms._filter(colspec, veccols)
+    @test cols == [:a, :c, :e]
+    cols = TableTransforms._filter(colspec, tupcols)
+    @test cols == [:a, :c, :e]
+
+    # tuple of strings
+    colspec = ("a", "c", "e")
+    cols = TableTransforms._filter(colspec, veccols)
+    @test cols == [:a, :c, :e]
+    cols = TableTransforms._filter(colspec, tupcols)
+    @test cols == [:a, :c, :e]
+
+    # vector of integers
+    colspec = [1, 3, 5]
+    cols = TableTransforms._filter(colspec, veccols)
+    @test cols == [:a, :c, :e]
+    cols = TableTransforms._filter(colspec, tupcols)
+    @test cols == [:a, :c, :e]
+
+    # tuple of integers
+    colspec = (1, 3, 5)
+    cols = TableTransforms._filter(colspec, veccols)
+    @test cols == [:a, :c, :e]
+    cols = TableTransforms._filter(colspec, tupcols)
+    @test cols == [:a, :c, :e]
+
+    # regex
+    colspec = r"[ace]"
+    cols = TableTransforms._filter(colspec, veccols)
+    @test cols == [:a, :c, :e]
+    cols = TableTransforms._filter(colspec, tupcols)
+    @test cols == [:a, :c, :e]
+
+    # colon
+    cols = TableTransforms._filter(:, veccols)
+    @test cols == [:a, :b, :c, :d, :e, :f]
+    cols = TableTransforms._filter(:, tupcols)
+    @test cols == [:a, :b, :c, :d, :e, :f]
+
+    # throws
+    @test_throws AssertionError TableTransforms._filter(r"x", veccols)
+    @test_throws AssertionError TableTransforms._filter(r"x", tupcols)
+    @test_throws AssertionError TableTransforms._filter(String[], veccols)
+    @test_throws AssertionError TableTransforms._filter(String[], tupcols)
+    @test_throws AssertionError TableTransforms._filter(Symbol[], veccols)
+    @test_throws AssertionError TableTransforms._filter(Symbol[], tupcols)
+  end
+
   @testset "Select" begin
     a = rand(4000)
     b = rand(4000)
