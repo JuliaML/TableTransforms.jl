@@ -48,7 +48,7 @@ Drop all rows with missing values in table.
     DropMissing((col₁, col₂, ..., colₙ))
 
 Drop all rows with missing values in selects columns `col₁`, `col₂`, ..., `colₙ`.
-    
+
     DropMissing(regex)
 
 Drop all rows with missing values in columns that match with `regex`.
@@ -71,7 +71,7 @@ _ftrans(::DropMissing{Colon}, table) =
   Filter(row -> all(!ismissing, row))
 
 function _ftrans(transform::DropMissing, table)
-  allcols = collect(Tables.columnnames(table))
+  allcols = Tables.columnnames(table)
   cols = _filter(transform.colspec, allcols)
   Filter(row -> all(!ismissing, getindex.(Ref(row), cols)))
 end
