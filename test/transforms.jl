@@ -67,6 +67,24 @@
     @test_throws AssertionError TableTransforms._filter(String[], tupcols)
     @test_throws AssertionError TableTransforms._filter(Symbol[], veccols)
     @test_throws AssertionError TableTransforms._filter(Symbol[], tupcols)
+
+    # type stability
+    @inferred TableTransforms._filter([:a, :b], veccols)
+    @inferred TableTransforms._filter([:a, :b], tupcols)
+    @inferred TableTransforms._filter((:a, :b), veccols)
+    @inferred TableTransforms._filter((:a, :b), tupcols)
+    @inferred TableTransforms._filter(["a", "b"], veccols)
+    @inferred TableTransforms._filter(["a", "b"], tupcols)
+    @inferred TableTransforms._filter(("a", "b"), veccols)
+    @inferred TableTransforms._filter(("a", "b"), tupcols)
+    @inferred TableTransforms._filter([1, 2], veccols)
+    @inferred TableTransforms._filter([1, 2], tupcols)
+    @inferred TableTransforms._filter((1, 2), veccols)
+    @inferred TableTransforms._filter((1, 2), tupcols)
+    @inferred TableTransforms._filter(r"[ab]", veccols)
+    @inferred TableTransforms._filter(r"[ab]", tupcols)
+    @inferred TableTransforms._filter(:, veccols)
+    @inferred TableTransforms._filter(:, tupcols)
   end
 
   @testset "Select" begin
