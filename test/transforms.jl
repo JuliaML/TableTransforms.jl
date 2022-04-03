@@ -1,7 +1,7 @@
 @testset "Transforms" begin
   # using MersenneTwister for compatibility between Julia versions
   rng = MersenneTwister(42)
-  @testset "colspec" begin
+  @testset "ColSpec" begin
     veccols = [:a, :b, :c, :d, :e, :f]
     tupcols = (:a, :b, :c, :d, :e, :f)
     
