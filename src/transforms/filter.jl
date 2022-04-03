@@ -60,7 +60,6 @@ struct DropMissing{S<:ColSpec} <: Stateless
   colspec::S
 end
 
-# argument error
 DropMissing(::Tuple{}) = throw(ArgumentError("Cannot create a DropMissing object with empty tuple."))
 
 DropMissing() = DropMissing(:)
