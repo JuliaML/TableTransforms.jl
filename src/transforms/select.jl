@@ -131,7 +131,7 @@ end
 
 # argumet erros
 Reject(::Tuple{}) = throw(ArgumentError("Cannot create a Reject object with empty tuple."))
-Reject(::Colon) = throw(ArgumentError("Is no possible reject all colls."))
+Reject(::Colon) = throw(ArgumentError("Cannot reject all columns."))
 Reject() = throw(ArgumentError("Cannot create a Reject object without arguments."))
 
 Reject(cols::T...) where {T<:ColSelector} = 
