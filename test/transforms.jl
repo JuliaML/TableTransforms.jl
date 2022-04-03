@@ -155,10 +155,26 @@
     tₒ = revert(T, n, c)
     @test t == tₒ
 
-    # selection with single column
-    @test (Select(:a) == Select("a") ==
-           Select((:a,)) == Select(("a",)) ==
-           Select([:a]) == Select(["a"]))
+    # selection with integers
+    T = Select(4, 3, 2)
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == [:d, :c, :b]
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # selection with tuple of integers
+    T = Select((4, 3, 2))
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == [:d, :c, :b]
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # selection with vector of integers
+    T = Select([4, 3, 2])
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == [:d, :c, :b]
+    tₒ = revert(T, n, c)
+    @test t == tₒ
 
     # reapply test
     T = Select(:b, :c, :d)
@@ -279,10 +295,26 @@
     tₒ = revert(T, n, c)
     @test t == tₒ
 
-    # rejection with single column
-    @test (Reject(:a) == Reject("a") ==
-           Reject((:a,)) == Reject(("a",)) ==
-           Reject([:a]) == Reject(["a"]))
+    # rejection with integers
+    T = Reject(4, 3, 2)
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == [:a, :e, :f]
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # rejection with tuple of integers
+    T = Reject((4, 3, 2))
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == [:a, :e, :f]
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # rejection with vector of integers
+    T = Reject([4, 3, 2])
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == [:a, :e, :f]
+    tₒ = revert(T, n, c)
+    @test t == tₒ
 
     # reapply test
     T = Reject(:b, :c, :d)

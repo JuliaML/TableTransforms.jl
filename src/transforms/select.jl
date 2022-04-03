@@ -42,8 +42,6 @@ end
 Tables.materializer(t::TableSelection) = 
   Tables.materializer(t.table)
 
-const ColSpec = Union{Vector{Symbol}, Regex}
-
 """
     Select(col₁, col₂, ..., colₙ)
     Select([col₁, col₂, ..., colₙ])
@@ -56,38 +54,23 @@ The transform that selects columns `col₁`, `col₂`, ..., `colₙ`.
 Selects the columns that match with `regex`.
 """
 struct Select{S<:ColSpec} <: Stateless
-  cols::S
+  colspec::S
 end
 
-# to avoid StackOverflowError in Select() and Select(())
-Select(::Tuple{}) = throw(ArgumentError("Cannot create a Select object without arguments."))
+# argument errors
+Select(::Tuple{}) = throw(ArgumentError("Cannot create a Select object with empty tuple."))
+Select() = throw(ArgumentError("Cannot create a Select object without arguments."))
 
-Select(cols::T...) where {T<:Union{AbstractString, Symbol}} = 
+Select(cols::T...) where {T<:ColSelector} = 
   Select(cols)
 
-Select(cols::NTuple{N, T}) where {N, T<:Union{AbstractString, Symbol}} =
-  Select(collect(cols))
-
-Select(cols::Vector{T}) where {T<:AbstractString} =
-  Select(Symbol.(cols))
-
-Base.:(==)(a::Select, b::Select) = a.cols == b.cols
-
 isrevertible(::Type{<:Select}) = true
-
-_select(cols::Vector{Symbol}, allcols) = cols
-_select(cols::Regex, allcols) = 
-  filter(col -> occursin(cols, String(col)), allcols)
 
 function apply(transform::Select, table)
   # retrieve relevant column names
   allcols = collect(Tables.columnnames(table))
-  select  = _select(transform.cols, allcols)
+  select  = _filter(transform.colspec, allcols)
   reject  = setdiff(allcols, select)
-
-  # validate selections
-  @assert !isempty(select) "Invalid selection"
-  @assert select ⊆ Tables.columnnames(table) "Invalid selection"
 
   # keep track of indices to revert later
   sinds = indexin(select, allcols)
@@ -143,28 +126,22 @@ The transform that discards columns `col₁`, `col₂`, ..., `colₙ`.
 Discards the columns that match with `regex`.
 """
 struct Reject{S<:ColSpec} <: Stateless
-  cols::S
+  colspec::S
 end
 
-# to avoid StackOverflowError in Reject() and Reject(())
-Reject(::Tuple{}) = throw(ArgumentError("Cannot create a Reject object with no arguments."))
+# argumet erros
+Reject(::Tuple{}) = throw(ArgumentError("Cannot create a Reject object with empty tuple."))
+Reject(::Colon) = throw(ArgumentError("Cannot reject all columns."))
+Reject() = throw(ArgumentError("Cannot create a Reject object without arguments."))
 
-Reject(cols::T...) where {T<:Union{AbstractString, Symbol}} = 
+Reject(cols::T...) where {T<:ColSelector} = 
   Reject(cols)
-
-Reject(cols::NTuple{N, T}) where {N, T<:Union{AbstractString, Symbol}} =
-  Reject(collect(cols))
-
-Reject(cols::Vector{T}) where {T<:AbstractString} =
-  Reject(Symbol.(cols))
-
-Base.:(==)(a::Reject, b::Reject) = a.cols == b.cols
 
 isrevertible(::Type{<:Reject}) = true
 
 function apply(transform::Reject, table)
   allcols = Tables.columnnames(table)
-  reject  = _select(transform.cols, allcols)
+  reject  = _filter(transform.colspec, allcols)
   select  = setdiff(allcols, reject)
   strans  = Select(select)
   newtable, scache = apply(strans, table)

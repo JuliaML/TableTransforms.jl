@@ -5,6 +5,9 @@
 # types used to select a column
 const ColSelector = Union{Symbol,Integer,AbstractString}
 
+# union of types used to filter columns
+const ColSpec = Union{Vector{T},NTuple{N,T},Regex,Colon} where {N,T<:ColSelector}
+
 # filter table columns using colspec
 function _filter(colspec::Vector{Symbol}, cols)
   # validate columns

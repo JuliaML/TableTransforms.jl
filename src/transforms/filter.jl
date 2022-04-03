@@ -68,7 +68,7 @@ DropMissing(cols::T...) where {T<:ColSelector} =
 
 function DropMissing(regex::Regex)
   Filter() do row
-    cols = _select(regex, propertynames(row))
+    cols = _filter(regex, propertynames(row))
     all(!ismissing, getindex.(Ref(row), cols))
   end
 end
