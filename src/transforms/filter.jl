@@ -27,7 +27,7 @@ function apply(transform::Filter, table)
 end
 
 function revert(::Filter, newtable, cache)
-  rows = Tables.rowtable(newtable)
+  rows = Vector{NamedTuple}(Tables.rowtable(newtable))
 
   for (i, row) in cache
     insert!(rows, i, row)
@@ -35,10 +35,6 @@ function revert(::Filter, newtable, cache)
 
   rows |> Tables.materializer(newtable)
 end
-
-# DropMissing
-
-const VecOrTuple{T} = Union{Vector{T}, NTuple{N, T}} where {T, N}
 
 """
     DropMissing()
@@ -69,18 +65,24 @@ DropMissing(cols::T...) where {T<:ColSelector} =
 
 isrevertible(::Type{<:DropMissing}) = true
 
-_ftrans(::DropMissing{Colon}, table) =
-  Filter(row -> all(!ismissing, row))
+_ftrans(::DropMissing{Colon}, allcols) =
+  allcols, Filter(row -> all(!ismissing, row))
 
-function _ftrans(transform::DropMissing, table)
-  allcols = Tables.columnnames(table)
+function _ftrans(transform::DropMissing, allcols)
   cols = _filter(transform.colspec, allcols)
-  Filter(row -> all(!ismissing, getindex.(Ref(row), cols)))
+  cols, Filter(row -> all(!ismissing, getindex.(Ref(row), cols)))
 end
 
+_nonmissing(v) = Vector{nonmissingtype(eltype(v))}(v)
+
 function apply(transform::DropMissing, table)
-  ftrans = _ftrans(transform, table)
-  newtable, fcache = apply(ftrans, table)
+  allcols = Tables.columnnames(table)
+  cols, ftrans = _ftrans(transform, allcols)
+  temp, fcache = apply(ftrans, table)
+  newcols = [col ∈ cols ? _nonmissing(Tables.getcolumn(temp, col)) : Tables.getcolumn(temp, col)
+                        for col in allcols]
+  𝒯 = (; zip(allcols, newcols)...)
+  newtable = 𝒯 |> Tables.materializer(table)
   newtable, (ftrans, fcache)
 end
 
