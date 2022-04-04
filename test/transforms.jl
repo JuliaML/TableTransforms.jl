@@ -603,6 +603,22 @@
     n1, c1 = apply(T, t)
     n2 = reapply(T, t, c1)
     @test n1 == n2
+
+    # throws: empty tuple
+    @test_throws ArgumentError DropMissing(())
+
+    # throws: empty selection
+    @test_throws AssertionError apply(DropMissing(r"g"), t)
+    @test_throws AssertionError apply(DropMissing(Symbol[]), t)
+    @test_throws AssertionError apply(DropMissing(String[]), t)
+
+    # throws: columns that do not exist in the original table
+    @test_throws AssertionError apply(DropMissing(:g, :h), t)
+    @test_throws AssertionError apply(DropMissing([:g, :h]), t)
+    @test_throws AssertionError apply(DropMissing((:g, :h)), t)
+    @test_throws AssertionError apply(DropMissing("g", "h"), t)
+    @test_throws AssertionError apply(DropMissing(["g", "h"]), t)
+    @test_throws AssertionError apply(DropMissing(("g", "h")), t)
   end
 
   @testset "Rename" begin

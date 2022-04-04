@@ -5,7 +5,40 @@
 # types used to select a column
 const ColSelector = Union{Symbol,Integer,AbstractString}
 
-# union of types used to filter columns
+"""
+    ColSpec  
+
+`ColSpec` is a union of types used to filter columns. 
+The `ColSpec` type together with the `ColSelector` union type and 
+the `_filter` internal function form the ColSpec interface.
+
+To implement the ColSpec interface, the following steps must be performed:
+
+1. add colspec fied:
+```julia
+struct MyTransform{S<:ColSpec,#= other type params =#}
+  colspec::S
+  # other fileds
+end
+```
+2. use `_filter(colspec, cols)` internal function in apply:
+```julia
+function apply(transform::MyTransform, table)
+  allcols = Tables.columnnames(table)
+  # selected columns
+  cols = _filter(transform.colspec, allcols)
+  # code...
+end
+```
+
+If you need to create constructors that accept 
+individual column selectors use the `ColSelector` type. Example:
+```julia
+function MyTransform(args::T...) where {T<:ColSelector}
+  # code...
+end
+```
+"""
 const ColSpec = Union{Vector{T},NTuple{N,T},Regex,Colon} where {N,T<:ColSelector}
 
 # filter table columns using colspec
