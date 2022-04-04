@@ -27,7 +27,7 @@ function apply(transform::Filter, table)
 end
 
 function revert(::Filter, newtable, cache)
-  rows = Vector{NamedTuple}(Tables.rowtable(newtable))
+  rows = Tables.rowtable(newtable)
 
   for (i, row) in cache
     insert!(rows, i, row)
@@ -65,28 +65,43 @@ DropMissing(cols::T...) where {T<:ColSelector} =
 
 isrevertible(::Type{<:DropMissing}) = true
 
-_ftrans(::DropMissing{Colon}, allcols) =
-  allcols, Filter(row -> all(!ismissing, row))
+_ftrans(::DropMissing{Colon}, cols) =
+  Filter(row -> all(!ismissing, row))
 
-function _ftrans(transform::DropMissing, allcols)
-  cols = _filter(transform.colspec, allcols)
-  cols, Filter(row -> all(!ismissing, getindex.(Ref(row), cols)))
+_ftrans(::DropMissing, cols) =
+  Filter(row -> all(!ismissing, getindex.(Ref(row), cols)))
+
+function _nonmissing(table, col)
+  c = Tables.getcolumn(table, col)
+  Vector{nonmissingtype(eltype(c))}(c)
 end
 
-_nonmissing(v) = Vector{nonmissingtype(eltype(v))}(v)
+function _missing(table, col)
+  c = Tables.getcolumn(table, col)
+  Vector{Union{Missing,eltype(c)}}(c)
+end
+
+function _process(table, cols, func)
+  allcols = Tables.columnnames(table)
+  newcols = [col ∈ cols ? func(table, col) : Tables.getcolumn(table, col)
+             for col in allcols]
+  𝒯 = (; zip(allcols, newcols)...)
+  𝒯 |> Tables.materializer(table)
+end
 
 function apply(transform::DropMissing, table)
   allcols = Tables.columnnames(table)
-  cols, ftrans = _ftrans(transform, allcols)
-  temp, fcache = apply(ftrans, table)
-  newcols = [col ∈ cols ? _nonmissing(Tables.getcolumn(temp, col)) : Tables.getcolumn(temp, col)
-                        for col in allcols]
-  𝒯 = (; zip(allcols, newcols)...)
-  newtable = 𝒯 |> Tables.materializer(table)
-  newtable, (ftrans, fcache)
+  cols = _filter(transform.colspec, allcols)
+  ftrans = _ftrans(transform, cols)
+  newtable, fcache = apply(ftrans, table)
+  # post-processing
+  ptable = _process(newtable, cols, _nonmissing)
+  ptable, (ftrans, fcache, cols)
 end
 
 function revert(::DropMissing, newtable, cache)
-  ftrans, fcache = cache
-  revert(ftrans, newtable, fcache)
+  ftrans, fcache, cols = cache
+  # pre-processing
+  ptable = _process(newtable, cols, _missing)
+  revert(ftrans, ptable, fcache)
 end
