@@ -9,6 +9,9 @@ function assert_continuous(table)
 end
 
 function assert_continuous_or_missing(table)
-  types = schema(table).scitypes
-  @assert all(T <: Union{Missing, Continuous} for T in types) "columns must hold continuous variables"
+  cols = Tables.columns(table)
+  for col in cols
+      type = scitype(col)
+      @assert type <: AbstractVector{<:Union{Missing, Continuous}} "columns must hold continuous variables"
+  end
 end
