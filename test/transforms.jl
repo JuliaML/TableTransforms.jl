@@ -699,8 +699,8 @@
     n, c = apply(Coerce(Count), t)
     tₒ = revert(Coerce(Count), n, c)
     @test t == tₒ
-
   end
+
   @testset "Center" begin
     # using rng for reproducible results
     x = rand(rng, Normal(2, 1), 4000)
