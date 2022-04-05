@@ -11,8 +11,6 @@ struct Coerce{S} <: Colwise
   type::S
 end
 
-assertions(::Type{Coerce}) = [assert_continuous]
-
 isrevertible(::Type{<:Coerce}) = true
 
 colcache(::Coerce, x) = ScientificTypes.elscitype(x)
