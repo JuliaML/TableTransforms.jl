@@ -685,6 +685,22 @@
     @test t == tₒ
   end
 
+  @testset "Coerce" begin
+    x1 = [1.0, 2.0, 3.0, 4.0, 5.0]
+    x2 = [1.0, 2.0, 3.0, 4.0, 5.0]
+    x3 = [5.0, 5.0, 5.0, 5.0, 5.0]
+    t = TypedTables.Table(;x1, x2, x3)
+
+    # apply test
+    n, c = apply(Coerce(Count), t)
+    @test elscitype(t[1]) == Count
+
+    # revert test
+    n, c = apply(Coerce(Count), t)
+    tₒ = revert(Coerce(Count), n, c)
+    @test t == tₒ
+
+  end
   @testset "Center" begin
     # using rng for reproducible results
     x = rand(rng, Normal(2, 1), 4000)

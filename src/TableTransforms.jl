@@ -36,6 +36,7 @@ export
   DropMissing,
   Rename,
   Identity,
+  Coerce,
   Center,
   Scale,
   MinMax,
