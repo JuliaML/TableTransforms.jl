@@ -65,15 +65,21 @@ DropMissing(cols::T...) where {T<:ColSelector} =
 
 isrevertible(::Type{<:DropMissing}) = true
 
+# ftrans
 _ftrans(::DropMissing{Colon}, cols) =
   Filter(row -> all(!ismissing, row))
 
 _ftrans(::DropMissing, cols) =
   Filter(row -> all(!ismissing, getindex.(Ref(row), cols)))
 
+# nonmissing 
+_nonmissing(::Type{T}, c) where {T} = c
+_nonmissing(::Type{Union{Missing,T}}, c) where {T} =
+  collect(T, c)
+
 function _nonmissing(columns, col)
   c = Tables.getcolumn(columns, col)
-  collect(nonmissingtype(eltype(c)), c)
+  _nonmissing(eltype(c), c)
 end
 
 function _nonmissing(table, cols, allcols)
@@ -84,6 +90,7 @@ function _nonmissing(table, cols, allcols)
   𝒯 |> Tables.materializer(table)
 end
 
+# reverttypes
 function _reverttypes(table, types)
   columns = Tables.columns(table)
   allcols = Tables.columnnames(table)
