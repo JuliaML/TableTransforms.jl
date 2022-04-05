@@ -6,6 +6,9 @@ using LinearAlgebra
 using Statistics
 using Test, Random, Plots
 using ReferenceTests, ImageIO
+# WARNING: replacing the following line with `using ScientificTypes` will
+# cause a conflicting import and break the tests
+import ScientificTypes: Count, elscitype
 
 # set default configurations for plots
 gr(ms=2, mc=:black, aspectratio=:equal,

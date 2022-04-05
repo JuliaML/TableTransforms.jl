@@ -693,7 +693,7 @@
 
     # apply test
     n, c = apply(Coerce(Count), t)
-    @test elscitype(t[1]) == Count
+    @test elscitype(n[1]) == Count
 
     # revert test
     n, c = apply(Coerce(Count), t)
