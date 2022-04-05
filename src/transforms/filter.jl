@@ -82,38 +82,33 @@ function _nonmissing(columns, col)
   _nonmissing(eltype(c), c)
 end
 
-function _nonmissing(table, cols, allcols)
-  columns = Tables.columns(table)
+function apply(transform::DropMissing, table)
+  allcols = Tables.columnnames(table)
+  cols    = _filter(transform.colspec, allcols)
+  ftrans  = _ftrans(transform, cols)
+  newtable, fcache = apply(ftrans, table)
+
+  # post-processing
+  columns = Tables.columns(newtable)
   newcols = [col ∈ cols ? _nonmissing(columns, col) : Tables.getcolumn(columns, col)
              for col in allcols]
   𝒯 = (; zip(allcols, newcols)...)
-  𝒯 |> Tables.materializer(table)
-end
+  ptable = 𝒯 |> Tables.materializer(newtable)
 
-# reverttypes
-function _reverttypes(table, types)
-  columns = Tables.columns(table)
-  allcols = Tables.columnnames(table)
-  newcols = [collect(T, Tables.getcolumn(columns, col)) 
-             for (T, col) in zip(types, allcols)]
-  𝒯 = (; zip(allcols, newcols)...)
-  𝒯 |> Tables.materializer(table)
-end
-
-function apply(transform::DropMissing, table)
-  allcols = Tables.columnnames(table)
-  cols = _filter(transform.colspec, allcols)
-  ftrans = _ftrans(transform, cols)
-  newtable, fcache = apply(ftrans, table)
-  # post-processing
   types = Tables.schema(table).types
-  ptable = _nonmissing(newtable, cols, allcols)
   ptable, (ftrans, fcache, types)
 end
 
 function revert(::DropMissing, newtable, cache)
   ftrans, fcache, types = cache
+
   # pre-processing
-  ptable = _reverttypes(newtable, types)
+  columns = Tables.columns(newtable)
+  allcols = Tables.columnnames(newtable)
+  newcols = [collect(T, Tables.getcolumn(columns, col))
+             for (T, col) in zip(types, allcols)]
+  𝒯 = (; zip(allcols, newcols)...)
+  ptable = 𝒯 |> Tables.materializer(newtable)
+
   revert(ftrans, ptable, fcache)
 end
