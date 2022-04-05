@@ -71,20 +71,24 @@ _ftrans(::DropMissing{Colon}, cols) =
 _ftrans(::DropMissing, cols) =
   Filter(row -> all(!ismissing, getindex.(Ref(row), cols)))
 
-function _nonmissing(table, col)
-  c = Tables.getcolumn(table, col)
-  Vector{nonmissingtype(eltype(c))}(c)
+function _nonmissing(columns, col)
+  c = Tables.getcolumn(columns, col)
+  collect(nonmissingtype(eltype(c)), c)
 end
 
-function _missing(table, col)
-  c = Tables.getcolumn(table, col)
-  Vector{Union{Missing,eltype(c)}}(c)
-end
-
-function _process(table, cols, func)
-  allcols = Tables.columnnames(table)
-  newcols = [col ∈ cols ? func(table, col) : Tables.getcolumn(table, col)
+function _nonmissing(table, cols, allcols)
+  columns = Tables.columns(table)
+  newcols = [col ∈ cols ? _nonmissing(columns, col) : Tables.getcolumn(columns, col)
              for col in allcols]
+  𝒯 = (; zip(allcols, newcols)...)
+  𝒯 |> Tables.materializer(table)
+end
+
+function _reverttypes(table, types)
+  columns = Tables.columns(table)
+  allcols = Tables.columnnames(table)
+  newcols = [collect(T, Tables.getcolumn(columns, col)) 
+             for (T, col) in zip(types, allcols)]
   𝒯 = (; zip(allcols, newcols)...)
   𝒯 |> Tables.materializer(table)
 end
@@ -95,13 +99,14 @@ function apply(transform::DropMissing, table)
   ftrans = _ftrans(transform, cols)
   newtable, fcache = apply(ftrans, table)
   # post-processing
-  ptable = _process(newtable, cols, _nonmissing)
-  ptable, (ftrans, fcache, cols)
+  types = Tables.schema(table).types
+  ptable = _nonmissing(newtable, cols, allcols)
+  ptable, (ftrans, fcache, types)
 end
 
 function revert(::DropMissing, newtable, cache)
-  ftrans, fcache, cols = cache
+  ftrans, fcache, types = cache
   # pre-processing
-  ptable = _process(newtable, cols, _missing)
+  ptable = _reverttypes(newtable, types)
   revert(ftrans, ptable, fcache)
 end
