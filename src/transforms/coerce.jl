@@ -11,6 +11,8 @@ struct Coerce{P} <: Transform
   pairs::P
 end
 
+Coerce(pair...) = Coerce(pair)
+
 isrevertible(::Type{<:Coerce}) = true
 
 function apply(transform::Coerce, table)
