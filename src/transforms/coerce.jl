@@ -3,20 +3,26 @@
 # ------------------------------------------------------------------
 
 """
-    Coerce(P)
+    Coerce(pairs, tight=false, verbosity=1)
 
-Return a new versions of the table whose scientific element types are S.
+Return a copy of the table, ensuring that the element scitypes of the columns match the new specification.
+
+Valid specifications (more to be added):
+
+(1) one or more column_name=>Scitype pairs
 """
-struct Coerce{P} <: Transform
+struct Coerce{P, T, V} <: Transform
   pairs::P
+  tight::T
+  verbosity::V
 end
 
-Coerce(pair...) = Coerce(pair)
+Coerce(pair...; tight=false, verbosity=1) = Coerce(pair, tight, verbosity)
 
 isrevertible(::Type{<:Coerce}) = true
 
 function apply(transform::Coerce, table)
-  newtable = ScientificTypes.coerce(table, transform.pairs...)
+  newtable = ScientificTypes.coerce(table, transform.pairs...; tight=transform.tight, verbosity=transform.verbosity)
 
   scitypes = [ScientificTypes.elscitype(x) for x in Tables.columns(table)]
   colnames = Tables.columnnames(table)
