@@ -3,18 +3,24 @@
 # ------------------------------------------------------------------
 
 """
-    Coerce(S::DataType)
+    Coerce(P)
 
 Return a new versions of the table whose scientific element types are S.
 """
-struct Coerce{S} <: Colwise
-  type::S
+struct Coerce{P} <: Transform
+  pairs::P
 end
 
 isrevertible(::Type{<:Coerce}) = true
 
-colcache(::Coerce, x) = ScientificTypes.elscitype(x)
+function apply(transform::Coerce, table)
+  newtable = ScientificTypes.coerce(table, transform.pairs...)
 
-colapply(transform::Coerce, x, c) = ScientificTypes.coerce(x, transform.type)
+  scitypes = [ScientificTypes.elscitype(x) for x in Tables.columns(table)]
+  colnames = Tables.columnnames(table)
+  pairs = [Pair(i, j) for (i, j) in zip(colnames, scitypes)]
+  
+  return newtable, pairs
+end
 
-colrevert(transform::Coerce, y, c) = ScientificTypes.coerce(y, c)
+revert(transform::Coerce, newtable, cache) = ScientificTypes.coerce(newtable, cache...)

@@ -692,12 +692,12 @@
     t = TypedTables.Table(;x1, x2, x3)
 
     # apply test
-    n, c = apply(Coerce(Count), t)
-    @test elscitype(n[1]) == Count
+    n, c = apply(Coerce([:x1=>Count, :x2=>Count]), t)
+    @test elscitype(n.x1) == Count && elscitype(n.x2) == Count
 
     # revert test
-    n, c = apply(Coerce(Count), t)
-    tₒ = revert(Coerce(Count), n, c)
+    n, c = apply(Coerce([:x1=>Count, :x2=>Count]), t)
+    tₒ = revert(Coerce([:x1=>Count, :x2=>Count]), n, c)
     @test t == tₒ
   end
 
