@@ -73,21 +73,19 @@ _ftrans(::DropMissing, cols) =
   Filter(row -> all(!ismissing, getindex.(Ref(row), cols)))
 
 # nonmissing 
-_nonmissing(::Type{T}, c) where {T} = c
-_nonmissing(::Type{Union{Missing,T}}, c) where {T} =
-  collect(T, c)
-
-_nonmissing(col) = _nonmissing(eltype(col), col)
+_nonmissing(::Type{T}, x) where {T} = x
+_nonmissing(::Type{Union{Missing,T}}, x) where {T} = collect(T, x)
+_nonmissing(x) = _nonmissing(eltype(x), x)
 
 function apply(transform::DropMissing, table)
   colnames = Tables.columnnames(table)
-  select = _filter(transform.colspec, colnames)
-  ftrans = _ftrans(transform, select)
+  selnames = _filter(transform.colspec, colnames)
+  ftrans = _ftrans(transform, selnames)
   newtable, fcache = apply(ftrans, table)
 
   # post-processing
   coltable = Tables.columntable(newtable)
-  pcolumns = [nm ∈ select ? _nonmissing(col) : col for (nm, col) in pairs(coltable)]
+  pcolumns = [nm ∈ selnames ? _nonmissing(x) : x for (nm, x) in pairs(coltable)]
   𝒯 = (; zip(colnames, pcolumns)...)
   ptable = 𝒯 |> Tables.materializer(newtable)
 
@@ -101,7 +99,7 @@ function revert(::DropMissing, newtable, cache)
   # pre-processing
   colnames = Tables.columnnames(newtable)
   coltable = Tables.columntable(newtable)
-  pcolumns = [collect(T, col) for (T, col) in zip(types, coltable)]
+  pcolumns = [collect(T, x) for (T, x) in zip(types, coltable)]
   𝒯 = (; zip(colnames, pcolumns)...)
   ptable = 𝒯 |> Tables.materializer(newtable)
 
