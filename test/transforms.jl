@@ -689,7 +689,7 @@
     x1 = [1.0, 2.0, 3.0, 4.0, 5.0]
     x2 = [1.0, 2.0, 3.0, 4.0, 5.0]
     x3 = [5.0, 5.0, 5.0, 5.0, 5.0]
-    t = TypedTables.Table(;x1, x2, x3)
+    t = Table(;x1, x2, x3)
 
     # apply test
     n, c = apply(Coerce(:x1=>Count, :x2=>Count), t)
@@ -698,7 +698,7 @@
     # revert test
     n, c = apply(Coerce(:x1=>Count, :x2=>Count), t)
     tₒ = revert(Coerce(:x1=>Count, :x2=>Count), n, c)
-    @test t == tₒ
+    @test elscitype(tₒ.x1)==elscitype(t.x1) && elscitype(tₒ.x2)==elscitype(t.x2)
   end
 
   @testset "Center" begin
