@@ -28,8 +28,8 @@ function apply(transform::Coerce, table)
                     tight=transform.tight,
                     verbosity=transform.verbosity)
 
-  scitypes = [elscitype(x) for x in Tables.columns(table)]
   colnames = Tables.columnnames(table)
+  scitypes = [elscitype(x) for x in Tables.columns(table)]
   pairs = [Pair(i, j) for (i, j) in zip(colnames, scitypes)]
   
   newtable, pairs
