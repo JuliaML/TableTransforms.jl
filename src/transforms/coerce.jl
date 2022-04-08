@@ -11,6 +11,7 @@ This transform wraps the ScientificTypes.coerce function. Please see their docst
 
 ```julia
 Coerce(:col1 => Continuous, :col2 => Count)
+```
 """
 struct Coerce{P} <: Transform
   pairs::P
@@ -24,7 +25,8 @@ isrevertible(::Type{<:Coerce}) = true
 
 function apply(transform::Coerce, table)
   newtable = coerce(table, transform.pairs...;
-                    tight=transform.tight, verbosity=transform.verbosity)
+                    tight=transform.tight,
+                    verbosity=transform.verbosity)
 
   scitypes = [elscitype(x) for x in Tables.columns(table)]
   colnames = Tables.columnnames(table)

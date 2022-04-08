@@ -674,6 +674,25 @@
     @test n1 == n2
   end
 
+  @testset "Coerce" begin
+    x1 = [1.0, 2.0, 3.0, 4.0, 5.0]
+    x2 = [1.0, 2.0, 3.0, 4.0, 5.0]
+    x3 = [5.0, 5.0, 5.0, 5.0, 5.0]
+    t = Table(;x1, x2, x3)
+
+    # apply test
+    T = Coerce(:x1=>Count, :x2=>Count)
+    n, c = apply(T, t)
+    @test eltype(n.x1) == Int
+    @test eltype(n.x2) == Int
+
+    # revert test
+    n, c = apply(T, t)
+    tₒ = revert(T, n, c)
+    @test eltype(tₒ.x1)==eltype(t.x1)
+    @test eltype(tₒ.x2)==eltype(t.x2)
+  end
+  
   @testset "Identity" begin
     x = rand(4000)
     y = rand(4000)
@@ -683,22 +702,6 @@
     @test t == n
     tₒ = revert(T, n, c)
     @test t == tₒ
-  end
-
-  @testset "Coerce" begin
-    x1 = [1.0, 2.0, 3.0, 4.0, 5.0]
-    x2 = [1.0, 2.0, 3.0, 4.0, 5.0]
-    x3 = [5.0, 5.0, 5.0, 5.0, 5.0]
-    t = Table(;x1, x2, x3)
-
-    # apply test
-    n, c = apply(Coerce(:x1=>Count, :x2=>Count), t)
-    @test elscitype(n.x1) == Count && elscitype(n.x2) == Count
-
-    # revert test
-    n, c = apply(Coerce(:x1=>Count, :x2=>Count), t)
-    tₒ = revert(Coerce(:x1=>Count, :x2=>Count), n, c)
-    @test elscitype(tₒ.x1)==elscitype(t.x1) && elscitype(tₒ.x2)==elscitype(t.x2)
   end
 
   @testset "Center" begin
