@@ -9,7 +9,8 @@ Return a copy of the table, ensuring that the element scitypes of the columns ma
 
 This transform wraps around ScientificTypes.coerce function. Example syntax:
 
-table |> Coerce(:column1=>Continuous, :column2=>Count)
+```julia
+Coerce(:col1 => Continuous, :col2 => Count)
 """
 struct Coerce{P} <: Transform
   pairs::P
