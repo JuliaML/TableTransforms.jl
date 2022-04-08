@@ -6,7 +6,7 @@ using LinearAlgebra
 using Statistics
 using Test, Random, Plots
 using ReferenceTests, ImageIO
-import ScientificTypes: Count, elscitype
+import ScientificTypes: Count
 
 # set default configurations for plots
 gr(ms=2, mc=:black, aspectratio=:equal,
