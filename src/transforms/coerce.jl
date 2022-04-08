@@ -5,7 +5,7 @@
 """
     Coerce(pairs, tight=false, verbosity=1)
 
-Return a copy of the table, ensuring that the element scitypes of the columns match the new specification.
+Return a copy of the table, ensuring that the scientific types of the columns match the new specification.
 
 This transform wraps around ScientificTypes.coerce function. Example syntax:
 
