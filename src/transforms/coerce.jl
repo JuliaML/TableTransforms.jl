@@ -7,7 +7,7 @@
 
 Return a copy of the table, ensuring that the scientific types of the columns match the new specification.
 
-This transform wraps the ScientificTypes.coerce function. Please their docstring for more details.
+This transform wraps the ScientificTypes.coerce function. Please see their docstring for more details.
 
 ```julia
 Coerce(:col1 => Continuous, :col2 => Count)
