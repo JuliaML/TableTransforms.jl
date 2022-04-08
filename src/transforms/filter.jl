@@ -65,7 +65,6 @@ DropMissing(cols::T...) where {T<:ColSelector} =
 
 isrevertible(::Type{<:DropMissing}) = true
 
-# ftrans
 _ftrans(::DropMissing{Colon}, cols) =
   Filter(row -> all(!ismissing, row))
 
@@ -78,29 +77,35 @@ _nonmissing(::Type{Union{Missing,T}}, x) where {T} = collect(T, x)
 _nonmissing(x) = _nonmissing(eltype(x), x)
 
 function apply(transform::DropMissing, table)
-  colnames = Tables.columnnames(table)
-  selnames = _filter(transform.colspec, colnames)
+  names = Tables.columnnames(table)
+  coltypes = Tables.schema(table).types
+  selnames = _filter(transform.colspec, names)
   ftrans = _ftrans(transform, selnames)
   newtable, fcache = apply(ftrans, table)
 
   # post-processing
-  coltable = Tables.columntable(newtable)
-  pcolumns = [nm ∈ selnames ? _nonmissing(x) : x for (nm, x) in pairs(coltable)]
-  𝒯 = (; zip(colnames, pcolumns)...)
+  cols = Tables.columns(newtable)
+  pcols = map(names) do n
+    x = Tables.getcolumn(cols, n)
+    n ∈ selnames ? _nonmissing(x) : x
+  end
+  𝒯 = (; zip(names, pcols)...)
   ptable = 𝒯 |> Tables.materializer(newtable)
 
-  types = Tables.schema(table).types
-  ptable, (ftrans, fcache, types)
+  ptable, (ftrans, fcache, coltypes)
 end
 
 function revert(::DropMissing, newtable, cache)
-  ftrans, fcache, types = cache
+  ftrans, fcache, coltypes = cache
 
   # pre-processing
-  colnames = Tables.columnnames(newtable)
-  coltable = Tables.columntable(newtable)
-  pcolumns = [collect(T, x) for (T, x) in zip(types, coltable)]
-  𝒯 = (; zip(colnames, pcolumns)...)
+  cols = Tables.columns(newtable)
+  names = Tables.columnnames(newtable)
+  pcols = map(zip(coltypes, names)) do (T, n)
+    x = Tables.getcolumn(cols, n)
+    collect(T, x)
+  end
+  𝒯 = (; zip(names, pcols)...)
   ptable = 𝒯 |> Tables.materializer(newtable)
 
   revert(ftrans, ptable, fcache)
