@@ -28,11 +28,16 @@ function apply(transform::Coerce, table)
                     tight=transform.tight,
                     verbosity=transform.verbosity)
 
-  colnames = Tables.columnnames(table)
-  scitypes = [elscitype(x) for x in Tables.columns(table)]
-  pairs = [Pair(i, j) for (i, j) in zip(colnames, scitypes)]
+  cols = Tables.columns(table)
+  types = [eltype(col) for col in cols]
   
-  newtable, pairs
+  newtable, types
 end
 
-revert(transform::Coerce, newtable, cache) = coerce(newtable, cache...)
+function revert(transform::Coerce, newtable, cache)
+  names = schema(newtable).names
+  cols = Tables.columns(newtable)
+  newcols = (collect(type, col) for (type, col) in zip(cache, cols))
+  
+  Tables.materializer(newtable)(NamedTuple{names}(newcols))
+end
