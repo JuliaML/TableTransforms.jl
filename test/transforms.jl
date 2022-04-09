@@ -598,6 +598,44 @@
     @test isequalmissing(n.e, [missing, 5, 6, 5])
     @test isequalmissing(n.f, [4, missing, 4, 5])
 
+    # table schema after apply and revert
+    T = DropMissing()
+    n, c = apply(T, t)
+    tₒ = revert(T, n, c)
+    ttypes = Tables.schema(t).types
+    ntypes = Tables.schema(n).types
+    @test ntypes[1] == Int
+    @test ntypes[2] == Int
+    @test ntypes[3] == Int
+    @test ntypes[4] == Int
+    @test ntypes[5] == Int
+    @test ntypes[6] == Int
+    @test ttypes == Tables.schema(tₒ).types
+
+    T = DropMissing([:a, :c, :d])
+    n, c = apply(T, t)
+    tₒ = revert(T, n, c)
+    ntypes = Tables.schema(n).types
+    @test ntypes[1] == Int
+    @test ntypes[2] == Union{Missing,Int}
+    @test ntypes[3] == Int
+    @test ntypes[4] == Int
+    @test ntypes[5] == Union{Missing,Int}
+    @test ntypes[6] == Union{Missing,Int}
+    @test ttypes == Tables.schema(tₒ).types
+
+    T = DropMissing([:b, :e, :f])
+    n, c = apply(T, t)
+    tₒ = revert(T, n, c)
+    ntypes = Tables.schema(n).types
+    @test ntypes[1] == Union{Missing,Int}
+    @test ntypes[2] == Int
+    @test ntypes[3] == Union{Missing,Int}
+    @test ntypes[4] == Union{Missing,Int}
+    @test ntypes[5] == Int
+    @test ntypes[6] == Int
+    @test ttypes == Tables.schema(tₒ).types
+
     # reapply test
     T = DropMissing()
     n1, c1 = apply(T, t)
