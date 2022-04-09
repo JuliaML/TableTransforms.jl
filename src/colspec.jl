@@ -21,12 +21,12 @@ struct MyTransform{S<:ColSpec,#= other type params =#}
   # other fileds
 end
 ```
-2. use `_filter(colspec, cols)` internal function in apply:
+2. use `_filter(colspec, names)` internal function in apply:
 ```julia
 function apply(transform::MyTransform, table)
-  allcols = Tables.columnnames(table)
-  # selected columns
-  cols = _filter(transform.colspec, allcols)
+  names = Tables.columnnames(table)
+  # selected column names
+  snames = _filter(transform.colspec, names)
   # code...
 end
 ```
@@ -42,32 +42,32 @@ end
 const ColSpec = Union{Vector{T},NTuple{N,T},Regex,Colon} where {N,T<:ColSelector}
 
 # filter table columns using colspec
-function _filter(colspec::Vector{Symbol}, cols)
+function _filter(colspec::Vector{Symbol}, names)
   # validate columns
   @assert !isempty(colspec) "Invalid column selection."
-  @assert colspec ⊆ cols "Invalid column selection."
+  @assert colspec ⊆ names "Invalid column selection."
   return colspec
 end
 
-_filter(colspec::Vector{<:AbstractString}, cols) = 
-  _filter(Symbol.(colspec), cols)
+_filter(colspec::Vector{<:AbstractString}, names) = 
+  _filter(Symbol.(colspec), names)
 
-_filter(colspec::Vector{<:Integer}, cols::Vector) = 
-  _filter(cols[colspec], cols)
+_filter(colspec::Vector{<:Integer}, names::Vector) = 
+  _filter(names[colspec], names)
 
-_filter(colspec::Vector{<:Integer}, cols::Tuple) = 
-  _filter(colspec, collect(cols))
+_filter(colspec::Vector{<:Integer}, names::Tuple) = 
+  _filter(colspec, collect(names))
 
-_filter(colspec::NTuple{N,<:ColSelector}, cols) where {N} =
-  _filter(collect(colspec), cols)
+_filter(colspec::NTuple{N,<:ColSelector}, names) where {N} =
+  _filter(collect(colspec), names)
 
-function _filter(colspec::Regex, cols::Vector)
-  fcols = filter(col -> occursin(colspec, String(col)), cols)
-  _filter(fcols, cols)
+function _filter(colspec::Regex, names::Vector)
+  fnames = filter(col -> occursin(colspec, String(col)), names)
+  _filter(fnames, names)
 end
 
-_filter(colspec::Regex, cols::Tuple) = 
-  _filter(colspec, collect(cols))
+_filter(colspec::Regex, names::Tuple) = 
+  _filter(colspec, collect(names))
 
-_filter(::Colon, cols::Vector) = cols
-_filter(::Colon, cols::Tuple) = collect(cols)
+_filter(::Colon, names::Vector) = names
+_filter(::Colon, names::Tuple) = collect(names)
