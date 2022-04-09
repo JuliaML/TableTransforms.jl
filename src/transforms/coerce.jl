@@ -28,8 +28,7 @@ function apply(transform::Coerce, table)
                     tight=transform.tight,
                     verbosity=transform.verbosity)
 
-  cols = Tables.columns(table)
-  types = [eltype(col) for col in cols]
+  types = [eltype(x) for x in Tables.columns(table)]
   
   newtable, types
 end
