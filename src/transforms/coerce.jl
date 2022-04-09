@@ -29,7 +29,7 @@ function apply(transform::Coerce, table)
                     tight=transform.tight,
                     verbosity=transform.verbosity)
 
-  types = Tables.schema(tables).types
+  types = Tables.schema(table).types
   
   newtable, types
 end
