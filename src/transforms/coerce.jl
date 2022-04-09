@@ -35,7 +35,7 @@ function apply(transform::Coerce, table)
 end
 
 function revert(transform::Coerce, newtable, cache)
-  colnames = Tables.columnnames(newtable)
+  names = Tables.columnnames(newtable)
   cols = Tables.columns(newtable)
   newcols = (collect(type, col) for (type, col) in zip(cache, cols))
   
