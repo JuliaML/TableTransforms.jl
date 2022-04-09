@@ -34,9 +34,10 @@ function apply(transform::Coerce, table)
 end
 
 function revert(transform::Coerce, newtable, cache)
-  names = schema(newtable).names
+  colnames = Tables.columnnames(newtable)
   cols = Tables.columns(newtable)
   newcols = (collect(type, col) for (type, col) in zip(cache, cols))
   
-  Tables.materializer(newtable)(NamedTuple{names}(newcols))
+  𝒯 = (; zip(colnames, newcols)...)
+  𝒯 |> Tables.materializer(newtable)
 end
