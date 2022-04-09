@@ -19,7 +19,8 @@ struct Coerce{P} <: Transform
   verbosity::Int
 end
 
-Coerce(pair...; tight=false, verbosity=1) = Coerce(pair, tight, verbosity)
+Coerce(pair::Pair{Symbol,<:Type}...; tight=false, verbosity=1) = 
+  Coerce(pair, tight, verbosity)
 
 isrevertible(::Type{<:Coerce}) = true
 
