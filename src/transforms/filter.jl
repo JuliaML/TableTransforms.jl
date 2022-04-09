@@ -78,30 +78,30 @@ _nonmissing(x) = _nonmissing(eltype(x), x)
 
 function apply(transform::DropMissing, table)
   names = Tables.columnnames(table)
-  coltypes = Tables.schema(table).types
-  selnames = _filter(transform.colspec, names)
-  ftrans = _ftrans(transform, selnames)
+  types = Tables.schema(table).types
+  snames = _filter(transform.colspec, names)
+  ftrans = _ftrans(transform, snames)
   newtable, fcache = apply(ftrans, table)
 
   # post-processing
   cols = Tables.columns(newtable)
   pcols = map(names) do n
     x = Tables.getcolumn(cols, n)
-    n ∈ selnames ? _nonmissing(x) : x
+    n ∈ snames ? _nonmissing(x) : x
   end
   𝒯 = (; zip(names, pcols)...)
   ptable = 𝒯 |> Tables.materializer(newtable)
 
-  ptable, (ftrans, fcache, coltypes)
+  ptable, (ftrans, fcache, types)
 end
 
 function revert(::DropMissing, newtable, cache)
-  ftrans, fcache, coltypes = cache
+  ftrans, fcache, types = cache
 
   # pre-processing
   cols = Tables.columns(newtable)
   names = Tables.columnnames(newtable)
-  pcols = map(zip(coltypes, names)) do (T, n)
+  pcols = map(zip(types, names)) do (T, n)
     x = Tables.getcolumn(cols, n)
     collect(T, x)
   end
