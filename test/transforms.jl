@@ -689,8 +689,8 @@
     # revert test
     n, c = apply(T, t)
     tₒ = revert(T, n, c)
-    @test eltype(tₒ.x1)==eltype(t.x1)
-    @test eltype(tₒ.x2)==eltype(t.x2)
+    @test eltype(tₒ.x1) == eltype(t.x1)
+    @test eltype(tₒ.x2) == eltype(t.x2)
   end
   
   @testset "Identity" begin
