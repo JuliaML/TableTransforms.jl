@@ -39,6 +39,6 @@ function revert(transform::Coerce, newtable, cache)
   cols = Tables.columns(newtable)
   newcols = [collect(T, Tables.getcolumn(cols, n)) for (T, n) in zip(cache, names)]
   
-  𝒯 = (; zip(colnames, newcols)...)
+  𝒯 = (; zip(names, newcols)...)
   𝒯 |> Tables.materializer(newtable)
 end
