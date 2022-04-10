@@ -38,6 +38,7 @@ export
   Rename,
   Identity,
   Center,
+  Coalesce,
   Scale,
   MinMax,
   Interquartile,
