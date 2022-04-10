@@ -7,7 +7,7 @@ using Statistics
 using Test, Random, Plots
 using ReferenceTests, ImageIO
 using CategoricalArrays
-import ScientificTypes: Count, Multiclass
+using ScientificTypes: Count, Multiclass
 
 # set default configurations for plots
 gr(ms=2, mc=:black, aspectratio=:equal,
