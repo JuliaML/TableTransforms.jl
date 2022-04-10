@@ -38,6 +38,7 @@ export
   Rename,
   Identity,
   Center,
+  Replace,
   Scale,
   MinMax,
   Interquartile,

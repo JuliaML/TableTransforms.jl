@@ -746,6 +746,53 @@
     end
   end
 
+  @testset "Replace" begin
+    a = [3, 2, 1, 4, 5, 3]
+    b = [2, 4, 4, 5, 8, 5]
+    c = [1, 1, 6, 2, 4, 1]
+    d = [4, 3, 7, 5, 4, 1]
+    e = [5, 5, 2, 6, 5, 2]
+    f = [4, 4, 3, 4, 5, 2]
+    t = Table(; a, b, c, d, e, f)
+
+    T = Replace(1 => -1, 5 => -5)
+    n, c = apply(T, t)
+    @test n.a == [3, 2, -1, 4, -5, 3]
+    @test n.b == [2, 4, 4, -5, 8, -5]
+    @test n.c == [-1, -1, 6, 2, 4, -1]
+    @test n.d == [4, 3, 7, -5, 4, -1]
+    @test n.e == [-5, -5, 2, 6, -5, 2]
+    @test n.f == [4, 4, 3, 4, -5, 2]
+    @test isrevertible(T) == true
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # table schema after apply and revert
+    T = Replace(1 => -1, 5 => -5)
+    n, c = apply(T, t)
+    types = Tables.schema(t).types
+    @test types == Tables.schema(n).types
+    tₒ = revert(T, n, c)
+    @test types == Tables.schema(tₒ).types
+    
+    # no occurrences
+    T = Replace(10 => 11, 20 => 30)
+    n, c = apply(T, t)
+    @test t == n
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # a = [3, 2, 1, 4, 5, 3]
+    # b = [2.3, 4.5, 4.7, 5.5, 8.5, 5.3]
+    # c = Bool[1, 0, 0, 0, 1, 0]
+    # d = [4, 3, 7, 5, 4, 1]
+
+    # throws
+    @test_throws ArgumentError Replace()
+    T = Replace(1 => 1.5)
+    @test_throws InexactError apply(T, t)
+  end
+
   @testset "Scale" begin
     # constant column
     x = fill(3.0, 10)
