@@ -685,8 +685,6 @@
     n, c = apply(T, t)
     @test eltype(n.x1) == Int
     @test eltype(n.x2) == Int
-
-    # revert test
     n, c = apply(T, t)
     tₒ = revert(T, n, c)
     @test eltype(tₒ.x1) == eltype(t.x1)
