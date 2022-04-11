@@ -714,40 +714,6 @@
     @test n1 == n2
   end
 
-  @testset "Identity" begin
-    x = rand(4000)
-    y = rand(4000)
-    t = Table(; x, y)
-    T = Identity()
-    n, c = apply(T, t)
-    @test t == n
-    tₒ = revert(T, n, c)
-    @test t == tₒ
-  end
-
-  @testset "Center" begin
-    # using rng for reproducible results
-    x = rand(rng, Normal(2, 1), 4000)
-    y = rand(rng, Normal(5, 1), 4000)
-    t = Table(; x, y)
-    T = Center()
-    n, c = apply(T, t)
-    μ = mean(Tables.matrix(n), dims=1)
-    @test isapprox(μ[1], 0; atol=1e-6)
-    @test isapprox(μ[2], 0; atol=1e-6)
-    tₒ = revert(T, n, c)
-    @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
-
-    # visual tests    
-    if visualtests
-      p₁ = scatter(t.x, t.y, label="Original")
-      p₂ = scatter(n.x, n.y, label="Center")
-      p = plot(p₁, p₂, layout=(1,2))
-
-      @test_reference joinpath(datadir, "center.png") p
-    end
-  end
-
   @testset "Coalesce" begin
     a = [3, 2, missing, 4, 5, 3]
     b = [missing, 4, 4, 5, 8, 5]
@@ -791,6 +757,40 @@
     @test ntypes[5] == Int
     @test ntypes[6] == Int
     @test ttypes == Tables.schema(tₒ).types    
+  end
+
+  @testset "Identity" begin
+    x = rand(4000)
+    y = rand(4000)
+    t = Table(; x, y)
+    T = Identity()
+    n, c = apply(T, t)
+    @test t == n
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+  end
+
+  @testset "Center" begin
+    # using rng for reproducible results
+    x = rand(rng, Normal(2, 1), 4000)
+    y = rand(rng, Normal(5, 1), 4000)
+    t = Table(; x, y)
+    T = Center()
+    n, c = apply(T, t)
+    μ = mean(Tables.matrix(n), dims=1)
+    @test isapprox(μ[1], 0; atol=1e-6)
+    @test isapprox(μ[2], 0; atol=1e-6)
+    tₒ = revert(T, n, c)
+    @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+
+    # visual tests    
+    if visualtests
+      p₁ = scatter(t.x, t.y, label="Original")
+      p₂ = scatter(n.x, n.y, label="Center")
+      p = plot(p₁, p₂, layout=(1,2))
+
+      @test_reference joinpath(datadir, "center.png") p
+    end
   end
 
   @testset "Scale" begin
