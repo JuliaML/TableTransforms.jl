@@ -680,7 +680,6 @@
     x3 = [5.0, 5.0, 5.0, 5.0, 5.0]
     t = Table(;x1, x2, x3)
 
-    # apply test
     T = Coerce(:x1=>Count, :x2=>Count)
     n, c = apply(T, t)
     @test eltype(n.x1) == Int
