@@ -46,4 +46,3 @@ function revert(transform::Coerce, newtable, cache)
   𝒯 |> Tables.materializer(newtable)
 end
 
-
