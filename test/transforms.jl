@@ -627,7 +627,7 @@
     n2 = reapply(T, t, c1)
     @test n1 == n2
   end
-  
+
   @testset "Coalesce" begin
     a = [3, 2, missing, 4, 5, 3]
     b = [missing, 4, 4, 5, 8, 5]
