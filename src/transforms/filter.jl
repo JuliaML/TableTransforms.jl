@@ -79,7 +79,7 @@ _nonmissing(x) = _nonmissing(eltype(x), x)
 function apply(transform::DropMissing, table)
   names = Tables.columnnames(table)
   types = Tables.schema(table).types
-  snames = _filter(transform.colspec, names)
+  snames = choose(transform.colspec, names)
   ftrans = _ftrans(transform, snames)
   newtable, fcache = apply(ftrans, table)
 
