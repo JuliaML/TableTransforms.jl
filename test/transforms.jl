@@ -802,6 +802,7 @@
     f = [4, 4, 3, 4, 5, 2]
     t = Table(; a, b, c, d, e, f)
 
+    # replace with a value of the same type
     T = Replace(1 => -1, 5 => -5)
     n, c = apply(T, t)
     @test n.a == [3, 2, -1, 4, -5, 3]
@@ -822,7 +823,7 @@
     tₒ = revert(T, n, c)
     @test types == Tables.schema(tₒ).types
 
-    # replece by value with olher type
+    # replace with a value of another type
     T = Replace(1 => 1.5, 5 => 5.5, 4 => true)
     n, c = apply(T, t)
     @test n.a == Real[3, 2, 1.5, true, 5.5, 3]
