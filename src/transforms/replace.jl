@@ -7,23 +7,23 @@
 Replaces all occurrences of `oldᵢ` with `newᵢ` in the table.
 """
 struct Replace{K,V} <: Colwise
-  oldnew::IdDict{K,V}
+  pairs::IdDict{K,V}
 end
 
 Replace() = throw(ArgumentError("Cannot create a Replace object without arguments."))
 
-Replace(oldnew::Pair...) = Replace(IdDict(values(oldnew)))
+Replace(pairs::Pair...) = Replace(IdDict(values(pairs)))
 
 isrevertible(::Type{<:Replace}) = true
 
 function colcache(transform::Replace, x)
-  olds = keys(transform.oldnew)
+  olds = keys(transform.pairs)
   inds = [findall(v -> v === old, x) .=> old for old in olds]
   Dict(reduce(vcat, inds))
 end
 
 colapply(transform::Replace, x, c) =
-  map(v -> get(transform.oldnew, v, v), x)
+  map(v -> get(transform.pairs, v, v), x)
 
 colrevert(::Replace, x, c) =
   map(i -> get(c, i, x[i]), 1:length(x))
