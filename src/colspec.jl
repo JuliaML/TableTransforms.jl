@@ -10,7 +10,7 @@ const ColSelector = Union{Symbol,Integer,AbstractString}
 
 `ColSpec` is a union of types used to filter columns. 
 The `ColSpec` type together with the `ColSelector` union type and 
-the `_filter` internal function form the ColSpec interface.
+the `choose` function form the ColSpec interface.
 
 To implement the ColSpec interface, the following steps must be performed:
 
@@ -21,12 +21,12 @@ struct MyTransform{S<:ColSpec,#= other type params =#}
   # other fileds
 end
 ```
-2. use `_filter(colspec, cols)` internal function in apply:
+2. use `choose(colspec, names)` function in apply:
 ```julia
 function apply(transform::MyTransform, table)
-  allcols = Tables.columnnames(table)
-  # selected columns
-  cols = _filter(transform.colspec, allcols)
+  names = Tables.columnnames(table)
+  # selected column names
+  snames = choose(transform.colspec, names)
   # code...
 end
 ```
@@ -41,33 +41,33 @@ end
 """
 const ColSpec = Union{Vector{T},NTuple{N,T},Regex,Colon} where {N,T<:ColSelector}
 
-# filter table columns using colspec
-function _filter(colspec::Vector{Symbol}, cols)
+# choose column names using colspec
+function choose(colspec::Vector{Symbol}, names)
   # validate columns
   @assert !isempty(colspec) "Invalid column selection."
-  @assert colspec ⊆ cols "Invalid column selection."
+  @assert colspec ⊆ names "Invalid column selection."
   return colspec
 end
 
-_filter(colspec::Vector{<:AbstractString}, cols) = 
-  _filter(Symbol.(colspec), cols)
+choose(colspec::Vector{<:AbstractString}, names) = 
+  choose(Symbol.(colspec), names)
 
-_filter(colspec::Vector{<:Integer}, cols::Vector) = 
-  _filter(cols[colspec], cols)
+choose(colspec::Vector{<:Integer}, names::Vector) = 
+  choose(names[colspec], names)
 
-_filter(colspec::Vector{<:Integer}, cols::Tuple) = 
-  _filter(colspec, collect(cols))
+choose(colspec::Vector{<:Integer}, names::Tuple) = 
+  choose(colspec, collect(names))
 
-_filter(colspec::NTuple{N,<:ColSelector}, cols) where {N} =
-  _filter(collect(colspec), cols)
+choose(colspec::NTuple{N,<:ColSelector}, names) where {N} =
+  choose(collect(colspec), names)
 
-function _filter(colspec::Regex, cols::Vector)
-  fcols = filter(col -> occursin(colspec, String(col)), cols)
-  _filter(fcols, cols)
+function choose(colspec::Regex, names::Vector)
+  fnames = filter(n -> occursin(colspec, String(n)), names)
+  choose(fnames, names)
 end
 
-_filter(colspec::Regex, cols::Tuple) = 
-  _filter(colspec, collect(cols))
+choose(colspec::Regex, names::Tuple) = 
+  choose(colspec, collect(names))
 
-_filter(::Colon, cols::Vector) = cols
-_filter(::Colon, cols::Tuple) = collect(cols)
+choose(::Colon, names::Vector) = names
+choose(::Colon, names::Tuple) = collect(names)

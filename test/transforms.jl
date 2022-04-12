@@ -1,92 +1,6 @@
 @testset "Transforms" begin
   # using MersenneTwister for compatibility between Julia versions
   rng = MersenneTwister(42)
-  @testset "ColSpec" begin
-    veccols = [:a, :b, :c, :d, :e, :f]
-    tupcols = (:a, :b, :c, :d, :e, :f)
-    
-    # vector of symbols
-    colspec = [:a, :c, :e]
-    cols = TableTransforms._filter(colspec, veccols)
-    @test cols == [:a, :c, :e]
-    cols = TableTransforms._filter(colspec, tupcols)
-    @test cols == [:a, :c, :e]
-
-    # tuple of symbols
-    colspec = (:a, :c, :e)
-    cols = TableTransforms._filter(colspec, veccols)
-    @test cols == [:a, :c, :e]
-    cols = TableTransforms._filter(colspec, tupcols)
-    @test cols == [:a, :c, :e]
-
-    # vector of strings
-    colspec = ["a", "c", "e"]
-    cols = TableTransforms._filter(colspec, veccols)
-    @test cols == [:a, :c, :e]
-    cols = TableTransforms._filter(colspec, tupcols)
-    @test cols == [:a, :c, :e]
-
-    # tuple of strings
-    colspec = ("a", "c", "e")
-    cols = TableTransforms._filter(colspec, veccols)
-    @test cols == [:a, :c, :e]
-    cols = TableTransforms._filter(colspec, tupcols)
-    @test cols == [:a, :c, :e]
-
-    # vector of integers
-    colspec = [1, 3, 5]
-    cols = TableTransforms._filter(colspec, veccols)
-    @test cols == [:a, :c, :e]
-    cols = TableTransforms._filter(colspec, tupcols)
-    @test cols == [:a, :c, :e]
-
-    # tuple of integers
-    colspec = (1, 3, 5)
-    cols = TableTransforms._filter(colspec, veccols)
-    @test cols == [:a, :c, :e]
-    cols = TableTransforms._filter(colspec, tupcols)
-    @test cols == [:a, :c, :e]
-
-    # regex
-    colspec = r"[ace]"
-    cols = TableTransforms._filter(colspec, veccols)
-    @test cols == [:a, :c, :e]
-    cols = TableTransforms._filter(colspec, tupcols)
-    @test cols == [:a, :c, :e]
-
-    # colon
-    cols = TableTransforms._filter(:, veccols)
-    @test cols == [:a, :b, :c, :d, :e, :f]
-    cols = TableTransforms._filter(:, tupcols)
-    @test cols == [:a, :b, :c, :d, :e, :f]
-
-    # throws
-    @test_throws AssertionError TableTransforms._filter(r"x", veccols)
-    @test_throws AssertionError TableTransforms._filter(r"x", tupcols)
-    @test_throws AssertionError TableTransforms._filter(String[], veccols)
-    @test_throws AssertionError TableTransforms._filter(String[], tupcols)
-    @test_throws AssertionError TableTransforms._filter(Symbol[], veccols)
-    @test_throws AssertionError TableTransforms._filter(Symbol[], tupcols)
-
-    # type stability
-    @inferred TableTransforms._filter([:a, :b], veccols)
-    @inferred TableTransforms._filter([:a, :b], tupcols)
-    @inferred TableTransforms._filter((:a, :b), veccols)
-    @inferred TableTransforms._filter((:a, :b), tupcols)
-    @inferred TableTransforms._filter(["a", "b"], veccols)
-    @inferred TableTransforms._filter(["a", "b"], tupcols)
-    @inferred TableTransforms._filter(("a", "b"), veccols)
-    @inferred TableTransforms._filter(("a", "b"), tupcols)
-    @inferred TableTransforms._filter([1, 2], veccols)
-    @inferred TableTransforms._filter([1, 2], tupcols)
-    @inferred TableTransforms._filter((1, 2), veccols)
-    @inferred TableTransforms._filter((1, 2), tupcols)
-    @inferred TableTransforms._filter(r"[ab]", veccols)
-    @inferred TableTransforms._filter(r"[ab]", tupcols)
-    @inferred TableTransforms._filter(:, veccols)
-    @inferred TableTransforms._filter(:, tupcols)
-  end
-
   @testset "Select" begin
     a = rand(4000)
     b = rand(4000)
@@ -488,10 +402,12 @@
     # revert test
     @test isrevertible(T) == true
     tₒ = revert(T, n, c)
+    cols = Tables.columns(t)
+    colsₒ = Tables.columns(tₒ)
     colnames = Tables.columnnames(t)
-    for colname in colnames
-      col = Tables.getcolumn(t, colname)
-      colₒ = Tables.getcolumn(tₒ, colname)
+    for n in colnames
+      col = Tables.getcolumn(cols, n)
+      colₒ = Tables.getcolumn(colsₒ, n)
       @test isequalmissing(col, colₒ)
     end
 
@@ -598,6 +514,44 @@
     @test isequalmissing(n.e, [missing, 5, 6, 5])
     @test isequalmissing(n.f, [4, missing, 4, 5])
 
+    # table schema after apply and revert
+    T = DropMissing()
+    n, c = apply(T, t)
+    tₒ = revert(T, n, c)
+    ttypes = Tables.schema(t).types
+    ntypes = Tables.schema(n).types
+    @test ntypes[1] == Int
+    @test ntypes[2] == Int
+    @test ntypes[3] == Int
+    @test ntypes[4] == Int
+    @test ntypes[5] == Int
+    @test ntypes[6] == Int
+    @test ttypes == Tables.schema(tₒ).types
+
+    T = DropMissing([:a, :c, :d])
+    n, c = apply(T, t)
+    tₒ = revert(T, n, c)
+    ntypes = Tables.schema(n).types
+    @test ntypes[1] == Int
+    @test ntypes[2] == Union{Missing,Int}
+    @test ntypes[3] == Int
+    @test ntypes[4] == Int
+    @test ntypes[5] == Union{Missing,Int}
+    @test ntypes[6] == Union{Missing,Int}
+    @test ttypes == Tables.schema(tₒ).types
+
+    T = DropMissing([:b, :e, :f])
+    n, c = apply(T, t)
+    tₒ = revert(T, n, c)
+    ntypes = Tables.schema(n).types
+    @test ntypes[1] == Union{Missing,Int}
+    @test ntypes[2] == Int
+    @test ntypes[3] == Union{Missing,Int}
+    @test ntypes[4] == Union{Missing,Int}
+    @test ntypes[5] == Int
+    @test ntypes[6] == Int
+    @test ttypes == Tables.schema(tₒ).types
+
     # reapply test
     T = DropMissing()
     n1, c1 = apply(T, t)
@@ -673,6 +627,51 @@
     n2 = reapply(T, t, c1)
     @test n1 == n2
   end
+  
+  @testset "Coalesce" begin
+    a = [3, 2, missing, 4, 5, 3]
+    b = [missing, 4, 4, 5, 8, 5]
+    c = [1, 1, 6, 2, 4, missing]
+    d = [4, 3, 7, 5, 4, missing]
+    e = [missing, 5, 2, 6, 5, 2]
+    f = [4, missing, 3, 4, 5, 2]
+    t = Table(; a, b, c, d, e, f)
+
+    T = Coalesce(0)
+    n, c = apply(T, t)
+    @test n.a == [3, 2, 0, 4, 5, 3]
+    @test n.b == [0, 4, 4, 5, 8, 5]
+    @test n.c == [1, 1, 6, 2, 4, 0]
+    @test n.d == [4, 3, 7, 5, 4, 0]
+    @test n.e == [0, 5, 2, 6, 5, 2]
+    @test n.f == [4, 0, 3, 4, 5, 2]
+
+    # revert test
+    @test isrevertible(T) == true
+    tₒ = revert(T, n, c)
+    cols = Tables.columns(t)
+    colsₒ = Tables.columns(tₒ)
+    colnames = Tables.columnnames(t)
+    for n in colnames
+      col = Tables.getcolumn(cols, n)
+      colₒ = Tables.getcolumn(colsₒ, n)
+      @test isequalmissing(col, colₒ)
+    end
+
+    # table schema after apply and revert
+    T = Coalesce(0)
+    n, c = apply(T, t)
+    tₒ = revert(T, n, c)
+    ttypes = Tables.schema(t).types
+    ntypes = Tables.schema(n).types
+    @test ntypes[1] == Int
+    @test ntypes[2] == Int
+    @test ntypes[3] == Int
+    @test ntypes[4] == Int
+    @test ntypes[5] == Int
+    @test ntypes[6] == Int
+    @test ttypes == Tables.schema(tₒ).types    
+  end
 
   @testset "Coerce" begin
     x1 = [1.0, 2.0, 3.0, 4.0, 5.0]
@@ -698,7 +697,7 @@
     @test eltype(tₒ.x1) == eltype(t.x1)
     @test eltype(tₒ.x2) == eltype(t.x2)
   end
-  
+
   @testset "Identity" begin
     x = rand(4000)
     y = rand(4000)

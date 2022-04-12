@@ -36,10 +36,6 @@ function revert(::Filter, newtable, cache)
   rows |> Tables.materializer(newtable)
 end
 
-# DropMissing
-
-const VecOrTuple{T} = Union{Vector{T}, NTuple{N, T}} where {T, N}
-
 """
     DropMissing()
     DropMissing(:)
@@ -69,22 +65,48 @@ DropMissing(cols::T...) where {T<:ColSelector} =
 
 isrevertible(::Type{<:DropMissing}) = true
 
-_ftrans(::DropMissing{Colon}, table) =
+_ftrans(::DropMissing{Colon}, cols) =
   Filter(row -> all(!ismissing, row))
 
-function _ftrans(transform::DropMissing, table)
-  allcols = Tables.columnnames(table)
-  cols = _filter(transform.colspec, allcols)
+_ftrans(::DropMissing, cols) =
   Filter(row -> all(!ismissing, getindex.(Ref(row), cols)))
-end
+
+# nonmissing 
+_nonmissing(::Type{T}, x) where {T} = x
+_nonmissing(::Type{Union{Missing,T}}, x) where {T} = collect(T, x)
+_nonmissing(x) = _nonmissing(eltype(x), x)
 
 function apply(transform::DropMissing, table)
-  ftrans = _ftrans(transform, table)
+  names = Tables.columnnames(table)
+  types = Tables.schema(table).types
+  snames = choose(transform.colspec, names)
+  ftrans = _ftrans(transform, snames)
   newtable, fcache = apply(ftrans, table)
-  newtable, (ftrans, fcache)
+
+  # post-processing
+  cols = Tables.columns(newtable)
+  pcols = map(names) do n
+    x = Tables.getcolumn(cols, n)
+    n ∈ snames ? _nonmissing(x) : x
+  end
+  𝒯 = (; zip(names, pcols)...)
+  ptable = 𝒯 |> Tables.materializer(newtable)
+
+  ptable, (ftrans, fcache, types)
 end
 
 function revert(::DropMissing, newtable, cache)
-  ftrans, fcache = cache
-  revert(ftrans, newtable, fcache)
+  ftrans, fcache, types = cache
+
+  # pre-processing
+  cols = Tables.columns(newtable)
+  names = Tables.columnnames(newtable)
+  pcols = map(zip(types, names)) do (T, n)
+    x = Tables.getcolumn(cols, n)
+    collect(T, x)
+  end
+  𝒯 = (; zip(names, pcols)...)
+  ptable = 𝒯 |> Tables.materializer(newtable)
+
+  revert(ftrans, ptable, fcache)
 end

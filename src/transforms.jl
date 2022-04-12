@@ -211,10 +211,10 @@ end
 # IMPLEMENTATIONS
 # ----------------
 
-include("transforms/colspec.jl")
 include("transforms/select.jl")
 include("transforms/filter.jl")
 include("transforms/rename.jl")
+include("transforms/coalesce.jl")
 include("transforms/coerce.jl")
 include("transforms/identity.jl")
 include("transforms/center.jl")
