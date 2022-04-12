@@ -1,33 +1,29 @@
 # ------------------------------------------------------------------
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
+"""
+    Replace(old₁ => new₁, old₂ => new₂, ..., oldₙ => newₙ)
 
+Replaces all occurrences of `oldᵢ` with `newᵢ` in the table.
+"""
 struct Replace{K,V} <: Colwise
-  oldnew::Dict{K,V}
+  oldnew::IdDict{K,V}
 end
 
 Replace() = throw(ArgumentError("Cannot create a Replace object without arguments."))
 
-Replace(oldnew::Pair...) = Replace(Dict(oldnew))
+Replace(oldnew::Pair...) = Replace(IdDict(values(oldnew)))
 
 isrevertible(::Type{<:Replace}) = true
 
 function colcache(transform::Replace, x)
-  olds = collect(keys(transform.oldnew))
-  Dict(old => findall(isequal(old), x) for old in olds)
+  olds = keys(transform.oldnew)
+  inds = [findall(v -> v === old, x) .=> old for old in olds]
+  Dict(reduce(vcat, inds))
 end
 
-colapply(transform::Replace, x, c) = 
-  replace!(copy(x), transform.oldnew...)
+colapply(transform::Replace, x, c) =
+  map(v -> get(transform.oldnew, v, v), x)
 
-function colrevert(::Replace, x, c)
-  allinds = vcat(values(c)...)
-  map(1:length(x)) do i
-    if i ∈ allinds
-      for (old, inds) in c
-        i ∈ inds && return old
-      end
-    end
-    return x[i]
-  end
-end
+colrevert(::Replace, x, c) =
+  map(i -> get(c, i, x[i]), 1:length(x))
