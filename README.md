@@ -150,6 +150,7 @@ Please check the docstrings for additional information.
 | `Filter` | Row filtering |
 | `DropMissing` | Drop missings |
 | `Rename` | Column renaming |
+| `Coerce` | Coerce elscitypes of columns|
 | `Identity` | Identity transform |
 | `Center` | Mean removal |
 | `Scale` | Interval scaling |

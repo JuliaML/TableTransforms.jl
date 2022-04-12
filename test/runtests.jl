@@ -2,12 +2,12 @@ using TableTransforms
 using Distributions
 using Tables
 using TypedTables
+using CategoricalArrays
+using ScientificTypes: Count, Multiclass
 using LinearAlgebra
 using Statistics
 using Test, Random, Plots
 using ReferenceTests, ImageIO
-using CategoricalArrays
-using ScientificTypes: Count, Multiclass
 
 # set default configurations for plots
 gr(ms=2, mc=:black, aspectratio=:equal,
