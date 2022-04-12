@@ -69,7 +69,7 @@ isrevertible(::Type{<:Select}) = true
 function apply(transform::Select, table)
   # retrieve relevant column names
   allcols = collect(Tables.columnnames(table))
-  select  = _filter(transform.colspec, allcols)
+  select  = choose(transform.colspec, allcols)
   reject  = setdiff(allcols, select)
 
   # keep track of indices to revert later
@@ -141,7 +141,7 @@ isrevertible(::Type{<:Reject}) = true
 
 function apply(transform::Reject, table)
   allcols = Tables.columnnames(table)
-  reject  = _filter(transform.colspec, allcols)
+  reject  = choose(transform.colspec, allcols)
   select  = setdiff(allcols, reject)
   strans  = Select(select)
   newtable, scache = apply(strans, table)
