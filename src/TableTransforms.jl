@@ -36,6 +36,7 @@ export
   Filter,
   DropMissing,
   Rename,
+  Coalesce,
   Identity,
   Center,
   Replace,
