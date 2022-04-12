@@ -35,11 +35,10 @@ function isequalmissing(a, b)
   return true
 end
 
-
 # list of tests
 testfiles = [
-  "colspec.jl",
   "distributions.jl",
+  "colspec.jl",
   "transforms.jl"
 ]
 
