@@ -5,7 +5,7 @@
 """
     Replace(old₁ => new₁, old₂ => new₂, ..., oldₙ => newₙ)
 
-Replaces all occurrences of `oldᵢ` with `newᵢ` in the table.
+Replaces `oldᵢ` value with `newᵢ` value in the table.
 """
 struct Replace{K,V} <: Colwise
   pairs::IdDict{K,V}
