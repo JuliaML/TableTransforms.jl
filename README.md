@@ -151,6 +151,7 @@ Please check the docstrings for additional information.
 | `DropMissing` | Drop missings |
 | `Rename` | Column renaming |
 | `Coalesce` | Replace missings |
+| `Coerce` | Coerce scientific types |
 | `Identity` | Identity transform |
 | `Center` | Mean removal |
 | `Scale` | Interval scaling |

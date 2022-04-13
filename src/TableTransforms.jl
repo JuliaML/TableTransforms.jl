@@ -37,6 +37,7 @@ export
   DropMissing,
   Rename,
   Coalesce,
+  Coerce,
   Identity,
   Center,
   Scale,
