@@ -23,8 +23,6 @@ function colcache(transform::Replace, x)
   Dict(reduce(vcat, inds))
 end
 
-colapply(transform::Replace, x, c) =
-  [get(transform.pairs, xᵢ, xᵢ) for xᵢ in x]
+colapply(transform::Replace, x, c) = [get(transform.pairs, xᵢ, xᵢ) for xᵢ in x]
 
-colrevert(::Replace, x, c) =
-  [get(c, i, x[i]) for i in 1:length(x)]
+colrevert(transform::Replace, x, c) = [get(c, i, x[i]) for i in 1:length(x)]
