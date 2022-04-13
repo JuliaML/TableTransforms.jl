@@ -2,6 +2,8 @@ using TableTransforms
 using Distributions
 using Tables
 using TypedTables
+using CategoricalArrays
+using ScientificTypes: Count, Multiclass
 using LinearAlgebra
 using Statistics
 using Test, Random, Plots

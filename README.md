@@ -152,6 +152,7 @@ Please check the docstrings for additional information.
 | `Rename` | Column renaming |
 | `Coalesce` | Replace missings |
 | `Replace` | Replace values |
+| `Coerce` | Coerce scientific types |
 | `Identity` | Identity transform |
 | `Center` | Mean removal |
 | `Scale` | Interval scaling |

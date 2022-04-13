@@ -38,6 +38,7 @@ export
   Rename,
   Coalesce,
   Replace,
+  Coerce,
   Identity,
   Center,
   Scale,
