@@ -150,6 +150,7 @@ Please check the docstrings for additional information.
 | `Filter` | Row filtering |
 | `DropMissing` | Drop missings |
 | `Rename` | Column renaming |
+| `Replace` | Replace values |
 | `Coalesce` | Replace missings |
 | `Coerce` | Coerce scientific types |
 | `Identity` | Identity transform |

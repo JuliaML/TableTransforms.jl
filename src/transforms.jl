@@ -214,6 +214,7 @@ end
 include("transforms/select.jl")
 include("transforms/filter.jl")
 include("transforms/rename.jl")
+include("transforms/replace.jl")
 include("transforms/coalesce.jl")
 include("transforms/coerce.jl")
 include("transforms/identity.jl")
