@@ -24,7 +24,7 @@ function colcache(transform::Replace, x)
 end
 
 colapply(transform::Replace, x, c) =
-  map(v -> get(transform.pairs, v, v), x)
+  [get(transform.pairs, xᵢ, xᵢ) for xᵢ in x]
 
 colrevert(::Replace, x, c) =
-  map(i -> get(c, i, x[i]), 1:length(x))
+  [get(c, i, x[i]) for i in 1:length(x)]

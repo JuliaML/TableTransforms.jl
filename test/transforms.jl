@@ -676,12 +676,12 @@
     tₒ = revert(T, n, c)
     ttypes = Tables.schema(t).types
     ntypes = Tables.schema(n).types
-    @test ntypes[1] == typejoin(typeof.(n.a)...)
-    @test ntypes[2] == typejoin(typeof.(n.b)...)
-    @test ntypes[3] == typejoin(typeof.(n.c)...)
-    @test ntypes[4] == typejoin(typeof.(n.d)...)
-    @test ntypes[5] == typejoin(typeof.(n.e)...)
-    @test ntypes[6] == typejoin(typeof.(n.f)...)
+    @test ntypes[1] == Real
+    @test ntypes[2] == Real
+    @test ntypes[3] == Real
+    @test ntypes[4] == Real
+    @test ntypes[5] == Real
+    @test ntypes[6] == Real
     @test ttypes == Tables.schema(tₒ).types
 
     # no occurrences
