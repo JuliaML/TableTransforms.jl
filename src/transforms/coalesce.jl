@@ -15,8 +15,6 @@ isrevertible(::Type{<:Coalesce}) = true
 
 colcache(::Coalesce, x) = findall(ismissing, x)
 
-colapply(tramsform::Coalesce, x, c) =
-  coalesce.(x, tramsform.value)
+colapply(tramsform::Coalesce, x, c) = coalesce.(x, tramsform.value)
 
-colrevert(::Coalesce, x, c) =
-  map(i -> i ∈ c ? missing : x[i], 1:length(x))
+colrevert(::Coalesce, x, c) = [i ∈ c ? missing : x[i] for i in 1:length(x)]
