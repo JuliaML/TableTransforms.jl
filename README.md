@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="imgs/logo.png" height="200"><br>
+  <img src="docs/src/assets/logo.png" height="200"><br>
   <a href="https://github.com/JuliaML/TableTransforms.jl/actions">
     <img src="https://img.shields.io/github/workflow/status/JuliaML/TableTransforms.jl/CI?style=flat-square">
   </a>
@@ -80,19 +80,19 @@ table = (;a, b, c, d)
 # corner plot of original table
 table |> corner
 ```
-![original](imgs/original.png)
+![original](docs/src/assets/original.png)
 
 ```julia
 # convert to PCA scores
 table |> PCA() |> corner
 ```
-![pca](imgs/pca.png)
+![pca](docs/src/assets/pca.png)
 
 ```julia
 # convert to any Distributions.jl
 table |> Quantile(Normal()) |> corner
 ```
-![quantile](imgs/quantile.png)
+![quantile](docs/src/assets/quantile.png)
 
 Below is a more sophisticated example with a pipeline that has
 two parallel branches. The tables produced by these two branches
@@ -109,7 +109,7 @@ pipeline = (f1 → f2 → f3) ⊔ (f4 → f5)
 # feed data into the pipeline
 table |> pipeline |> corner
 ```
-![pipeline](imgs/pipeline.png)
+![pipeline](docs/src/assets/pipeline.png)
 
 To revert a pipeline or single transform, use the `apply` and `revert`
 functions instead:
