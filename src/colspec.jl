@@ -52,19 +52,19 @@ which can be of type `Vector{Symbol}` or of type `NTuple{N,Symbol}`.
 ```julia
 julia> names = (:a, :b, :c, :d, :e, :f);
 
-julia> choose([:a, :c, :e], names)
+julia> choose(["a", "c", "e"], names)
 3-element Vector{Symbol}:
  :a
  :c
  :e
 
-julia> choose([1, 3, 5], names)
+julia> choose((1, 3, 5), names)
 3-element Vector{Symbol}:
  :a
  :c
  :e
 
-julia> choose(r"[acd]", names)
+julia> choose(r"[ace]", names)
 3-element Vector{Symbol}:
  :a
  :c
