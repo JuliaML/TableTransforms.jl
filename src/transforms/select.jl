@@ -47,11 +47,25 @@ Tables.materializer(t::TableSelection) =
     Select([col₁, col₂, ..., colₙ])
     Select((col₁, col₂, ..., colₙ))
     
-The transform that selects columns `col₁`, `col₂`, ..., `colₙ`.
+The transform that selects columns `col₁`, `col₂`, ..., `colₙ`.  
+The `col` arguments must be the same type and the accepted types 
+for `col` arguments are: `Integer`, `Symbol` or `String`.
+
+# Examples
+```julia
+T = Select(1, 4, 6)
+T = Select([:a, :d, :f])
+T = Select(("a", "d", "f"))
+```
     
     Select(regex)
 
 Selects the columns that match with `regex`.
+# Examples
+```julia
+T = Select(r"a")
+T = Select(r"[adf]")
+```
 """
 struct Select{S<:ColSpec} <: Stateless
   colspec::S
