@@ -50,13 +50,6 @@ Tables.materializer(t::TableSelection) =
 The transform that selects columns `col₁`, `col₂`, ..., `colₙ`.  
 The `col` arguments must be the same type and the accepted types 
 for `col` arguments are: `Integer`, `Symbol` or `String`.
-
-# Examples
-```julia
-T = Select(1, 4, 6)
-T = Select([:a, :d, :f])
-T = Select(("a", "d", "f"))
-```
     
     Select(regex)
 
@@ -64,8 +57,10 @@ Selects the columns that match with `regex`.
 
 # Examples
 ```julia
-T = Select(r"a")
-T = Select(r"[adf]")
+T = Select(1, 3, 5)
+T = Select([:a, :c, :e])
+T = Select(("a", "c", "e"))
+T = Select(r"[ace]")
 ```
 """
 struct Select{S<:ColSpec} <: Stateless
@@ -138,21 +133,16 @@ The transform that discards columns `col₁`, `col₂`, ..., `colₙ`.
 The `col` arguments must be the same type and the accepted types 
 for `col` arguments are: `Integer`, `Symbol` or `String`.
 
-# Examples
-```julia
-T = Reject("c", "d", "e")
-T = Reject([3, 4, 5])
-T = Reject((:c, :d, :e))
-```
-
     Reject(regex)
 
 Discards the columns that match with `regex`.
 
 # Examples
 ```julia
-T = Reject(r"c")
-T = Reject(r"[cde]")
+T = Reject(:b, :d, :f)
+T = Reject(["b", "d", "f"])
+T = Reject((2, 4, 6))
+T = Reject(r"[bdf]")
 ```
 """
 struct Reject{S<:ColSpec} <: Stateless

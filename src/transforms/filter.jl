@@ -12,6 +12,18 @@ Filters the table returning only the rows where the `function` returns true.
 T = Filter(row -> sum(row) > 10)
 T = Filter(row -> row.a == true && row.b < 30)
 ```
+
+Note that schema of the new table is the same as the original table:
+```julia
+julia> table = (a = [1, missing, 2, 3], b = [missing, 1, 2, 3]);
+
+julia> T = Filter(row -> all(!ismissing, row));
+
+julia> newtable, cache = apply(T, table);
+
+julia> newtable
+(a = Union{Missing, Int64}[2, 3], b = Union{Missing, Int64}[2, 3])
+```
 """
 struct Filter{F} <: Stateless
   func::F 
@@ -52,11 +64,33 @@ Drop all rows with missing values in table.
     DropMissing([col₁, col₂, ..., colₙ])
     DropMissing((col₁, col₂, ..., colₙ))
 
-Drop all rows with missing values in selects columns `col₁`, `col₂`, ..., `colₙ`.
+Drop all rows with missing values in selects columns `col₁`, `col₂`, ..., `colₙ`.  
+The `col` arguments must be the same type and the accepted types 
+for `col` arguments are: `Integer`, `Symbol` or `String`.
 
     DropMissing(regex)
 
 Drop all rows with missing values in columns that match with `regex`.
+
+# Examples
+```julia
+T = DropMissing()
+T = DropMissing("b", "c", "e")
+T = DropMissing([2, 3, 5])
+T = DropMissing((:b, :c, :e))
+T = DropMissing(r"[bce]]")
+```
+
+Note that columns affected by DropMissing will have their schema changed:
+```julia
+julia> table = (a = [1, missing, 2, 3], b = [missing, 1, 2, 3]);
+
+julia> T = DropMissing();
+
+julia> newtable, cache = apply(T, table);
+
+julia> newtable
+(a = [2, 3], b = [2, 3])
 """
 struct DropMissing{S<:ColSpec} <: Stateless
   colspec::S
