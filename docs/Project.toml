@@ -1,0 +1,6 @@
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+TableTransforms = "0d432bfd-3ee1-4ac1-886a-39f05cc69a3e"
+
+[compat]
+Documenter = "0.27"
