@@ -61,6 +61,7 @@ T = Select(("a", "d", "f"))
     Select(regex)
 
 Selects the columns that match with `regex`.
+
 # Examples
 ```julia
 T = Select(r"a")
@@ -133,11 +134,26 @@ revert(::Select, newtable::TableSelection, cache) = newtable.table
     Reject([col₁, col₂, ..., colₙ])
     Reject((col₁, col₂, ..., colₙ))
 
-The transform that discards columns `col₁`, `col₂`, ..., `colₙ`.
+The transform that discards columns `col₁`, `col₂`, ..., `colₙ`.  
+The `col` arguments must be the same type and the accepted types 
+for `col` arguments are: `Integer`, `Symbol` or `String`.
+
+# Examples
+```julia
+T = Reject("c", "d", "e")
+T = Reject([3, 4, 5])
+T = Reject((:c, :d, :e))
+```
 
     Reject(regex)
 
 Discards the columns that match with `regex`.
+
+# Examples
+```julia
+T = Reject(r"c")
+T = Reject(r"[cde]")
+```
 """
 struct Reject{S<:ColSpec} <: Stateless
   colspec::S
