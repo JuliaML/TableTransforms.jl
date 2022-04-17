@@ -6,6 +6,12 @@
     Filter(function)
 
 Filters the table returning only the rows where the `function` returns true.
+
+# Examples
+```julia
+T = Filter(row -> sum(row) > 10)
+T = Filter(row -> row.a == true && row.b < 30)
+```
 """
 struct Filter{F} <: Stateless
   func::F 
