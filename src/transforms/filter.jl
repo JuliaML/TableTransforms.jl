@@ -75,7 +75,7 @@ T = DropMissing(r"[bce]")
 
 ## Notes
 
-* The transform can potentially alter the element type of columns from `Union{Missing,T}` to simply `T`.
+* The transform can alter the element type of columns from `Union{Missing,T}` to `T`.
 """
 struct DropMissing{S<:ColSpec} <: Stateless
   colspec::S
