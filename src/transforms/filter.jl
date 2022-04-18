@@ -57,7 +57,7 @@ Drop all rows with missing values in table.
     DropMissing([col₁, col₂, ..., colₙ])
     DropMissing((col₁, col₂, ..., colₙ))
 
-Drop all rows with missing values in selected columns `col₁`, `col₂`, ..., `colₙ`.  
+Drop all rows with missing values in selected columns `col₁`, `col₂`, ..., `colₙ`.
 
     DropMissing(regex)
 

@@ -47,7 +47,7 @@ Tables.materializer(t::TableSelection) =
     Select([col₁, col₂, ..., colₙ])
     Select((col₁, col₂, ..., colₙ))
     
-The transform that selects columns `col₁`, `col₂`, ..., `colₙ`.  
+The transform that selects columns `col₁`, `col₂`, ..., `colₙ`.
     
     Select(regex)
 
@@ -128,7 +128,7 @@ revert(::Select, newtable::TableSelection, cache) = newtable.table
     Reject([col₁, col₂, ..., colₙ])
     Reject((col₁, col₂, ..., colₙ))
 
-The transform that discards columns `col₁`, `col₂`, ..., `colₙ`.  
+The transform that discards columns `col₁`, `col₂`, ..., `colₙ`.
 
     Reject(regex)
 
