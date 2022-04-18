@@ -48,14 +48,13 @@ Tables.materializer(t::TableSelection) =
     Select((col₁, col₂, ..., colₙ))
     
 The transform that selects columns `col₁`, `col₂`, ..., `colₙ`.  
-The `col` arguments must be the same type and the accepted types 
-for `col` arguments are: `Integer`, `Symbol` or `String`.
     
     Select(regex)
 
 Selects the columns that match with `regex`.
 
 # Examples
+
 ```julia
 T = Select(1, 3, 5)
 T = Select([:a, :c, :e])
@@ -130,14 +129,13 @@ revert(::Select, newtable::TableSelection, cache) = newtable.table
     Reject((col₁, col₂, ..., colₙ))
 
 The transform that discards columns `col₁`, `col₂`, ..., `colₙ`.  
-The `col` arguments must be the same type and the accepted types 
-for `col` arguments are: `Integer`, `Symbol` or `String`.
 
     Reject(regex)
 
 Discards the columns that match with `regex`.
 
 # Examples
+
 ```julia
 T = Reject(:b, :d, :f)
 T = Reject(["b", "d", "f"])

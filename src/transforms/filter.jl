@@ -3,27 +3,20 @@
 # ------------------------------------------------------------------
 
 """
-    Filter(function)
+    Filter(func)
 
-Filters the table returning only the rows where the `function` returns true.
+Filters the table returning only the rows where the `func` returns true.
 
 # Examples
+
 ```julia
 T = Filter(row -> sum(row) > 10)
 T = Filter(row -> row.a == true && row.b < 30)
 ```
 
-Note that schema of the new table is the same as the original table:
-```julia
-julia> table = (a = [1, missing, 2, 3], b = [missing, 1, 2, 3]);
+## Notes
 
-julia> T = Filter(row -> all(!ismissing, row));
-
-julia> newtable, cache = apply(T, table);
-
-julia> newtable
-(a = Union{Missing, Int64}[2, 3], b = Union{Missing, Int64}[2, 3])
-```
+* The schema of the new table will be the same as the original table.
 """
 struct Filter{F} <: Stateless
   func::F 
@@ -64,33 +57,26 @@ Drop all rows with missing values in table.
     DropMissing([col₁, col₂, ..., colₙ])
     DropMissing((col₁, col₂, ..., colₙ))
 
-Drop all rows with missing values in selects columns `col₁`, `col₂`, ..., `colₙ`.  
-The `col` arguments must be the same type and the accepted types 
-for `col` arguments are: `Integer`, `Symbol` or `String`.
+Drop all rows with missing values in selected columns `col₁`, `col₂`, ..., `colₙ`.  
 
     DropMissing(regex)
 
 Drop all rows with missing values in columns that match with `regex`.
 
 # Examples
+
 ```julia
 T = DropMissing()
 T = DropMissing("b", "c", "e")
 T = DropMissing([2, 3, 5])
 T = DropMissing((:b, :c, :e))
-T = DropMissing(r"[bce]]")
+T = DropMissing(r"[bce]")
 ```
 
-Note that columns affected by DropMissing will have their schema changed:
-```julia
-julia> table = (a = [1, missing, 2, 3], b = [missing, 1, 2, 3]);
+## Notes
 
-julia> T = DropMissing();
-
-julia> newtable, cache = apply(T, table);
-
-julia> newtable
-(a = [2, 3], b = [2, 3])
+* If the eltype of column affected by `DropMissing` is `Union{Missing,T}`,
+the eltype of new column will be `T`.
 """
 struct DropMissing{S<:ColSpec} <: Stateless
   colspec::S

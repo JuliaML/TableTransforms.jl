@@ -44,11 +44,10 @@ const ColSpec = Union{Vector{T},NTuple{N,T},Regex,Colon} where {N,T<:ColSelector
 """
     choose(colspec::ColSpec, names) -> Vector{Symbol}
 
-Choose column names using colspec.
-The `names` argument will be the value returned by the `Tables.columnnames` function 
-which can be of type `Vector{Symbol}` or of type `NTuple{N,Symbol}`.
+Choose column `names` using `colspec`.
 
 # Examples
+
 ```julia
 julia> names = (:a, :b, :c, :d, :e, :f);
 
