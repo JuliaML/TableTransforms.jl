@@ -52,6 +52,15 @@ The transform that selects columns `col₁`, `col₂`, ..., `colₙ`.
     Select(regex)
 
 Selects the columns that match with `regex`.
+
+# Examples
+
+```julia
+T = Select(1, 3, 5)
+T = Select([:a, :c, :e])
+T = Select(("a", "c", "e"))
+T = Select(r"[ace]")
+```
 """
 struct Select{S<:ColSpec} <: Stateless
   colspec::S
@@ -124,6 +133,15 @@ The transform that discards columns `col₁`, `col₂`, ..., `colₙ`.
     Reject(regex)
 
 Discards the columns that match with `regex`.
+
+# Examples
+
+```julia
+T = Reject(:b, :d, :f)
+T = Reject(["b", "d", "f"])
+T = Reject((2, 4, 6))
+T = Reject(r"[bdf]")
+```
 """
 struct Reject{S<:ColSpec} <: Stateless
   colspec::S

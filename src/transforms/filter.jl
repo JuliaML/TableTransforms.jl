@@ -3,9 +3,20 @@
 # ------------------------------------------------------------------
 
 """
-    Filter(function)
+    Filter(func)
 
-Filters the table returning only the rows where the `function` returns true.
+Filters the table returning only the rows where the `func` returns true.
+
+# Examples
+
+```julia
+T = Filter(row -> sum(row) > 10)
+T = Filter(row -> row.a == true && row.b < 30)
+```
+
+## Notes
+
+* The schema of the table is preserved by the transform.
 """
 struct Filter{F} <: Stateless
   func::F 
@@ -46,11 +57,25 @@ Drop all rows with missing values in table.
     DropMissing([col₁, col₂, ..., colₙ])
     DropMissing((col₁, col₂, ..., colₙ))
 
-Drop all rows with missing values in selects columns `col₁`, `col₂`, ..., `colₙ`.
+Drop all rows with missing values in selected columns `col₁`, `col₂`, ..., `colₙ`.
 
     DropMissing(regex)
 
 Drop all rows with missing values in columns that match with `regex`.
+
+# Examples
+
+```julia
+T = DropMissing()
+T = DropMissing("b", "c", "e")
+T = DropMissing([2, 3, 5])
+T = DropMissing((:b, :c, :e))
+T = DropMissing(r"[bce]")
+```
+
+## Notes
+
+* The transform can alter the element type of columns from `Union{Missing,T}` to `T`.
 """
 struct DropMissing{S<:ColSpec} <: Stateless
   colspec::S
