@@ -16,7 +16,7 @@ T = Filter(row -> row.a == true && row.b < 30)
 
 ## Notes
 
-* The schema of the new table will be the same as the original table.
+* The schema of the table is preserved by the transform.
 """
 struct Filter{F} <: Stateless
   func::F 
