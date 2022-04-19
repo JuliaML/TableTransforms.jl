@@ -7,7 +7,7 @@
 
 Replaces all missing values from the table with `value`.
 
-## Examples
+# Examples
 
 ```{julia}
 T = Coalesce(0)

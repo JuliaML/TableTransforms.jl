@@ -6,6 +6,14 @@
     Identity()
 
 The identity transform `x -> x`.
+
+# Examples
+
+T = Identity()
+
+## Notes
+
+* The schema of the table is preserved by the transform.
 """
 struct Identity <: Stateless end
 

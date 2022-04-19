@@ -7,7 +7,7 @@
 
 Replaces `oldᵢ` value with `newᵢ` value in the table.
 
-## Examples
+# Examples
 
 ```{julia}
 T = Replace(1 => -1, 5 => -5)

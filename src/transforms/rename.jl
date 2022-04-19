@@ -7,7 +7,7 @@
 
 The transform that renames `col₁` to `newcol₁`, `col₂` to `newcol₂`, ...
 
-## Examples
+# Examples
 
 ```{julia}
 T = Rename(Dict(:a => :x, :c => :y))
