@@ -6,6 +6,16 @@
     Coalesce(value)
 
 Replaces all missing values from the table with `value`.
+
+## Examples
+
+```{julia}
+T = Coalesce(0)
+```
+
+## Notes
+
+* The transform can alter the element type of columns from `Union{Missing,T}` to `T`.
 """
 struct Coalesce{T} <: Colwise
   value::T
