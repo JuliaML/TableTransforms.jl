@@ -11,6 +11,7 @@ The identity transform `x -> x`.
 
 ```julia
 Identity()
+```
 """
 struct Identity <: Stateless end
 
