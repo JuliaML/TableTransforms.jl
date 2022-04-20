@@ -14,10 +14,6 @@ This transform wraps the ScientificTypes.coerce function. Please see their docst
 ```julia
 Coerce(:col1 => Continuous, :col2 => Count)
 ```
-
-## Notes
-
-* The transform can alter the element type of columns.
 """
 struct Coerce{P} <: Transform
   pairs::P
