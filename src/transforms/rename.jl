@@ -13,10 +13,6 @@ The transform that renames `col₁` to `newcol₁`, `col₂` to `newcol₂`, ...
 T = Rename(:a => :x, :c => :y)
 T = Rename("a" => "x", "c" => "y")
 ```
-
-## Notes
-
-* The schema of the table is preserved by the transform.
 """
 struct Rename <: Stateless
   names::Dict{Symbol,Symbol}
