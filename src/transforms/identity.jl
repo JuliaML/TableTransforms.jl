@@ -9,7 +9,7 @@ The identity transform `x -> x`.
 
 # Examples
 
-T = Identity()
+Identity()
 """
 struct Identity <: Stateless end
 
