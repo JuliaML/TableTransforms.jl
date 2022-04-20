@@ -9,6 +9,8 @@ Return a copy of the table, ensuring that the scientific types of the columns ma
 
 This transform wraps the ScientificTypes.coerce function. Please see their docstring for more details.
 
+# Examples
+
 ```julia
 Coerce(:col1 => Continuous, :col2 => Count)
 ```

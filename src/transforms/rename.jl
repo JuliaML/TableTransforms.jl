@@ -6,6 +6,13 @@
     Rename(:col₁ => :newcol₁, :col₂ => :newcol₂, ..., :col₁ => :newcolₙ)
 
 The transform that renames `col₁` to `newcol₁`, `col₂` to `newcol₂`, ...
+
+# Examples
+
+```julia
+Rename(:a => :x, :c => :y)
+Rename("a" => "x", "c" => "y")
+```
 """
 struct Rename <: Stateless
   names::Dict{Symbol,Symbol}

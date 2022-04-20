@@ -6,6 +6,13 @@
     Replace(old₁ => new₁, old₂ => new₂, ..., oldₙ => newₙ)
 
 Replaces `oldᵢ` value with `newᵢ` value in the table.
+
+# Examples
+
+```julia
+Replace(1 => -1, 5 => -5)
+Replace(1 => 1.5, 5 => 5.5, 4 => true)
+```
 """
 struct Replace{K,V} <: Colwise
   pairs::IdDict{K,V}
