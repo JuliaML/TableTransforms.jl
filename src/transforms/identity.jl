@@ -8,7 +8,7 @@
 The identity transform `x -> x`.
 
 # Examples
-
+```julia
 Identity()
 """
 struct Identity <: Stateless end
