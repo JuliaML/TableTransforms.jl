@@ -13,10 +13,6 @@ Replaces `oldᵢ` value with `newᵢ` value in the table.
 T = Replace(1 => -1, 5 => -5)
 T = Replace(1 => 1.5, 5 => 5.5, 4 => true)
 ```
-
-## Notes
-
-* The transform can alter the element type of columns.
 """
 struct Replace{K,V} <: Colwise
   pairs::IdDict{K,V}
