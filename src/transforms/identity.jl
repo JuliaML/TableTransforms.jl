@@ -8,6 +8,7 @@
 The identity transform `x -> x`.
 
 # Examples
+
 ```julia
 Identity()
 """
