@@ -5,8 +5,21 @@
 """
     Scale(; low=0.25, high=0.75)
 
-The scale transform of `x` is the value `(x .- xl) ./ (xh .- xl))`
+Applies the scale transform in all table columns.
+The scale transform of the column `x` is defined by `(x .- xl) ./ (xh - xl)`,
 where `xl = quantile(x, low)` and `xh = quantile(x, high)`.
+
+# Examples
+
+```julia
+Scale()
+Scale(low=0, high=1)
+Scale(low=0.3, high=0.7)
+```
+
+## Notes
+
+* The `low` and `high` values are restricted to the interval: [0, 1].
 """
 struct Scale <: Colwise
   low::Float64
@@ -39,6 +52,8 @@ colrevert(::Scale, y, c) = @. (c.xh - c.xl) * y + c.xl
     MinMax()
 
 The transform that is equivalent to `Scale(low=0, high=1)`.
+
+Check the `Scale` doc for more information: [`Scale`](@ref).
 """
 MinMax() = Scale(low=0.0, high=1.0)
 
@@ -46,5 +61,7 @@ MinMax() = Scale(low=0.0, high=1.0)
     Interquartile()
 
 The transform that is equivalent to `Scale(low=0.25, high=0.75)`.
+
+Check the `Scale` doc for more information: [`Scale`](@ref).
 """
 Interquartile() = Scale(low=0.25, high=0.75)
