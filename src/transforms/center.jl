@@ -5,7 +5,7 @@
 """
     Center()
 
-Applies the center transform in all table columns.
+Applies the center transform to all columns of the table.
 The center transform of the column `x`, with mean `μ`,
 is defined by `x .- μ`.
 """

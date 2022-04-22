@@ -5,7 +5,7 @@
 """
     ZScore()
 
-Applies the z-score transform (a.k.a. normal score) in all table columns.
+Applies the z-score transform (a.k.a. normal score) to all columns of the table.
 The z-score transform of the column `x`, with mean `μ` and standard deviation `σ`,
 is defined by `(x .- μ) ./ σ`.
 """
