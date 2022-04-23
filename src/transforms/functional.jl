@@ -13,11 +13,6 @@ The transform that applies a `function` elementwise.
 Functional(cos)
 Functional(sin)
 ```
-
-## Notes
-
-* The schema of the table is preserved by the transform.
-
 """
 struct Functional{F} <: Colwise
   func::F
