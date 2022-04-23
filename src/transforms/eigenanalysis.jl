@@ -24,6 +24,14 @@ but the data is projected back to the basis of the original variables using the 
 
 See [https://geostatisticslessons.com/lessons/sphereingmaf](https://geostatisticslessons.com/lessons/sphereingmaf)
 for more details about these three variants of eigenanalysis.
+
+# Examples
+
+```julia
+EigenAnalysis(:V)
+EigenAnalysis(:VD)
+EigenAnalysis(:VDV)
+```
 """
 struct EigenAnalysis <: Transform
   proj::Symbol

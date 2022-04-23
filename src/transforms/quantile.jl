@@ -6,6 +6,17 @@
     Quantile(distribution=Normal())
 
 The quantile transform to a given `distribution`.
+
+# Examples
+
+```julia
+Quantile()
+Quantile(distribution=Normal())
+```
+
+## Notes
+
+* The schema of the table is preserved by the transform.
 """
 struct Quantile{D} <: Colwise
   dist::D
