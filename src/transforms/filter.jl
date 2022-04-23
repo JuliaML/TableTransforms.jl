@@ -10,8 +10,8 @@ Filters the table returning only the rows where the `func` returns true.
 # Examples
 
 ```julia
-T = Filter(row -> sum(row) > 10)
-T = Filter(row -> row.a == true && row.b < 30)
+Filter(row -> sum(row) > 10)
+Filter(row -> row.a == true && row.b < 30)
 ```
 
 ## Notes
@@ -66,11 +66,11 @@ Drop all rows with missing values in columns that match with `regex`.
 # Examples
 
 ```julia
-T = DropMissing()
-T = DropMissing("b", "c", "e")
-T = DropMissing([2, 3, 5])
-T = DropMissing((:b, :c, :e))
-T = DropMissing(r"[bce]")
+DropMissing()
+DropMissing("b", "c", "e")
+DropMissing([2, 3, 5])
+DropMissing((:b, :c, :e))
+DropMissing(r"[bce]")
 ```
 
 ## Notes

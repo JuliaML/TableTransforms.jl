@@ -56,10 +56,10 @@ Selects the columns that match with `regex`.
 # Examples
 
 ```julia
-T = Select(1, 3, 5)
-T = Select([:a, :c, :e])
-T = Select(("a", "c", "e"))
-T = Select(r"[ace]")
+Select(1, 3, 5)
+Select([:a, :c, :e])
+Select(("a", "c", "e"))
+Select(r"[ace]")
 ```
 """
 struct Select{S<:ColSpec} <: Stateless
@@ -137,10 +137,10 @@ Discards the columns that match with `regex`.
 # Examples
 
 ```julia
-T = Reject(:b, :d, :f)
-T = Reject(["b", "d", "f"])
-T = Reject((2, 4, 6))
-T = Reject(r"[bdf]")
+Reject(:b, :d, :f)
+Reject(["b", "d", "f"])
+Reject((2, 4, 6))
+Reject(r"[bdf]")
 ```
 """
 struct Reject{S<:ColSpec} <: Stateless
