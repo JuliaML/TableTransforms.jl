@@ -6,6 +6,13 @@
     Sequential(transforms)
 
 A transform where `transforms` are applied in sequence.
+
+# Examples
+
+```julia
+Scale(low=0.2, high=0.8) → EigenAnalysis(:VDV)
+Select(:x, :z) → ZScore() → EigenAnalysis(:V) → Scale(low=0, high=1)
+```
 """
 struct Sequential <: Transform
   transforms::Vector{Transform}

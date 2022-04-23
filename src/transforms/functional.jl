@@ -6,6 +6,13 @@
     Functional(function)
 
 The transform that applies a `function` elementwise.
+
+# Examples
+
+```julia
+Functional(cos)
+Functional(sin)
+```
 """
 struct Functional{F} <: Colwise
   func::F

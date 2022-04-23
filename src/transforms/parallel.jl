@@ -6,6 +6,13 @@
     Parallel(transforms)
 
 A transform where `transforms` are applied in parallel.
+
+# Examples
+
+```julia
+Scale(low=0.3, high=0.6) ⊔ EigenAnalysis(:VDV)
+ZScore() ⊔ EigenAnalysis(:V)
+```
 """
 struct Parallel <: Transform
   transforms::Vector{Transform}
