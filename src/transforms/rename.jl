@@ -10,8 +10,8 @@ The transform that renames `col₁` to `newcol₁`, `col₂` to `newcol₂`, ...
 # Examples
 
 ```julia
-T = Rename(:a => :x, :c => :y)
-T = Rename("a" => "x", "c" => "y")
+Rename(:a => :x, :c => :y)
+Rename("a" => "x", "c" => "y")
 ```
 """
 struct Rename <: Stateless

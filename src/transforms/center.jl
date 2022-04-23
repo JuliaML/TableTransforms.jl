@@ -5,7 +5,9 @@
 """
     Center()
 
-The transform that removes the mean of the variables.
+Applies the center transform to all columns of the table.
+The center transform of the column `x`, with mean `μ`,
+is defined by `x .- μ`.
 """
 struct Center <: Colwise end
 

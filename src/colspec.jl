@@ -41,7 +41,35 @@ end
 """
 const ColSpec = Union{Vector{T},NTuple{N,T},Regex,Colon} where {N,T<:ColSelector}
 
-# choose column names using colspec
+"""
+    choose(colspec::ColSpec, names) -> Vector{Symbol}
+
+Choose column `names` using `colspec`.
+
+# Examples
+
+```julia
+julia> names = (:a, :b, :c, :d, :e, :f);
+
+julia> choose(["a", "c", "e"], names)
+3-element Vector{Symbol}:
+ :a
+ :c
+ :e
+
+julia> choose((1, 3, 5), names)
+3-element Vector{Symbol}:
+ :a
+ :c
+ :e
+
+julia> choose(r"[ace]", names)
+3-element Vector{Symbol}:
+ :a
+ :c
+ :e
+```
+"""
 function choose(colspec::Vector{Symbol}, names)
   # validate columns
   @assert !isempty(colspec) "Invalid column selection."
