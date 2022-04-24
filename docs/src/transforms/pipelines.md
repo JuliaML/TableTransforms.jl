@@ -1,8 +1,0 @@
-# Pipelines
-
-```@docs
-Sequential
-→
-Parallel
-⊔
-```

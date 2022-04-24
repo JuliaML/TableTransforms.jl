@@ -15,16 +15,7 @@ makedocs(;
   ),
   pages=[
     "Home" => "index.md",
-    "Reference guide" => [
-      "Using transforms" => "usingtransforms.md",
-      "Transforms" => [
-        "Data Manipulation" => "transforms/datamanipulation.md",
-        "Statistic" => "transforms/statistic.md",
-        "Pipelines" => "transforms/pipelines.md"
-      ],
-      "Traits" => "traits.md"
-    ],
-    "Index" => "links.md"
+    "Transforms" => "transforms.md"
   ]
 )
 
