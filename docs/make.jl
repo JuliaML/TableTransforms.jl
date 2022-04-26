@@ -3,6 +3,9 @@ using Documenter
 
 DocMeta.setdocmeta!(TableTransforms, :DocTestSetup, :(using TableTransforms); recursive=true)
 
+# Workaround for GR warnings
+ENV["GKSwstype"] = "100"
+
 makedocs(;
   modules=[TableTransforms],
   authors="Júlio Hoffimann <julio.hoffimann@gmail.com> and contributors",

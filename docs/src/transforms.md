@@ -1,16 +1,5 @@
 # Tranforms
 
-## Functions to use transforms
-
-```@docs
-apply
-revert
-isrevertible
-reapply
-```
-
-## List of transforms
-
 ```@docs
 Select
 Reject

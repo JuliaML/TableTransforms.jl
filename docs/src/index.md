@@ -60,9 +60,12 @@ Get the latest stable release with Julia's package manager:
 
 Below is a quick example with simple transforms:
 
-```julia
+```@example usage
 using TableTransforms
-using PairPlots
+using Plots, PairPlots
+using Distributions
+using Random; Random.seed!(2) # hide
+gr(format=:png) # hide
 
 # example table from PairPlots.jl
 N = 100_000
@@ -70,29 +73,27 @@ a = [2randn(N÷2) .+ 6; randn(N÷2)]
 b = [3randn(N÷2); 2randn(N÷2)]
 c = randn(N)
 d = c .+ 0.6randn(N)
-table = (;a, b, c, d)
+table = (; a, b, c, d)
 
 # corner plot of original table
 table |> corner
 ```
-![original](assets/original.png)
 
-```julia
+```@example usage
 # convert to PCA scores
 table |> PCA() |> corner
 ```
-![pca](assets/pca.png)
 
-```julia
+```@example usage
 # convert to any Distributions.jl
 table |> Quantile(Normal()) |> corner
 ```
-![quantile](assets/quantile.png)
 
 Below is a more sophisticated example with a pipeline that has
 two parallel branches. The tables produced by these two branches
 are concatenated horizontally in the final table:
-```julia
+
+```@example usage
 # create a transform pipeline
 f1 = ZScore()
 f2 = Scale()
@@ -104,25 +105,63 @@ pipeline = (f1 → f2 → f3) ⊔ (f4 → f5)
 # feed data into the pipeline
 table |> pipeline |> corner
 ```
-![pipeline](assets/pipeline.png)
+
+### Apply and Revert
 
 To revert a pipeline or single transform, use the `apply` and `revert`
 functions instead:
 
-```julia
-# apply transform and save cache to revert later
-newtable, cache = apply(pipeline, table)
-
-# perform additional modeling with newtable
-# newtable = ...
-
-# revert pipeline when done with modeling
-original = revert(pipeline, newtable, cache)
+```@docs
+apply
+revert
+isrevertible
 ```
 
+To exemplify the use of these functions, let's create a table:
+
+```@example usage2
+using TableTransforms
+using DataFrames
+using Random; Random.seed!(2) # hide
+
+a = rand(6)
+b = 3rand(6)
+c = 2rand(6)
+table = DataFrame(; a, b, c)
+```
+
+\
+Now, let's choose a transform and check if it is reversible:
+
+```@example usage2
+transform = Center()
+isrevertible(transform)
+```
+
+We apply the transformation to the table and save the cache in a variable:
+
+```@example usage2
+newtable, cache = apply(transform, table)
+newtable
+```
+
+\
+Using the cache we can reverse the transform:
+
+```@example usage2
+original = revert(transform, newtable, cache)
+```
+
+\
 Finally, it is sometimes useful to `reapply` a transform that was
 "fitted" with training data to unseen test data. In this case, the
 cache from a previous `apply` call is used:
+
+```@docs
+reapply
+```
+
+Example:
 
 ```julia
 # ZScore transform "fits" μ and σ using training data
@@ -131,99 +170,3 @@ newtable, cache = apply(ZScore(), traintable)
 # we can reuse the same values of μ and σ with test data
 newtable = reapply(ZScore(), testtable, cache)
 ```
-
-## Available transforms
-
-Please check the docstrings for additional information.
-
-### Builtin
-
-| Transform | Description |
-|-----------|-------------|
-| `Select` | Column selection |
-| `Reject` | Column rejection |
-| `Filter` | Row filtering |
-| `DropMissing` | Drop missings |
-| `Rename` | Column renaming |
-| `Replace` | Replace values |
-| `Coalesce` | Replace missings |
-| `Coerce` | Coerce scientific types |
-| `Identity` | Identity transform |
-| `Center` | Mean removal |
-| `Scale` | Interval scaling |
-| `MinMax` | Shortcut for `Scale(low=0.0, high=1.0)` |
-| `Interquartile` | Shortcut for `Scale(low=0.25, high=0.75)` |
-| `ZScore` | Z-score (a.k.a. normal score) |
-| `Quantile` | Quantile-quantile transform |
-| `Functional` | Colwise function application |
-| `EigenAnalysis` | Eigenanalysis of covariance |
-| `PCA` | Shortcut for `ZScore() → EigenAnalysis(:V)` |
-| `DRS` | Shortcut for `ZScore() → EigenAnalysis(:VD)` |
-| `SDS` | Shortcut for `ZScore() → EigenAnalysis(:VDV)` |
-| `Sequential` | Transform created with `→` (\to in LaTeX) |
-| `Parallel` | Transform created with `⊔` (\sqcup in LaTeX) |
-
-### External
-
-#### [CoDa.jl](https://github.com/JuliaEarth/CoDa.jl) provides:
-
-| Transform | Description |
-|-----------|-------------|
-| `Closure` | Compositional closure |
-| `Remainder` | Compositional remainder |
-| `ALR` | Additive log-ratio |
-| `CLR` | Centered log-ratio |
-| `ILR` | Isometric log-ratio |
-
-## Custom transforms
-
-It is easy to integrate custom transforms into existing
-pipelines. The new transform should be a subtype of
-`Transform`, and should implement `apply`. If the new
-transform `isrevertible`, then it should also implement
-`revert`.
-
-## Contributing
-
-Contributions are very welcome. Please [open an issue](https://github.com/JuliaML/TableTransforms.jl/issues) if you have questions.
-
-We have open issues with missing transforms that you can contribute.
-
-## Related packages
-
-- [FeatureTransforms.jl](https://github.com/invenia/FeatureTransforms.jl)
-  has transforms, but they are not fully revertible. Some of their
-  transforms such as `MeanStdScaling` are constructed for a specific
-  table and cannot be inserted in the middle of a pipeline for example.
-- [AutoMLPipeline.jl](https://github.com/IBM/AutoMLPipeline.jl) relies on
-  the Python stack via [PyCall.jl](https://github.com/JuliaPy/PyCall.jl).
-  They provide pipelines with Julia's pipe `|>` operator and follow a
-  more "Pythonic" interface. They do not support general
-  [Tables.jl](https://github.com/JuliaData/Tables.jl).
-- [Impute.jl](https://github.com/invenia/Impute.jl),
-  [Cleaner.jl](https://github.com/TheRoniOne/Cleaner.jl),
-  [DataConvenience.jl](https://github.com/xiaodaigh/DataConvenience.jl)
-  all have a small set of transforms related to fixing column names as
-  well as other basic transforms that we plan to absorb in the long term.
-- [DataFramesMeta.jl](https://github.com/jkrumbiegel/Chain.jl) is a package
-  to manipulate [DataFrames.jl](https://github.com/JuliaData/DataFrames.jl)
-  tables. It is not intended for statistical transforms such as `PCA`,
-  `Quantile`, etc, which rely on complex interactions between the rows and
-  columns of a table. The usage of macros in the package promotes one-shot
-  scripts as opposed to general pipelines that can be passed around to
-  different places in the program.
-- [Query.jl](https://github.com/queryverse/Query.jl) is a package to query
-  [IterableTables.jl](https://github.com/queryverse/IterableTables.jl).
-  Similar to other alternatives above, the package is not intended for
-  advanced statistical transforms.
-- [MLJ.jl](https://alan-turing-institute.github.io/MLJ.jl/dev/) is one
-  of the most popular packages for machine learning in Julia. The
-  package provides a facility for readily creating [non-branching
-  pipelines](https://alan-turing-institute.github.io/MLJ.jl/dev/linear_pipelines/#Linear-Pipelines)
-  which can include supervised learners, as well as the flexibility to
-  create more complicated composite machine learning models using
-  so-called [learning
-  networks](https://alan-turing-institute.github.io/MLJ.jl/dev/composing_models/#Learning-Networks). These composites
-  have the advantage that the hyper-parameters of the component models
-  appear as nested fields of the composite, which is useful in
-  hyper-parameter optimization.
