@@ -21,7 +21,8 @@ makedocs(;
     "Transforms" => [
       "transforms/builtin.md",
       "transforms/external.md"
-    ]
+    ],
+    "related.md"
   ]
 )
 
