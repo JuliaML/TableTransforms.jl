@@ -106,18 +106,16 @@ pipeline = (f1 → f2 → f3) ⊔ (f4 → f5)
 table |> pipeline |> corner
 ```
 
-To create sequential pipeline you can use `→` (`\to<tab>`) operator and
-to crate parallel pipeline you can use `⊔` (`\sqcup<tab>`) operator:
+Each branch is a sequence of transforms constructed with the `→` (`\to<tab>`) operator.
+The branches are placed in parallel with the `⊔` (`\sqcup<tab>`) operator.
 
 ```@docs
 →
 ⊔
 ```
 
-### Apply and Revert
-
-To revert a pipeline or single transform, use the `apply` and `revert`
-functions instead:
+To revert a pipeline or single transform, use the [`apply`](@ref) and [`revert`](@ref)
+functions instead. The function [`isrevertible`](@ref) can be used to check if a transform is revertible.
 
 ```@docs
 apply
@@ -169,7 +167,7 @@ cache from a previous `apply` call is used:
 reapply
 ```
 
-Example:
+Consider the following example:
 
 ```julia
 # ZScore transform "fits" μ and σ using training data
