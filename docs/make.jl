@@ -18,7 +18,10 @@ makedocs(;
   ),
   pages=[
     "Home" => "index.md",
-    "Transforms" => "transforms.md"
+    "Transforms" => [
+      "transforms/builtin.md",
+      "transforms/external.md"
+    ]
   ]
 )
 

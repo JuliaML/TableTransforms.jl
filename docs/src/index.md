@@ -152,9 +152,9 @@ Using the cache we can reverse the transform:
 original = revert(transform, newtable, cache)
 ```
 
-Finally, it is sometimes useful to `reapply` a transform that was
+Finally, it is sometimes useful to [`reapply`](@ref) a transform that was
 "fitted" with training data to unseen test data. In this case, the
-cache from a previous `apply` call is used:
+cache from a previous [`apply`](@ref) call is used:
 
 ```@docs
 reapply
