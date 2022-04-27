@@ -6,6 +6,12 @@
   <a href="https://codecov.io/gh/JuliaML/TableTransforms.jl">
     <img src="https://img.shields.io/codecov/c/github/JuliaML/TableTransforms.jl?style=flat-square">
   </a>
+  <a href="https://JuliaML.github.io/TableTransforms.jl/stable">
+    <img src="https://img.shields.io/badge/docs-stable-blue?style=flat-square">
+  </a>
+  <a href="https://JuliaML.github.io/TableTransforms.jl/dev">
+    <img src="https://img.shields.io/badge/docs-latest-blue?style=flat-square">
+  </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square">
   </a>
