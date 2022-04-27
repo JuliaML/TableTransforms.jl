@@ -4,6 +4,8 @@ CurrentModule = TableTransforms
 
 # TableTransforms.jl
 
+*Transforms and pipelines with tabular data.*
+
 ## Overview
 
 This package provides transforms that are commonly used in statistics
