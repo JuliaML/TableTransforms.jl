@@ -22,7 +22,5 @@ PCA
 DRS
 SDS
 Sequential
-→
 Parallel
-⊔
 ```

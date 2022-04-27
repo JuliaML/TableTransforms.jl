@@ -106,6 +106,14 @@ pipeline = (f1 → f2 → f3) ⊔ (f4 → f5)
 table |> pipeline |> corner
 ```
 
+To create sequential pipeline you can use `→` (`\to<tab>`) operator and
+to crate parallel pipeline you can use `⊔` (`\sqcup<tab>`) operator:
+
+```@docs
+→
+⊔
+```
+
 ### Apply and Revert
 
 To revert a pipeline or single transform, use the `apply` and `revert`
