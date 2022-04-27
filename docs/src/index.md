@@ -125,40 +125,33 @@ isrevertible
 
 To exemplify the use of these functions, let's create a table:
 
-```@example usage2
-using TableTransforms
-using DataFrames
-using Random; Random.seed!(2) # hide
-
-a = rand(6)
-b = 3rand(6)
-c = 2rand(6)
-table = DataFrame(; a, b, c)
+```@example usage
+a = [-1.0, 4.0, 1.6, 3.4]
+b = [1.6, 3.4, -1.0, 4.0]
+c = [3.4, 2.0, 3.6, -1.0]
+table = (; a, b, c)
 ```
 
-\
 Now, let's choose a transform and check if it is reversible:
 
-```@example usage2
+```@example usage
 transform = Center()
 isrevertible(transform)
 ```
 
 We apply the transformation to the table and save the cache in a variable:
 
-```@example usage2
+```@example usage
 newtable, cache = apply(transform, table)
 newtable
 ```
 
-\
 Using the cache we can reverse the transform:
 
-```@example usage2
+```@example usage
 original = revert(transform, newtable, cache)
 ```
 
-\
 Finally, it is sometimes useful to `reapply` a transform that was
 "fitted" with training data to unseen test data. In this case, the
 cache from a previous `apply` call is used:
