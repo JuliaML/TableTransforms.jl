@@ -22,43 +22,6 @@ and machine learning. It was developed to address specific needs in
 feature engineering and works with general
 [Tables.jl](https://github.com/JuliaData/Tables.jl) tables.
 
-Past attempts to model transforms in Julia such as
-[FeatureTransforms.jl](https://github.com/invenia/FeatureTransforms.jl)
-served as inspiration for this package. We are happy to absorb any
-missing transform, and contributions are very welcome.
-
-## Features
-
-- Transforms are **revertible** meaning that one can apply a transform
-  and undo the transformation without having to do all the manual work
-  keeping constants around.
-
-- Pipelines can be easily constructed with clean syntax
-  `(f1 → f2 → f3) ⊔ (f4 → f5)`, and they are automatically
-  revertible when the individual transforms are revertible.
-
-- Branches of a pipeline and colwise transforms are run in parallel
-  using multiple threads with the awesome
-  [Transducers.jl](https://github.com/JuliaFolds/Transducers.jl)
-  framework.
-
-- Pipelines can be reapplied to unseen "test" data using the same cache
-  (e.g. constants) fitted with "training" data. For example, a `ZScore`
-  relies on "fitting" `μ` and `σ` once at training time.
-
-## Rationale
-
-A common task in statistics and machine learning consists of transforming
-the variables of a problem to achieve better convergence or to apply methods
-that rely on multivariate Gaussian distributions. This process can be quite
-tedious to implement by hand and very error-prone. We provide a consistent
-and clean API to combine statistical transforms into pipelines.
-
-*Although most transforms discussed here come from the statistical domain,
-our long term vision is more ambitious. We aim to provide a complete
-user experience with fully-featured pipelines that include standardization
-of column names, imputation of missing data, and more.*
-
 ## Installation
 
 Get the latest stable release with Julia's package manager:
@@ -67,132 +30,10 @@ Get the latest stable release with Julia's package manager:
 ] add TableTransforms
 ```
 
-## Usage
+## Documentation
 
-Below is a quick example with simple transforms:
-
-```julia
-using TableTransforms
-using PairPlots
-
-# example table from PairPlots.jl
-N = 100_000
-a = [2randn(N÷2) .+ 6; randn(N÷2)]
-b = [3randn(N÷2); 2randn(N÷2)]
-c = randn(N)
-d = c .+ 0.6randn(N)
-table = (;a, b, c, d)
-
-# corner plot of original table
-table |> corner
-```
-![original](docs/src/assets/original.png)
-
-```julia
-# convert to PCA scores
-table |> PCA() |> corner
-```
-![pca](docs/src/assets/pca.png)
-
-```julia
-# convert to any Distributions.jl
-table |> Quantile(Normal()) |> corner
-```
-![quantile](docs/src/assets/quantile.png)
-
-Below is a more sophisticated example with a pipeline that has
-two parallel branches. The tables produced by these two branches
-are concatenated horizontally in the final table:
-```julia
-# create a transform pipeline
-f1 = ZScore()
-f2 = Scale()
-f3 = Quantile()
-f4 = Functional(cos)
-f5 = Interquartile()
-pipeline = (f1 → f2 → f3) ⊔ (f4 → f5)
-
-# feed data into the pipeline
-table |> pipeline |> corner
-```
-![pipeline](docs/src/assets/pipeline.png)
-
-To revert a pipeline or single transform, use the `apply` and `revert`
-functions instead:
-
-```julia
-# apply transform and save cache to revert later
-newtable, cache = apply(pipeline, table)
-
-# perform additional modeling with newtable
-# newtable = ...
-
-# revert pipeline when done with modeling
-original = revert(pipeline, newtable, cache)
-```
-
-Finally, it is sometimes useful to `reapply` a transform that was
-"fitted" with training data to unseen test data. In this case, the
-cache from a previous `apply` call is used:
-
-```julia
-# ZScore transform "fits" μ and σ using training data
-newtable, cache = apply(ZScore(), traintable)
-
-# we can reuse the same values of μ and σ with test data
-newtable = reapply(ZScore(), testtable, cache)
-```
-
-## Available transforms
-
-Please check the docstrings for additional information.
-
-### Builtin
-
-| Transform | Description |
-|-----------|-------------|
-| `Select` | Column selection |
-| `Reject` | Column rejection |
-| `Filter` | Row filtering |
-| `DropMissing` | Drop missings |
-| `Rename` | Column renaming |
-| `Replace` | Replace values |
-| `Coalesce` | Replace missings |
-| `Coerce` | Coerce scientific types |
-| `Identity` | Identity transform |
-| `Center` | Mean removal |
-| `Scale` | Interval scaling |
-| `MinMax` | Shortcut for `Scale(low=0.0, high=1.0)` |
-| `Interquartile` | Shortcut for `Scale(low=0.25, high=0.75)` |
-| `ZScore` | Z-score (a.k.a. normal score) |
-| `Quantile` | Quantile-quantile transform |
-| `Functional` | Colwise function application |
-| `EigenAnalysis` | Eigenanalysis of covariance |
-| `PCA` | Shortcut for `ZScore() → EigenAnalysis(:V)` |
-| `DRS` | Shortcut for `ZScore() → EigenAnalysis(:VD)` |
-| `SDS` | Shortcut for `ZScore() → EigenAnalysis(:VDV)` |
-| `Sequential` | Transform created with `→` (\to in LaTeX) |
-| `Parallel` | Transform created with `⊔` (\sqcup in LaTeX) |
-
-### External
-
-#### [CoDa.jl](https://github.com/JuliaEarth/CoDa.jl) provides:
-
-| Transform | Description |
-|-----------|-------------|
-| `Closure` | Compositional closure |
-| `Remainder` | Compositional remainder |
-| `ALR` | Additive log-ratio |
-| `CLR` | Centered log-ratio |
-| `ILR` | Isometric log-ratio |
-
-## Custom transforms
-
-It is easy to integrate custom transforms into existing
-pipelines. The new transform should be a subtype of
-`Transform`, and should implement `apply`. If the new
-transform `isrevertible`, then it should also implement
-`revert`.
+- [**STABLE**][docs-stable-url] &mdash; **most recently tagged version of the documentation.**
+- [**LATEST**][docs-latest-url] &mdash; *in-development version of the documentation.*
 
 ## Contributing
 
@@ -238,3 +79,6 @@ We have open issues with missing transforms that you can contribute.
   have the advantage that the hyper-parameters of the component models
   appear as nested fields of the composite, which is useful in
   hyper-parameter optimization.
+
+[docs-stable-url]: https://JuliaML.github.io/TableTransforms.jl/stable
+[docs-latest-url]: https://JuliaML.github.io/TableTransforms.jl/dev
