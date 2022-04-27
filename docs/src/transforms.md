@@ -1,89 +1,133 @@
 # Tranforms
 
-## Column selection
+## Select
 
 ```@docs
 Select
+```
+
+## Reject
+
+```@docs
 Reject
 ```
 
-## Row filtering
+## Filter
 
 ```@docs
 Filter
+```
+
+## DropMissing
+
+```@docs
 DropMissing
 ```
 
-## Column renaming
+## Rename
 
 ```@docs
 Rename
 ```
 
-## Replace values
+## Replace
 
 ```@docs
 Replace
+```
+
+## Coalesce
+
+```@docs
 Coalesce
 ```
 
-## Coerce scientific types
+## Coerce
 
 ```@docs
 Coerce
 ```
 
-## Identity transform
+## Identity
 
 ```@docs
 Identity
 ```
 
-## Mean removal
+## Center
 
 ```@docs
 Center
 ```
 
-## Interval scaling
+## Scale
 
 ```@docs
 Scale
+```
+
+## MinMax
+
+```@docs
 MinMax
+```
+
+## Interquartile
+
+```@docs
 Interquartile
 ```
 
-## Z-score (a.k.a. normal score)
+## ZScore
 
 ```@docs
 ZScore
 ```
 
-## Quantile-quantile transform
+## Quantile
 
 ```@docs
 Quantile
 ```
 
-
-## Colwise function application
+## Functional
 
 ```@docs
 Functional
 ```
 
-## Eigenanalysis of covariance
+## EigenAnalysis
 
 ```@docs
 EigenAnalysis
+```
+
+## PCA
+
+```@docs
 PCA
+```
+
+## DRS
+
+```@docs
 DRS
+```
+
+## SDS
+
+```@docs
 SDS
 ```
 
-## Pipelines
+## Sequential
 
 ```@docs
 Sequential
+```
+
+## Parallel
+
+```@docs
 Parallel
 ```

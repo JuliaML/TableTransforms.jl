@@ -25,5 +25,5 @@ makedocs(;
 deploydocs(;
   repo="github.com/JuliaML/TableTransforms.jl",
   devbranch="master",
-  push_preview = true
+  push_preview=true
 )
