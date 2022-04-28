@@ -9,7 +9,7 @@ The transform that applies a `func` elementwise.
 
     Functional(col₁ => func₁, col₂ => func₂, ..., colₙ => funcₙ)
 
-Applies the `funcᵢ` function to the `colᵢ` column.
+Apply the corresponding `funcᵢ` function to each `colᵢ` column.
 
 # Examples
 
@@ -25,10 +25,10 @@ struct Functional{F} <: Stateless
 end
 
 Functional(pairs::Pair{Symbol}...) =
-  Functional(Dict(pairs))
+  Functional(NamedTuple(pairs))
 
 Functional(pairs::Pair{K}...) where {K<:AbstractString} =
-  Functional(Dict(Symbol(k) => v for (k, v) in pairs))
+  Functional(NamedTuple(Symbol(k) => v for (k, v) in pairs))
 
 Functional() = throw(ArgumentError("Cannot create a Functional object without arguments."))
 
@@ -50,9 +50,8 @@ inverse(::Any) = nothing
 isrevertible(transform::Functional) =
   !isnothing(inverse(transform.func))
 
-isrevertible(transform::Functional{<:Dict}) =
+isrevertible(transform::Functional{<:NamedTuple}) =
   all(!isnothing, inverse.(values(transform.func)))
-
 
 function applyfunc(transform::Functional, cols, nm)
   x = Tables.getcolumn(cols, nm)
@@ -60,7 +59,7 @@ function applyfunc(transform::Functional, cols, nm)
   func.(x)
 end
 
-function applyfunc(transform::Functional{<:Dict}, cols, nm)
+function applyfunc(transform::Functional{<:NamedTuple}, cols, nm)
   x = Tables.getcolumn(cols, nm)
   func = get(transform.func, nm, identity)
   func.(x)
@@ -73,4 +72,26 @@ function apply(transform::Functional, table)
   𝒯 = (; zip(names, ncols)...)
   newtable = 𝒯 |> Tables.materializer(table)
   return newtable, nothing
+end
+
+function revertfunc(transform::Functional, cols, nm)
+  x = Tables.getcolumn(cols, nm)
+  func = transform.func
+  invfunc = inverse(func)
+  invfunc.(x)
+end
+
+function revertfunc(transform::Functional{<:NamedTuple}, cols, nm)
+  x = Tables.getcolumn(cols, nm)
+  func = get(transform.func, nm, identity)
+  invfunc = inverse(func)
+  invfunc.(x)
+end
+
+function revert(transform::Filter, newtable, cache)
+  cols = Tables.columns(newtable)
+  names = Tables.columnnames(newtable)
+  ocols = tcollect(revertfunc(transform, cols, nm) for nm in names)
+  𝒯 = (; zip(names, ocols)...)
+  𝒯 |> Tables.materializer(newtable)
 end
