@@ -60,6 +60,8 @@ Get the latest stable release with Julia's package manager:
 
 ## Usage
 
+### Basic
+
 Below is a quick example with simple transforms:
 
 ```@example usage
@@ -115,6 +117,8 @@ The branches are placed in parallel with the `⊔` (`\sqcup<tab>`) operator.
 →
 ⊔
 ```
+
+### Advanced
 
 To revert a pipeline or single transform, use the [`apply`](@ref) and [`revert`](@ref)
 functions instead. The function [`isrevertible`](@ref) can be used to check if a transform is revertible.
