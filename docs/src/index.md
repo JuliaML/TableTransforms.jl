@@ -169,17 +169,8 @@ reapply
 Consider the following example:
 
 ```@example usage
-traintable = (
-  a = rand(3),
-  b = rand(3),
-  c = rand(3)
-)
-
-testtable = (
-  a = rand(3),
-  b = rand(3),
-  c = rand(3)
-)
+traintable = (a = rand(3), b = rand(3), c = rand(3))
+testtable  = (a = rand(3), b = rand(3), c = rand(3))
 
 transform = ZScore()
 
