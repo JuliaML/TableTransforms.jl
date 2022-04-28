@@ -9,7 +9,7 @@ The transform that applies a `func` elementwise.
 
     Functional(col₁ => func₁, col₂ => func₂, ..., colₙ => funcₙ)
 
-Applies in each `colᵢ` the function `funcᵢ` in the table.
+Applies the `funcᵢ` function to the `colᵢ` column.
 
 # Examples
 
@@ -20,16 +20,14 @@ Functional(:a => cos, :b => sin)
 Functional("a" => cos, "b" => sin)
 ```
 """
-struct Functional{K,F} <: Stateless
-  pairs::Dict{K,F}
+struct Functional{F} <: Stateless
+  func::F
 end
 
-Functional(func) = Functional(Dict((:) => func))
-
-Functional(pairs::Pair{Symbol,F}...) where {F} =
+Functional(pairs::Pair{Symbol}...) =
   Functional(Dict(pairs))
 
-Functional(pairs::Pair{K,F}...) where {K<:AbstractString,F} =
+Functional(pairs::Pair{K}...) where {K<:AbstractString} =
   Functional(Dict(Symbol(k) => v for (k, v) in pairs))
 
 Functional() = throw(ArgumentError("Cannot create a Functional object without arguments."))
@@ -49,26 +47,27 @@ inverse(::typeof(asind)) = sind
 # fallback to nothing
 inverse(::Any) = nothing
 
-isrevertible(transform::Functional{Colon}) =
-  !isnothing(inverse(transform.pairs[:]))
-
 isrevertible(transform::Functional) =
-  any(isnothing, inverse.(values(transform.pairs)))
+  !isnothing(inverse(transform.func))
+
+isrevertible(transform::Functional{<:Dict}) =
+  all(!isnothing, inverse.(values(transform.func)))
+
 
 function applyfunc(transform::Functional, cols, nm)
   x = Tables.getcolumn(cols, nm)
-  func = get(transform.pairs, nm, identity)
+  func = transform.func
   func.(x)
 end
 
-function applyfunc(transform::Functional{Colon}, cols, nm)
+function applyfunc(transform::Functional{<:Dict}, cols, nm)
   x = Tables.getcolumn(cols, nm)
-  func = transform.pairs[:]
+  func = get(transform.func, nm, identity)
   func.(x)
 end
 
 function apply(transform::Functional, table) 
-  cols = Tables.getcolumns(table)
+  cols = Tables.columns(table)
   names = Tables.columnnames(table)
   ncols = tcollect(applyfunc(transform, cols, nm) for nm in names)
   𝒯 = (; zip(names, ncols)...)
