@@ -33,16 +33,17 @@ Functional(pairs::Pair{K}...) where {K<:AbstractString} =
 Functional() = throw(ArgumentError("Cannot create a Functional object without arguments."))
 
 # known invertible functions
-inverse(::typeof(log))   = exp
-inverse(::typeof(exp))   = log
-inverse(::typeof(cos))   = acos
-inverse(::typeof(acos))  = cos
-inverse(::typeof(sin))   = asin
-inverse(::typeof(asin))  = sin
+inverse(::typeof(log))  = exp
+inverse(::typeof(exp))  = log
+inverse(::typeof(cos))  = acos
+inverse(::typeof(acos)) = cos
+inverse(::typeof(sin))  = asin
+inverse(::typeof(asin)) = sin
 inverse(::typeof(cosd))  = acosd
 inverse(::typeof(acosd)) = cosd
 inverse(::typeof(sind))  = asind
 inverse(::typeof(asind)) = sind
+inverse(::typeof(identity)) = identity
 
 # fallback to nothing
 inverse(::Any) = nothing
@@ -88,7 +89,7 @@ function revertfunc(transform::Functional{<:NamedTuple}, cols, nm)
   invfunc.(x)
 end
 
-function revert(transform::Filter, newtable, cache)
+function revert(transform::Functional, newtable, cache)
   cols = Tables.columns(newtable)
   names = Tables.columnnames(newtable)
   ocols = tcollect(revertfunc(transform, cols, nm) for nm in names)
