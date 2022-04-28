@@ -60,7 +60,7 @@ Get the latest stable release with Julia's package manager:
 
 ## Usage
 
-### Basics
+### Basic
 
 Below is a quick example with simple transforms:
 
