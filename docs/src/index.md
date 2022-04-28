@@ -168,10 +168,22 @@ reapply
 
 Consider the following example:
 
-```julia
+```@example usage
+traintable = (a = rand(3), b = rand(3), c = rand(3))
+testtable  = (a = rand(3), b = rand(3), c = rand(3))
+
+transform = ZScore()
+
 # ZScore transform "fits" μ and σ using training data
-newtable, cache = apply(ZScore(), traintable)
+newtable, cache = apply(transform, traintable)
 
 # we can reuse the same values of μ and σ with test data
-newtable = reapply(ZScore(), testtable, cache)
+newtable = reapply(transform, testtable, cache)
+```
+
+Note that this result is different from the result returned by the [`apply`](@ref) function:
+
+```@example usage
+newtable, cache = apply(transform, testtable)
+newtable
 ```
