@@ -984,7 +984,9 @@
     n, c = apply(T, rt)
     @test Tables.isrowtable(n)
     rtₒ = revert(T, n, c)
-    @test Tables.matrix(rt) ≈ Tables.matrix(rtₒ)
+    for (row, rowₒ) in zip(rt, rtₒ)
+      @test row.x == rowₒ.x
+    end
   end
 
   @testset "Functional" begin
