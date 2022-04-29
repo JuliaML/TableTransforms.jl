@@ -80,8 +80,11 @@ Select(cols::T...) where {T<:ColSelector} =
 isrevertible(::Type{<:Select}) = true
 
 function apply(transform::Select, table)
+  # original columns
+  cols = Tables.columns(table)
+
   # retrieve relevant column names
-  allcols = collect(Tables.columnnames(table))
+  allcols = collect(Tables.columnnames(cols))
   select  = choose(transform.colspec, allcols)
   reject  = setdiff(allcols, select)
 
@@ -95,9 +98,6 @@ function apply(transform::Select, table)
   reject = reject[sorted]
   rinds  = rinds[sorted]
 
-  # original columns
-  cols = Tables.columns(table)
-
   # rejected columns
   rcols = [Tables.getcolumn(cols, name) for name in reject]
 
@@ -107,7 +107,7 @@ end
 function revert(::Select, newtable, cache)
   # selected columns
   cols   = Tables.columns(newtable)
-  select = Tables.columnnames(newtable)
+  select = Tables.columnnames(cols)
   scols  = [Tables.getcolumn(cols, name) for name in select]
 
   # rejected columns
@@ -162,7 +162,8 @@ Reject(cols::T...) where {T<:ColSelector} =
 isrevertible(::Type{<:Reject}) = true
 
 function apply(transform::Reject, table)
-  allcols = Tables.columnnames(table)
+  cols = Tables.columns(table)
+  allcols = Tables.columnnames(cols)
   reject  = choose(transform.colspec, allcols)
   select  = setdiff(allcols, reject)
   strans  = Select(select)

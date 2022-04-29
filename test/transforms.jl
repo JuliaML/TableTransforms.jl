@@ -123,6 +123,14 @@
     tₒ = revert(T, n, c)
     @test t == tₒ
 
+    # row table
+    rt = Tables.rowtable(t)
+    T = Select(r"y")
+    n, c = apply(T, rt)
+    @test Tables.columnnames(n) == [:y1, :y2]
+    rtₒ = revert(T, n, c)
+    @test rt == rtₒ
+
     # throws: Select without arguments
     @test_throws ArgumentError Select()
     @test_throws ArgumentError Select(())
@@ -263,6 +271,14 @@
     tₒ = revert(T, n, c)
     @test t == tₒ
 
+    # row table
+    rt = Tables.rowtable(t)
+    T = Reject(r"y")
+    n, c = apply(T, rt)
+    @test Tables.columnnames(n) == [:x1, :x2]
+    rtₒ = revert(T, n, c)
+    @test rt == rtₒ
+
     # throws: Reject without arguments
     @test_throws ArgumentError Reject()
     @test_throws ArgumentError Reject(())
@@ -303,8 +319,18 @@
     @test Tables.getcolumn(s, 1) == Tables.getcolumn(cols, 1)
     @test Tables.getcolumn(s, 3) == Tables.getcolumn(cols, :e)
 
+    # row table
+    rt = Tables.rowtable(t)
+    s = TableTransforms.TableSelection(rt, [:a, :b, :e])
+    cols = Tables.columns(rt)
+    @test Tables.getcolumn(s, :a) == Tables.getcolumn(cols, :a)
+    @test Tables.getcolumn(s, 1) == Tables.getcolumn(cols, 1)
+    @test Tables.getcolumn(s, 3) == Tables.getcolumn(cols, :e)
+
     # throws
     @test_throws AssertionError TableTransforms.TableSelection(t, [:a, :b, :z])
+    s = TableTransforms.TableSelection(t, [:a, :b, :e])
+    @test_throws ErrorException Tables.getcolumn(s, :f)
   end
 
   @testset "Filter" begin
@@ -379,6 +405,14 @@
     n1, c1 = apply(T, t)
     n2 = reapply(T, t, c1)
     @test n1 == n2
+
+    # row table
+    rt = Tables.rowtable(t)
+    T = Filter(row -> row.b == 4 || row.f == 4)
+    n, c = apply(T, rt)
+    @test Tables.isrowtable(n)
+    rtₒ = revert(T, n, c)
+    @test rt == rtₒ
   end
 
   @testset "DropMissing" begin
@@ -558,6 +592,16 @@
     n2 = reapply(T, t, c1)
     @test n1 == n2
 
+    # row table
+    rt = Tables.rowtable(t)
+    T = DropMissing()
+    n, c = apply(T, rt)
+    @test Tables.isrowtable(n)
+    rtₒ = revert(T, n, c)
+    for (row, rowₒ) in zip(rt, rtₒ)
+      @test isequalmissing(row, rowₒ)
+    end
+
     # throws: empty tuple
     @test_throws ArgumentError DropMissing(())
 
@@ -620,6 +664,14 @@
     @test Tables.columnnames(n) == (:x, :b, :y, :d)
     tₒ = revert(T, n, c)
     @test t == tₒ
+
+    # row table
+    rt = Tables.rowtable(t)
+    T = Rename(:a => :x, :c => :y)
+    n, c = apply(T, rt)
+    @test Tables.isrowtable(n)
+    rtₒ = revert(T, n, c)
+    @test rt == rtₒ
 
     # reapply test
     T = Rename(:b => :x, :d => :y)
@@ -707,6 +759,14 @@
     tₒ = revert(T, n, c)
     @test t == tₒ
 
+    # row table
+    rt = Tables.rowtable(t)
+    T = Replace(3 => -3, 2.5 => 2.0)
+    n, c = apply(T, rt)
+    @test Tables.isrowtable(n)
+    rtₒ = revert(T, n, c)
+    @test rt == rtₒ
+
     # throws
     @test_throws ArgumentError Replace()
   end
@@ -753,7 +813,17 @@
     @test ntypes[4] == Int
     @test ntypes[5] == Int
     @test ntypes[6] == Int
-    @test ttypes == Tables.schema(tₒ).types    
+    @test ttypes == Tables.schema(tₒ).types  
+    
+    # row table
+    rt = Tables.rowtable(t)
+    T = Coalesce(0)
+    n, c = apply(T, rt)
+    @test Tables.isrowtable(n)
+    rtₒ = revert(T, n, c)
+    for (row, rowₒ) in zip(rt, rtₒ)
+      @test isequalmissing(row, rowₒ)
+    end
   end
   
   @testset "Coerce" begin
@@ -779,6 +849,14 @@
     tₒ = revert(T, n, c)
     @test eltype(tₒ.x1) == eltype(t.x1)
     @test eltype(tₒ.x2) == eltype(t.x2)
+
+    # row table
+    rt = Tables.rowtable(t)
+    T = Coerce(:x1 => Count, :x2 => Count)
+    n, c = apply(T, rt)
+    @test Tables.isrowtable(n)
+    rtₒ = revert(T, n, c)
+    @test rt == rtₒ
   end
 
   @testset "Identity" begin
@@ -790,6 +868,14 @@
     @test t == n
     tₒ = revert(T, n, c)
     @test t == tₒ
+
+    # row table
+    rt = Tables.rowtable(t)
+    T = Identity()
+    n, c = apply(T, rt)
+    @test Tables.isrowtable(n)
+    rtₒ = revert(T, n, c)
+    @test rt == rtₒ
   end
 
   @testset "Center" begin
@@ -813,6 +899,14 @@
 
       @test_reference joinpath(datadir, "center.png") p
     end
+
+    # row table
+    rt = Tables.rowtable(t)
+    T = Center()
+    n, c = apply(T, rt)
+    @test Tables.isrowtable(n)
+    rtₒ = revert(T, n, c)
+    @test Tables.matrix(rt) ≈ Tables.matrix(rtₒ)
   end
 
   @testset "Scale" begin
@@ -848,6 +942,14 @@
 
       @test_reference joinpath(datadir, "scale.png") p
     end
+
+    # row table
+    rt = Tables.rowtable(t)
+    T = Scale()
+    n, c = apply(T, rt)
+    @test Tables.isrowtable(n)
+    rtₒ = revert(T, n, c)
+    @test Tables.matrix(rt) ≈ Tables.matrix(rtₒ)
   end
 
   @testset "ZScore" begin
@@ -874,6 +976,14 @@
 
       @test_reference joinpath(datadir, "zscore.png") p
     end
+
+    # row table
+    rt = Tables.rowtable(t)
+    T = ZScore()
+    n, c = apply(T, rt)
+    @test Tables.isrowtable(n)
+    rtₒ = revert(T, n, c)
+    @test Tables.matrix(rt) ≈ Tables.matrix(rtₒ)
   end
 
   @testset "Quantile" begin
@@ -893,6 +1003,16 @@
     @test n.y != y
     tₒ = revert(T, n, c)
     @test tₒ.x == t.x
+
+    # row table
+    rt = Tables.rowtable(t)
+    T = Quantile()
+    n, c = apply(T, rt)
+    @test Tables.isrowtable(n)
+    rtₒ = revert(T, n, c)
+    for (row, rowₒ) in zip(rt, rtₒ)
+      @test row.x == rowₒ.x
+    end
   end
 
   @testset "Functional" begin
@@ -1001,6 +1121,17 @@
     T = Functional("x" => abs, "y" => sin)
     @test isrevertible(T) == false
 
+    # row table
+    x = π*rand(1500)
+    y = π*rand(1500)
+    t = Table(; x, y)
+    rt = Tables.rowtable(t)
+    T = Functional(cos)
+    n, c = apply(T, rt)
+    @test Tables.isrowtable(n)
+    rtₒ = revert(T, n, c)
+    @test Tables.matrix(rt) ≈ Tables.matrix(rtₒ)
+
     # throws
     @test_throws ArgumentError Functional()
     t = Table(x = rand(15), y = rand(15))
@@ -1081,6 +1212,17 @@
       @test_reference joinpath(datadir, "eigenanalysis-1.png") p
       @test_reference joinpath(datadir, "eigenanalysis-2.png") q
     end
+
+    # row table
+    x = rand(Normal(0, 10), 1500)
+    y = x + rand(Normal(0, 2), 1500)
+    t = Table(; x, y)
+    rt = Tables.rowtable(t)
+    T = EigenAnalysis(:V)
+    n, c = apply(T, rt)
+    @test Tables.isrowtable(n)
+    rtₒ = revert(T, n, c)
+    @test Tables.matrix(rt) ≈ Tables.matrix(rtₒ)
   end
 
   @testset "Sequential" begin
@@ -1108,6 +1250,14 @@
     n1, c1 = apply(T, t)
     n2 = reapply(T, t, c1)
     @test n1 == n2
+
+    # row table
+    rt = Tables.rowtable(t)
+    T = Scale(low=0.2, high=0.8) → EigenAnalysis(:VDV)
+    n, c = apply(T, rt)
+    @test Tables.isrowtable(n)
+    rtₒ = revert(T, n, c)
+    @test Tables.matrix(rt) ≈ Tables.matrix(rtₒ)
   end
 
   @testset "Parallel" begin
@@ -1149,6 +1299,18 @@
     n1, c1 = apply(T, t)
     n2 = reapply(T, t, c1)
     @test n1 == n2
+
+    # row table
+    x = rand(Normal(0, 10), 1500)
+    y = x + rand(Normal(0, 2), 1500)
+    z = y + rand(Normal(0, 5), 1500)
+    t = Table(; x, y, z)
+    rt = Tables.rowtable(t)
+    T = Scale(low=0.3, high=0.6) ⊔ EigenAnalysis(:VDV)
+    n, c = apply(T, rt)
+    @test Tables.isrowtable(n)
+    rtₒ = revert(T, n, c)
+    @test Tables.matrix(rt) ≈ Tables.matrix(rtₒ)
   end
 
   @testset "Miscellaneous" begin

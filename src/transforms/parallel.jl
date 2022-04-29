@@ -33,7 +33,8 @@ function apply(p::Parallel, table)
   newtable = tablehcat(tables)
 
   # save original column names
-  onames = Tables.columnnames(table)
+  ocols = Tables.columns(table)
+  onames = Tables.columnnames(ocols)
 
   # find first revertible transform
   ind = findfirst(isrevertible, p.transforms)
@@ -42,7 +43,8 @@ function apply(p::Parallel, table)
   rinfo = if isnothing(ind)
     nothing
   else
-    tnames = Tables.columnnames.(tables)
+    tcols  = Tables.columns.(tables)
+    tnames = Tables.columnnames.(tcols)
     ncols  = length.(tnames)
     nrcols = ncols[ind]
     start  = sum(ncols[1:ind-1]) + 1
@@ -99,7 +101,7 @@ function tablehcat(tables)
   varsdict = Set{Symbol}()
   for 𝒯 in tables
     cols = Tables.columns(𝒯)
-    vars = Tables.columnnames(𝒯)
+    vars = Tables.columnnames(cols)
     vals = [Tables.getcolumn(cols, var) for var in vars]
     for (var, val) in zip(vars, vals)
       while var ∈ varsdict

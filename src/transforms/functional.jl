@@ -59,7 +59,7 @@ _functuple(func::NamedTuple, names) = func
 
 function apply(transform::Functional, table) 
   cols = Tables.columns(table)
-  names = Tables.columnnames(table)
+  names = Tables.columnnames(cols)
   funcs = _functuple(transform.func, names)
   
   ncols = map(names) do nm
@@ -77,7 +77,7 @@ function revert(transform::Functional, newtable, cache)
   @assert isrevertible(transform) "Transform is not revertible."
 
   cols = Tables.columns(newtable)
-  names = Tables.columnnames(newtable)
+  names = Tables.columnnames(cols)
   funcs = _functuple(transform.func, names)
 
   ocols = map(names) do nm
