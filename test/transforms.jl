@@ -1003,6 +1003,13 @@
 
     # throws
     @test_throws ArgumentError Functional()
+    t = Table(x = rand(15), y = rand(15))
+    T = Functional(Polynomial(1, 2, 3))
+    n, c = apply(T, t)
+    @test_throws AssertionError revert(T, n, c)
+    T = Functional(:x => abs, :y => sin)
+    n, c = apply(T, t)
+    @test_throws AssertionError revert(T, n, c)
   end
 
   @testset "EigenAnalysis" begin
