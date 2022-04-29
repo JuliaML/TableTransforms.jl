@@ -2,18 +2,20 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-struct TableSelection{T} 
+struct TableSelection{T,C} 
   table::T
-  cols::Vector{Symbol}
-  function TableSelection(table::T, cols::Vector{Symbol}) where {T}
-    @assert cols ⊆ Tables.columnnames(table)
-    new{T}(table, cols)
+  cols::C
+  names::Vector{Symbol}
+  function TableSelection(table::T, names::Vector{Symbol}) where {T}
+    cols = Tables.columns(table)
+    @assert names ⊆ Tables.columnnames(cols)
+    new{T,typeof(cols)}(table, cols, names)
   end
 end
 
 function Base.:(==)(a::TableSelection, b::TableSelection)
-  a.cols != b.cols && return false
-  all(Tables.getcolumn(a, col) == Tables.getcolumn(b, col) for col in a.cols)
+  a.names != b.names && return false
+  all(Tables.getcolumn(a, nm) == Tables.getcolumn(b, nm) for nm in a.names)
 end
 
 function Base.show(io::IO, t::TableSelection)
@@ -25,18 +27,20 @@ end
 Tables.istable(::Type{<:TableSelection}) = true
 Tables.columnaccess(::Type{<:TableSelection}) = true
 Tables.columns(t::TableSelection) = t
-Tables.columnnames(t::TableSelection) = t.cols
-Tables.getcolumn(t::TableSelection, col::Int) =
-  Tables.getcolumn(t.table, t.cols[col])
-Tables.getcolumn(t::TableSelection, col::Symbol) = 
-  Tables.getcolumn(t.table, col)
+Tables.columnnames(t::TableSelection) = t.names
+Tables.getcolumn(t::TableSelection, i::Int) =
+  Tables.getcolumn(t.cols, t.names[i])
+function Tables.getcolumn(t::TableSelection, nm::Symbol)
+  nm ∉ t.names && error("Table has no column $nm.")
+  Tables.getcolumn(t.cols, nm)
+end
 
 function Tables.schema(t::TableSelection)
   schema = Tables.schema(t.table)
   names = schema.names
   types = schema.types
-  inds = indexin(t.cols, collect(names))
-  Tables.Schema(t.cols, types[inds])
+  inds = indexin(t.names, collect(names))
+  Tables.Schema(t.names, types[inds])
 end
 
 Tables.materializer(t::TableSelection) = 
