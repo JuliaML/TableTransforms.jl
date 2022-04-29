@@ -123,6 +123,14 @@
     tₒ = revert(T, n, c)
     @test t == tₒ
 
+    # row table
+    rt = Tables.rowtable(t)
+    T = Select(r"y")
+    n, c = apply(T, rt)
+    @test @test Tables.columnnames(n) == [:y1, :y2]
+    rtₒ = revert(T, n, c)
+    @test rt == rtₒ
+
     # throws: Select without arguments
     @test_throws ArgumentError Select()
     @test_throws ArgumentError Select(())
@@ -263,6 +271,14 @@
     tₒ = revert(T, n, c)
     @test t == tₒ
 
+    # row table
+    rt = Tables.rowtable(t)
+    T = Reject(r"y")
+    n, c = apply(T, rt)
+    @test Tables.columnnames(n) == [:x1, :x2]
+    rtₒ = revert(T, n, c)
+    @test rt == rtₒ
+
     # throws: Reject without arguments
     @test_throws ArgumentError Reject()
     @test_throws ArgumentError Reject(())
@@ -303,8 +319,18 @@
     @test Tables.getcolumn(s, 1) == Tables.getcolumn(cols, 1)
     @test Tables.getcolumn(s, 3) == Tables.getcolumn(cols, :e)
 
+    # row table
+    rt = Tables.rowtable(t)
+    s = TableTransforms.TableSelection(rt, [:a, :b, :e])
+    cols = Tables.columns(rt)
+    @test Tables.getcolumn(s, :a) == Tables.getcolumn(cols, :a)
+    @test Tables.getcolumn(s, 1) == Tables.getcolumn(cols, 1)
+    @test Tables.getcolumn(s, 3) == Tables.getcolumn(cols, :e)
+
     # throws
     @test_throws AssertionError TableTransforms.TableSelection(t, [:a, :b, :z])
+    s = TableTransforms.TableSelection(t, [:a, :b, :e])
+    @test_throws ErrorException Tables.getcolumn(s, :f)
   end
 
   @testset "Filter" begin
