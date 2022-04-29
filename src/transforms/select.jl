@@ -6,8 +6,7 @@ struct TableSelection{T}
   table::T
   cols::Vector{Symbol}
   function TableSelection(table::T, cols::Vector{Symbol}) where {T}
-    tcols = Tables.columns(table)
-    @assert cols ⊆ Tables.columnnames(tcols)
+    @assert cols ⊆ Tables.columnnames(table)
     new{T}(table, cols)
   end
 end
