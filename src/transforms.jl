@@ -130,8 +130,8 @@ function apply(transform::Colwise, table)
   end
 
   # retrieve column names and values
-  names = Tables.columnnames(table)
   cols  = Tables.columns(table)
+  names = Tables.columnnames(cols)
 
   # function to transform a single column
   function colfunc(n)
@@ -159,9 +159,9 @@ function revert(transform::Colwise, newtable, cache)
   @assert isrevertible(transform) "transform is not revertible"
 
   # transformed columns
-  names = Tables.columnnames(newtable)
   cols  = Tables.columns(newtable)
-
+  names = Tables.columnnames(cols)
+  
   # function to transform a single column
   function colfunc(i)
     n = names[i]
@@ -185,9 +185,9 @@ function reapply(transform::Colwise, table, cache)
   end
 
   # retrieve column names and values
-  names = Tables.columnnames(table)
   cols  = Tables.columns(table)
-
+  names = Tables.columnnames(cols)
+  
   # check that cache is valid
   @assert length(names) == length(cache) "invalid cache for table"
 

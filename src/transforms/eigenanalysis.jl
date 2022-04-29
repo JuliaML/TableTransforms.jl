@@ -53,7 +53,8 @@ function apply(transform::EigenAnalysis, table)
   end
 
   # original columns names
-  names = Tables.columnnames(table)
+  cols = Tables.columns(table)
+  names = Tables.columnnames(cols)
 
   # table as matrix
   X = Tables.matrix(table)
@@ -77,7 +78,8 @@ end
 
 function revert(::EigenAnalysis, newtable, cache)
   # transformed column names
-  names = Tables.columnnames(newtable)
+  cols = Tables.columns(newtable)
+  names = Tables.columnnames(cols)
 
   # table as matrix
   Z = Tables.matrix(newtable)
@@ -103,7 +105,8 @@ function reapply(transform::EigenAnalysis, table, cache)
   end
 
   # original columns names
-  names = Tables.columnnames(table)
+  cols = Tables.columns(table)
+  names = Tables.columnnames(cols)
 
   # table as matrix
   X = Tables.matrix(table)

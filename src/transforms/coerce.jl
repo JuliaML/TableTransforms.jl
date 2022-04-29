@@ -37,8 +37,9 @@ function apply(transform::Coerce, table)
 end
 
 function revert(transform::Coerce, newtable, cache)
-  names = Tables.columnnames(newtable)
   cols = Tables.columns(newtable)
+  names = Tables.columnnames(cols)
+  
   oldcols = map(zip(cache, names)) do (T, n)
     x = Tables.getcolumn(cols, n)
     collect(T, x)
@@ -47,4 +48,3 @@ function revert(transform::Coerce, newtable, cache)
   𝒯 = (; zip(names, oldcols)...)
   𝒯 |> Tables.materializer(newtable)
 end
-

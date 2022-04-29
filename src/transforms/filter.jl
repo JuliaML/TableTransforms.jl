@@ -102,16 +102,17 @@ _nonmissing(::Type{Union{Missing,T}}, x) where {T} = collect(T, x)
 _nonmissing(x) = _nonmissing(eltype(x), x)
 
 function apply(transform::DropMissing, table)
-  names = Tables.columnnames(table)
+  cols = Tables.columns(table)
+  names = Tables.columnnames(cols)
   types = Tables.schema(table).types
   snames = choose(transform.colspec, names)
   ftrans = _ftrans(transform, snames)
   newtable, fcache = apply(ftrans, table)
 
   # post-processing
-  cols = Tables.columns(newtable)
+  ncols = Tables.columns(newtable)
   pcols = map(names) do n
-    x = Tables.getcolumn(cols, n)
+    x = Tables.getcolumn(ncols, n)
     n ∈ snames ? _nonmissing(x) : x
   end
   𝒯 = (; zip(names, pcols)...)
@@ -125,7 +126,7 @@ function revert(::DropMissing, newtable, cache)
 
   # pre-processing
   cols = Tables.columns(newtable)
-  names = Tables.columnnames(newtable)
+  names = Tables.columnnames(cols)
   pcols = map(zip(types, names)) do (T, n)
     x = Tables.getcolumn(cols, n)
     collect(T, x)

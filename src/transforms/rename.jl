@@ -35,7 +35,8 @@ end
 
 
 function _rename(names, table)
-  oldnames = Tables.columnnames(table)
+  cols = Tables.columns(table)
+  oldnames = Tables.columnnames(cols)
 
   # check if requested renames exist in the table
   @assert keys(names) ⊆ oldnames "invalid column names"
@@ -46,7 +47,6 @@ function _rename(names, table)
   end
 
   # table with new tables
-  cols = Tables.columns(table)
   vals = [Tables.getcolumn(cols, name) for name in oldnames]
   𝒯 = (; zip(newnames, vals)...) |> Tables.materializer(table)
   

@@ -24,7 +24,8 @@ end
 2. use `choose(colspec, names)` function in apply:
 ```julia
 function apply(transform::MyTransform, table)
-  names = Tables.columnnames(table)
+  cols = Tables.columns(table)
+  names = Tables.columnnames(cols)
   # selected column names
   snames = choose(transform.colspec, names)
   # code...
