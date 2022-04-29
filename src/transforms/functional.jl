@@ -54,45 +54,39 @@ isrevertible(transform::Functional) =
 isrevertible(transform::Functional{<:NamedTuple}) =
   all(!isnothing, inverse.(values(transform.func)))
 
-function applyfunc(transform::Functional, cols, nm)
-  x = Tables.getcolumn(cols, nm)
-  func = transform.func
-  func.(x)
-end
-
-function applyfunc(transform::Functional{<:NamedTuple}, cols, nm)
-  x = Tables.getcolumn(cols, nm)
-  func = get(transform.func, nm, identity)
-  func.(x)
-end
+_functuple(func, names) = NamedTuple(nm => func for nm in names)
+_functuple(func::NamedTuple, names) = func
 
 function apply(transform::Functional, table) 
   cols = Tables.columns(table)
   names = Tables.columnnames(table)
-  ncols = tcollect(applyfunc(transform, cols, nm) for nm in names)
+  funcs = _functuple(transform.func, names)
+  
+  ncols = map(names) do nm
+    x = Tables.getcolumn(cols, nm)
+    func = get(funcs, nm, identity)
+    func.(x)
+  end
+
   𝒯 = (; zip(names, ncols)...)
   newtable = 𝒯 |> Tables.materializer(table)
   return newtable, nothing
 end
 
-function revertfunc(transform::Functional, cols, nm)
-  x = Tables.getcolumn(cols, nm)
-  func = transform.func
-  invfunc = inverse(func)
-  invfunc.(x)
-end
-
-function revertfunc(transform::Functional{<:NamedTuple}, cols, nm)
-  x = Tables.getcolumn(cols, nm)
-  func = get(transform.func, nm, identity)
-  invfunc = inverse(func)
-  invfunc.(x)
-end
-
 function revert(transform::Functional, newtable, cache)
+  @assert isrevertible(transform) "Transform is not revertible."
+
   cols = Tables.columns(newtable)
   names = Tables.columnnames(newtable)
-  ocols = tcollect(revertfunc(transform, cols, nm) for nm in names)
+  funcs = _functuple(transform.func, names)
+
+  ocols = map(names) do nm
+    x = Tables.getcolumn(cols, nm)
+    func = get(funcs, nm, identity)
+    invfunc = inverse(func)
+    invfunc.(x)
+  end
+
   𝒯 = (; zip(names, ocols)...)
   𝒯 |> Tables.materializer(newtable)
 end
