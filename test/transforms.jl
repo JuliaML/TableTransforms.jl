@@ -966,6 +966,50 @@
     @test all(≥(1), n.x)
     @test all(≥(1), n.y)
     @test isrevertible(T) == false
+
+    # apply functions to specific columns
+    x = π*rand(1500)
+    y = π*(rand(1500) .- 0.5)
+    z = x + y
+    t = Table(; x, y, z)
+    T = Functional(:x => cos, :y => sin)
+    n, c = apply(T, t)
+    @test all(x -> -1 ≤ x ≤ 1, n.x)
+    @test all(y -> -1 ≤ y ≤ 1, n.y)
+    @test t.z == n.z
+    tₒ = revert(T, n, c)
+    @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+
+    x = 2*(rand(1500) .- 0.5)
+    y = 2*(rand(1500) .- 0.5)
+    z = x + y
+    t = Table(; x, y, z)
+    T = Functional("x" => acos, "y" => asin)
+    n, c = apply(T, t)
+    @test all(x -> 0 ≤ x ≤ π, n.x)
+    @test all(y -> -π/2 ≤ y ≤ π/2, n.y)
+    @test t.z == n.z
+    tₒ = revert(T, n, c)
+    @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+
+    T = Functional(:x => cos, :y => sin)
+    @test isrevertible(T) == true
+    T = Functional("x" => cos, "y" => sin)
+    @test isrevertible(T) == true
+    T = Functional(:x => abs, :y => sin)
+    @test isrevertible(T) == false
+    T = Functional("x" => abs, "y" => sin)
+    @test isrevertible(T) == false
+
+    # throws
+    @test_throws ArgumentError Functional()
+    t = Table(x = rand(15), y = rand(15))
+    T = Functional(Polynomial(1, 2, 3))
+    n, c = apply(T, t)
+    @test_throws AssertionError revert(T, n, c)
+    T = Functional(:x => abs, :y => sin)
+    n, c = apply(T, t)
+    @test_throws AssertionError revert(T, n, c)
   end
 
   @testset "EigenAnalysis" begin
