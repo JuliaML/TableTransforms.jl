@@ -127,7 +127,7 @@
     rt = Tables.rowtable(t)
     T = Select(r"y")
     n, c = apply(T, rt)
-    @test @test Tables.columnnames(n) == [:y1, :y2]
+    @test Tables.columnnames(n) == [:y1, :y2]
     rtₒ = revert(T, n, c)
     @test rt == rtₒ
 
