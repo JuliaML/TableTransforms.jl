@@ -13,7 +13,7 @@ The transform that applies the function `Tables.rowtable` to to the input table.
 RowTable()
 ```
 """
-struct RowTable <: Stateless end
+struct RowTable <: Transform end
 
 apply(::RowTable, table) = Tables.rowtable(table), table
 
