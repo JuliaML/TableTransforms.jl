@@ -34,6 +34,7 @@ export
   Replace,
   Coalesce,
   Coerce,
+  RowTable,
   Identity,
   Center,
   Scale,
