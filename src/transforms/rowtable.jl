@@ -6,12 +6,6 @@
     RowTable()
 
 The transform that applies the function `Tables.rowtable` to to the input table.
-
-# Examples
-
-```julia
-RowTable()
-```
 """
 struct RowTable <: Transform end
 
