@@ -867,8 +867,8 @@
     T = RowTable()
     n, c = apply(T, t)
     tₒ = revert(T, n, c)
-    @test typeof(t) <: Table
     @test typeof(n) <: Vector
+    @test Tables.rowaccess(typeof(n))
     @test typeof(tₒ) <: Table
   end
 

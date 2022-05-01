@@ -7,7 +7,7 @@
 
 The transform that applies the function `Tables.rowtable` to to the input table.
 """
-struct RowTable <: Transform end
+struct RowTable <: Stateless end
 
 apply(::RowTable, table) = Tables.rowtable(table), table
 
