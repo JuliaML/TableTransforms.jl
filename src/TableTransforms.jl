@@ -35,6 +35,7 @@ export
   Coalesce,
   Coerce,
   RowTable,
+  ColTable,
   Identity,
   Center,
   Scale,
