@@ -868,7 +868,7 @@
     n, c = apply(T, t)
     tₒ = revert(T, n, c)
     @test typeof(n) <: Vector
-    @test Tables.rowaccess(typeof(n))
+    @test Tables.rowaccess(n)
     @test typeof(tₒ) <: Table
   end
 
@@ -881,7 +881,7 @@
     n, c = apply(T, t)
     tₒ = revert(T, n, c)
     @test typeof(n) <: NamedTuple
-    @test Tables.columnaccess(typeof(n))
+    @test Tables.columnaccess(n)
     @test typeof(tₒ) <: Table
   end
 
