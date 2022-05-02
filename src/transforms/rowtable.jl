@@ -11,4 +11,4 @@ struct RowTable <: Stateless end
 
 apply(::RowTable, table) = Tables.rowtable(table), table
 
-revert(::RowTable, table, cache) = cache
+revert(::RowTable, newtable, cache) = cache
