@@ -11,4 +11,4 @@ struct ColTable <: Stateless end
 
 apply(::ColTable, table) = Tables.columntable(table), table
 
-revert(::ColTable, table, cache) = cache
+revert(::ColTable, newtable, cache) = cache
