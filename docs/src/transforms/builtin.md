@@ -50,6 +50,17 @@ Coalesce
 Coerce
 ```
 
+## RowTable
+
+```@docs
+RowTable
+```
+
+## ColTable
+```@docs
+ColTable
+```
+
 ## Identity
 
 ```@docs
