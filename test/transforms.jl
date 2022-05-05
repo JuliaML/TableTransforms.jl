@@ -680,6 +680,34 @@
     @test n1 == n2
   end
 
+  @testset "StdNames" begin
+    a = [3, 2, 1, 4, 5, 3]
+    b = [2, 4, 4, 5, 8, 5]
+    t = Table(; a, b)
+    t = t |> Rename(:a => "apple tree", :b => "banana tree")
+
+    # upper test
+    T = StdNames(:upper)
+    n, c = apply(T, t)
+    tₒ = revert(T, n, c)
+    @test Tables.columnnames(n) == (Symbol("APPLE TREE"), Symbol("BANANA TREE"))
+    @test t == tₒ
+
+    # camel test
+    T = StdNames(:camel)
+    n, c = apply(T, t)
+    tₒ = revert(T, n, c)
+    @test Tables.columnnames(n) == (:AppleTree, :BananaTree)
+    @test t == tₒ
+
+    # snake test
+    T = StdNames(:snake)
+    n, c = apply(T, t)
+    tₒ = revert(T, n, c)
+    @test Tables.columnnames(n) == (:apple_tree, :banana_tree)
+    @test t == tₒ
+  end
+
   @testset "Replace" begin
     a = [3, 2, 1, 4, 5, 3]
     b = [2, 4, 4, 5, 8, 5]
