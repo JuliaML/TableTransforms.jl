@@ -681,31 +681,46 @@
   end
 
   @testset "StdNames" begin
-    a = [3, 2, 1, 4, 5, 3]
-    b = [2, 4, 4, 5, 8, 5]
-    t = Table(; a, b)
-    t = t |> Rename(:a => "apple tree", :b => "banana tree")
+    names = (:a, Symbol("apple tree"), Symbol("banana tree"))
+    cols = ([1,2,3], [4,5,6], [7,8,9])
+    t = Table(; zip(names, cols)...)
+
+    # default test
+    T = StdNames()
+    n, c = apply(T, t)
+    tₒ = revert(T, n, c)
+    @test Tables.columnnames(n) == (:A, Symbol("APPLE TREE"), Symbol("BANANA TREE"))
+    @test t == tₒ
 
     # upper test
     T = StdNames(:upper)
     n, c = apply(T, t)
     tₒ = revert(T, n, c)
-    @test Tables.columnnames(n) == (Symbol("APPLE TREE"), Symbol("BANANA TREE"))
+    @test Tables.columnnames(n) == (:A, Symbol("APPLE TREE"), Symbol("BANANA TREE"))
     @test t == tₒ
 
     # camel test
     T = StdNames(:camel)
     n, c = apply(T, t)
     tₒ = revert(T, n, c)
-    @test Tables.columnnames(n) == (:AppleTree, :BananaTree)
+    @test Tables.columnnames(n) == (:A, :AppleTree, :BananaTree)
     @test t == tₒ
 
     # snake test
     T = StdNames(:snake)
     n, c = apply(T, t)
     tₒ = revert(T, n, c)
-    @test Tables.columnnames(n) == (:apple_tree, :banana_tree)
+    @test Tables.columnnames(n) == (:a, :apple_tree, :banana_tree)
     @test t == tₒ
+
+    # row table test
+    rt = Tables.rowtable(t)
+    T = StdNames()
+    n, c = apply(T, rt)
+    @test Tables.isrowtable(n)
+    rtₒ = revert(T, n, c)
+    @test rt == rtₒ
+
   end
 
   @testset "Replace" begin

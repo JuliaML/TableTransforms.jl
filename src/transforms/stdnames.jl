@@ -8,52 +8,41 @@
 StdNames transform standardizes the column names.
 """
 struct StdNames <: Stateless
-    stdmethod::Symbol
+  spec::Symbol
 end
+
+StdNames() = StdNames(:upper)
 
 isrevertible(::Type{StdNames}) = true
 
-function apply(transform::StdNames, table)    
-    if transform.stdmethod == :camel
-        _camel(table)
-    elseif transform.stdmethod == :snake
-        _snake(table)
-    else
-        _upper(table)
-    end
+function apply(transform::StdNames, table)  
+  oldnames = Tables.columnnames(table)
+  spec = transform.spec
+
+  (spec == :camel) && (newnames = map(_camel, oldnames))
+  (spec == :snake) && (newnames = map(_snake, oldnames))
+  (spec == :upper) && (newnames = map(_upper, oldnames))
+
+  names = Dict(zip(oldnames, newnames))
+  table |> Rename(names), oldnames
 end
 
 function revert(::StdNames, newtable, cache)
-    names = Tables.columnnames(newtable)
-    namesdict = Dict(zip(names, cache))
-    newtable |> Rename(namesdict)
+  newnames = Tables.columnnames(newtable)
+  names = Dict(zip(newnames, cache))
+  newtable |> Rename(names)
 end
 
-function _camel(table)
-    oldnames = Tables.columnnames(table)
-    function camelfunction(x)
-        substrings = split(string(x))
-        capitalize(s) = String([i == 1 ? uppercase(c) : c for (i, c) in enumerate(s)])
-        Symbol(join(map(capitalize, substrings)))
-    end
-
-    newnames = map(camelfunction, oldnames)
-    namesdict = Dict(zip(oldnames, newnames))
-    table |> Rename(namesdict), oldnames
+function _camel(name)
+  substrings = split(string(name))
+  capitalize(s) = String([i == 1 ? uppercase(c) : c for (i, c) in enumerate(s)])
+  Symbol(join(map(capitalize, substrings)))
 end
 
-function _snake(table)
-    oldnames = Tables.columnnames(table)
-    snakefunction(x) = Symbol(join(split(string(x)), "_"))
-    newnames = map(snakefunction, oldnames)
-    namesdict = Dict(zip(oldnames, newnames))
-    table |> Rename(namesdict), oldnames
+function _snake(name)
+  Symbol(join(split(string(name)), "_"))
 end
 
-function _upper(table)
-    oldnames = Tables.columnnames(table)
-    upperfunction(x) = Symbol(uppercase(string(x)))    
-    newnames = map(upperfunction, oldnames)
-    namesdict = Dict(zip(oldnames, newnames))
-    table |> Rename(namesdict), oldnames
+function _upper(name)
+  Symbol(uppercase(string(name)))
 end
