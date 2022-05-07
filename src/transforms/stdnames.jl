@@ -16,7 +16,8 @@ StdNames() = StdNames(:upper)
 isrevertible(::Type{StdNames}) = true
 
 function apply(transform::StdNames, table)  
-  oldnames = Tables.columnnames(table)
+  cols = Tables.columns(table)
+  oldnames = Tables.columnnames(cols)
   spec = transform.spec
 
   (spec == :camel) && (newnames = map(_camel, oldnames))
@@ -24,25 +25,25 @@ function apply(transform::StdNames, table)
   (spec == :upper) && (newnames = map(_upper, oldnames))
 
   names = Dict(zip(oldnames, newnames))
-  table |> Rename(names), oldnames
+  rtrans = Rename(names)
+  newtable, rcache = apply(rtrans, table)
+  newtable, (rtrans, rcache)
 end
 
 function revert(::StdNames, newtable, cache)
-  newnames = Tables.columnnames(newtable)
-  names = Dict(zip(newnames, cache))
-  newtable |> Rename(names)
+  rtrans, rcache = cache
+  revert(rtrans, newtable, rcache)
 end
 
 function _camel(name)
   substrings = split(string(name))
-  capitalize(s) = String([i == 1 ? uppercase(c) : c for (i, c) in enumerate(s)])
-  Symbol(join(map(capitalize, substrings)))
+  Symbol(join(map(uppercasefirst, substrings)))
 end
 
 function _snake(name)
-  Symbol(join(split(string(name)), "_"))
+  Symbol(lowercase(join(split(string(name)), "_")))
 end
 
 function _upper(name)
-  Symbol(uppercase(string(name)))
+  Symbol(replace(uppercase(string(name)), " "=>""))
 end

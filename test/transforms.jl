@@ -683,44 +683,101 @@
   @testset "StdNames" begin
     names = (:a, Symbol("apple tree"), Symbol("banana tree"))
     cols = ([1,2,3], [4,5,6], [7,8,9])
-    t = Table(; zip(names, cols)...)
+    t1 = Table(; zip(names, cols)...)
+
+    names = (:a, Symbol("apple_Tree"), Symbol("Banana_tree"))
+    t2 = Table(; zip(names, cols)...)
+
+    names = (:a, :B, :Appletree)
+    t3 = Table(; zip(names, cols)...)
 
     # default test
+    ## Table 1
     T = StdNames()
-    n, c = apply(T, t)
+    n, c = apply(T, t1)
     tₒ = revert(T, n, c)
-    @test Tables.columnnames(n) == (:A, Symbol("APPLE TREE"), Symbol("BANANA TREE"))
-    @test t == tₒ
+    @test Tables.columnnames(n) == (:A, :APPLETREE, :BANANATREE)
+    @test t1 == tₒ
+
+    ## Table 2
+    n, c = apply(T, t2)
+    tₒ = revert(T, n, c)
+    @test Tables.columnnames(n) == (:A, :APPLE_TREE, :BANANA_TREE)
+    @test t2 == tₒ
+
+    ## Table 3
+    n, c = apply(T, t3)
+    tₒ = revert(T, n, c)
+    @test Tables.columnnames(n) == (:A, :B, :APPLETREE)
+    @test t3 == tₒ
 
     # upper test
+    ## Table 1
     T = StdNames(:upper)
-    n, c = apply(T, t)
+    n, c = apply(T, t1)
     tₒ = revert(T, n, c)
-    @test Tables.columnnames(n) == (:A, Symbol("APPLE TREE"), Symbol("BANANA TREE"))
-    @test t == tₒ
+    @test Tables.columnnames(n) == (:A, :APPLETREE, :BANANATREE)
+    @test t1 == tₒ
+
+    ## Table 2
+    n, c = apply(T, t2)
+    tₒ = revert(T, n, c)
+    @test Tables.columnnames(n) == (:A, :APPLE_TREE, :BANANA_TREE)
+    @test t2 == tₒ
+
+    ## Table 3
+    n, c = apply(T, t3)
+    tₒ = revert(T, n, c)
+    @test Tables.columnnames(n) == (:A, :B, :APPLETREE)
+    @test t3 == tₒ
 
     # camel test
+    ## Table 1
     T = StdNames(:camel)
-    n, c = apply(T, t)
+    n, c = apply(T, t1)
     tₒ = revert(T, n, c)
     @test Tables.columnnames(n) == (:A, :AppleTree, :BananaTree)
-    @test t == tₒ
+    @test t1 == tₒ
+
+    ## Table 2
+    n, c = apply(T, t2)
+    tₒ = revert(T, n, c)
+    @test Tables.columnnames(n) == (:A, :Apple_Tree, :Banana_tree)
+    @test t2 == tₒ
+
+    ## Table 3
+    n, c = apply(T, t3)
+    tₒ = revert(T, n, c)
+    @test Tables.columnnames(n) == (:A, :B, :Appletree)
+    @test t3 == tₒ
 
     # snake test
+    ## Table 1
     T = StdNames(:snake)
-    n, c = apply(T, t)
+    n, c = apply(T, t1)
     tₒ = revert(T, n, c)
     @test Tables.columnnames(n) == (:a, :apple_tree, :banana_tree)
-    @test t == tₒ
+    @test t1 == tₒ
+
+    ## Table 2
+    n, c = apply(T, t2)
+    tₒ = revert(T, n, c)
+    @test Tables.columnnames(n) == (:a, :apple_tree, :banana_tree)
+    @test t2 == tₒ
+
+    ## Table 3
+    n, c = apply(T, t3)
+    tₒ = revert(T, n, c)
+    @test Tables.columnnames(n) == (:a, :b, :appletree)
+    @test t3 == tₒ
 
     # row table test
-    rt = Tables.rowtable(t)
+    rt = Tables.rowtable(t1)
     T = StdNames()
     n, c = apply(T, rt)
     @test Tables.isrowtable(n)
     rtₒ = revert(T, n, c)
     @test rt == rtₒ
-
   end
 
   @testset "Replace" begin
