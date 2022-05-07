@@ -45,5 +45,5 @@ function _snake(name)
 end
 
 function _upper(name)
-  Symbol(replace(uppercase(string(name)), " "=>""))
+  Symbol(replace(uppercase(string(name)), " " => ""))
 end
