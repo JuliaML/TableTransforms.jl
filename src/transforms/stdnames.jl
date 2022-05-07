@@ -20,10 +20,11 @@ function apply(transform::StdNames, table)
   oldnames = Tables.columnnames(cols)
   spec = transform.spec
 
-  (spec == :camel) && (newnames = map(_camel, oldnames))
-  (spec == :snake) && (newnames = map(_snake, oldnames))
-  (spec == :upper) && (newnames = map(_upper, oldnames))
+  (spec == :camel) && (newnames = map(_camel, map(string, oldnames)))
+  (spec == :snake) && (newnames = map(_snake, map(string, oldnames)))
+  (spec == :upper) && (newnames = map(_upper, map(string, oldnames)))
 
+  newnames = map(Symbol, newnames)
   names = Dict(zip(oldnames, newnames))
   rtrans = Rename(names)
   newtable, rcache = apply(rtrans, table)
@@ -36,14 +37,14 @@ function revert(::StdNames, newtable, cache)
 end
 
 function _camel(name)
-  substrings = split(string(name))
-  Symbol(join(map(uppercasefirst, substrings)))
+  substrings = split(name)
+  join(map(uppercasefirst, substrings))
 end
 
 function _snake(name)
-  Symbol(lowercase(join(split(string(name)), "_")))
+  lowercase(join(split(name), "_"))
 end
 
 function _upper(name)
-  Symbol(replace(uppercase(string(name)), " " => ""))
+  replace(uppercase(name), " " => "")
 end

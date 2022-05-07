@@ -681,98 +681,33 @@
   end
 
   @testset "StdNames" begin
-    names = (:a, Symbol("apple tree"), Symbol("banana tree"))
-    cols = ([1,2,3], [4,5,6], [7,8,9])
-    t1 = Table(; zip(names, cols)...)
+    # camel, snake, upper tests
+    @test TableTransforms._camel("apple banana") == "AppleBanana"
+    @test TableTransforms._snake("apple banana") == "apple_banana"
+    @test TableTransforms._upper("apple banana") == "APPLEBANANA"
 
-    names = (:a, Symbol("apple_Tree"), Symbol("Banana_tree"))
-    t2 = Table(; zip(names, cols)...)
+    @test TableTransforms._camel("apple_banana") == "Apple_banana"
+    @test TableTransforms._snake("apple_banana") == "apple_banana"
+    @test TableTransforms._upper("apple_banana") == "APPLE_BANANA"
 
-    names = (:a, :B, :Appletree)
-    t3 = Table(; zip(names, cols)...)
+    @test TableTransforms._camel("apple_Banana") == "Apple_Banana"
+    @test TableTransforms._snake("apple_Banana") == "apple_banana"
+    @test TableTransforms._upper("apple_Banana") == "APPLE_BANANA"
 
-    # default test
-    ## Table 1
-    T = StdNames()
-    n, c = apply(T, t1)
-    tₒ = revert(T, n, c)
-    @test Tables.columnnames(n) == (:A, :APPLETREE, :BANANATREE)
-    @test t1 == tₒ
+    @test TableTransforms._camel("a") == "A"
+    @test TableTransforms._snake("a") == "a"
+    @test TableTransforms._upper("a") == "A"
 
-    ## Table 2
-    n, c = apply(T, t2)
-    tₒ = revert(T, n, c)
-    @test Tables.columnnames(n) == (:A, :APPLE_TREE, :BANANA_TREE)
-    @test t2 == tₒ
-
-    ## Table 3
-    n, c = apply(T, t3)
-    tₒ = revert(T, n, c)
-    @test Tables.columnnames(n) == (:A, :B, :APPLETREE)
-    @test t3 == tₒ
-
-    # upper test
-    ## Table 1
-    T = StdNames(:upper)
-    n, c = apply(T, t1)
-    tₒ = revert(T, n, c)
-    @test Tables.columnnames(n) == (:A, :APPLETREE, :BANANATREE)
-    @test t1 == tₒ
-
-    ## Table 2
-    n, c = apply(T, t2)
-    tₒ = revert(T, n, c)
-    @test Tables.columnnames(n) == (:A, :APPLE_TREE, :BANANA_TREE)
-    @test t2 == tₒ
-
-    ## Table 3
-    n, c = apply(T, t3)
-    tₒ = revert(T, n, c)
-    @test Tables.columnnames(n) == (:A, :B, :APPLETREE)
-    @test t3 == tₒ
-
-    # camel test
-    ## Table 1
-    T = StdNames(:camel)
-    n, c = apply(T, t1)
-    tₒ = revert(T, n, c)
-    @test Tables.columnnames(n) == (:A, :AppleTree, :BananaTree)
-    @test t1 == tₒ
-
-    ## Table 2
-    n, c = apply(T, t2)
-    tₒ = revert(T, n, c)
-    @test Tables.columnnames(n) == (:A, :Apple_Tree, :Banana_tree)
-    @test t2 == tₒ
-
-    ## Table 3
-    n, c = apply(T, t3)
-    tₒ = revert(T, n, c)
-    @test Tables.columnnames(n) == (:A, :B, :Appletree)
-    @test t3 == tₒ
-
-    # snake test
-    ## Table 1
-    T = StdNames(:snake)
-    n, c = apply(T, t1)
-    tₒ = revert(T, n, c)
-    @test Tables.columnnames(n) == (:a, :apple_tree, :banana_tree)
-    @test t1 == tₒ
-
-    ## Table 2
-    n, c = apply(T, t2)
-    tₒ = revert(T, n, c)
-    @test Tables.columnnames(n) == (:a, :apple_tree, :banana_tree)
-    @test t2 == tₒ
-
-    ## Table 3
-    n, c = apply(T, t3)
-    tₒ = revert(T, n, c)
-    @test Tables.columnnames(n) == (:a, :b, :appletree)
-    @test t3 == tₒ
+    @test TableTransforms._camel("B") == "B"
+    @test TableTransforms._snake("B") == "b"
+    @test TableTransforms._upper("B") == "B"
 
     # row table test
-    rt = Tables.rowtable(t1)
+    names = (:a, Symbol("apple tree"), Symbol("banana tree"))
+    cols = ([1,2,3], [4,5,6], [7,8,9])
+    t = Table(; zip(names, cols)...)
+
+    rt = Tables.rowtable(t)
     T = StdNames()
     n, c = apply(T, rt)
     @test Tables.isrowtable(n)
