@@ -711,8 +711,16 @@
     T = StdNames()
     n, c = apply(T, rt)
     @test Tables.isrowtable(n)
+    @test isrevertible(T)
     rtₒ = revert(T, n, c)
     @test rt == rtₒ
+
+    # reapply test
+    T = StdNames()
+    n1, c1 = apply(T, rt)
+    n2 = reapply(T, n1, c1)
+    @test n1 == n2
+
   end
 
   @testset "Replace" begin
