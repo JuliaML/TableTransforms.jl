@@ -681,32 +681,25 @@
   end
 
   @testset "StdNames" begin
-    # camel, snake, upper tests
-    @test TableTransforms._camel("apple banana") == "AppleBanana"
-    @test TableTransforms._snake("apple banana") == "apple_banana"
-    @test TableTransforms._upper("apple banana") == "APPLEBANANA"
+    # camel test
+    l = ["apple banana", "apple_banana", "apple_Banana"]
+    for s in l
+      @test TableTransforms._camel(s) == "AppleBanana"
+      @test TableTransforms._snake(s) == "apple_banana"
+      @test TableTransforms._upper(s) == "APPLEBANANA"
+    end
 
-    @test TableTransforms._camel("apple_banana") == "Apple_banana"
-    @test TableTransforms._snake("apple_banana") == "apple_banana"
-    @test TableTransforms._upper("apple_banana") == "APPLE_BANANA"
-
-    @test TableTransforms._camel("apple_Banana") == "Apple_Banana"
-    @test TableTransforms._snake("apple_Banana") == "apple_banana"
-    @test TableTransforms._upper("apple_Banana") == "APPLE_BANANA"
-
-    @test TableTransforms._camel("a") == "A"
-    @test TableTransforms._snake("a") == "a"
-    @test TableTransforms._upper("a") == "A"
-
-    @test TableTransforms._camel("B") == "B"
-    @test TableTransforms._snake("B") == "b"
-    @test TableTransforms._upper("B") == "B"
+    l = ["a", "A", "_a", "_A", "a ", "A "]
+    for s in l
+      @test TableTransforms._camel(s) == "A"
+      @test TableTransforms._snake(s) == "a"
+      @test TableTransforms._upper(s) == "A"
+    end
 
     # row table test
     names = (:a, Symbol("apple tree"), Symbol("banana tree"))
     cols = ([1,2,3], [4,5,6], [7,8,9])
     t = Table(; zip(names, cols)...)
-
     rt = Tables.rowtable(t)
     T = StdNames()
     n, c = apply(T, rt)

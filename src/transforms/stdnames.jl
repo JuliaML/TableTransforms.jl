@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    StdNames(S)
+    StdNames(:spec)
 
 StdNames transform standardizes the column names.
 """
@@ -20,14 +20,16 @@ function apply(transform::StdNames, table)
   oldnames = Tables.columnnames(cols)
   spec = transform.spec
 
-  (spec == :camel) && (newnames = map(_camel, map(string, oldnames)))
-  (spec == :snake) && (newnames = map(_snake, map(string, oldnames)))
-  (spec == :upper) && (newnames = map(_upper, map(string, oldnames)))
+  (spec == :camel) && (newstringnames = _camel.(string.(oldnames)))
+  (spec == :snake) && (newstringnames = _snake.(string.(oldnames)))
+  (spec == :upper) && (newstringnames = _upper.(string.(oldnames)))
 
-  newnames = map(Symbol, newnames)
+  newnames = Symbol.(newstringnames)
   names = Dict(zip(oldnames, newnames))
+
   rtrans = Rename(names)
   newtable, rcache = apply(rtrans, table)
+
   newtable, (rtrans, rcache)
 end
 
@@ -36,15 +38,8 @@ function revert(::StdNames, newtable, cache)
   revert(rtrans, newtable, rcache)
 end
 
-function _camel(name)
-  substrings = split(name)
-  join(map(uppercasefirst, substrings))
-end
+_camel(name) = join(uppercasefirst.(split(strip(name, ['_', ' ']), ['_', ' '])))
 
-function _snake(name)
-  lowercase(join(split(name), "_"))
-end
+_snake(name) = lowercase(join(split(strip(name, ['_', ' ']), ['_', ' ']), '_'))
 
-function _upper(name)
-  replace(uppercase(name), " " => "")
-end
+_upper(name) = replace(uppercase(strip(name, ['_', ' '])), " " => "", "_" => "")
