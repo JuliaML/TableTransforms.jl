@@ -21,11 +21,12 @@ function apply(transform::StdNames, table)
   
   spec = transform.spec
 
-  (spec == :camel) && (newstringnames = _camel.(string.(oldnames)))
-  (spec == :snake) && (newstringnames = _snake.(string.(oldnames)))
-  (spec == :upper) && (newstringnames = _upper.(string.(oldnames)))
+  spec == :camel && (newstringnames = _camel.(string.(oldnames)))
+  spec == :snake && (newstringnames = _snake.(string.(oldnames)))
+  spec == :upper && (newstringnames = _upper.(string.(oldnames)))
 
-  newnames = Symbol.(newstringnames)
+  newuniquenames = _unique(newstringnames)
+  newnames = Symbol.(newuniquenames)
   names = Dict(zip(oldnames, newnames))
 
   rtrans = Rename(names)
@@ -39,8 +40,22 @@ function revert(::StdNames, newtable, cache)
   revert(rtrans, newtable, rcache)
 end
 
-_camel(name) = join(uppercasefirst.(split(strip(name, ['_', ' ']), ['_', ' '])))
+const delim = ['_', ' ']
 
-_snake(name) = lowercase(join(split(strip(name, ['_', ' ']), ['_', ' ']), '_'))
+function _unique(names)
+  uniquenames = [names...]
+  for i in range(2,length(uniquenames))
+      prev = uniquenames[1:i-1]
+      while uniquenames[i] in prev
+        uniquenames[i] = string(uniquenames[i], "_")
+      end
+  end
 
-_upper(name) = replace(uppercase(strip(name, ['_', ' '])), " " => "", "_" => "")
+  Tuple(uniquenames)
+end
+
+_camel(name) = join(uppercasefirst.(split(strip(name, delim), delim)))
+
+_snake(name) = lowercase(join(split(strip(name, delim), delim), '_'))
+
+_upper(name) = replace(uppercase(strip(name, delim)), delim => "")

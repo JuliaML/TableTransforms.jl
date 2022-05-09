@@ -682,19 +682,46 @@
 
   @testset "StdNames" begin
     # camel test
-    l = ["apple banana", "apple_banana", "apple_Banana"]
-    for s in l
-      @test TableTransforms._camel(s) == "AppleBanana"
-      @test TableTransforms._snake(s) == "apple_banana"
-      @test TableTransforms._upper(s) == "APPLEBANANA"
+    names = ["apple banana", "apple_banana", "apple_Banana"]
+    for name in names
+      @test TableTransforms._camel(name) == "AppleBanana"
+      @test TableTransforms._snake(name) == "apple_banana"
+      @test TableTransforms._upper(name) == "APPLEBANANA"
     end
 
-    l = ["a", "A", "_a", "_A", "a ", "A "]
-    for s in l
-      @test TableTransforms._camel(s) == "A"
-      @test TableTransforms._snake(s) == "a"
-      @test TableTransforms._upper(s) == "A"
+    names = ["a", "A", "_a", "_A", "a ", "A "]
+    for name in names
+      @test TableTransforms._camel(name) == "A"
+      @test TableTransforms._snake(name) == "a"
+      @test TableTransforms._upper(name) == "A"
     end
+
+    # invariant test
+    names = ["AppleTree", "BananaFruit", "PearSeed"]
+    for name in names
+      @test TableTransforms._camel(name) == name
+    end
+
+    names = ["apple_tree", "banana_fruit", "pear_seed"]
+    for name in names
+      @test TableTransforms._snake(name) == name
+    end
+
+    names = ["APPLETREE", "BANANAFRUIT", "PEARSEED"]
+    for name in names
+      @test TableTransforms._upper(name) == name
+    end
+
+    # uniqueness test
+    names = (Symbol("AppleTree"), Symbol("apple tree"), Symbol("apple_tree"))
+    cols = ([1,2,3], [4,5,6], [7,8,9])
+    t = Table(; zip(names, cols)...)
+    rt = Tables.rowtable(t)
+    T = StdNames(:upper)
+    n, c = apply(T, rt)
+    columns = Tables.columns(n)
+    columnnames = Tables.columnnames(columns)
+    @test columnnames == (:APPLETREE, :APPLETREE_, :APPLETREE__)
 
     # row table test
     names = (:a, Symbol("apple tree"), Symbol("banana tree"))
