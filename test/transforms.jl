@@ -720,7 +720,6 @@
     n1, c1 = apply(T, rt)
     n2 = reapply(T, n1, c1)
     @test n1 == n2
-
   end
 
   @testset "Replace" begin
