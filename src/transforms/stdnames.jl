@@ -18,6 +18,7 @@ isrevertible(::Type{StdNames}) = true
 function apply(transform::StdNames, table)  
   cols = Tables.columns(table)
   oldnames = Tables.columnnames(cols)
+  
   spec = transform.spec
 
   (spec == :camel) && (newstringnames = _camel.(string.(oldnames)))
