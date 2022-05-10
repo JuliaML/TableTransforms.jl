@@ -42,7 +42,7 @@ end
 const delim = ['_', ' ']
 
 function _unique(names)
-  newnames = Vector{String}()
+  newnames = String[]
   for name in names
     updatedname = name
     while updatedname ∈ newnames
