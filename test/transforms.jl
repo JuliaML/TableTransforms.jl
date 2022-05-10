@@ -638,6 +638,20 @@
     tₒ = revert(T, n, c)
     @test t == tₒ
 
+    # rename with dictionary of strings
+    T = Rename(Dict("a" => "x", "c" => "y"))
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:x, :b, :y, :d)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # rename with mixed dictionary
+    T = Rename(Dict("a" => :x, :c => "y"))
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:x, :b, :y, :d)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
     # rename with string pairs
     T = Rename("a" => "x", "c" => "y")
     n, c = apply(T, t)
