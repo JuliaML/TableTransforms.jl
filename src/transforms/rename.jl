@@ -22,7 +22,7 @@ Rename(names::Dict) = _symboldict(names) |> Rename
 Rename(names::Pair) = _pairsyms(names) |> Dict |> Rename
 Rename(names...) = _pairsyms.(names) |> Dict |> Rename
 
-_symboldict(names) = Dict(Iterators.map(((k,v),) -> Symbol(k) => Symbol(v), pairs(names)))
+_symboldict(names) = Dict(Symbol(k)=>Symbol(v) for (k, v) in pairs(names))
 
 _pairsyms(x::Pair) = Symbol(first(x)) => Symbol(last(x))
 
