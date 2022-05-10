@@ -44,11 +44,11 @@ const delim = ['_', ' ']
 function _unique(names)
   newnames = String[]
   for name in names
-    updatedname = name
-    while updatedname ∈ newnames
-      updatedname = string(updatedname, "_")
+    n = name
+    while n ∈ newnames
+      n = string(n, "_")
     end
-    push!(newnames, updatedname)
+    push!(newnames, n)
   end
 
   newnames
