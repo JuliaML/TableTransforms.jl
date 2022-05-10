@@ -21,14 +21,14 @@ function apply(transform::StdNames, table)
   
   spec = transform.spec
 
-  spec == :camel && (nonuniquenames = _camel.(oldnames))
-  spec == :snake && (nonuniquenames = _snake.(oldnames))
-  spec == :upper && (nonuniquenames = _upper.(oldnames))
+  spec == :camel && (names = _camel.(oldnames))
+  spec == :snake && (names = _snake.(oldnames))
+  spec == :upper && (names = _upper.(oldnames))
 
-  newnames = _unique(nonuniquenames)
-  names = Dict(zip(oldnames, newnames))
+  newnames = _unique(names)
+  oldnew = Dict(zip(oldnames, newnames))
 
-  rtrans = Rename(names)
+  rtrans = Rename(oldnew)
   newtable, rcache = apply(rtrans, table)
 
   newtable, (rtrans, rcache)
