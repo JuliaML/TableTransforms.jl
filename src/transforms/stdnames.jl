@@ -17,16 +17,15 @@ isrevertible(::Type{StdNames}) = true
 
 function apply(transform::StdNames, table)  
   cols = Tables.columns(table)
-  oldnames = Tables.columnnames(cols)
+  oldnames = string.(Tables.columnnames(cols))
   
   spec = transform.spec
 
-  spec == :camel && (newstringnames = _camel.(string.(oldnames)))
-  spec == :snake && (newstringnames = _snake.(string.(oldnames)))
-  spec == :upper && (newstringnames = _upper.(string.(oldnames)))
+  spec == :camel && (nonuniquenames = _camel.(oldnames))
+  spec == :snake && (nonuniquenames = _snake.(oldnames))
+  spec == :upper && (nonuniquenames = _upper.(oldnames))
 
-  newuniquenames = _unique(newstringnames)
-  newnames = Symbol.(newuniquenames)
+  newnames = _unique(nonuniquenames)
   names = Dict(zip(oldnames, newnames))
 
   rtrans = Rename(names)
@@ -43,15 +42,16 @@ end
 const delim = ['_', ' ']
 
 function _unique(names)
-  uniquenames = [names...]
-  for i in range(2,length(uniquenames))
-      prev = uniquenames[1:i-1]
-      while uniquenames[i] in prev
-        uniquenames[i] = string(uniquenames[i], "_")
-      end
+  newnames = Vector{String}()
+  for name in names
+    updatedname = name
+    while updatedname ∈ newnames
+      updatedname = string(updatedname, "_")
+    end
+    push!(newnames, updatedname)
   end
 
-  Tuple(uniquenames)
+  newnames
 end
 
 _camel(name) = join(uppercasefirst.(split(strip(name, delim), delim)))
