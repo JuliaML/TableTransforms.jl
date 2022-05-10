@@ -710,7 +710,7 @@
       @test TableTransforms._upper(name) == "A"
     end
 
-    # invariant test
+    # invariance test
     names = ["AppleTree", "BananaFruit", "PearSeed"]
     for name in names
       @test TableTransforms._camel(name) == name
