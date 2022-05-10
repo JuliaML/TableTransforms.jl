@@ -695,7 +695,6 @@
   end
 
   @testset "StdNames" begin
-    # camel test
     names = ["apple banana", "apple_banana", "apple_Banana"]
     for name in names
       @test TableTransforms._camel(name) == "AppleBanana"

@@ -5,7 +5,15 @@
 """
     StdNames(:spec)
 
-StdNames transform standardizes the column names.
+The transform that standardizes the column names. There are three different methods of standardization: uppercase, camelcase, and snakecase.
+They can be specified by the `spec`` argument (`:upper`, `:camel`, and `:snake`, respectively). Transform defaults to uppercase. 
+
+# Examples
+
+```julia
+StdNames()
+StdNames(:camel)
+```
 """
 struct StdNames <: Stateless
   spec::Symbol
@@ -56,6 +64,6 @@ end
 
 _camel(name) = join(uppercasefirst.(split(strip(name, delim), delim)))
 
-_snake(name) = lowercase(join(split(strip(name, delim), delim), '_'))
+_snake(name) = join(lowercase.(split(strip(name, delim), delim)), '_')
 
-_upper(name) = replace(uppercase(strip(name, delim)), delim => "")
+_upper(name) = replace(uppercase(name), delim => "")
