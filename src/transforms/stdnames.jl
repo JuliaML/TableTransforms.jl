@@ -66,7 +66,7 @@ function _unique(names)
   newnames
 end
 
-_camel(name) = join(uppercasefirst.(split(strip(name, delim), delim)))
+_camel(name) = join(uppercasefirst.(split(name, delim)))
 
 _snake(name) = join(lowercase.(split(strip(name, delim), delim)), '_')
 
