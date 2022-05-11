@@ -709,6 +709,23 @@
       @test TableTransforms._upper(name) == "A"
     end
 
+    # special characters
+    
+    name = "a&B"
+    @test TableTransforms._camel(name) == "A&B"
+    @test TableTransforms._snake(name) == "a&b"
+    @test TableTransforms._upper(name) == "A&B"
+
+    name = "apple-tree"
+    @test TableTransforms._camel(name) == "Apple-tree"
+    @test TableTransforms._snake(name) == "apple-tree"
+    @test TableTransforms._upper(name) == "APPLE-TREE"
+    
+    name = "apple#"
+    @test TableTransforms._camel(name) == "Apple#"
+    @test TableTransforms._snake(name) == "apple#"
+    @test TableTransforms._upper(name) == "APPLE#"
+
     # invariance test
     names = ["AppleTree", "BananaFruit", "PearSeed"]
     for name in names
@@ -735,7 +752,7 @@
     columns = Tables.columns(n)
     columnnames = Tables.columnnames(columns)
     @test columnnames == (:APPLETREE, :APPLETREE_, :APPLETREE__)
-
+    
     # row table test
     names = (:a, Symbol("apple tree"), Symbol("banana tree"))
     cols = ([1,2,3], [4,5,6], [7,8,9])

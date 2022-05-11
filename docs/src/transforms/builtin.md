@@ -26,16 +26,16 @@ Filter
 DropMissing
 ```
 
-## StdNames
-
-```@docs
-StdNames
-```
-
 ## Rename
 
 ```@docs
 Rename
+```
+
+## StdNames
+
+```@docs
+StdNames
 ```
 
 ## Replace
