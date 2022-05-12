@@ -22,15 +22,17 @@ StdNames() = StdNames(:upper)
 
 isrevertible(::Type{StdNames}) = true
 
+
 function apply(transform::StdNames, table)  
   cols = Tables.columns(table)
   oldnames = string.(Tables.columnnames(cols))
+  preprocessed = _filter.(oldnames)
   
   spec = transform.spec
 
-  spec == :camel && (names = _camel.(oldnames))
-  spec == :snake && (names = _snake.(oldnames))
-  spec == :upper && (names = _upper.(oldnames))
+  spec == :camel && (names = _camel.(preprocessed))
+  spec == :snake && (names = _snake.(preprocessed))
+  spec == :upper && (names = _upper.(preprocessed))
 
   newnames = _unique(names)
   oldnew = Dict(zip(oldnames, newnames))
@@ -46,8 +48,12 @@ function revert(::StdNames, newtable, cache)
   revert(rtrans, newtable, rcache)
 end
 
-const delim = ['_', ' ']
+function _filter(name)
+  _keep(char) = isdigit(char) || isletter(char) || occursin(char, String(delim))
+  filter(char -> _keep(char), name)
+end
 
+  
 function _unique(names)
   newnames = String[]
   for name in names
@@ -60,6 +66,8 @@ function _unique(names)
 
   newnames
 end
+
+const delim = [' ', '\t', '-', '_']
 
 _camel(name) = join(uppercasefirst.(split(name, delim)))
 

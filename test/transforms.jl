@@ -695,7 +695,7 @@
   end
 
   @testset "StdNames" begin
-    names = ["apple banana", "apple_banana", "apple_Banana"]
+    names = ["apple banana", "apple\tbanana", "apple_banana", "apple-banana", "apple_Banana"]
     for name in names
       @test TableTransforms._camel(name) == "AppleBanana"
       @test TableTransforms._snake(name) == "apple_banana"
@@ -710,21 +710,14 @@
     end
 
     # special characters
-    
     name = "a&B"
-    @test TableTransforms._camel(name) == "A&B"
-    @test TableTransforms._snake(name) == "a&b"
-    @test TableTransforms._upper(name) == "A&B"
-
-    name = "apple-tree"
-    @test TableTransforms._camel(name) == "Apple-tree"
-    @test TableTransforms._snake(name) == "apple-tree"
-    @test TableTransforms._upper(name) == "APPLE-TREE"
+    @test TableTransforms._filter(name) == "aB"
     
     name = "apple#"
-    @test TableTransforms._camel(name) == "Apple#"
-    @test TableTransforms._snake(name) == "apple#"
-    @test TableTransforms._upper(name) == "APPLE#"
+    @test TableTransforms._filter(name) == "apple"
+
+    name = "apple-tree"
+    @test TableTransforms._filter(name) == "apple-tree"
 
     # invariance test
     names = ["AppleTree", "BananaFruit", "PearSeed"]
