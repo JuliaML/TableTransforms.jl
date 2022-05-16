@@ -22,7 +22,6 @@ StdNames() = StdNames(:upper)
 
 isrevertible(::Type{StdNames}) = true
 
-
 function apply(transform::StdNames, table)  
   cols = Tables.columns(table)
   oldnames = string.(Tables.columnnames(cols))
