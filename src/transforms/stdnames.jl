@@ -47,6 +47,8 @@ function revert(::StdNames, newtable, cache)
   revert(rtrans, newtable, rcache)
 end
 
+const delim = [' ', '\t', '-', '_']
+
 _clean(name) = filter(c -> isdigit(c) || isletter(c) || c ∈ delim, name)
   
 function _unique(names)
@@ -61,8 +63,6 @@ function _unique(names)
 
   newnames
 end
-
-const delim = [' ', '\t', '-', '_']
 
 _camel(name) = join(uppercasefirst.(split(name, delim)))
 

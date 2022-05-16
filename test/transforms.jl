@@ -711,13 +711,13 @@
 
     # special characters
     name = "a&B"
-    @test TableTransforms._filter(name) == "aB"
+    @test TableTransforms._clean(name) == "aB"
     
     name = "apple#"
-    @test TableTransforms._filter(name) == "apple"
+    @test TableTransforms._clean(name) == "apple"
 
     name = "apple-tree"
-    @test TableTransforms._filter(name) == "apple-tree"
+    @test TableTransforms._clean(name) == "apple-tree"
 
     # invariance test
     names = ["AppleTree", "BananaFruit", "PearSeed"]
