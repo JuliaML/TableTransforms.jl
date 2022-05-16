@@ -25,13 +25,13 @@ isrevertible(::Type{StdNames}) = true
 function apply(transform::StdNames, table)  
   cols = Tables.columns(table)
   oldnames = string.(Tables.columnnames(cols))
-  preprocessed = _filter.(oldnames)
+  cleaned = _clean.(oldnames)
   
   spec = transform.spec
 
-  spec == :camel && (names = _camel.(preprocessed))
-  spec == :snake && (names = _snake.(preprocessed))
-  spec == :upper && (names = _upper.(preprocessed))
+  spec == :camel && (names = _camel.(cleaned))
+  spec == :snake && (names = _snake.(cleaned))
+  spec == :upper && (names = _upper.(cleaned))
 
   newnames = _unique(names)
   oldnew = Dict(zip(oldnames, newnames))
