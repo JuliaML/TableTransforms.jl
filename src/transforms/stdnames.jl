@@ -47,11 +47,7 @@ function revert(::StdNames, newtable, cache)
   revert(rtrans, newtable, rcache)
 end
 
-function _filter(name)
-  _keep(char) = isdigit(char) || isletter(char) || occursin(char, String(delim))
-  filter(char -> _keep(char), name)
-end
-
+_clean(name) = filter(c -> isdigit(c) || isletter(c) || c ∈ delim, name)
   
 function _unique(names)
   newnames = String[]
