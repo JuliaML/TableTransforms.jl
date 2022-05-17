@@ -38,10 +38,11 @@ function apply(transform::StdNames, table)
   spec == :snake && (names = _snake.(cleaned))
   spec == :upper && (names = _upper.(cleaned))
 
+  # make names unique
   newnames = _unique(names)
-  oldnew = Dict(zip(oldnames, newnames))
-
-  rtrans = Rename(oldnew)
+  
+  # rename transform
+  rtrans = Rename(Dict(oldnames .=> newnames))
   newtable, rcache = apply(rtrans, table)
 
   newtable, (rtrans, rcache)
