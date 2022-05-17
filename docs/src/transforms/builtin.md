@@ -32,6 +32,12 @@ DropMissing
 Rename
 ```
 
+## StdNames
+
+```@docs
+StdNames
+```
+
 ## Replace
 
 ```@docs

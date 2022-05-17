@@ -31,6 +31,7 @@ export
   Filter,
   DropMissing,
   Rename,
+  StdNames,
   Replace,
   Coalesce,
   Coerce,
