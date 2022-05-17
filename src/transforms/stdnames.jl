@@ -23,12 +23,17 @@ StdNames() = StdNames(:upper)
 isrevertible(::Type{StdNames}) = true
 
 function apply(transform::StdNames, table)  
+  # retrieve spec
+  spec = transform.spec
+  
+  # retrieve column names
   cols = Tables.columns(table)
   oldnames = string.(Tables.columnnames(cols))
-  cleaned = _clean.(oldnames)
   
-  spec = transform.spec
+  # clean column names
+  cleaned = _clean.(oldnames)
 
+  # apply spec
   spec == :camel && (names = _camel.(cleaned))
   spec == :snake && (names = _snake.(cleaned))
   spec == :upper && (names = _upper.(cleaned))
