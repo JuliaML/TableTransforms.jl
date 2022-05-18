@@ -104,7 +104,7 @@
     @test t == tₒ
 
     # different columntypes
-    t = (;a=rand(3), b=rand(ComplexF64, 3))
+    t = (a = rand(3), b = rand(ComplexF64, 3))
     T = Select(:a) → Functional(identity)
     tₒ = revert(T, apply(T, t)...)
     @test tₒ == t
