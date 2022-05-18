@@ -103,6 +103,17 @@
     tₒ = revert(T, n, c)
     @test t == tₒ
 
+    # different columntypes
+    t = (;a=rand(3), b=rand(ComplexF64, 3))
+    T = Select(:a) → Functional(identity)
+    tₒ = revert(T, apply(T, t)...)
+    @test tₒ == t
+    @test Tables.schema(tₒ) == Tables.schema(t)
+    T = Select(:b) → Functional(identity)
+    tₒ = revert(T, apply(T, t)...)
+    @test tₒ == t
+    @test Tables.schema(tₒ) == Tables.schema(t)
+
     x1 = rand(4000)
     x2 = rand(4000)
     y1 = rand(4000)
@@ -130,15 +141,6 @@
     @test Tables.columnnames(n) == [:y1, :y2]
     rtₒ = revert(T, n, c)
     @test rt == rtₒ
-
-    # different columntypes
-    tt = (;a=rand(3), b=rand(ComplexF64, 3))
-    T = Select(:a) → Functional(identity)
-    ttₒ = revert(T, apply(T, tt)...)
-    @test ttₒ == tt && Tables.schema(ttₒ) == Tables.schema(tt)
-    T = Select(:b) → Functional(identity)
-    ttₒ = revert(T, apply(T, tt)...)
-    @test ttₒ == tt && Tables.schema(ttₒ) == Tables.schema(tt)
 
     # throws: Select without arguments
     @test_throws ArgumentError Select()
