@@ -103,6 +103,17 @@
     tₒ = revert(T, n, c)
     @test t == tₒ
 
+    # different columntypes
+    t = (a = rand(3), b = rand(ComplexF64, 3))
+    T = Select(:a) → Functional(identity)
+    tₒ = revert(T, apply(T, t)...)
+    @test tₒ == t
+    @test Tables.schema(tₒ) == Tables.schema(t)
+    T = Select(:b) → Functional(identity)
+    tₒ = revert(T, apply(T, t)...)
+    @test tₒ == t
+    @test Tables.schema(tₒ) == Tables.schema(t)
+
     x1 = rand(4000)
     x2 = rand(4000)
     y1 = rand(4000)
