@@ -108,7 +108,7 @@ function revert(::Select, newtable, cache)
   # selected columns
   cols   = Tables.columns(newtable)
   select = Tables.columnnames(cols)
-  scols  = [Tables.getcolumn(cols, name) for name in select]
+  scols  = Any[Tables.getcolumn(cols, name) for name in select]
 
   # rejected columns
   reject, rcols, sperm, rinds = cache

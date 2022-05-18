@@ -131,6 +131,15 @@
     rtₒ = revert(T, n, c)
     @test rt == rtₒ
 
+    # different columntypes
+    tt = (;a=rand(3), b=rand(ComplexF64, 3))
+    T = Select(:a) → Functional(identity)
+    ttₒ = revert(T, apply(T, tt)...)
+    @test ttₒ == tt && Tables.schema(ttₒ) == Tables.schema(tt)
+    T = Select(:b) → Functional(identity)
+    ttₒ = revert(T, apply(T, tt)...)
+    @test ttₒ == tt && Tables.schema(ttₒ) == Tables.schema(tt)
+
     # throws: Select without arguments
     @test_throws ArgumentError Select()
     @test_throws ArgumentError Select(())
