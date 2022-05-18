@@ -1072,6 +1072,17 @@
     @test Tables.isrowtable(n)
     rtₒ = revert(T, n, c)
     @test Tables.matrix(rt) ≈ Tables.matrix(rtₒ)
+
+    # columntype does not change
+    for FT in (Float16, Float32)
+      t = Table(; x=rand(FT, 10))
+      for T in (MinMax(), Scale(FT(0), FT(0.5)))
+        n, c = apply(T, t)
+        @test Tables.columntype(t, :x) == Tables.columntype(n, :x)
+        tₒ = revert(T, n, c)
+        @test Tables.columntype(t, :x) == Tables.columntype(tₒ, :x)
+      end
+    end
   end
 
   @testset "ZScore" begin
