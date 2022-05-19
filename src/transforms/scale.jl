@@ -21,15 +21,16 @@ Scale(low=0.3, high=0.7)
 
 * The `low` and `high` values are restricted to the interval [0, 1].
 """
-struct Scale{T} <: Colwise
+struct Scale{T<:Real} <: Colwise
   low::T
   high::T
 
-  function Scale(low::T1, high::T2) where {T1,T2}
+  function Scale(low::T, high::T) where {T<:Real}
     @assert 0 ≤ low ≤ high ≤ 1 "invalid quantiles"
-    new{promote_type(T1, T2)}(low, high)
+    new{T}(low, high)
   end
 end
+Scale(low::Real, high::Real) = Scale(promote(low, high)...)
 
 Scale(; low=0.25, high=0.75) = Scale(low, high)
 
