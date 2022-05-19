@@ -30,6 +30,7 @@ struct Scale{T<:Real} <: Colwise
     new{T}(low, high)
   end
 end
+
 Scale(low::Real, high::Real) = Scale(promote(low, high)...)
 
 Scale(; low=0.25, high=0.75) = Scale(low, high)
