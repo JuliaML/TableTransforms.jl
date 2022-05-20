@@ -11,7 +11,7 @@ The quantile transform to a given `distribution`.
 
 ```julia
 Quantile()
-Quantile(distribution=Normal())
+Quantile(Normal())
 ```
 """
 struct Quantile{D} <: Colwise

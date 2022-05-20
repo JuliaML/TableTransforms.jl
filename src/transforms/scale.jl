@@ -21,21 +21,23 @@ Scale(low=0.3, high=0.7)
 
 * The `low` and `high` values are restricted to the interval [0, 1].
 """
-struct Scale <: Colwise
-  low::Float64
-  high::Float64
+struct Scale{T<:Real} <: Colwise
+  low::T
+  high::T
 
-  function Scale(low, high)
+  function Scale(low::T, high::T) where {T<:Real}
     @assert 0 ≤ low ≤ high ≤ 1 "invalid quantiles"
-    new(low, high)
+    new{T}(low, high)
   end
 end
 
+Scale(low::Real, high::Real) = Scale(promote(low, high)...)
+
 Scale(; low=0.25, high=0.75) = Scale(low, high)
 
-assertions(::Type{Scale}) = [assert_continuous]
+assertions(::Type{<:Scale}) = [assert_continuous]
 
-isrevertible(::Type{Scale}) = true
+isrevertible(::Type{<:Scale}) = true
 
 function colcache(transform::Scale, x)
   levels = (transform.low, transform.high)
@@ -55,7 +57,7 @@ The transform that is equivalent to `Scale(low=0, high=1)`.
 
 See also [`Scale`](@ref).
 """
-MinMax() = Scale(low=0.0, high=1.0)
+MinMax() = Scale(low=0, high=1)
 
 """
     Interquartile()
