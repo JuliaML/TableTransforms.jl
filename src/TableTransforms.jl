@@ -11,7 +11,8 @@ using Transducers: tcollect
 using LinearAlgebra
 using Statistics
 using PrettyTables
-
+using CategoricalArrays
+import Base.@kwdef
 import Distributions: ContinuousUnivariateDistribution
 import Distributions: quantile, cdf
 
@@ -48,6 +49,6 @@ export
   PCA, DRS, SDS,
   Sequential,
   Parallel,
-  →, ⊔
-
+  →, ⊔,
+  Levels
 end
