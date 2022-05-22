@@ -24,12 +24,6 @@ Levels(pairs::Pair{K}...; ordered::AbstractVector{K}=Symbol[]) where {K <: Symbo
 Levels(pairs::Pair{K}...; ordered::AbstractVector{K}=String[]) where {K <: AbstractString} =
   Levels(NamedTuple(Symbol(k) => v for (k,v) in pairs), Symbol.(ordered))
 
-Levels(pairs::Pair{K}...) where {K <: Symbol} =
-  Levels(NamedTuple(pairs), Symbol[])
-
-Levels(pairs::Pair{K}...) where {K <: AbstractString} =
-  Levels(NamedTuple(Symbol(k) => v for (k,v) in pairs), Symbol[])
-
 
 
 isrevertible(transform::Levels) = true
@@ -45,14 +39,13 @@ categorify(func::Function, x::AbstractVector, ordered::Bool) = ordered ? (levels
 function apply(transform::Levels,table)
   cols = Tables.columns(table)
   names = Tables.columnnames(cols)
-  levels = transform.levelspec
-  #should I pre-allocate the caches vector
-  caches = []
+  new_levels = transform.levelspec
+  caches = Vector{Union{Vector,Function}}()
   ncols = map(names) do nm
     x = Tables.getcolumn(cols, nm)
-    cat_level = get(levels, nm, identity)
+    level_ = get(new_levels, nm, identity)
     ordered = in(nm,transform.ordered)
-    cache, new_x = categorify(cat_level, x,ordered)
+    cache, new_x = categorify(level_, x, ordered)
     push!(caches, cache)
     new_x
   end
