@@ -38,11 +38,9 @@ isrevertible(transform::Levels) = true
 #1. when the col is already a categorical array and wanna change levels and order
 categorify(func::AbstractVector, x::CategoricalVector,ordered::Bool) = levels(x) , categorical(x,levels = func,ordered=ordered) 
 #2. when the col is normal array and want to change to categorical array
-#Reason to use Array instead of Vector: https://github.com/JuliaData/CategoricalArrays.jl/issues/294
-categorify(func::AbstractVector, x::AbstractVector,ordered::Bool) = Array , categorical(x,levels = func,ordered=ordered) 
+categorify(func::AbstractVector, x::AbstractVector,ordered::Bool) = unwrap, categorical(x,levels = func,ordered=ordered) 
 #3. when the col is not need for change 
-# add condition to check the scitype
-categorify(func::Base.Callable, x::AbstractVector,ordered::Bool) = ordered ? (levels(x), categorical(x, ordered=true)) : (func , func(x))
+categorify(func::Function, x::AbstractVector,ordered::Bool) = ordered ? (levels(x), categorical(x, ordered=true)) : (func , func.(x))
 
 
 function apply(transform::Levels,table)
