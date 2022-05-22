@@ -1,6 +1,33 @@
 @testset "Transforms" begin
   # using MersenneTwister for compatibility between Julia versions
   rng = MersenneTwister(42)
+  @testset "Levels" begin
+    a = categorical(["yes","no","no","no","yes"]) 
+    b = categorical([1,2,4,2,8],ordered=false) 
+    c =categorical([1,2,1,2,1]) 
+    d= [1,23,5,7,7]
+    t = Table(; a, b, c, d)
+
+    T = Levels(:a => ["yes","no"], :c => [1,2,4], :d => [1,23,5,7],ordered=[:b])
+    n,c = apply(T,t)
+    @test levels(n.a) == ["yes","no"]
+    @test isordered(n.b) == true
+    @test levels(n.c) == [1,2,4]
+    tₒ = revert(T, n, c)
+    @test levels(tₒ.a) == ["no","yes"]
+    @test levels(tₒ.c) == [1,2]
+    @test isordered(tₒ.b) == false
+
+    T = Levels(:a => ["yes","no"], :c => [1,2,4], :d => [1,23,5,7],ordered=[:a,:b,:d])
+    n,c = apply(T,t)
+    @test levels(n.a) == ["yes","no"]
+    @test isordered(n.a) == true
+    @test isordered(n.d) == true
+    tₒ = revert(T, n, c)
+    @test typeof(tₒ.d) == Vector{Int64}
+    @test isordered(tₒ.a) == false
+    @test isordered(tₒ.a) == false
+  end
   @testset "Select" begin
     a = rand(4000)
     b = rand(4000)
