@@ -14,7 +14,7 @@ Levels(:a => ["yes","no"], :c => [1,2,4], :d => [1,23,5,7] ,ordered = [:a,:b,:c]
 """
 
 @kwdef struct Levels{K} <: Stateless
-	levelspec::K
+  levelspec::K
   ordered::AbstractVector{Symbol}
 end
 #should work more on constructors
@@ -25,21 +25,21 @@ Levels(pairs::Pair{K}...; ordered::AbstractVector{K}=String[]) where {K <: Abstr
   Levels(NamedTuple(Symbol(k) => v for (k,v) in pairs), Symbol.(ordered))
 
 Levels(pairs::Pair{K}...) where {K <: Symbol} =
-  Levels(NamedTuple(pairs),Symbol[])
+  Levels(NamedTuple(pairs), Symbol[])
 
 Levels(pairs::Pair{K}...) where {K <: AbstractString} =
-  Levels(NamedTuple(Symbol(k) => v for (k,v) in pairs),Symbol[])
+  Levels(NamedTuple(Symbol(k) => v for (k,v) in pairs), Symbol[])
 
 
 
 isrevertible(transform::Levels) = true
 # handle three cases
 #1. when the col is already a categorical array and wanna change levels and order
-categorify(levels::AbstractVector, x::CategoricalVector,ordered::Bool) = levels(x) , categorical(x,levels = levels ,ordered=ordered) 
+categorify(level::AbstractVector, x::CategoricalVector, ordered::Bool) = levels(x), categorical(x, levels = level, ordered=ordered) 
 #2. when the col is normal array and want to change to categorical array
-categorify(levels::AbstractVector, x::AbstractVector,ordered::Bool) = unwrap, categorical(x,levels = levels,ordered=ordered) 
+categorify(level::AbstractVector, x::AbstractVector, ordered::Bool) = unwrap, categorical(x,levels = level, ordered=ordered) 
 #3. when the col is not need for change or convert back to normal array
-categorify(func::Function, x::AbstractVector,ordered::Bool) = ordered ? (levels(x), categorical(x, ordered=true)) : (func , func.(x))
+categorify(func::Function, x::AbstractVector, ordered::Bool) = ordered ? (levels(x), categorical(x, ordered=true)) : (func, func.(x))
 
 
 function apply(transform::Levels,table)
