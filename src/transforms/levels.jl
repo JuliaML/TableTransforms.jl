@@ -16,13 +16,13 @@ Levels(:a => ["yes","no"], :c => [1,2,4], :d => [1,23,5,7] ,ordered = [:a,:b,:c]
 
 @kwdef struct Levels{K} <: Stateless
 	levelspec::K
-  ordered::AbstractVector{Symbol}; #@assert all(in.(ordered,Ref(levelspec))) 
+  ordered::AbstractVector{Symbol}
 end
-
-Levels(pairs::Pair{K}...; ordered::AbstractVector{K}) where {K <: Symbol}=
+#should work more on constructors
+Levels(pairs::Pair{K}...; ordered::AbstractVector{K}=Symbol[]) where {K <: Symbol}=
   Levels(NamedTuple(pairs), ordered)
 
-Levels(pairs::Pair{K}...; ordered::AbstractVector{K}) where {K <: AbstractString} =
+Levels(pairs::Pair{K}...; ordered::AbstractVector{K}=String[]) where {K <: AbstractString} =
   Levels(NamedTuple(Symbol(k) => v for (k,v) in pairs), Symbol.(ordered))
 
 Levels(pairs::Pair{K}...) where {K <: Symbol} =

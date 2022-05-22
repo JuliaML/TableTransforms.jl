@@ -8,8 +8,20 @@
     d= [1,23,5,7,7]
     t = Table(; a, b, c, d)
 
-    T = Levels(:a => ["yes","no"], :c => [1,2,4], :d => [1,23,5,7],ordered=[:b])
+    T = Levels(:a => ["yes","no"], :c => [1,2,4], :d => [1,23,5,7])
+    T_same = Levels("a" => ["yes","no"], "c" => [1,2,4], "d" => [1,23,5,7])
     n,c = apply(T,t)
+    n,c = apply(T_same,t)
+    @test levels(n.a) == ["yes","no"]
+    @test levels(n.c) == [1,2,4]
+    tₒ = revert(T, n, c)
+    @test levels(tₒ.a) == ["no","yes"]
+    @test levels(tₒ.c) == [1,2]
+
+    T = Levels(:a => ["yes","no"], :c => [1,2,4], :d => [1,23,5,7],ordered=[:b])
+    T_same = Levels("a" => ["yes","no"], "c" => [1,2,4], "d" => [1,23,5,7],ordered=["b"])
+    n,c = apply(T,t)
+    n,c = apply(T_same,t)
     @test levels(n.a) == ["yes","no"]
     @test isordered(n.b) == true
     @test levels(n.c) == [1,2,4]
