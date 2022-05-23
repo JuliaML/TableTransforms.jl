@@ -5,9 +5,10 @@
 const NDim = Union{Int,Colon}
 
 """
-    EigenAnalysis(proj)
+    EigenAnalysis(proj; ndim=:)
 
 The eigenanalysis of the covariance with a given projection `proj`.
+The `ndim` keyword argument is the number of dimensions of the output.
 
 ## Projections
 
@@ -33,17 +34,22 @@ for more details about these three variants of eigenanalysis.
 EigenAnalysis(:V)
 EigenAnalysis(:VD)
 EigenAnalysis(:VDV)
+EigenAnalysis(:V, ndim=2)
+EigenAnalysis(:VD, ndim=3)
+EigenAnalysis(:VDV, ndim=4)
 ```
 """
 struct EigenAnalysis{T<:NDim} <: Transform
   proj::Symbol
   ndim::T
 
-  function EigenAnalysis(proj::Symbol, ndim::T=:) where {T<:NDim}
+  function EigenAnalysis(proj::Symbol, ndim::T) where {T<:NDim}
     @assert proj ∈ (:V, :VD, :VDV) "Invalid projection."
     new{T}(proj, ndim)
   end
 end
+
+EigenAnalysis(proj::Symbol; ndim::NDim=:) = EigenAnalysis(proj, ndim)
 
 assertions(::Type{EigenAnalysis}) = [assert_continuous]
 
@@ -157,12 +163,19 @@ function eigenmatrices(transform, X)
 end
 
 """
-    PCA()
+    PCA(; ndim=:)
 
 The PCA transform is a shortcut for
-`ZScore() → EigenAnalysis(:V)`.
+`ZScore() → EigenAnalysis(:V; ndim)`.
 
 See also: [`ZScore`](@ref), [`EigenAnalysis`](@ref).
+
+# Examples
+
+```julia
+PCA()
+PCA(ndim=2)
+```
 """
 PCA(; ndim::NDim=:) = ZScore() → EigenAnalysis(:V, ndim)
 
@@ -170,9 +183,16 @@ PCA(; ndim::NDim=:) = ZScore() → EigenAnalysis(:V, ndim)
     DRS()
 
 The DRS transform is a shortcut for
-`ZScore() → EigenAnalysis(:VD)`.
+`ZScore() → EigenAnalysis(:VD; ndim)`.
 
 See also: [`ZScore`](@ref), [`EigenAnalysis`](@ref).
+
+# Examples
+
+```julia
+DRS()
+DRS(ndim=3)
+```
 """
 DRS(; ndim::NDim=:) = ZScore() → EigenAnalysis(:VD, ndim)
 
@@ -180,8 +200,15 @@ DRS(; ndim::NDim=:) = ZScore() → EigenAnalysis(:VD, ndim)
     SDS()
 
 The SDS transform is a shortcut for
-`ZScore() → EigenAnalysis(:VDV)`.
+`ZScore() → EigenAnalysis(:VDV; ndim)`.
 
 See also: [`ZScore`](@ref), [`EigenAnalysis`](@ref).
+
+# Examples
+
+```julia
+SDS()
+SDS(ndim=4)
+```
 """
 SDS(; ndim::NDim=:) = ZScore() → EigenAnalysis(:VDV, ndim)
