@@ -1333,12 +1333,12 @@
     # visual tests    
     if visualtests
       p₁ = scatter(t₁.x, t₁.y, label="Original")
-      p₂ = scatter(t₂.x, t₂.y, label="V")
-      p₃ = scatter(t₃.x, t₃.y, label="VD")
-      p₄ = scatter(t₄.x, t₄.y, label="VDV")
-      p₅ = scatter(t₅.x, t₅.y, label="PCA")
-      p₆ = scatter(t₆.x, t₆.y, label="DRS")
-      p₇ = scatter(t₇.x, t₇.y, label="SDS")
+      p₂ = scatter(t₂.pc1, t₂.pc2, label="V")
+      p₃ = scatter(t₃.pc1, t₃.pc2, label="VD")
+      p₄ = scatter(t₄.pc1, t₄.pc2, label="VDV")
+      p₅ = scatter(t₅.pc1, t₅.pc2, label="PCA")
+      p₆ = scatter(t₆.pc1, t₆.pc2, label="DRS")
+      p₇ = scatter(t₇.pc1, t₇.pc2, label="SDS")
       p = plot(p₁, p₂, p₃, p₄, layout=(2,2))
       q = plot(p₂, p₃, p₄, p₅, p₆, p₇, layout=(2,3))
 
@@ -1356,6 +1356,45 @@
     @test Tables.isrowtable(n)
     rtₒ = revert(T, n, c)
     @test Tables.matrix(rt) ≈ Tables.matrix(rtₒ)
+
+    # ndim
+    x = rand(Normal(), 1500)
+    y = rand(Normal(), 1500)
+    z = rand(Normal(), 1500)
+    t = Table(; x, y, z)
+
+    # PCA
+    T = PCA(ndim=2)
+    n, c = apply(T, t)
+    Σ = cov(Tables.matrix(n))
+    @test isapprox(Σ[1,2], 0; atol=1e-6)
+    @test isapprox(Σ[2,1], 0; atol=1e-6)
+    @test isapprox(Σ[1,1], 1; atol=0.1)
+    @test isapprox(Σ[2,2], 1; atol=0.1)
+    tₒ = revert(T, n, c)
+    @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+
+    # DRS
+    T = DRS(ndim=2)
+    n, c = apply(T, t)
+    Σ = cov(Tables.matrix(n))
+    @test isapprox(Σ[1,2], 0; atol=1e-6)
+    @test isapprox(Σ[2,1], 0; atol=1e-6)
+    @test isapprox(Σ[1,1], 1; atol=1e-6)
+    @test isapprox(Σ[2,2], 1; atol=1e-6)
+    tₒ = revert(T, n, c)
+    @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+
+    # SDS
+    T = SDS(ndim=2)
+    n, c = apply(T, t)
+    Σ = cov(Tables.matrix(n))
+    @test isapprox(Σ[1,2], 0; atol=1e-6)
+    @test isapprox(Σ[2,1], 0; atol=1e-6)
+    @test isapprox(Σ[1,1], 1; atol=1e-6)
+    @test isapprox(Σ[2,2], 1; atol=1e-6)
+    tₒ = revert(T, n, c)
+    @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
   end
 
   @testset "Sequential" begin
