@@ -2,10 +2,8 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-const NDim = Union{Int,Colon}
-
 """
-    EigenAnalysis(proj; ndim=:)
+    EigenAnalysis(proj; ndim=nothing)
 
 The eigenanalysis of the covariance with a given projection `proj`.
 The `ndim` keyword argument is the number of dimensions of the output.
@@ -35,28 +33,24 @@ EigenAnalysis(:V)
 EigenAnalysis(:VD)
 EigenAnalysis(:VDV)
 EigenAnalysis(:V, ndim=2)
-EigenAnalysis(:VD, ndim=3)
-EigenAnalysis(:VDV, ndim=4)
 ```
 """
-struct EigenAnalysis{T<:NDim} <: Transform
+struct EigenAnalysis <: Transform
   proj::Symbol
-  ndim::T
+  ndim::Union{Int,Nothing}
 
-  function EigenAnalysis(proj::Symbol, ndim::T) where {T<:NDim}
+  function EigenAnalysis(proj; ndim=nothing)
     @assert proj ∈ (:V, :VD, :VDV) "Invalid projection."
-    new{T}(proj, ndim)
+    new(proj, ndim)
   end
 end
-
-EigenAnalysis(proj::Symbol; ndim::NDim=:) = EigenAnalysis(proj, ndim)
 
 assertions(::Type{EigenAnalysis}) = [assert_continuous]
 
 isrevertible(::Type{EigenAnalysis}) = true
 
 _ndim(ndim::Int, X) = ndim
-_ndim(ndim::Colon, X) = size(X, 2)
+_ndim(ndim::Nothing, X) = size(X, 2)
 
 function apply(transform::EigenAnalysis, table)
   # basic checks
@@ -74,35 +68,42 @@ function apply(transform::EigenAnalysis, table)
   # output dim
   ndim = _ndim(transform.ndim, X)
 
+  # center the data
+  μ = mean(X, dims=1)
+  Y = X .- μ
+
   # eigenanalysis of covariance
-  S, S⁻¹ = eigenmatrices(transform, X)
+  S, S⁻¹ = eigenmatrices(transform, Y)
 
   # project the data
-  Y = X * S
+  Z = Y * S
 
   # discarted and selected coluns
-  D = Y[:, ndim+1:end]
-  Y = Y[:, 1:ndim]
+  D = Z[:, ndim+1:end]
+  Z = Z[:, 1:ndim]
 
   # column names
   names = [Symbol(:pc, d) for d in 1:ndim]
 
   # table with transformed columns
-  𝒯 = (; zip(names, eachcol(Y))...)
+  𝒯 = (; zip(names, eachcol(Z))...)
   newtable = 𝒯 |> Tables.materializer(table)
 
-  newtable, (S, S⁻¹, D, onames)
+  newtable, (μ, S, S⁻¹, D, onames)
 end
 
 function revert(::EigenAnalysis, newtable, cache)
   # table as matrix
-  Y = Tables.matrix(newtable)
+  Z = Tables.matrix(newtable)
 
   # retrieve cache
-  S, S⁻¹, D, onames = cache
+  μ, S, S⁻¹, D, onames = cache
 
   # undo projection
-  X = hcat(Y, D) * S⁻¹
+  Y = hcat(Z, D) * S⁻¹
+
+  # undo centering
+  X = Y .+ μ
 
   # table with original columns
   𝒯 = (; zip(onames, eachcol(X))...)
@@ -122,26 +123,29 @@ function reapply(transform::EigenAnalysis, table, cache)
   ndim = _ndim(transform.ndim, X)
 
   # retrieve cache
-  S, S⁻¹, D, onames = cache
+  μ, S, S⁻¹, D, onames = cache
+
+  # center the data
+  Y = X .- μ
 
   # project the data
-  Y = X * S
+  Z = Y * S
 
   # selected coluns
-  Y = Y[:, 1:ndim]
+  Z = Z[:, 1:ndim]
 
   # column names
   names = [Symbol(:pc, d) for d in 1:ndim]
 
   # table with transformed columns
-  𝒯 = (; zip(names, eachcol(Y))...)
+  𝒯 = (; zip(names, eachcol(Z))...)
   𝒯 |> Tables.materializer(table)
 end
 
-function eigenmatrices(transform, X)
+function eigenmatrices(transform, Y)
   proj = transform.proj
 
-  Σ = cov(X)
+  Σ = cov(Y)
   F = eigen(Σ)
   λ = F.values[end:-1:1]
   V = F.vectors[:, end:-1:1]
@@ -163,7 +167,7 @@ function eigenmatrices(transform, X)
 end
 
 """
-    PCA(; ndim=:)
+    PCA(; ndim=nothing)
 
 The PCA transform is a shortcut for
 `ZScore() → EigenAnalysis(:V; ndim)`.
@@ -177,10 +181,10 @@ PCA()
 PCA(ndim=2)
 ```
 """
-PCA(; ndim::NDim=:) = ZScore() → EigenAnalysis(:V, ndim)
+PCA(; ndim=nothing) = ZScore() → EigenAnalysis(:V, ndim)
 
 """
-    DRS()
+    DRS(; ndim=nothing)
 
 The DRS transform is a shortcut for
 `ZScore() → EigenAnalysis(:VD; ndim)`.
@@ -194,10 +198,10 @@ DRS()
 DRS(ndim=3)
 ```
 """
-DRS(; ndim::NDim=:) = ZScore() → EigenAnalysis(:VD, ndim)
+DRS(; ndim=nothing) = ZScore() → EigenAnalysis(:VD, ndim)
 
 """
-    SDS()
+    SDS(; ndim=nothing)
 
 The SDS transform is a shortcut for
 `ZScore() → EigenAnalysis(:VDV; ndim)`.
@@ -211,4 +215,4 @@ SDS()
 SDS(ndim=4)
 ```
 """
-SDS(; ndim::NDim=:) = ZScore() → EigenAnalysis(:VDV, ndim)
+SDS(; ndim=nothing) = ZScore() → EigenAnalysis(:VDV, ndim)
