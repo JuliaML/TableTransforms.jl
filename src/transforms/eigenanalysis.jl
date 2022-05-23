@@ -164,7 +164,7 @@ The PCA transform is a shortcut for
 
 See also: [`ZScore`](@ref), [`EigenAnalysis`](@ref).
 """
-PCA(; ndim=:) = ZScore() → EigenAnalysis(:V, ndim)
+PCA(; ndim::NDim=:) = ZScore() → EigenAnalysis(:V, ndim)
 
 """
     DRS()
@@ -174,7 +174,7 @@ The DRS transform is a shortcut for
 
 See also: [`ZScore`](@ref), [`EigenAnalysis`](@ref).
 """
-DRS(; ndim=:) = ZScore() → EigenAnalysis(:VD, ndim)
+DRS(; ndim::NDim=:) = ZScore() → EigenAnalysis(:VD, ndim)
 
 """
     SDS()
@@ -184,4 +184,4 @@ The SDS transform is a shortcut for
 
 See also: [`ZScore`](@ref), [`EigenAnalysis`](@ref).
 """
-SDS(; ndim=:) = ZScore() → EigenAnalysis(:VDV, ndim)
+SDS(; ndim::NDim=:) = ZScore() → EigenAnalysis(:VDV, ndim)
