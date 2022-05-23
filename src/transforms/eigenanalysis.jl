@@ -181,7 +181,7 @@ PCA()
 PCA(ndim=2)
 ```
 """
-PCA(; ndim=nothing) = ZScore() → EigenAnalysis(:V, ndim)
+PCA(; ndim=nothing) = ZScore() → EigenAnalysis(:V; ndim)
 
 """
     DRS(; ndim=nothing)
@@ -198,7 +198,7 @@ DRS()
 DRS(ndim=3)
 ```
 """
-DRS(; ndim=nothing) = ZScore() → EigenAnalysis(:VD, ndim)
+DRS(; ndim=nothing) = ZScore() → EigenAnalysis(:VD; ndim)
 
 """
     SDS(; ndim=nothing)
@@ -215,4 +215,4 @@ SDS()
 SDS(ndim=4)
 ```
 """
-SDS(; ndim=nothing) = ZScore() → EigenAnalysis(:VDV, ndim)
+SDS(; ndim=nothing) = ZScore() → EigenAnalysis(:VDV; ndim)
