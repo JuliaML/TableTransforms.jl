@@ -33,12 +33,13 @@ EigenAnalysis(:VD)
 EigenAnalysis(:VDV)
 ```
 """
-struct EigenAnalysis <: Transform
+struct EigenAnalysis{T<:Union{Int,Colon}} <: Transform
   proj::Symbol
+  ndim::T
 
-  function EigenAnalysis(proj)
+  function EigenAnalysis(proj, ndim=:)
     @assert proj ∈ (:V, :VD, :VDV) "invalid projection"
-    new(proj)
+    new(proj, ndim)
   end
 end
 
@@ -46,34 +47,39 @@ assertions(::Type{EigenAnalysis}) = [assert_continuous]
 
 isrevertible(::Type{EigenAnalysis}) = true
 
+_ndim(ndim, X) = ndim
+_ndim(ndim::Colon, X) = size(X, 2)
+
 function apply(transform::EigenAnalysis, table)
   # basic checks
   for assertion in assertions(transform)
     assertion(table)
   end
 
-  # original columns names
-  cols = Tables.columns(table)
-  names = Tables.columnnames(cols)
+  # output dim
+  ndim = _ndim(transform.ndim, X)
 
   # table as matrix
   X = Tables.matrix(table)
-
-  # center the data
-  μ = mean(X, dims=1)
-  Y = X .- μ
 
   # eigenanalysis of covariance
   S, S⁻¹ = eigenmatrices(transform, Y)
 
   # project the data
-  Z = Y * S
+  Y = X * S
+
+  # discarted and selected coluns
+  D = Y[:, ndim+1:end]
+  Y = Y[:, 1:ndim]
+
+  # column names
+  names = [Symbol(:pc, d) for d in 1:ndim]
 
   # table with transformed columns
-  𝒯 = (; zip(names, eachcol(Z))...)
+  𝒯 = (; zip(names, eachcol(Y))...)
   newtable = 𝒯 |> Tables.materializer(table)
 
-  newtable, (μ, S, S⁻¹)
+  newtable, (D, S, S⁻¹)
 end
 
 function revert(::EigenAnalysis, newtable, cache)
@@ -82,16 +88,13 @@ function revert(::EigenAnalysis, newtable, cache)
   names = Tables.columnnames(cols)
 
   # table as matrix
-  Z = Tables.matrix(newtable)
+  Y = Tables.matrix(newtable)
 
   # retrieve cache
-  μ, S, S⁻¹ = cache
+  D, S, S⁻¹ = cache
 
   # undo projection
-  Y = Z * S⁻¹
-
-  # undo centering
-  X = Y .+ μ
+  X = hcat(Y, D) * S⁻¹
 
   # table with original columns
   𝒯 = (; zip(names, eachcol(X))...)
@@ -104,24 +107,26 @@ function reapply(transform::EigenAnalysis, table, cache)
     assertion(table)
   end
 
-  # original columns names
-  cols = Tables.columns(table)
-  names = Tables.columnnames(cols)
+  # output dim
+  ndim = _ndim(transform.ndim, X)
 
   # table as matrix
   X = Tables.matrix(table)
 
   # retrieve cache
-  μ, S, S⁻¹ = cache
-
-  # center the data
-  Y = X .- μ
+  D, S, S⁻¹ = cache
 
   # project the data
-  Z = Y * S
+  Y = X * S
+
+  # selected coluns
+  Y = Y[:, 1:ndim]
+
+  # column names
+  names = [Symbol(:pc, d) for d in 1:ndim]
 
   # table with transformed columns
-  𝒯 = (; zip(names, eachcol(Z))...)
+  𝒯 = (; zip(names, eachcol(Y))...)
   𝒯 |> Tables.materializer(table)
 end
 
@@ -129,7 +134,9 @@ function eigenmatrices(transform, Y)
   proj = transform.proj
 
   Σ = cov(Y)
-  λ, V = eigen(Σ)
+  F = eigen(Σ)
+  λ = F.values[end:-1:1]
+  V = F.vectors[:, end:-1:1]
 
   if proj == :V
     S   = V
