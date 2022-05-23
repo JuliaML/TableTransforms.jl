@@ -2,6 +2,8 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+const NDim = Union{Int,Colon}
+
 """
     EigenAnalysis(proj)
 
@@ -33,13 +35,13 @@ EigenAnalysis(:VD)
 EigenAnalysis(:VDV)
 ```
 """
-struct EigenAnalysis{T<:Union{Int,Colon}} <: Transform
+struct EigenAnalysis{T<:NDim} <: Transform
   proj::Symbol
   ndim::T
 
-  function EigenAnalysis(proj, ndim=:)
-    @assert proj ∈ (:V, :VD, :VDV) "invalid projection"
-    new(proj, ndim)
+  function EigenAnalysis(proj::Symbol, ndim::T=:) where {T<:NDim}
+    @assert proj ∈ (:V, :VD, :VDV) "Invalid projection."
+    new{T}(proj, ndim)
   end
 end
 
@@ -47,7 +49,7 @@ assertions(::Type{EigenAnalysis}) = [assert_continuous]
 
 isrevertible(::Type{EigenAnalysis}) = true
 
-_ndim(ndim, X) = ndim
+_ndim(ndim::Int, X) = ndim
 _ndim(ndim::Colon, X) = size(X, 2)
 
 function apply(transform::EigenAnalysis, table)
@@ -56,14 +58,18 @@ function apply(transform::EigenAnalysis, table)
     assertion(table)
   end
 
-  # output dim
-  ndim = _ndim(transform.ndim, X)
+  # original columns names
+  cols = Tables.columns(table)
+  onames = Tables.columnnames(cols)
 
   # table as matrix
   X = Tables.matrix(table)
 
+  # output dim
+  ndim = _ndim(transform.ndim, X)
+
   # eigenanalysis of covariance
-  S, S⁻¹ = eigenmatrices(transform, Y)
+  S, S⁻¹ = eigenmatrices(transform, X)
 
   # project the data
   Y = X * S
@@ -79,25 +85,21 @@ function apply(transform::EigenAnalysis, table)
   𝒯 = (; zip(names, eachcol(Y))...)
   newtable = 𝒯 |> Tables.materializer(table)
 
-  newtable, (D, S, S⁻¹)
+  newtable, (S, S⁻¹, D, onames)
 end
 
 function revert(::EigenAnalysis, newtable, cache)
-  # transformed column names
-  cols = Tables.columns(newtable)
-  names = Tables.columnnames(cols)
-
   # table as matrix
   Y = Tables.matrix(newtable)
 
   # retrieve cache
-  D, S, S⁻¹ = cache
+  S, S⁻¹, D, onames = cache
 
   # undo projection
   X = hcat(Y, D) * S⁻¹
 
   # table with original columns
-  𝒯 = (; zip(names, eachcol(X))...)
+  𝒯 = (; zip(onames, eachcol(X))...)
   𝒯 |> Tables.materializer(newtable)
 end
 
@@ -107,14 +109,14 @@ function reapply(transform::EigenAnalysis, table, cache)
     assertion(table)
   end
 
-  # output dim
-  ndim = _ndim(transform.ndim, X)
-
   # table as matrix
   X = Tables.matrix(table)
 
+  # output dim
+  ndim = _ndim(transform.ndim, X)
+
   # retrieve cache
-  D, S, S⁻¹ = cache
+  S, S⁻¹, D, onames = cache
 
   # project the data
   Y = X * S
@@ -130,10 +132,10 @@ function reapply(transform::EigenAnalysis, table, cache)
   𝒯 |> Tables.materializer(table)
 end
 
-function eigenmatrices(transform, Y)
+function eigenmatrices(transform, X)
   proj = transform.proj
 
-  Σ = cov(Y)
+  Σ = cov(X)
   F = eigen(Σ)
   λ = F.values[end:-1:1]
   V = F.vectors[:, end:-1:1]
@@ -162,7 +164,7 @@ The PCA transform is a shortcut for
 
 See also: [`ZScore`](@ref), [`EigenAnalysis`](@ref).
 """
-PCA() = ZScore() → EigenAnalysis(:V)
+PCA(; ndim=:) = ZScore() → EigenAnalysis(:V, ndim)
 
 """
     DRS()
@@ -172,7 +174,7 @@ The DRS transform is a shortcut for
 
 See also: [`ZScore`](@ref), [`EigenAnalysis`](@ref).
 """
-DRS() = ZScore() → EigenAnalysis(:VD)
+DRS(; ndim=:) = ZScore() → EigenAnalysis(:VD, ndim)
 
 """
     SDS()
@@ -182,4 +184,4 @@ The SDS transform is a shortcut for
 
 See also: [`ZScore`](@ref), [`EigenAnalysis`](@ref).
 """
-SDS() = ZScore() → EigenAnalysis(:VDV)
+SDS(; ndim=:) = ZScore() → EigenAnalysis(:VDV, ndim)
