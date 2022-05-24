@@ -1333,12 +1333,12 @@
     # visual tests    
     if visualtests
       p₁ = scatter(t₁.x, t₁.y, label="Original")
-      p₂ = scatter(t₂.pc2, t₂.pc1, label="V")
-      p₃ = scatter(t₃.pc2, t₃.pc1, label="VD")
-      p₄ = scatter(t₄.pc2, t₄.pc1, label="VDV")
-      p₅ = scatter(t₅.pc2, t₅.pc1, label="PCA")
-      p₆ = scatter(t₆.pc2, t₆.pc1, label="DRS")
-      p₇ = scatter(t₇.pc2, t₇.pc1, label="SDS")
+      p₂ = scatter(t₂.PC2, t₂.PC1, label="V")
+      p₃ = scatter(t₃.PC2, t₃.PC1, label="VD")
+      p₄ = scatter(t₄.PC2, t₄.PC1, label="VDV")
+      p₅ = scatter(t₅.PC2, t₅.PC1, label="PCA")
+      p₆ = scatter(t₆.PC2, t₆.PC1, label="DRS")
+      p₇ = scatter(t₇.PC2, t₇.PC1, label="SDS")
       p = plot(p₁, p₂, p₃, p₄, layout=(2,2))
       q = plot(p₂, p₃, p₄, p₅, p₆, p₇, layout=(2,3))
 
@@ -1364,7 +1364,7 @@
     t = Table(; x, y, z)
 
     # PCA
-    T = PCA(ndim=2)
+    T = PCA(2)
     n, c = apply(T, t)
     Σ = cov(Tables.matrix(n))
     @test isapprox(Σ[1,2], 0; atol=1e-6)
@@ -1373,7 +1373,7 @@
     @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
     # DRS
-    T = DRS(ndim=2)
+    T = DRS(2)
     n, c = apply(T, t)
     Σ = cov(Tables.matrix(n))
     @test isapprox(Σ[1,2], 0; atol=1e-6)
@@ -1384,7 +1384,7 @@
     @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
     # SDS
-    T = SDS(ndim=2)
+    T = SDS(2)
     n, c = apply(T, t)
     Σ = cov(Tables.matrix(n))
     @test isapprox(Σ[1,2], 0; atol=1e-6)

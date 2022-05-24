@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    EigenAnalysis(proj; ndim=nothing)
+    EigenAnalysis(proj, ndim=nothing)
 
 The eigenanalysis of the covariance with a given projection `proj`.
 The `ndim` keyword argument is the number of dimensions of the output.
@@ -32,14 +32,14 @@ for more details about these three variants of eigenanalysis.
 EigenAnalysis(:V)
 EigenAnalysis(:VD)
 EigenAnalysis(:VDV)
-EigenAnalysis(:V, ndim=2)
+EigenAnalysis(:V, 2)
 ```
 """
 struct EigenAnalysis <: Transform
   proj::Symbol
   ndim::Union{Int,Nothing}
 
-  function EigenAnalysis(proj; ndim=nothing)
+  function EigenAnalysis(proj, ndim=nothing)
     @assert proj ∈ (:V, :VD, :VDV) "Invalid projection."
     new(proj, ndim)
   end
@@ -78,12 +78,12 @@ function apply(transform::EigenAnalysis, table)
   # project the data
   Z = Y * S
 
-  # discarted and selected coluns
+  # discard columns
   D = Z[:, ndim+1:end]
   Z = Z[:, 1:ndim]
 
   # column names
-  names = [Symbol(:pc, d) for d in 1:ndim]
+  names = Symbol.(:PC, 1:ndim)
 
   # table with transformed columns
   𝒯 = (; zip(names, eachcol(Z))...)
@@ -135,7 +135,7 @@ function reapply(transform::EigenAnalysis, table, cache)
   Z = Z[:, 1:ndim]
 
   # column names
-  names = [Symbol(:pc, d) for d in 1:ndim]
+  names = Symbol.(:PC, 1:ndim)
 
   # table with transformed columns
   𝒯 = (; zip(names, eachcol(Z))...)
@@ -146,28 +146,25 @@ function eigenmatrices(transform, Y)
   proj = transform.proj
 
   Σ = cov(Y)
-  F = eigen(Σ)
-  λ = F.values[end:-1:1]
-  V = F.vectors[:, end:-1:1]
+  λ, V = eigen(Σ)
 
   if proj == :V
-    S   = V
-    S⁻¹ = transpose(V)
+    P = V
   elseif proj == :VD
-    Λ   = Diagonal(sqrt.(λ))
-    S   = V * inv(Λ)
-    S⁻¹ = Λ * transpose(V)
+    Λ = Diagonal(sqrt.(λ))
+    P = V * inv(Λ)
   elseif proj == :VDV
-    Λ   = Diagonal(sqrt.(λ))
-    S   = V * inv(Λ) * transpose(V)
-    S⁻¹ = V * Λ * transpose(V)
+    Λ = Diagonal(sqrt.(λ))
+    P = V * inv(Λ) * transpose(V)
   end
 
+  S   = P[:, end:-1:1]
+  S⁻¹ = inv(S)
   S, S⁻¹
 end
 
 """
-    PCA(; ndim=nothing)
+    PCA(ndim=nothing)
 
 The PCA transform is a shortcut for
 `ZScore() → EigenAnalysis(:V; ndim)`.
@@ -181,10 +178,10 @@ PCA()
 PCA(ndim=2)
 ```
 """
-PCA(; ndim=nothing) = ZScore() → EigenAnalysis(:V; ndim)
+PCA(ndim=nothing) = ZScore() → EigenAnalysis(:V, ndim)
 
 """
-    DRS(; ndim=nothing)
+    DRS(ndim=nothing)
 
 The DRS transform is a shortcut for
 `ZScore() → EigenAnalysis(:VD; ndim)`.
@@ -198,10 +195,10 @@ DRS()
 DRS(ndim=3)
 ```
 """
-DRS(; ndim=nothing) = ZScore() → EigenAnalysis(:VD; ndim)
+DRS(ndim=nothing) = ZScore() → EigenAnalysis(:VD, ndim)
 
 """
-    SDS(; ndim=nothing)
+    SDS(ndim=nothing)
 
 The SDS transform is a shortcut for
 `ZScore() → EigenAnalysis(:VDV; ndim)`.
@@ -215,4 +212,4 @@ SDS()
 SDS(ndim=4)
 ```
 """
-SDS(; ndim=nothing) = ZScore() → EigenAnalysis(:VDV; ndim)
+SDS(ndim=nothing) = ZScore() → EigenAnalysis(:VDV, ndim)
