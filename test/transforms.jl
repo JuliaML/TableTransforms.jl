@@ -1444,6 +1444,14 @@
     @test Tables.isrowtable(n)
     rtₒ = revert(T, n, c)
     @test Tables.matrix(rt) ≈ Tables.matrix(rtₒ)
+
+    # https://github.com/JuliaML/TableTransforms.jl/issues/80
+    t = (a=rand(3), b=rand(3))
+    T = Select(:a) ⊔ Select(:b)
+    n, c = apply(T, t)
+    @test t == n
+    tₒ = revert(T, n, c)
+    @test tₒ == t
   end
 
   @testset "Miscellaneous" begin

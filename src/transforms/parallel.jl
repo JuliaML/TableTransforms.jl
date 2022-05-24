@@ -32,10 +32,6 @@ function apply(p::Parallel, table)
   # table with concatenated columns
   newtable = tablehcat(tables)
 
-  # save original column names
-  ocols = Tables.columns(table)
-  onames = Tables.columnnames(ocols)
-
   # find first revertible transform
   ind = findfirst(isrevertible, p.transforms)
 
@@ -53,14 +49,13 @@ function apply(p::Parallel, table)
     (ind, range)
   end
 
-  newtable, (onames, caches, rinfo)
+  newtable, (caches, rinfo)
 end
 
 function revert(p::Parallel, newtable, cache)
   # retrieve cache
-  onames = cache[1]
-  caches = cache[2]
-  rinfo  = cache[3]
+  caches = cache[1]
+  rinfo  = cache[2]
 
   @assert !isnothing(rinfo) "transform is not revertible"
 
@@ -71,11 +66,13 @@ function revert(p::Parallel, newtable, cache)
   rcache = caches[ind]
 
   # columns of transformed table
-  cols = Tables.columns(newtable)
+  cols  = Tables.columns(newtable)
+  names = Tables.columnnames(cols)
 
   # retrieve subtable to revert
-  rcols = [Tables.getcolumn(cols, j) for j in range]
-  𝒯 = (; zip(onames, rcols)...)
+  rcols  = [Tables.getcolumn(cols, j) for j in range]
+  rnames = names[range]
+  𝒯 = (; zip(rnames, rcols)...)
   rtable = 𝒯 |> Tables.materializer(newtable)
 
   # revert transform on subtable
@@ -84,7 +81,7 @@ end
 
 function reapply(p::Parallel, table, cache)
   # retrieve caches
-  caches = cache[2]
+  caches = cache[1]
 
   # reapply transforms in parallel
   f(t, c) = reapply(t, table, c)
