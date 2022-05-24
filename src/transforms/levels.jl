@@ -7,9 +7,9 @@ allowing only changing the order of the column.
 # Examples
 
 ```julia
-Levels(:a => ["yes,"no"], :c => [1,2,4], :d => ["a","b","c"])
-Levels("a" => ["yes","no"], "c" => [1,2,4], ordered = ["a","c"])
-Levels(:a => ["yes","no"], :c => [1,2,4], :d => [1,23,5,7], ordered = [:a,:b,:c])
+Levels(:a => ["yes, "no"], :c => [1, 2, 4], :d => ["a", "b", "c"])
+Levels("a" => ["yes", "no"], "c" => [1, 2, 4], ordered = ["a", "c"])
+Levels(:a => ["yes", "no"], :c => [1, 2, 4], :d => [1, 23, 5, 7], ordered = [:a, :b, :c])
 ```
 """
 struct Levels{K} <: Stateless
@@ -29,7 +29,7 @@ isrevertible(transform::Levels) = true
 categorify(l::AbstractVector, x::CategoricalVector, o) = levels(x), categorical(x, levels=l, ordered=o) 
 
 # when the col is normal array and want to change to categorical array
-categorify(l, x::AbstractVector, o) = unwrap, categorical(x,levels=l, ordered=o) 
+categorify(l, x::AbstractVector, o) = unwrap, categorical(x, levels=l, ordered=o) 
 
 # when the col is not need for change or convert back to normal array
 categorify(f::Function, x::AbstractVector, o) = o ? (levels(x), categorical(x, ordered=true)) : (f, f.(x))
@@ -42,7 +42,7 @@ function apply(transform::Levels,table)
   ncols = map(names) do nm
     x = Tables.getcolumn(cols, nm)
     l = get(newlevels, nm, identity)
-    o = in(nm,transform.ordered)
+    o = in(nm, transform.ordered)
     cache, newx = categorify(l, x, o)
     push!(caches, cache)
     newx
