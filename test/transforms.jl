@@ -29,15 +29,15 @@
 
     T = Levels(:a => ["yes", "no"], :c => [1, 2, 4], :d => [1, 23, 5, 7], ordered=[:b])
     n, c = apply(T, t)
-    @test levels(n.a) == ["yes","no"]
+    @test levels(n.a) == ["yes", "no"]
     @test isordered(n.b) == true
-    @test levels(n.c) == [1,2,4]
+    @test levels(n.c) == [1, 2, 4]
     tₒ = revert(T, n, c)
-    @test levels(tₒ.a) == ["no","yes"]
-    @test levels(tₒ.c) == [1,2]
+    @test levels(tₒ.a) == ["no", "yes"]
+    @test levels(tₒ.c) == [1, 2]
     @test isordered(tₒ.b) == false
 
-    T = Levels("a" => ["yes","no"], "c" => [1,2,4], "e" => 5:-1:1, ordered=["b","e"])
+    T = Levels("a" => ["yes", "no"], "c" => [1, 2, 4], "e" => 5:-1:1, ordered=["b", "e"])
     n, c = apply(T, t)
     @test isordered(n.b) == true
     @test levels(n.e) == [5, 4, 3, 2, 1]
@@ -47,7 +47,7 @@
     @test levels(tₒ.e) == [1, 2, 3, 4]
 
     T = Levels(:a => ["yes", "no"], :c => [1, 2, 4], :d => [1, 23, 5, 7], ordered=[:a, :b, :d])
-    n,c = apply(T, t)
+    n, c = apply(T, t)
     @test levels(n.a) == ["yes", "no"]
     @test isordered(n.a) == true
     @test isordered(n.b) == true
