@@ -1356,6 +1356,43 @@
     @test Tables.isrowtable(n)
     rtₒ = revert(T, n, c)
     @test Tables.matrix(rt) ≈ Tables.matrix(rtₒ)
+
+    # ndim
+    x = rand(Normal(), 1500)
+    y = rand(Normal(), 1500)
+    z = rand(Normal(), 1500)
+    t = Table(; x, y, z)
+
+    # PCA
+    T = PCA(2)
+    n, c = apply(T, t)
+    Σ = cov(Tables.matrix(n))
+    @test isapprox(Σ[1,2], 0; atol=1e-6)
+    @test isapprox(Σ[2,1], 0; atol=1e-6)
+    tₒ = revert(T, n, c)
+    @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+
+    # DRS
+    T = DRS(2)
+    n, c = apply(T, t)
+    Σ = cov(Tables.matrix(n))
+    @test isapprox(Σ[1,2], 0; atol=1e-6)
+    @test isapprox(Σ[2,1], 0; atol=1e-6)
+    @test isapprox(Σ[1,1], 1; atol=1e-6)
+    @test isapprox(Σ[2,2], 1; atol=1e-6)
+    tₒ = revert(T, n, c)
+    @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+
+    # SDS
+    T = SDS(2)
+    n, c = apply(T, t)
+    Σ = cov(Tables.matrix(n))
+    @test isapprox(Σ[1,2], 0; atol=1e-6)
+    @test isapprox(Σ[2,1], 0; atol=1e-6)
+    @test isapprox(Σ[1,1], 1; atol=1e-6)
+    @test isapprox(Σ[2,2], 1; atol=1e-6)
+    tₒ = revert(T, n, c)
+    @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
   end
 
   @testset "Sequential" begin

@@ -152,7 +152,7 @@ function eigenmatrices(transform, Y, ndim)
 
   Pp  = P[:, end:-1:1]
   S   = Pp[:, 1:ndim]
-  S⁻¹ = inv(Pp)[:, 1:ndim]
+  S⁻¹ = inv(Pp)[1:ndim, :]
   S, S⁻¹
 end
 
