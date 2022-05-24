@@ -2,26 +2,33 @@
   # using MersenneTwister for compatibility between Julia versions
   rng = MersenneTwister(42)
   @testset "Levels" begin
-    a = categorical(["yes","no","no","no","yes"]) 
-    b = categorical([1,2,4,2,8],ordered=false) 
-    c =categorical([1,2,1,2,1]) 
-    d= [1,23,5,7,7]
-    t = Table(; a, b, c, d)
+    a = categorical(["yes", "no", "no", "no", "yes"]) 
+    b = categorical([1, 2, 4, 2, 8], ordered=false) 
+    c = categorical([1, 2, 1, 2, 1]) 
+    d = [1, 23, 5, 7, 7]
+    e = categorical([2, 3, 1, 4, 1])
+    t = Table(; a, b, c, d, e)
 
-    T = Levels(:a => ["yes","no"], :c => [1,2,4], :d => [1,23,5,7])
-    T_same = Levels("a" => ["yes","no"], "c" => [1,2,4], "d" => [1,23,5,7])
-    n,c = apply(T,t)
-    n,c = apply(T_same,t)
-    @test levels(n.a) == ["yes","no"]
-    @test levels(n.c) == [1,2,4]
+    T = Levels(:a => ["yes", "no"], :c => [1, 2, 4], :d => [1, 23, 5, 7], :e => 1:5)
+    n, c = apply(T, t)
+    @test levels(n.a) == ["yes", "no"]
+    @test levels(n.c) == [1, 2, 4]
+    @test levels(n.e) == [1, 2, 3, 4, 5]
     tₒ = revert(T, n, c)
-    @test levels(tₒ.a) == ["no","yes"]
-    @test levels(tₒ.c) == [1,2]
+    @test levels(tₒ.a) == ["no", "yes"]
+    @test levels(tₒ.c) == [1, 2]
+    @test levels(tₒ.e) == [1, 2, 3, 4]
 
-    T = Levels(:a => ["yes","no"], :c => [1,2,4], :d => [1,23,5,7],ordered=[:b])
-    T_same = Levels("a" => ["yes","no"], "c" => [1,2,4], "d" => [1,23,5,7],ordered=["b"])
-    n,c = apply(T,t)
-    n,c = apply(T_same,t)
+    T = Levels("a" => ["yes", "no"], "c" => [1, 2, 4])
+    n, c = apply(T, t)
+    @test levels(n.a) == ["yes", "no"]
+    @test levels(n.c) == [1, 2, 4]
+    tₒ = revert(T, n, c)
+    @test levels(tₒ.a) == ["no", "yes"]
+    @test levels(tₒ.c) == [1, 2]
+
+    T = Levels(:a => ["yes", "no"], :c => [1, 2, 4], :d => [1, 23, 5, 7], ordered=[:b])
+    n, c = apply(T, t)
     @test levels(n.a) == ["yes","no"]
     @test isordered(n.b) == true
     @test levels(n.c) == [1,2,4]
@@ -30,16 +37,27 @@
     @test levels(tₒ.c) == [1,2]
     @test isordered(tₒ.b) == false
 
-    T = Levels(:a => ["yes","no"], :c => [1,2,4], :d => [1,23,5,7],ordered=[:a,:b,:d])
-    n,c = apply(T,t)
-    @test levels(n.a) == ["yes","no"]
+    T = Levels("a" => ["yes","no"], "c" => [1,2,4], "e" => 5:-1:1, ordered=["b","e"])
+    n, c = apply(T, t)
+    @test isordered(n.b) == true
+    @test levels(n.e) == [5, 4, 3, 2, 1]
+    @test levels(n.c) == [1, 2, 4]
+    tₒ = revert(T, n, c)
+    @test isordered(tₒ.b) == false
+    @test levels(tₒ.e) == [1, 2, 3, 4]
+
+    T = Levels(:a => ["yes", "no"], :c => [1, 2, 4], :d => [1, 23, 5, 7], ordered=[:a, :b, :d])
+    n,c = apply(T, t)
+    @test levels(n.a) == ["yes", "no"]
     @test isordered(n.a) == true
+    @test isordered(n.b) == true
     @test isordered(n.d) == true
     tₒ = revert(T, n, c)
     @test typeof(tₒ.d) == Vector{Int64}
     @test isordered(tₒ.a) == false
-    @test isordered(tₒ.a) == false
+    @test isordered(tₒ.b) == false
   end
+  
   @testset "Select" begin
     a = rand(4000)
     b = rand(4000)
