@@ -49,10 +49,10 @@ function apply(transform::Levels, table)
   categ = first.(result)
   cache = last.(result)
 
-  𝒯 = (; zip(names, first.(nres))...)
+  𝒯 = (; zip(names, categ)...)
   newtable = 𝒯 |> Tables.materializer(table)
   
-  newtable, caches
+  newtable, cache
 end
 
 function revert(transform::Levels, newtable, caches)
