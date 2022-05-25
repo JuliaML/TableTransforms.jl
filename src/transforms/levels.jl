@@ -26,12 +26,16 @@ Levels(pairs::Pair{K}...; ordered=K[]) where {K<:AbstractString} =
 isrevertible(transform::Levels) = true
 
 # when the col is already a categorical array and wanna change levels and order
-categorify(l::AbstractVector, x::CategoricalVector, o) = categorical(x, levels=l, ordered=o), levels(x)
+_categorify(l::AbstractVector, x::CategoricalVector, o) =
+  categorical(x, levels=l, ordered=o), levels(x)
 
 # when the col is normal array and want to change to categorical array
-categorify(l, x::AbstractVector, o) = categorical(x, levels=l, ordered=o), unwrap 
+_categorify(l::AbstractVector, x::AbstractVector, o) =
+  categorical(x, levels=l, ordered=o), unwrap 
+
 # when the col is not need for change or convert back to normal array
-categorify(f::Function, x::AbstractVector, o) = o ? (categorical(x, ordered=true), levels(x)) : (f.(x), f)
+_categorify(f::Function, x::AbstractVector, o) =
+  o ? (categorical(x, ordered=true), levels(x)) : (f.(x), f)
 
 function apply(transform::Levels, table)
   cols = Tables.columns(table)
