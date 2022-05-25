@@ -30,7 +30,6 @@ categorify(l::AbstractVector, x::CategoricalVector, o) = categorical(x, levels=l
 
 # when the col is normal array and want to change to categorical array
 categorify(l, x::AbstractVector, o) = categorical(x, levels=l, ordered=o), unwrap 
-
 # when the col is not need for change or convert back to normal array
 categorify(f::Function, x::AbstractVector, o) = o ? (categorical(x, ordered=true), levels(x)) : (f.(x), f)
 
