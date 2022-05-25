@@ -40,7 +40,6 @@ _categorify(f::Function, x::AbstractVector, o) =
 function apply(transform::Levels, table)
   cols = Tables.columns(table)
   names = Tables.columnnames(cols)
-  newlevels = transform.levelspec
   nres = map(names) do nm
     x = Tables.getcolumn(cols, nm)
     l = get(newlevels, nm, identity)
