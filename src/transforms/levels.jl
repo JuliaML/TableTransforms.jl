@@ -46,7 +46,8 @@ function apply(transform::Levels, table)
     o = nm ∈ transform.ordered
     _categorify(l, x, o)
   end
-  caches = last.(nres)
+  categ = first.(result)
+  cache = last.(result)
 
   𝒯 = (; zip(names, first.(nres))...)
   newtable = 𝒯 |> Tables.materializer(table)
