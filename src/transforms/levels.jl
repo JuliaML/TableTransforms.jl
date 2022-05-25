@@ -17,38 +17,36 @@ struct Levels{K} <: Stateless
   ordered::Vector{Symbol}
 end
 
-Levels(pairs::Pair{K}...; ordered::AbstractVector{K}=Symbol[]) where {K <: Symbol} =
+Levels(pairs::Pair{Symbol}...; ordered=Symbol[]) =
   Levels(NamedTuple(pairs), ordered)
 
-Levels(pairs::Pair{K}...; ordered::AbstractVector{K}=String[]) where {K <: AbstractString} =
+Levels(pairs::Pair{K}...; ordered=K[]) where {K <: AbstractString} =
   Levels(NamedTuple(Symbol(k) => v for (k,v) in pairs), Symbol.(ordered))
 
 isrevertible(transform::Levels) = true
 
 # when the col is already a categorical array and wanna change levels and order
-categorify(l::AbstractVector, x::CategoricalVector, o) = levels(x), categorical(x, levels=l, ordered=o) 
+categorify(l::AbstractVector, x::CategoricalVector, o) = categorical(x, levels=l, ordered=o), levels(x)
 
 # when the col is normal array and want to change to categorical array
-categorify(l, x::AbstractVector, o) = unwrap, categorical(x, levels=l, ordered=o) 
+categorify(l, x::AbstractVector, o) = categorical(x, levels=l, ordered=o), unwrap 
 
 # when the col is not need for change or convert back to normal array
-categorify(f::Function, x::AbstractVector, o) = o ? (levels(x), categorical(x, ordered=true)) : (f, f.(x))
+categorify(f::Function, x::AbstractVector, o) = o ? (categorical(x, ordered=true), levels(x)) : (f.(x), f)
 
 function apply(transform::Levels,table)
   cols = Tables.columns(table)
   names = Tables.columnnames(cols)
   newlevels = transform.levelspec
-  caches = Vector{Union{Vector,Function}}()
-  ncols = map(names) do nm
+  nres = map(names) do nm
     x = Tables.getcolumn(cols, nm)
     l = get(newlevels, nm, identity)
-    o = in(nm, transform.ordered)
-    cache, newx = categorify(l, x, o)
-    push!(caches, cache)
-    newx
+    o = nm ∈ transform.ordered
+    categorify(l, x, o)
   end
-  
-  𝒯 = (; zip(names, ncols)...)
+  caches = last.(nres)
+
+  𝒯 = (; zip(names, first.(nres))...)
   newtable = 𝒯 |> Tables.materializer(table)
   
   newtable, caches
@@ -60,11 +58,11 @@ function revert(transform::Levels, newtable, caches)
   cols = Tables.columns(newtable)
   names = Tables.columnnames(cols)
 
-  ocols = map(zip(caches, names)) do (func, nm)
+  ocols = map(zip(caches, names)) do (f, nm)
     x = Tables.getcolumn(cols, nm)
-    last(categorify(func,x,false))
+    first(categorify(f, x, false))
   end
-  
+
   𝒯 = (; zip(names, ocols)...)
   𝒯 |> Tables.materializer(newtable)
 end
