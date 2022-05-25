@@ -33,7 +33,7 @@ categorify(l, x::AbstractVector, o) = categorical(x, levels=l, ordered=o), unwra
 # when the col is not need for change or convert back to normal array
 categorify(f::Function, x::AbstractVector, o) = o ? (categorical(x, ordered=true), levels(x)) : (f.(x), f)
 
-function apply(transform::Levels,table)
+function apply(transform::Levels, table)
   cols = Tables.columns(table)
   names = Tables.columnnames(cols)
   newlevels = transform.levelspec
