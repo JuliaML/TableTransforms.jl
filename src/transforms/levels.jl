@@ -40,12 +40,14 @@ _categorify(f::Function, x::AbstractVector, o) =
 function apply(transform::Levels, table)
   cols = Tables.columns(table)
   names = Tables.columnnames(cols)
+
   result = map(names) do nm
     x = Tables.getcolumn(cols, nm)
     l = get(transform.levelspec, nm, identity)
     o = nm ∈ transform.ordered
     _categorify(l, x, o)
   end
+  
   categ = first.(result)
   cache = last.(result)
 
