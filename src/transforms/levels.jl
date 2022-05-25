@@ -42,7 +42,7 @@ function apply(transform::Levels, table)
   names = Tables.columnnames(cols)
   nres = map(names) do nm
     x = Tables.getcolumn(cols, nm)
-    l = get(newlevels, nm, identity)
+    l = get(transform.levelspec, nm, identity)
     o = nm ∈ transform.ordered
     _categorify(l, x, o)
   end
