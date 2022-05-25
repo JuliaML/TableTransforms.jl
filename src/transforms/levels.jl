@@ -40,7 +40,7 @@ _categorify(f::Function, x::AbstractVector, o) =
 function apply(transform::Levels, table)
   cols = Tables.columns(table)
   names = Tables.columnnames(cols)
-  nres = map(names) do nm
+  result = map(names) do nm
     x = Tables.getcolumn(cols, nm)
     l = get(transform.levelspec, nm, identity)
     o = nm ∈ transform.ordered
