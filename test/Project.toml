@@ -16,4 +16,3 @@ TypedTables = "9d95f2ec-7b3d-5a63-8d20-e2491e220bb9"
 [compat]
 GR = "=0.59.0"
 Plots = "=1.22.4"
-CategoricalArrays = "=0.10.6"
