@@ -20,7 +20,7 @@ end
 Levels(pairs::Pair{Symbol}...; ordered=Symbol[]) =
   Levels(NamedTuple(pairs), ordered)
 
-Levels(pairs::Pair{K}...; ordered=K[]) where {K <: AbstractString} =
+Levels(pairs::Pair{K}...; ordered=K[]) where {K<:AbstractString} =
   Levels(NamedTuple(Symbol(k) => v for (k,v) in pairs), Symbol.(ordered))
 
 isrevertible(transform::Levels) = true
