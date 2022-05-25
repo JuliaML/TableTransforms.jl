@@ -55,15 +55,16 @@ function apply(transform::Levels, table)
   newtable, cache
 end
 
-function revert(transform::Levels, newtable, caches)
+function revert(transform::Levels, newtable, cache)
   @assert isrevertible(transform)
 
   cols = Tables.columns(newtable)
   names = Tables.columnnames(cols)
 
-  ocols = map(zip(caches, names)) do (f, nm)
+  ocols = map(zip(cache, names)) do (f, nm)
     x = Tables.getcolumn(cols, nm)
-    first(categorify(f, x, false))
+    c, _ = _categorify(f, x, false)
+    c
   end
 
   𝒯 = (; zip(names, ocols)...)
