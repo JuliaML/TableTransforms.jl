@@ -45,7 +45,7 @@ function apply(transform::Levels, table)
     x = Tables.getcolumn(cols, nm)
     l = get(newlevels, nm, identity)
     o = nm ∈ transform.ordered
-    categorify(l, x, o)
+    _categorify(l, x, o)
   end
   caches = last.(nres)
 
