@@ -58,8 +58,6 @@ function apply(transform::Levels, table)
 end
 
 function revert(transform::Levels, newtable, cache)
-  @assert isrevertible(transform)
-
   cols = Tables.columns(newtable)
   names = Tables.columnnames(cols)
 
