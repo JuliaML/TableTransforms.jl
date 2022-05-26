@@ -1369,8 +1369,6 @@
     Σ = cov(Tables.matrix(n))
     @test isapprox(Σ[1,2], 0; atol=1e-6)
     @test isapprox(Σ[2,1], 0; atol=1e-6)
-    tₒ = revert(T, n, c)
-    @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
     # DRS
     T = DRS(2)
@@ -1380,8 +1378,6 @@
     @test isapprox(Σ[2,1], 0; atol=1e-6)
     @test isapprox(Σ[1,1], 1; atol=1e-6)
     @test isapprox(Σ[2,2], 1; atol=1e-6)
-    tₒ = revert(T, n, c)
-    @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
     # SDS
     T = SDS(2)
@@ -1391,8 +1387,6 @@
     @test isapprox(Σ[2,1], 0; atol=1e-6)
     @test isapprox(Σ[1,1], 1; atol=1e-6)
     @test isapprox(Σ[2,2], 1; atol=1e-6)
-    tₒ = revert(T, n, c)
-    @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
   end
 
   @testset "Sequential" begin
