@@ -4,8 +4,9 @@
 
 """
     EigenAnalysis(proj, ndim=nothing)
+
 The eigenanalysis of the covariance with a given projection `proj`.
-The `ndim` keyword argument is the number of dimensions of the output.
+The number of dimensions of the output is defined by the `ndim` argument.
 
 ## Projections
 
@@ -202,7 +203,7 @@ See also: [`ZScore`](@ref), [`EigenAnalysis`](@ref).
 
 ```julia
 SDS()
-SDS(ndim=4)
+SDS(4)
 ```
 """
 SDS(ndim=nothing) = ZScore() → EigenAnalysis(:VDV, ndim)
