@@ -139,22 +139,24 @@ function eigenmatrices(transform, Y, d)
   proj = transform.proj
 
   Σ = cov(Y)
-  λ, V = eigen(Σ)
+  F = eigen(Σ)
+  λ = F.values[end:-1:1]
+  V = F.vectors[:, end:-1:1]
 
   if proj == :V
-    P = V
+    S   = V
+    S⁻¹ = transpose(V)
   elseif proj == :VD
-    Λ = Diagonal(sqrt.(λ))
-    P = V * inv(Λ)
+    Λ   = Diagonal(sqrt.(λ))
+    S   = V * inv(Λ)
+    S⁻¹ = Λ * transpose(V)
   elseif proj == :VDV
-    Λ = Diagonal(sqrt.(λ))
-    P = V * inv(Λ) * transpose(V)
+    Λ   = Diagonal(sqrt.(λ))
+    S   = V * inv(Λ) * transpose(V)
+    S⁻¹ = V * Λ * transpose(V)
   end
 
-  Pp  = P[:, end:-1:1]
-  S   = Pp[:, 1:d]
-  S⁻¹ = inv(Pp)[1:d, :]
-  S, S⁻¹
+  S[:, 1:d], S⁻¹[1:d, :]
 end
 
 """
