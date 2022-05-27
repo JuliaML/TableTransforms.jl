@@ -65,21 +65,21 @@ function apply(transform::EigenAnalysis, table)
   # table as matrix
   X = Tables.matrix(table)
 
-  # output dim
-  ndim = _ndim(transform.ndim, X)
+  # output dimension
+  d = _ndim(transform.ndim, X)
 
   # center the data
   μ = mean(X, dims=1)
   Y = X .- μ
 
   # eigenanalysis of covariance
-  S, S⁻¹ = eigenmatrices(transform, Y, ndim)
+  S, S⁻¹ = eigenmatrices(transform, Y, d)
 
   # project the data
   Z = Y * S
 
   # column names
-  names = Symbol.(:PC, 1:ndim)
+  names = Symbol.(:PC, 1:d)
 
   # table with transformed columns
   𝒯 = (; zip(names, eachcol(Z))...)
@@ -115,8 +115,8 @@ function reapply(transform::EigenAnalysis, table, cache)
   # table as matrix
   X = Tables.matrix(table)
 
-  # output dim
-  ndim = _ndim(transform.ndim, X)
+  # output dimension
+  d = _ndim(transform.ndim, X)
 
   # retrieve cache
   μ, S, S⁻¹, onames = cache
@@ -128,14 +128,14 @@ function reapply(transform::EigenAnalysis, table, cache)
   Z = Y * S
 
   # column names
-  names = Symbol.(:PC, 1:ndim)
+  names = Symbol.(:PC, 1:d)
 
   # table with transformed columns
   𝒯 = (; zip(names, eachcol(Z))...)
   𝒯 |> Tables.materializer(table)
 end
 
-function eigenmatrices(transform, Y, ndim)
+function eigenmatrices(transform, Y, d)
   proj = transform.proj
 
   Σ = cov(Y)
@@ -152,8 +152,8 @@ function eigenmatrices(transform, Y, ndim)
   end
 
   Pp  = P[:, end:-1:1]
-  S   = Pp[:, 1:ndim]
-  S⁻¹ = inv(Pp)[1:ndim, :]
+  S   = Pp[:, 1:d]
+  S⁻¹ = inv(Pp)[1:d, :]
   S, S⁻¹
 end
 
