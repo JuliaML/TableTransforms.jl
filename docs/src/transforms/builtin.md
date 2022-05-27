@@ -115,6 +115,12 @@ Quantile
 Functional
 ```
 
+## Levels
+
+```@docs
+Levels
+```
+
 ## EigenAnalysis
 
 ```@docs

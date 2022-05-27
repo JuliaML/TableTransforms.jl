@@ -11,6 +11,7 @@ using Transducers: tcollect
 using LinearAlgebra
 using Statistics
 using PrettyTables
+using CategoricalArrays
 
 import Distributions: ContinuousUnivariateDistribution
 import Distributions: quantile, cdf
@@ -45,10 +46,10 @@ export
   ZScore,
   Quantile,
   Functional,
+  Levels,
   EigenAnalysis,
   PCA, DRS, SDS,
   Sequential,
   Parallel,
   →, ⊔
-
 end
