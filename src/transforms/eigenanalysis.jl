@@ -139,9 +139,7 @@ function eigenmatrices(transform, Y, d)
   proj = transform.proj
 
   Σ = cov(Y)
-  F = eigen(Σ)
-  λ = F.values[end:-1:1]
-  V = F.vectors[:, end:-1:1]
+  λ, V = eigen(Σ, sortby=λ -> -real(λ))
 
   if proj == :V
     S   = V
