@@ -1,5 +1,5 @@
 """
-    Levels(:a => ["yes,"no"])
+    Levels(:a => ["yes:,"no"])
 
 Return a copy of the table with specified levels and orders for categorical columns
 allowing only changing the order of the column.
