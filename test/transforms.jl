@@ -1335,10 +1335,10 @@
       p₁ = scatter(t₁.x, t₁.y, label="Original")
       p₂ = scatter(t₂.PC2, t₂.PC1, label="V")
       p₃ = scatter(t₃.PC2, t₃.PC1, label="VD")
-      p₄ = scatter(t₄.PC2, t₄.PC1, label="VDV")
+      p₄ = scatter(t₄.PC1, t₄.PC2, label="VDV")
       p₅ = scatter(t₅.PC2, t₅.PC1, label="PCA")
       p₆ = scatter(t₆.PC2, t₆.PC1, label="DRS")
-      p₇ = scatter(t₇.PC2, t₇.PC1, label="SDS")
+      p₇ = scatter(t₇.PC1, t₇.PC2, label="SDS")
       p = plot(p₁, p₂, p₃, p₄, layout=(2,2))
       q = plot(p₂, p₃, p₄, p₅, p₆, p₇, layout=(2,3))
 
