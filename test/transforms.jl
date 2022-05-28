@@ -1375,11 +1375,11 @@
     T = DRS(2)
     n, c = apply(T, t)
     Σ = cov(Tables.matrix(n))
+    @test Tables.columnnames(n) == (:PC1, :PC2)
     @test isapprox(Σ[1,2], 0; atol=1e-6)
     @test isapprox(Σ[2,1], 0; atol=1e-6)
     @test isapprox(Σ[1,1], 1; atol=1e-6)
     @test isapprox(Σ[2,2], 1; atol=1e-6)
-    @test Tables.columnnames(n) == (:PC1, :PC2)
 
     # SDS
     T = SDS(2)
