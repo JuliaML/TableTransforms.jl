@@ -1415,9 +1415,9 @@
     @test Tables.matrix(rt) ≈ Tables.matrix(rtₒ)
 
     # ndim
-    x = rand(Normal(), 1000)
-    y = x + rand(Normal(), 1000)
-    z = 2x - y
+    x = randn(1000)
+    y = x + randn(1000)
+    z = 2x - y + randn(1000)
     t = Table(; x, y, z)
 
     # PCA
