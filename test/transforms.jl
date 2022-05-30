@@ -1333,6 +1333,52 @@
     @test isordered(tₒ.b) == false
   end
 
+  @testset "Sort" begin
+    a = [5, 3, 1, 2]
+    b = [2, 4, 8, 5]
+    c = [3, 2, 1, 4]
+    d = [4, 3, 7, 5]
+    t = Table(; a, b, c, d)
+
+    T = Sort(:a)
+    n, c = apply(T, t)
+    @test Tables.schema(t) == Tables.schema(n)
+    @test n.a == [1, 2, 3, 5]
+    @test n.b == [8, 5, 4, 2]
+    @test n.c == [1, 4, 2, 3]
+    @test n.d == [7, 5, 3, 4]
+    @test isrevertible(T) == true
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # descending order test
+    T = Sort(:b, ascending=false)
+    n, c = apply(T, t)
+    @test Tables.schema(t) == Tables.schema(n)
+    @test n.a == [1, 2, 3, 5]
+    @test n.b == [8, 5, 4, 2]
+    @test n.c == [1, 4, 2, 3]
+    @test n.d == [7, 5, 3, 4]
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # random test
+    a = rand(200)
+    b = rand(200)
+    c = rand(200)
+    d = rand(200)
+    t = Table(; a, b, c, d)
+
+    T = Sort(:c)
+    n, c = apply(T, t)
+
+    @test Tables.schema(t) == Tables.schema(n)
+    @test issetequal(Tables.rowtable(t), Tables.rowtable(n))
+    @test issorted(Tables.getcolumn(n, :c))
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+  end
+
   @testset "EigenAnalysis" begin
     # PCA test
     x = rand(Normal(0, 10), 1500)
