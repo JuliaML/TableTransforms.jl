@@ -3,36 +3,36 @@
 # ------------------------------------------------------------------
 
 """
-    Sort(by, ascending)
+    Sort(by, rev)
 
 Returns a table copy with rows sorted by values of a specific column.
 The `by` value specifies the column used to sort, it can be a index (Int) or a name (Symbol).
-The `ascending` value is a boolean that specifies the sort order, the default value is true.
+Use `rev=true` to reverse the sorting order, the default value is `false`.
 
 
 # Examples
 
 ```julia
 Sort(:a)
-Sort(:a, ascending=true)
+Sort(:a, rev=true)
 Sort(1)
-Sort(1, ascending=false)
+Sort(1, rev=false)
 ```
 """
 
 struct Sort <: Stateless
   by::Union{Int, Symbol}
-  ascending::Bool
+  rev::Bool
 end
 
-Sort(by; ascending=true) = Sort(by, ascending)
+Sort(by; rev=false) = Sort(by, rev)
 
 isrevertible(::Type{<:Sort}) = true
 
 function apply(transform::Sort, table)
   # use selected column to calculate new order
   scol = Tables.getcolumn(table, transform.by)
-  neworder = sortperm(scol, rev=!transform.ascending)
+  neworder = sortperm(scol, rev=transform.rev)
 
   # sort rows
   rows = Tables.rowtable(table)

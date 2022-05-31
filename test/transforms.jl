@@ -1352,7 +1352,7 @@
     @test t == tₒ
 
     # descending order test
-    T = Sort(:b, ascending=false)
+    T = Sort(:b, rev=true)
     n, c = apply(T, t)
     @test Tables.schema(t) == Tables.schema(n)
     @test n.a == [1, 2, 3, 5]
