@@ -31,7 +31,8 @@ isrevertible(::Type{<:Sort}) = true
 
 function apply(transform::Sort, table)
   # use selected column to calculate new order
-  scol = Tables.getcolumn(table, transform.by)
+  cols = Tables.columns(table)
+  scol = Tables.getcolumn(cols, transform.by)
   neworder = sortperm(scol, rev=transform.rev)
 
   # sort rows
