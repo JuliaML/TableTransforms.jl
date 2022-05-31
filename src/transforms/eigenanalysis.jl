@@ -37,20 +37,22 @@ EigenAnalysis(:V, 2)
 """
 struct EigenAnalysis <: Transform
   proj::Symbol
-  ndim::Union{Int,Nothing}
+  maxdim::Union{Int,Nothing}
+  pratio::Float64
 
-  function EigenAnalysis(proj, ndim=nothing)
+  function EigenAnalysis(proj, maxdim, pratio)
     @assert proj ∈ (:V, :VD, :VDV) "Invalid projection."
-    new(proj, ndim)
+    @assert 0 ≤ pratio ≤ 1 "Invalid ratio."
+    new(proj, maxdim, pratio)
   end
 end
+
+EigenAnalysis(proj; maxdim=nothing, pratio=0.99) = 
+  EigenAnalysis(proj, maxdim, pratio)
 
 assertions(::Type{EigenAnalysis}) = [assert_continuous]
 
 isrevertible(::Type{EigenAnalysis}) = true
-
-_ndim(ndim::Int, X) = ndim
-_ndim(ndim::Nothing, X) = size(X, 2)
 
 function apply(transform::EigenAnalysis, table)
   # basic checks
@@ -65,21 +67,18 @@ function apply(transform::EigenAnalysis, table)
   # table as matrix
   X = Tables.matrix(table)
 
-  # output dimension
-  d = _ndim(transform.ndim, X)
-
   # center the data
   μ = mean(X, dims=1)
   Y = X .- μ
 
   # eigenanalysis of covariance
-  S, S⁻¹ = eigenmatrices(transform, Y, d)
+  S, S⁻¹ = eigenmatrices(transform, Y)
 
   # project the data
   Z = Y * S
 
   # column names
-  names = Symbol.(:PC, 1:d)
+  names = Symbol.(:PC, 1:size(Z, 2))
 
   # table with transformed columns
   𝒯 = (; zip(names, eachcol(Z))...)
@@ -115,9 +114,6 @@ function reapply(transform::EigenAnalysis, table, cache)
   # table as matrix
   X = Tables.matrix(table)
 
-  # output dimension
-  d = _ndim(transform.ndim, X)
-
   # retrieve cache
   μ, S, S⁻¹, onames = cache
 
@@ -128,14 +124,25 @@ function reapply(transform::EigenAnalysis, table, cache)
   Z = Y * S
 
   # column names
-  names = Symbol.(:PC, 1:d)
+  names = Symbol.(:PC, 1:size(Z, 2))
 
   # table with transformed columns
   𝒯 = (; zip(names, eachcol(Z))...)
   𝒯 |> Tables.materializer(table)
 end
 
-function eigenmatrices(transform, Y, d)
+_maxdim(maxdim::Int, Y) = maxdim
+_maxdim(::Nothing, Y) = size(Y, 2)
+
+function outdim(transform, Y, λ)
+  pratio = transform.pratio
+  pvar = pratio * sum(λ) 
+  md = _maxdim(transform.maxdim, Y)
+  pd = findfirst(≥(pvar), cumsum(λ))
+  min(pd, md)
+end
+
+function eigenmatrices(transform, Y)
   proj = transform.proj
 
   Σ = cov(Y)
@@ -153,6 +160,8 @@ function eigenmatrices(transform, Y, d)
     S   = V * inv(Λ) * transpose(V)
     S⁻¹ = V * Λ * transpose(V)
   end
+
+  d = outdim(transform, Y, λ)
 
   S[:, 1:d], S⁻¹[1:d, :]
 end
@@ -172,7 +181,8 @@ PCA()
 PCA(2)
 ```
 """
-PCA(ndim=nothing) = ZScore() → EigenAnalysis(:V, ndim)
+PCA(; maxdim=nothing, pratio=0.99) = 
+  ZScore() → EigenAnalysis(:V, maxdim, pratio)
 
 """
     DRS(ndim=nothing)
@@ -189,7 +199,8 @@ DRS()
 DRS(3)
 ```
 """
-DRS(ndim=nothing) = ZScore() → EigenAnalysis(:VD, ndim)
+DRS(; maxdim=nothing, pratio=0.99) = 
+  ZScore() → EigenAnalysis(:VD, maxdim, pratio)
 
 """
     SDS(ndim=nothing)
@@ -206,4 +217,5 @@ SDS()
 SDS(4)
 ```
 """
-SDS(ndim=nothing) = ZScore() → EigenAnalysis(:VDV, ndim)
+SDS(; maxdim=nothing, pratio=0.99) = 
+  ZScore() → EigenAnalysis(:VDV, maxdim, pratio)
