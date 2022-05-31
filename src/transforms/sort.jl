@@ -30,14 +30,14 @@ function apply(transform::Sort, table)
   # use selected column to calculate new order
   cols = Tables.columns(table)
   scol = Tables.getcolumn(cols, transform.col)
-  neworder = sortperm(scol, rev=transform.rev)
+  inds = sortperm(scol, rev=transform.rev)
 
   # sort rows
   rows = Tables.rowtable(table)
-  rows = rows[neworder]
+  rows = rows[inds]
 
   newtable = rows |> Tables.materializer(table)
-  newtable, neworder
+  newtable, inds
 end
 
 function revert(::Sort, newtable, cache)
