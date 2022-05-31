@@ -3,10 +3,10 @@
 # ------------------------------------------------------------------
 
 """
-    Sort(by, rev)
+    Sort(col, rev)
 
 Returns a table copy with rows sorted by values of a specific column.
-The `by` value specifies the column used to sort, it can be a index (Int) or a name (Symbol).
+The `col` value is a name (Symbol) that specifies the column used to sort.
 Use `rev=true` to reverse the sorting order, the default value is `false`.
 
 # Examples
@@ -14,24 +14,22 @@ Use `rev=true` to reverse the sorting order, the default value is `false`.
 ```julia
 Sort(:a)
 Sort(:a, rev=true)
-Sort(1)
-Sort(1, rev=false)
 ```
 """
 
 struct Sort <: Stateless
-  by::Union{Int, Symbol}
+  col::Symbol
   rev::Bool
 end
 
-Sort(by; rev=false) = Sort(by, rev)
+Sort(col; rev=false) = Sort(col, rev)
 
 isrevertible(::Type{<:Sort}) = true
 
 function apply(transform::Sort, table)
   # use selected column to calculate new order
   cols = Tables.columns(table)
-  scol = Tables.getcolumn(cols, transform.by)
+  scol = Tables.getcolumn(cols, transform.col)
   neworder = sortperm(scol, rev=transform.rev)
 
   # sort rows
