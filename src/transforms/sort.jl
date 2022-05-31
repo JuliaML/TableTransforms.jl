@@ -42,11 +42,11 @@ end
 
 function revert(::Sort, newtable, cache)
   # use cache to recalculate old order
-  oldorder = sortperm(cache)
+  inds = sortperm(cache)
 
   # undo rows sort
   rows = Tables.rowtable(newtable)
-  rows = rows[oldorder]
+  rows = rows[inds]
 
   rows |> Tables.materializer(newtable)
 end
