@@ -9,7 +9,6 @@ Returns a table copy with rows sorted by values of a specific column.
 The `by` value specifies the column used to sort, it can be a index (Int) or a name (Symbol).
 Use `rev=true` to reverse the sorting order, the default value is `false`.
 
-
 # Examples
 
 ```julia
