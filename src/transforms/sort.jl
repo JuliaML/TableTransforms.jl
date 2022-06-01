@@ -51,8 +51,8 @@ function apply(transform::Sort, table)
   snames = choose(transform.colspec, names)
   
   # use selected columns to calculate new order
-  srows = collect(zip(Tables.getcolumn.(Ref(cols), snames)...))
-  inds = sortperm(srows; transform.kwargs...)
+  scols = collect(zip(Tables.getcolumn.(Ref(cols), snames)...))
+  inds = sortperm(scols; transform.kwargs...)
 
   # sort rows
   rows = Tables.rowtable(table)
