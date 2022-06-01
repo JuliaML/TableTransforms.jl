@@ -3,11 +3,11 @@
 # ------------------------------------------------------------------
 
 """
-    Sort(col; rev=false)
+    Sort(col; alg=DEFAULT_UNSTABLE, lt=isless, by=identity, rev=false, order=Forward)
 
 Returns a table copy with rows sorted by values of a specific column.
 The `col` value is a name (Symbol) that specifies the column used to sort.
-Use `rev=true` to reverse the sorting order, the default value is `false`.
+The keyword arguments are the same as in the `sort` function.
 
 # Examples
 
@@ -17,12 +17,12 @@ Sort(:a, rev=true)
 ```
 """
 
-struct Sort <: Stateless
+struct Sort{T} <: Stateless
   col::Symbol
-  rev::Bool
+  kwargs::T
 end
 
-Sort(col; rev=false) = Sort(col, rev)
+Sort(col; kwargs...) = Sort(col, values(kwargs))
 
 isrevertible(::Type{<:Sort}) = true
 
@@ -30,7 +30,7 @@ function apply(transform::Sort, table)
   # use selected column to calculate new order
   cols = Tables.columns(table)
   scol = Tables.getcolumn(cols, transform.col)
-  inds = sortperm(scol, rev=transform.rev)
+  inds = sortperm(scol; transform.kwargs...)
 
   # sort rows
   rows = Tables.rowtable(table)
