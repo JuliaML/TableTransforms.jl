@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    Sort(col, rev)
+    Sort(col; rev=false)
 
 Returns a table copy with rows sorted by values of a specific column.
 The `col` value is a name (Symbol) that specifies the column used to sort.
