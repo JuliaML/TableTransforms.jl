@@ -121,6 +121,12 @@ Functional
 Levels
 ```
 
+## Sort
+
+```@docs
+Sort
+```
+
 ## EigenAnalysis
 
 ```@docs
