@@ -23,10 +23,6 @@ Sort([1, 3, 5], by=row -> abs.(row))
 Sort(("a", "c", "e"))
 Sort(r"[ace]")
 ```
-
-## Notes
-
-* The row passed to `by` kwarg is the selection row, not the table row.
 """
 struct Sort{S<:ColSpec,T} <: Stateless
   colspec::S
