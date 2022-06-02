@@ -47,6 +47,7 @@ export
   Quantile,
   Functional,
   Levels,
+  Sort,
   EigenAnalysis,
   PCA, DRS, SDS,
   Sequential,
