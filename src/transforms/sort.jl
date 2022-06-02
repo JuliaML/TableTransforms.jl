@@ -3,16 +3,16 @@
 # ------------------------------------------------------------------
 
 """
-    Sort(col₁, col₂, ..., colₙ; alg=DEFAULT_UNSTABLE, lt=isless, by=identity, rev=false, order=Forward)
-    Sort([col₁, col₂, ..., colₙ]; alg=DEFAULT_UNSTABLE, lt=isless, by=identity, rev=false, order=Forward)
-    Sort((col₁, col₂, ..., colₙ); alg=DEFAULT_UNSTABLE, lt=isless, by=identity, rev=false, order=Forward)
+    Sort(col₁, col₂, ..., colₙ; kwargs...)
+    Sort([col₁, col₂, ..., colₙ]; kwargs...)
+    Sort((col₁, col₂, ..., colₙ); kwargs...)
 
-Sort the table by the values of the selected columns `col₁`, `col₂`, ..., `colₙ`.
-The keyword arguments are the same as in the `sort` function.
+Sort the rows of selected columns `col₁`, `col₂`, ..., `colₙ` by forwarding
+the `kwargs` to the `sortperm` function.
 
-    Sort(regex; alg=DEFAULT_UNSTABLE, lt=isless, by=identity, rev=false, order=Forward)
+    Sort(regex; kwargs...)
 
-Sort the table by the values of the columns that match with `regex`.
+Sort the rows of columns that match with `regex`.
 
 # Examples
 
