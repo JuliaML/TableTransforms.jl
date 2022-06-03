@@ -136,10 +136,11 @@ _maxdim(::Nothing, Y) = size(Y, 2)
 
 function outdim(transform, Y, λ)
   pratio = transform.pratio
-  pvar = pratio * sum(λ) 
-  md = _maxdim(transform.maxdim, Y)
-  pd = findfirst(≥(pvar), cumsum(λ))
-  min(pd, md)
+  csums  = cumsum(λ) 
+  ratios = csums ./ last(csums)
+  mdim   = _maxdim(transform.maxdim, Y)
+  pdim   = findfirst(≥(pratio), ratios)
+  min(mdim, pdim)
 end
 
 function eigenmatrices(transform, Y)
