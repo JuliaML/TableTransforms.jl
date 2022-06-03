@@ -3,10 +3,11 @@
 # ------------------------------------------------------------------
 
 """
-    EigenAnalysis(proj, ndim=nothing)
+    EigenAnalysis(proj; maxdim=nothing, pratio=0.99)
 
 The eigenanalysis of the covariance with a given projection `proj`.
-The number of dimensions of the output is defined by the `ndim` argument.
+`maxdim` keyword argument defines the maximum number of dimensions of the output.
+`pratio` is the percentage ratio of the variances that will be preserved.
 
 ## Projections
 
@@ -32,7 +33,9 @@ for more details about these three variants of eigenanalysis.
 EigenAnalysis(:V)
 EigenAnalysis(:VD)
 EigenAnalysis(:VDV)
-EigenAnalysis(:V, 2)
+EigenAnalysis(:V, maxdim=3)
+EigenAnalysis(:VD, pratio=0.89)
+EigenAnalysis(:VDV, maxdim=3, pratio=0.89)
 ```
 """
 struct EigenAnalysis <: Transform
@@ -42,7 +45,7 @@ struct EigenAnalysis <: Transform
 
   function EigenAnalysis(proj, maxdim, pratio)
     @assert proj ∈ (:V, :VD, :VDV) "Invalid projection."
-    @assert 0 ≤ pratio ≤ 1 "Invalid ratio."
+    @assert 0 ≤ pratio ≤ 1 "Invalid pratio."
     new(proj, maxdim, pratio)
   end
 end
@@ -168,46 +171,48 @@ function eigenmatrices(transform, Y)
 end
 
 """
-    PCA(ndim=nothing)
+    PCA(; maxdim=nothing, pratio=0.99)
 
 The PCA transform is a shortcut for
-`ZScore() → EigenAnalysis(:V, ndim)`.
+`ZScore() → EigenAnalysis(:V; maxdim, pratio)`.
 
 See also: [`ZScore`](@ref), [`EigenAnalysis`](@ref).
 
 # Examples
 
 ```julia
-PCA()
-PCA(2)
+PCA(maxdim=2)
+PCA(pratio=0.86)
+PCA(maxdim=2, pratio=0.86)
 ```
 """
 PCA(; maxdim=nothing, pratio=0.99) = 
   ZScore() → EigenAnalysis(:V, maxdim, pratio)
 
 """
-    DRS(ndim=nothing)
+    DRS(; maxdim=nothing, pratio=0.99)
 
 The DRS transform is a shortcut for
-`ZScore() → EigenAnalysis(:VD, ndim)`.
+`ZScore() → EigenAnalysis(:VD; maxdim, pratio)`.
 
 See also: [`ZScore`](@ref), [`EigenAnalysis`](@ref).
 
 # Examples
 
 ```julia
-DRS()
-DRS(3)
+DRS(maxdim=3)
+DRS(pratio=0.87)
+DRS(maxdim=3, pratio=0.87)
 ```
 """
 DRS(; maxdim=nothing, pratio=0.99) = 
   ZScore() → EigenAnalysis(:VD, maxdim, pratio)
 
 """
-    SDS(ndim=nothing)
+    SDS(; maxdim=nothing, pratio=0.99)
 
 The SDS transform is a shortcut for
-`ZScore() → EigenAnalysis(:VDV, ndim)`.
+`ZScore() → EigenAnalysis(:VDV; maxdim, pratio)`.
 
 See also: [`ZScore`](@ref), [`EigenAnalysis`](@ref).
 
@@ -215,7 +220,9 @@ See also: [`ZScore`](@ref), [`EigenAnalysis`](@ref).
 
 ```julia
 SDS()
-SDS(4)
+SDS(maxdim=4)
+SDS(pratio=0.88)
+SDS(maxdim=4, pratio=0.88)
 ```
 """
 SDS(; maxdim=nothing, pratio=0.99) = 
