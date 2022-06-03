@@ -6,8 +6,9 @@
     EigenAnalysis(proj; maxdim=nothing, pratio=1.0)
 
 The eigenanalysis of the covariance with a given projection `proj`.
-`maxdim` keyword argument defines the maximum number of dimensions of the output.
-`pratio` is the percentage ratio of the variances that will be preserved.
+Optionally specify the maximum number of dimensions in the output `maxdim`
+and the percentage of variance to retain `pratio`. Default to all dimensions of
+the input.
 
 ## Projections
 
