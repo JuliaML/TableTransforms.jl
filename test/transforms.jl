@@ -1414,14 +1414,14 @@
     rtₒ = revert(T, n, c)
     @test Tables.matrix(rt) ≈ Tables.matrix(rtₒ)
 
-    # ndim
+    # maxdim
     x = randn(1000)
     y = x + randn(1000)
     z = 2x - y + randn(1000)
     t = Table(; x, y, z)
 
     # PCA
-    T = PCA(2)
+    T = PCA(maxdim=2)
     n, c = apply(T, t)
     Σ = cov(Tables.matrix(n))
     @test Tables.columnnames(n) == (:PC1, :PC2)
@@ -1429,7 +1429,7 @@
     @test isapprox(Σ[2,1], 0; atol=1e-6)
 
     # DRS
-    T = DRS(2)
+    T = DRS(maxdim=2)
     n, c = apply(T, t)
     Σ = cov(Tables.matrix(n))
     @test Tables.columnnames(n) == (:PC1, :PC2)
@@ -1439,7 +1439,7 @@
     @test isapprox(Σ[2,2], 1; atol=1e-6)
 
     # SDS
-    T = SDS(2)
+    T = SDS(maxdim=2)
     n, c = apply(T, t)
     Σ = cov(Tables.matrix(n))
     @test Tables.columnnames(n) == (:PC1, :PC2)
@@ -1447,6 +1447,56 @@
     @test isapprox(Σ[2,1], 0; atol=1e-6)
     @test isapprox(Σ[1,1], 1; atol=1e-6)
     @test isapprox(Σ[2,2], 1; atol=1e-6)
+
+    # pratio
+    a = randn(rng, 1000)
+    b = randn(rng, 1000)
+    c = a + randn(rng, 1000)
+    d = b - randn(rng, 1000)
+    e = 3d + c - randn(rng, 1000)
+    t = Table(; a, b, c, d, e)
+
+    # PCA
+    T = PCA(pratio=0.90)
+    n, c = apply(T, t)
+    Σ = cov(Tables.matrix(n))
+    @test Tables.columnnames(n) == (:PC1, :PC2, :PC3)
+    @test isapprox(Σ[1,2], 0; atol=1e-6)
+    @test isapprox(Σ[1,3], 0; atol=1e-6)
+    @test isapprox(Σ[2,1], 0; atol=1e-6)
+    @test isapprox(Σ[2,3], 0; atol=1e-6)
+    @test isapprox(Σ[3,1], 0; atol=1e-6)
+    @test isapprox(Σ[3,2], 0; atol=1e-6)
+
+    # DRS
+    T = DRS(pratio=0.90)
+    n, c = apply(T, t)
+    Σ = cov(Tables.matrix(n))
+    @test Tables.columnnames(n) == (:PC1, :PC2, :PC3)
+    @test isapprox(Σ[1,2], 0; atol=1e-6)
+    @test isapprox(Σ[1,3], 0; atol=1e-6)
+    @test isapprox(Σ[2,1], 0; atol=1e-6)
+    @test isapprox(Σ[2,3], 0; atol=1e-6)
+    @test isapprox(Σ[3,1], 0; atol=1e-6)
+    @test isapprox(Σ[3,2], 0; atol=1e-6)
+    @test isapprox(Σ[1,1], 1; atol=1e-6)
+    @test isapprox(Σ[2,2], 1; atol=1e-6)
+    @test isapprox(Σ[3,3], 1; atol=1e-6)
+
+    # SDS
+    T = SDS(pratio=0.90)
+    n, c = apply(T, t)
+    Σ = cov(Tables.matrix(n))
+    @test Tables.columnnames(n) == (:PC1, :PC2, :PC3)
+    @test isapprox(Σ[1,2], 0; atol=1e-6)
+    @test isapprox(Σ[1,3], 0; atol=1e-6)
+    @test isapprox(Σ[2,1], 0; atol=1e-6)
+    @test isapprox(Σ[2,3], 0; atol=1e-6)
+    @test isapprox(Σ[3,1], 0; atol=1e-6)
+    @test isapprox(Σ[3,2], 0; atol=1e-6)
+    @test isapprox(Σ[1,1], 1; atol=1e-6)
+    @test isapprox(Σ[2,2], 1; atol=1e-6)
+    @test isapprox(Σ[3,3], 1; atol=1e-6)
   end
 
   @testset "Sequential" begin
