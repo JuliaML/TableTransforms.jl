@@ -35,8 +35,8 @@ EigenAnalysis(:V)
 EigenAnalysis(:VD)
 EigenAnalysis(:VDV)
 EigenAnalysis(:V, maxdim=3)
-EigenAnalysis(:VD, pratio=0.89)
-EigenAnalysis(:VDV, maxdim=3, pratio=0.89)
+EigenAnalysis(:VD, pratio=0.99)
+EigenAnalysis(:VDV, maxdim=3, pratio=0.99)
 ```
 """
 struct EigenAnalysis <: Transform
