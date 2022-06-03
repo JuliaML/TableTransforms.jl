@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    EigenAnalysis(proj; maxdim=nothing, pratio=0.99)
+    EigenAnalysis(proj; maxdim=nothing, pratio=1.0)
 
 The eigenanalysis of the covariance with a given projection `proj`.
 `maxdim` keyword argument defines the maximum number of dimensions of the output.
@@ -50,7 +50,7 @@ struct EigenAnalysis <: Transform
   end
 end
 
-EigenAnalysis(proj; maxdim=nothing, pratio=0.99) = 
+EigenAnalysis(proj; maxdim=nothing, pratio=1.0) = 
   EigenAnalysis(proj, maxdim, pratio)
 
 assertions(::Type{EigenAnalysis}) = [assert_continuous]
@@ -171,7 +171,7 @@ function eigenmatrices(transform, Y)
 end
 
 """
-    PCA(; maxdim=nothing, pratio=0.99)
+    PCA(; maxdim=nothing, pratio=1.0)
 
 The PCA transform is a shortcut for
 `ZScore() → EigenAnalysis(:V; maxdim, pratio)`.
@@ -186,11 +186,11 @@ PCA(pratio=0.86)
 PCA(maxdim=2, pratio=0.86)
 ```
 """
-PCA(; maxdim=nothing, pratio=0.99) = 
+PCA(; maxdim=nothing, pratio=1.0) = 
   ZScore() → EigenAnalysis(:V, maxdim, pratio)
 
 """
-    DRS(; maxdim=nothing, pratio=0.99)
+    DRS(; maxdim=nothing, pratio=1.0)
 
 The DRS transform is a shortcut for
 `ZScore() → EigenAnalysis(:VD; maxdim, pratio)`.
@@ -205,11 +205,11 @@ DRS(pratio=0.87)
 DRS(maxdim=3, pratio=0.87)
 ```
 """
-DRS(; maxdim=nothing, pratio=0.99) = 
+DRS(; maxdim=nothing, pratio=1.0) = 
   ZScore() → EigenAnalysis(:VD, maxdim, pratio)
 
 """
-    SDS(; maxdim=nothing, pratio=0.99)
+    SDS(; maxdim=nothing, pratio=1.0)
 
 The SDS transform is a shortcut for
 `ZScore() → EigenAnalysis(:VDV; maxdim, pratio)`.
@@ -225,5 +225,5 @@ SDS(pratio=0.88)
 SDS(maxdim=4, pratio=0.88)
 ```
 """
-SDS(; maxdim=nothing, pratio=0.99) = 
+SDS(; maxdim=nothing, pratio=1.0) = 
   ZScore() → EigenAnalysis(:VDV, maxdim, pratio)
