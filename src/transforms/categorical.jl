@@ -2,6 +2,35 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+"""
+    Categorical(col₁, col₂, ..., colₙ; ordered=nothing)
+    Categorical([col₁, col₂, ..., colₙ]; ordered=nothing)
+    Categorical((col₁, col₂, ..., colₙ); ordered=nothing)
+
+docstring
+
+    Categorical(regex; ordered=nothing)
+
+docstring
+
+    Categorical(col₁ => levels₁, ..., colₙ => levels₂; ordered=nothing)
+
+docstring
+
+# Examples
+
+```julia
+Categorical(1, 3, 5)
+Categorical([:a, :c, :e], ordered=[:c])
+Categorical(("a", "c", "e"), ordered=("a", "e"))
+Categorical(r"[ace]", ordered=[1, 2])
+
+# with levels
+Categorical(1 => 1:3, 2 => ["a", "b"])
+Categorical(:a => 1:3, :b => ["a", "b"], ordered=[:a])
+Categorical("a" => 1:3, "b" => ["a", "b"], ordered=["b"])
+```
+"""
 struct Categorical{S<:ColSpec,O<:ColSpec,L} <: Stateless
   colspec::S
   ordered::O
@@ -21,26 +50,24 @@ Categorical(pairs::Pair{T}...; ordered::ColSpec=nothing) where {T<:ColSelector} 
 Categorical(::Tuple{}; ordered) = throw(ArgumentError("Cannot create a Categorical object with empty tuple."))
 Categorical(; ordered) = throw(ArgumentError("Cannot create a Categorical object without arguments."))
 
-_levels(::Nothing, snames) = Dict(snames .=> nothing)
-_levels(levels::Vector, snames) = Dict(snames .=> levels)
-
-function _ordered(colspec, snames)
-  ordered = choose(colspec, snames)
-  Dict(nm => nm ∈ ordered for nm in snames)
-end
+_levels(::Nothing, nm, snames) = nothing
+_levels(levels::Tuple, nm, snames) = levels[findfirst(==(nm), snames)]
 
 function apply(transform::Categorical, table)
   cols = Tables.columns(table)
   names = Tables.columnnames(cols)
   snames = choose(transform.colspec, names)
-  levels = _levels(transform.levels, snames)
-  ordered = _ordered(transform.ordered, snames)
+  ordered = choose(transform.ordered, snames)
+  levels = transform.levels
   
   columns = map(names) do nm
     x = Tables.getcolumn(cols, nm)
-    l = get(levels, nm, nothing)
-    o = get(ordered, nm, false)
-    nm ∈ snames ? categorical(x, levels=l, ordered=o) : x
+    if nm ∈ snames
+      o = nm ∈ ordered
+      l = _levels(levels, nm, snames)
+      return categorical(x, ordered=o, levels=l)
+    end
+    x
   end
 
   𝒯 = (; zip(names, columns)...)
