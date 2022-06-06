@@ -40,7 +40,7 @@ function MyTransform(args::T...) where {T<:ColSelector}
 end
 ```
 """
-const ColSpec = Union{Vector{T},NTuple{N,T},Regex,Colon} where {N,T<:ColSelector}
+const ColSpec = Union{Vector{T},NTuple{N,T},Regex,Colon,Nothing} where {N,T<:ColSelector}
 
 """
     choose(colspec::ColSpec, names) -> Vector{Symbol}
@@ -100,3 +100,4 @@ choose(colspec::Regex, names::Tuple) =
 
 choose(::Colon, names::Vector) = names
 choose(::Colon, names::Tuple) = collect(names)
+choose(::Nothing, names) = Symbol[]
