@@ -7,15 +7,16 @@
     Categorical([col₁, col₂, ..., colₙ]; ordered=nothing)
     Categorical((col₁, col₂, ..., colₙ); ordered=nothing)
 
-docstring
+Make selected columns col₁, col₂, ..., colₙ categorical using `categorical` function from CategoricalArrays.jl.
+`ordered` keyword argument can be a tuple, vector or regex that selects the columns where `ordered=true`.
 
     Categorical(regex; ordered=nothing)
 
-docstring
+Make columns that match with `regex` categorical.
 
     Categorical(col₁ => levels₁, ..., colₙ => levels₂; ordered=nothing)
 
-docstring
+Make selected columns col₁, col₂, ..., colₙ categorical by specifying the levels of each one.
 
 # Examples
 
