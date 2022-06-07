@@ -67,6 +67,12 @@ RowTable
 ColTable
 ```
 
+## Categorize
+
+```@docs
+Categorize
+```
+
 ## Identity
 
 ```@docs
