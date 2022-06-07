@@ -54,6 +54,16 @@ Categorical(; ordered) = throw(ArgumentError("Cannot create a Categorical object
 _levels(::Nothing, nm, snames) = nothing
 _levels(levels::Tuple, nm, snames) = levels[findfirst(==(nm), snames)]
 
+_categorical(x::AbstractVector, o, l) =
+  categorical(x, ordered=o, levels=l), y -> unwrap.(y)
+
+function _categorical(x::CategoricalArray, o, l)
+  xl = levels(x)
+  xo = isordered(x)
+  f = y -> categorical(y, ordered=xo, levels=xl)
+  categorical(x, ordered=o, levels=l), f
+end
+
 function apply(transform::Categorical, table)
   cols = Tables.columns(table)
   names = Tables.columnnames(cols)
@@ -61,28 +71,30 @@ function apply(transform::Categorical, table)
   ordered = choose(transform.ordered, snames)
   levels = transform.levels
   
-  columns = map(names) do nm
+  results = map(names) do nm
     x = Tables.getcolumn(cols, nm)
     if nm ∈ snames
       o = nm ∈ ordered
       l = _levels(levels, nm, snames)
-      return categorical(x, ordered=o, levels=l)
+      return _categorical(x, o, l)
     end
-    x
+    x, identity
   end
+
+  columns, cache = first.(results), last.(results)
 
   𝒯 = (; zip(names, columns)...)
   newtable = 𝒯 |> Tables.materializer(table)
-  newtable, snames
+  newtable, cache
 end
 
 function revert(::Categorical, newtable, cache)
   cols = Tables.columns(newtable)
   names = Tables.columnnames(cols)
 
-  columns = map(names) do nm
+  columns = map(names, cache) do nm, revfunc
     x = Tables.getcolumn(cols, nm)
-    nm ∈ cache ? unwrap.(x) : x
+    revfunc(x)
   end
 
   𝒯 = (; zip(names, columns)...)
