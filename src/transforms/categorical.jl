@@ -27,7 +27,7 @@ Categorical(("a", "c", "e"), ordered=("a", "e"))
 Categorical(r"[ace]", ordered=[1, 2])
 
 # with levels
-Categorical(1 => 1:3, 2 => ["a", "b"])
+Categorical(1 => 1:3, 2 => ["a", "b"], ordered=r"a")
 Categorical(:a => 1:3, :b => ["a", "b"], ordered=[:a])
 Categorical("a" => 1:3, "b" => ["a", "b"], ordered=["b"])
 ```

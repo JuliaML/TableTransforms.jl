@@ -981,6 +981,100 @@
     @test typeof(tₒ) <: Table
   end
 
+  @testset "Levels" begin
+    a = rand([true, false], 50)
+    b = rand(["y", "n"], 50)
+    c = rand(1:3, 50)
+    t = Table(; a, b, c)
+
+    T = Categorical(2, 3)
+    n, c = apply(T, t)
+    @test levels(n.b) == ["n", "y"]
+    @test levels(n.c) == [1, 2, 3]
+    tₒ = revert(T, n, c)
+    @test tₒ == t
+
+    T = Categorical([:a, :b, :c], ordered=[:b, :c])
+    n, c = apply(T, t)
+    @test levels(n.a) == [false, true]
+    @test isordered(n.a) == false
+    @test levels(n.b) == ["n", "y"]
+    @test isordered(n.b) == true
+    @test levels(n.c) == [1, 2, 3]
+    @test isordered(n.c) == true
+    tₒ = revert(T, n, c)
+    @test tₒ == t
+
+    T = Categorical(("a", "b", "c"), ordered=("a", "b"))
+    n, c = apply(T, t)
+    @test levels(n.a) == [false, true]
+    @test isordered(n.a) == true
+    @test levels(n.b) == ["n", "y"]
+    @test isordered(n.b) == true
+    @test levels(n.c) == [1, 2, 3]
+    @test isordered(n.c) == false
+    tₒ = revert(T, n, c)
+    @test tₒ == t
+
+    T = Categorical(r"[abc]", ordered=r"[ac]")
+    n, c = apply(T, t)
+    @test levels(n.a) == [false, true]
+    @test isordered(n.a) == true
+    @test levels(n.b) == ["n", "y"]
+    @test isordered(n.b) == false
+    @test levels(n.c) == [1, 2, 3]
+    @test isordered(n.c) == false
+    tₒ = revert(T, n, c)
+    @test tₒ == t
+
+    T = Categorical(2 => ["n", "y", "m"])
+    n, c = apply(T, t)
+    @test levels(n.b) == ["n", "y", "m"]
+    @test isordered(n.b) == false
+    tₒ = revert(T, n, c)
+    @test tₒ == t
+
+    T = Categorical(:b => ["n", "y", "m"], :c => [1, 2, 3, 4], ordered=[:c])
+    n, c = apply(T, t)
+    @test levels(n.b) == ["n", "y", "m"]
+    @test isordered(n.b) == false
+    @test levels(n.c) == [1, 2, 3, 4]
+    @test isordered(n.c) == true
+    tₒ = revert(T, n, c)
+    @test tₒ == t
+
+    T = Categorical("b" => ["n", "y", "m"], "c" => [1, 2, 3, 4], ordered=["b"])
+    n, c = apply(T, t)
+    @test levels(n.b) == ["n", "y", "m"]
+    @test isordered(n.b) == true
+    @test levels(n.c) == [1, 2, 3, 4]
+    @test isordered(n.c) == false
+    tₒ = revert(T, n, c)
+    @test tₒ == t
+
+    # x = categorical(rand(["y", "n"], 50), ordered=false)
+    # y = categorical(rand(1:3, 50), ordered=true)
+    # t = Table(; x, y)
+    
+    # T = Categorical(:x => ["n", "y", "m"], :y => [1, 2, 3, 4], ordered=[:y])
+    # n, y = apply(T, t)
+    # @test levels(n.x) == ["n", "y", "m"]
+    # @test isordered(n.x) == false
+    # @test levels(n.y) == [1, 2, 3, 4]
+    # @test isordered(n.y) == true
+    # tₒ = revert(T, n, y)
+    # @test tₒ == t
+
+    # T = Categorical("x" => ["n", "y", "m"], "y" => [1, 2, 3, 4], ordered=["x"])
+    # n, y = apply(T, t)
+    # @test levels(n.x) == ["n", "y", "m"]
+    # @test isordered(n.x) == true
+    # @test levels(n.y) == [1, 2, 3, 4]
+    # @test isordered(n.y) == false
+    # tₒ = revert(T, n, y)
+    # @test tₒ == t
+  end
+
   @testset "Identity" begin
     x = rand(4000)
     y = rand(4000)
