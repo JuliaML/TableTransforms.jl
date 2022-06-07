@@ -60,8 +60,8 @@ _categorical(x::AbstractVector, o, l) =
 function _categorical(x::CategoricalArray, o, l)
   xl = levels(x)
   xo = isordered(x)
-  f = y -> categorical(y, ordered=xo, levels=xl)
-  categorical(x, ordered=o, levels=l), f
+  revfunc = y -> categorical(y, ordered=xo, levels=xl)
+  categorical(x, ordered=o, levels=l), revfunc
 end
 
 function apply(transform::Categorize, table)
