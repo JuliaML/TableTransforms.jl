@@ -1027,6 +1027,7 @@
     tₒ = revert(T, n, c)
     @test tₒ == t
 
+    # with levels
     T = Categorize(2 => ["n", "y", "m"])
     n, c = apply(T, t)
     @test levels(n.b) == ["n", "y", "m"]
@@ -1052,6 +1053,7 @@
     tₒ = revert(T, n, c)
     @test tₒ == t
 
+    # categorical columns
     x = categorical(rand(["y", "n"], 50), ordered=false)
     y = categorical(rand(1:3, 50), ordered=true)
     t = Table(; x, y)
@@ -1081,6 +1083,36 @@
     @test levels(tₒ.y) == [1, 2, 3]
     @test isordered(tₒ.y) == true
     @test tₒ == t
+
+    a = rand([true, false], 50)
+    b = rand(["y", "n"], 50)
+    c = rand(1:3, 50)
+    t = Table(; a, b, c)
+
+    # throws: Categorize without arguments
+    @test_throws ArgumentError Categorize()
+    @test_throws ArgumentError Categorize(())
+
+    # throws: empty selection
+    @test_throws AssertionError apply(Categorize(r"x"), t)
+    @test_throws AssertionError apply(Categorize(Symbol[]), t)
+    @test_throws AssertionError apply(Categorize(String[]), t)
+
+    # throws: columns that do not exist in the original table
+    @test_throws AssertionError apply(Categorize([:x, :y]), t)
+    @test_throws AssertionError apply(Categorize(("x", "y")), t)
+    T = Categorize(:x => ["n", "y", "m"], :y => [1, 2, 3, 4])
+    @test_throws AssertionError apply(T, t)
+    T = Categorize("x" => ["n", "y", "m"], "y" => [1, 2, 3, 4])
+    @test_throws AssertionError apply(T, t)
+
+    # throws: invalid ordered column selection
+    @test_throws AssertionError apply(Categorize([:a, :c], ordered=[:b]), t)
+    @test_throws AssertionError apply(Categorize(("a", "b"), ordered=["c"]), t)
+    T = Categorize(:b => ["n", "y", "m"], :c => [1, 2, 3, 4], ordered=[:a])
+    @test_throws AssertionError apply(T, t)
+    T = Categorize("b" => ["n", "y", "m"], "c" => [1, 2, 3, 4], ordered=["a"])
+    @test_throws AssertionError apply(T, t)
   end
 
   @testset "Identity" begin

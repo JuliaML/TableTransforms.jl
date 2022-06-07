@@ -48,8 +48,8 @@ Categorize(pairs::Pair{T}...; ordered::ColSpec=nothing) where {T<:ColSelector} =
   Categorize(first.(pairs), ordered, last.(pairs))
 
 # argument errors
-Categorize(::Tuple{}; ordered) = throw(ArgumentError("Cannot create a Categorize object with empty tuple."))
-Categorize(; ordered) = throw(ArgumentError("Cannot create a Categorize object without arguments."))
+Categorize(::Tuple{}; kwargs...) = throw(ArgumentError("Cannot create a Categorize object with empty tuple."))
+Categorize(; kwargs...) = throw(ArgumentError("Cannot create a Categorize object without arguments."))
 
 _levels(::Nothing, nm, snames) = nothing
 _levels(levels::Tuple, nm, snames) = levels[findfirst(==(nm), snames)]
