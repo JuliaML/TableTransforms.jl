@@ -58,8 +58,7 @@ _categorical(x::AbstractVector, o, l) =
   categorical(x, ordered=o, levels=l), y -> unwrap.(y)
 
 function _categorical(x::CategoricalArray, o, l)
-  xl = levels(x)
-  xo = isordered(x)
+  xo, xl = isordered(x), levels(x)
   revfunc = y -> categorical(y, ordered=xo, levels=xl)
   categorical(x, ordered=o, levels=l), revfunc
 end
