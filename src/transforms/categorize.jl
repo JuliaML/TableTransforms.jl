@@ -7,16 +7,16 @@
     Categorize([col₁, col₂, ..., colₙ]; ordered=nothing)
     Categorize((col₁, col₂, ..., colₙ); ordered=nothing)
 
-Make selected columns col₁, col₂, ..., colₙ categorical using `categorical` function from CategoricalArrays.jl.
+Make selected columns `col₁`, `col₂`, ..., `colₙ` categorical using `categorical` function from CategoricalArrays.jl.
 `ordered` keyword argument can be a tuple, vector or regex that selects the columns where `ordered=true`.
 
     Categorize(regex; ordered=nothing)
 
 Make columns that match with `regex` categorical.
 
-    Categorize(col₁ => levels₁, ..., colₙ => levels₂; ordered=nothing)
+    Categorize(col₁ => levels₁, ..., colₙ => levelsₙ; ordered=nothing)
 
-Make selected columns col₁, col₂, ..., colₙ categorical by specifying the levels of each one.
+Make selected columns `col₁`, `col₂`, ..., `colₙ` categorical by specifying the levels of each one.
 
 # Examples
 
