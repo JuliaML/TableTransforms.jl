@@ -981,20 +981,20 @@
     @test typeof(tₒ) <: Table
   end
 
-  @testset "Categorical" begin
+  @testset "Categorize" begin
     a = rand([true, false], 50)
     b = rand(["y", "n"], 50)
     c = rand(1:3, 50)
     t = Table(; a, b, c)
 
-    T = Categorical(2, 3)
+    T = Categorize(2, 3)
     n, c = apply(T, t)
     @test levels(n.b) == ["n", "y"]
     @test levels(n.c) == [1, 2, 3]
     tₒ = revert(T, n, c)
     @test tₒ == t
 
-    T = Categorical([:a, :b, :c], ordered=[:b, :c])
+    T = Categorize([:a, :b, :c], ordered=[:b, :c])
     n, c = apply(T, t)
     @test levels(n.a) == [false, true]
     @test isordered(n.a) == false
@@ -1005,7 +1005,7 @@
     tₒ = revert(T, n, c)
     @test tₒ == t
 
-    T = Categorical(("a", "b", "c"), ordered=("a", "b"))
+    T = Categorize(("a", "b", "c"), ordered=("a", "b"))
     n, c = apply(T, t)
     @test levels(n.a) == [false, true]
     @test isordered(n.a) == true
@@ -1016,7 +1016,7 @@
     tₒ = revert(T, n, c)
     @test tₒ == t
 
-    T = Categorical(r"[abc]", ordered=r"[ac]")
+    T = Categorize(r"[abc]", ordered=r"[ac]")
     n, c = apply(T, t)
     @test levels(n.a) == [false, true]
     @test isordered(n.a) == true
@@ -1027,14 +1027,14 @@
     tₒ = revert(T, n, c)
     @test tₒ == t
 
-    T = Categorical(2 => ["n", "y", "m"])
+    T = Categorize(2 => ["n", "y", "m"])
     n, c = apply(T, t)
     @test levels(n.b) == ["n", "y", "m"]
     @test isordered(n.b) == false
     tₒ = revert(T, n, c)
     @test tₒ == t
 
-    T = Categorical(:b => ["n", "y", "m"], :c => [1, 2, 3, 4], ordered=[:c])
+    T = Categorize(:b => ["n", "y", "m"], :c => [1, 2, 3, 4], ordered=[:c])
     n, c = apply(T, t)
     @test levels(n.b) == ["n", "y", "m"]
     @test isordered(n.b) == false
@@ -1043,7 +1043,7 @@
     tₒ = revert(T, n, c)
     @test tₒ == t
 
-    T = Categorical("b" => ["n", "y", "m"], "c" => [1, 2, 3, 4], ordered=["b"])
+    T = Categorize("b" => ["n", "y", "m"], "c" => [1, 2, 3, 4], ordered=["b"])
     n, c = apply(T, t)
     @test levels(n.b) == ["n", "y", "m"]
     @test isordered(n.b) == true
@@ -1056,22 +1056,30 @@
     y = categorical(rand(1:3, 50), ordered=true)
     t = Table(; x, y)
     
-    T = Categorical(:x => ["n", "y", "m"], :y => [1, 2, 3, 4], ordered=[:y])
+    T = Categorize(:x => ["n", "y", "m"], :y => [1, 2, 3, 4], ordered=[:y])
     n, c = apply(T, t)
     @test levels(n.x) == ["n", "y", "m"]
     @test isordered(n.x) == false
     @test levels(n.y) == [1, 2, 3, 4]
     @test isordered(n.y) == true
     tₒ = revert(T, n, c)
+    @test levels(tₒ.x) == ["n", "y"]
+    @test isordered(tₒ.x) == false
+    @test levels(tₒ.y) == [1, 2, 3]
+    @test isordered(tₒ.y) == true
     @test tₒ == t
 
-    T = Categorical("x" => ["n", "y", "m"], "y" => [1, 2, 3, 4], ordered=["x"])
+    T = Categorize("x" => ["n", "y", "m"], "y" => [1, 2, 3, 4], ordered=["x"])
     n, c = apply(T, t)
     @test levels(n.x) == ["n", "y", "m"]
     @test isordered(n.x) == true
     @test levels(n.y) == [1, 2, 3, 4]
     @test isordered(n.y) == false
     tₒ = revert(T, n, c)
+    @test levels(tₒ.x) == ["n", "y"]
+    @test isordered(tₒ.x) == false
+    @test levels(tₒ.y) == [1, 2, 3]
+    @test isordered(tₒ.y) == true
     @test tₒ == t
   end
 

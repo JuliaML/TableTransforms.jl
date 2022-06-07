@@ -38,7 +38,7 @@ export
   Coerce,
   RowTable,
   ColTable,
-  Categorical,
+  Categorize,
   Identity,
   Center,
   Scale,
