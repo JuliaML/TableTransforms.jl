@@ -1289,7 +1289,7 @@
     tₒ = revert(T, n, c)
     @test tₒ == t
 
-    T = Levels(:b => ["n", "y", "m"], :c => [1, 2, 3, 4], ordered=[:c])
+    T = Levels(:b => ["n", "y", "m"], :c => 1:4, ordered=[:c])
     n, c = apply(T, t)
     @test levels(n.b) == ["n", "y", "m"]
     @test isordered(n.b) == false
@@ -1298,7 +1298,7 @@
     tₒ = revert(T, n, c)
     @test tₒ == t
 
-    T = Levels("b" => ["n", "y", "m"], "c" => [1, 2, 3, 4], ordered=["b"])
+    T = Levels("b" => ["n", "y", "m"], "c" => 1:4, ordered=["b"])
     n, c = apply(T, t)
     @test levels(n.b) == ["n", "y", "m"]
     @test isordered(n.b) == true
@@ -1312,10 +1312,10 @@
     y = categorical(rand(1:3, 50), ordered=true)
     t = Table(; x, y)
     
-    T = Levels(:x => ["n", "y", "m"], :y => [1, 2, 3, 4], ordered=[:y])
+    T = Levels(:x => ["n", "y", "m"], :y => 1:4, ordered=r"[xy]")
     n, c = apply(T, t)
     @test levels(n.x) == ["n", "y", "m"]
-    @test isordered(n.x) == false
+    @test isordered(n.x) == true
     @test levels(n.y) == [1, 2, 3, 4]
     @test isordered(n.y) == true
     tₒ = revert(T, n, c)
@@ -1325,7 +1325,7 @@
     @test isordered(tₒ.y) == true
     @test tₒ == t
 
-    T = Levels("x" => ["n", "y", "m"], "y" => [1, 2, 3, 4], ordered=["x"])
+    T = Levels("x" => ["n", "y", "m"], "y" => 1:4, ordered=["x"])
     n, c = apply(T, t)
     @test levels(n.x) == ["n", "y", "m"]
     @test isordered(n.x) == true
@@ -1347,15 +1347,17 @@
     @test_throws ArgumentError Levels()
 
     # throws: columns that do not exist in the original table
-    T = Levels(:x => ["n", "y", "m"], :y => [1, 2, 3, 4])
+    T = Levels(:x => ["n", "y", "m"], :y => 1:4)
     @test_throws AssertionError apply(T, t)
-    T = Levels("x" => ["n", "y", "m"], "y" => [1, 2, 3, 4])
+    T = Levels("x" => ["n", "y", "m"], "y" => 1:4)
     @test_throws AssertionError apply(T, t)
 
     # throws: invalid ordered column selection
-    T = Levels(:b => ["n", "y", "m"], :c => [1, 2, 3, 4], ordered=[:a])
+    T = Levels(:b => ["n", "y", "m"], :c => 1:4, ordered=[:a])
     @test_throws AssertionError apply(T, t)
-    T = Levels("b" => ["n", "y", "m"], "c" => [1, 2, 3, 4], ordered=["a"])
+    T = Levels("b" => ["n", "y", "m"], "c" => 1:4, ordered=["a"])
+    @test_throws AssertionError apply(T, t)
+    T = Levels("b" => ["n", "y", "m"], "c" => 1:4, ordered=r"xy")
     @test_throws AssertionError apply(T, t)
   end
 
