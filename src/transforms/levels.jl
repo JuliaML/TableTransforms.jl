@@ -21,8 +21,6 @@ end
 Levels(pairs::Pair{T}...; ordered::ColSpec=nothing) where {T<:ColSelector} =
   Levels(first.(pairs), ordered, last.(pairs))
 
-# argument errors
-Levels(::Tuple{}; kwargs...) = throw(ArgumentError("Cannot create a Levels object with empty tuple."))
 Levels(; kwargs...) = throw(ArgumentError("Cannot create a Levels object without arguments."))
 
 isrevertible(transform::Levels) = true
