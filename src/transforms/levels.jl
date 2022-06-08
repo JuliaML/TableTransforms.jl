@@ -1,7 +1,7 @@
 """
-  Levels(col₁ => levels₁, ..., colₙ => levelsₙ; ordered=nothing)
+  Levels(col₁ => levels₁, col₂ => levels₂, ..., colₙ => levelsₙ; ordered=nothing)
 
-Return a copy of the table with specified levels and orders for categorical columns.
+Make selected columns `col₁`, `col₂`, ..., `colₙ` categorical by specifying the levels of each one.
 `ordered` keyword argument can be a tuple, vector or regex that selects the columns where `ordered=true`.
 
 # Examples
