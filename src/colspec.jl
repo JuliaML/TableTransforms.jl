@@ -80,7 +80,7 @@ julia> choose(:, names)
   :f
 
 julia> choose(nothing, names)
-0-element Vector{Symbol}:
+Symbol[]
 ```
 """
 function choose(colspec::Vector{Symbol}, names)
