@@ -29,13 +29,13 @@ Levels(; kwargs...) = throw(ArgumentError("Cannot create a Levels object without
 
 isrevertible(transform::Levels) = true
 
-_categorical(x::AbstractVector, o, l) =
-  categorical(x, ordered=o, levels=l), y -> unwrap.(y)
+_categorical(x::AbstractVector, l, o) =
+  categorical(x, levels=l, ordered=o), y -> unwrap.(y)
 
-function _categorical(x::CategoricalArray, o, l)
-  xo, xl = isordered(x), levels(x)
-  revfunc = y -> categorical(y, ordered=xo, levels=xl)
-  categorical(x, ordered=o, levels=l), revfunc
+function _categorical(x::CategoricalArray, l, o)
+  xl, xo = levels(x), isordered(x)
+  revfunc = y -> categorical(y, levels=xl, ordered=xo)
+  categorical(x, levels=l, ordered=o), revfunc
 end
 
 function apply(transform::Levels, table)
@@ -50,7 +50,7 @@ function apply(transform::Levels, table)
     if nm ∈ snames
       o = nm ∈ ordered
       l = levels[findfirst(==(nm), snames)]
-      return _categorical(x, o, l)
+      return _categorical(x, l, o)
     end
     x, identity
   end
