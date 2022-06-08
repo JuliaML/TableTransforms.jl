@@ -57,6 +57,12 @@
   snames = TableTransforms.choose(:, tupnames)
   @test snames == [:a, :b, :c, :d, :e, :f]
 
+  # nothing
+  snames = TableTransforms.choose(nothing, vecnames)
+  @test snames == Symbol[]
+  snames = TableTransforms.choose(nothing, tupnames)
+  @test snames == Symbol[]
+
   # throws
   @test_throws AssertionError TableTransforms.choose(r"x", vecnames)
   @test_throws AssertionError TableTransforms.choose(r"x", tupnames)
