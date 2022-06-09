@@ -1,72 +1,76 @@
-"""
-    Levels(:a => ["yes", "no"])
+# ------------------------------------------------------------------
+# Licensed under the MIT License. See LICENSE in the project root.
+# ------------------------------------------------------------------
 
-Return a copy of the table with specified levels and orders for categorical columns
-allowing only changing the order of the column.
+"""
+    Levels(col₁ => levels₁, col₂ => levels₂, ..., colₙ => levelsₙ; ordered=nothing)
+
+Convert columns `col₁`, `col₂`, ..., `colₙ` to categorical arrays with given levels `levels₁`, `levels₂`, ..., `levelsₙ`.
+Optionally, specify which columns are `ordered`.
 
 # Examples
 
 ```julia
-Levels(:a => ["yes, "no"], :c => [1, 2, 4], :d => ["a", "b", "c"])
-Levels("a" => ["yes", "no"], "c" => [1, 2, 4], ordered = ["a", "c"])
-Levels(:a => ["yes", "no"], :c => [1, 2, 4], :d => [1, 23, 5, 7], ordered = [:a, :b, :c])
+Levels(1 => 1:3, 2 => ["a", "b"], ordered=r"a")
+Levels(:a => 1:3, :b => ["a", "b"], ordered=[:a])
+Levels("a" => 1:3, "b" => ["a", "b"], ordered=["b"])
 ```
 """
-struct Levels{K} <: Stateless
-  levelspec::K
-  ordered::Vector{Symbol}
+struct Levels{S<:ColSpec,O<:ColSpec,L} <: Stateless
+  colspec::S
+  ordered::O
+  levels::L
 end
 
-Levels(pairs::Pair{Symbol}...; ordered=Symbol[]) =
-  Levels(NamedTuple(pairs), ordered)
+Levels(pairs::Pair{T}...; ordered::ColSpec=nothing) where {T<:ColSelector} =
+  Levels(first.(pairs), ordered, last.(pairs))
 
-Levels(pairs::Pair{K}...; ordered=K[]) where {K<:AbstractString} =
-  Levels(NamedTuple(Symbol(k) => v for (k,v) in pairs), Symbol.(ordered))
+Levels(; kwargs...) = throw(ArgumentError("Cannot create a Levels object without arguments."))
 
 isrevertible(transform::Levels) = true
 
-# when the col is already a categorical array and wanna change levels and order
-_categorify(l::AbstractVector, x::CategoricalVector, o) =
-  categorical(x, levels=l, ordered=o), levels(x)
+_categorical(x::AbstractVector, l, o) =
+  categorical(x, levels=l, ordered=o), y -> unwrap.(y)
 
-# when the col is normal array and want to change to categorical array
-_categorify(l::AbstractVector, x::AbstractVector, o) =
-  categorical(x, levels=l, ordered=o), unwrap 
-
-# when the col is not need for change or convert back to normal array
-_categorify(f::Function, x::AbstractVector, o) =
-  o ? (categorical(x, ordered=true), levels(x)) : (f.(x), f)
+function _categorical(x::CategoricalArray, l, o)
+  xl, xo = levels(x), isordered(x)
+  revfunc = y -> categorical(y, levels=xl, ordered=xo)
+  categorical(x, levels=l, ordered=o), revfunc
+end
 
 function apply(transform::Levels, table)
   cols = Tables.columns(table)
   names = Tables.columnnames(cols)
-
-  result = map(names) do nm
+  snames = choose(transform.colspec, names)
+  ordered = choose(transform.ordered, snames)
+  levels = transform.levels
+  
+  results = map(names) do nm
     x = Tables.getcolumn(cols, nm)
-    l = get(transform.levelspec, nm, identity)
-    o = nm ∈ transform.ordered
-    _categorify(l, x, o)
+    if nm ∈ snames
+      o = nm ∈ ordered
+      l = levels[findfirst(==(nm), snames)]
+      return _categorical(x, l, o)
+    end
+    x, identity
   end
-  
-  categ = first.(result)
-  cache = last.(result)
 
-  𝒯 = (; zip(names, categ)...)
+  columns, cache = first.(results), last.(results)
+
+  𝒯 = (; zip(names, columns)...)
   newtable = 𝒯 |> Tables.materializer(table)
-  
   newtable, cache
 end
 
-function revert(transform::Levels, newtable, cache)
+function revert(::Levels, newtable, cache)
   cols = Tables.columns(newtable)
   names = Tables.columnnames(cols)
 
-  ocols = map(zip(cache, names)) do (f, nm)
+  columns = map(names, cache) do nm, revfunc
     x = Tables.getcolumn(cols, nm)
-    c, _ = _categorify(f, x, false)
-    c
+    revfunc(x)
   end
 
-  𝒯 = (; zip(names, ocols)...)
+  𝒯 = (; zip(names, columns)...)
   𝒯 |> Tables.materializer(newtable)
 end
