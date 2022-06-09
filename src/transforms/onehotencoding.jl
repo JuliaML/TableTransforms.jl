@@ -19,9 +19,6 @@ struct OneHotEncoding{S<:ColSelector} <: Stateless
   col::S
 end
 
-_levels(x) = levels(categorical(x))
-_levels(x::CategoricalArray) = levels(x)
-
 _colname(col::Integer, names) = names[col]
 _colname(col::AbstractString, names) =
   _colname(Symbol(col), names)
@@ -35,29 +32,52 @@ _name(nm, names) =
   nm ∈ names ? _name(Symbol("$(nm)_"), names) : nm
 
 function apply(transform::OneHotEncoding, table)
-  cols    = Tables.columns(table)
-  names   = collect(Tables.columnnames(cols))
-  colname = _colname(transform.col, names)
-  colind  = findfirst(==(colname), names)
+  cols = Tables.columns(table)
+  names = collect(Tables.columnnames(cols))
   columns = [Tables.getcolumn(cols, nm) for nm in names]
+  
+  name = _colname(transform.col, names)
+  ind = findfirst(==(name), names)
+  x = columns[ind]
 
-  x = Tables.getcolumn(cols, colname)
-  levels = _levels(x)
-  onehot = map(levels) do l
-    name = _name(Symbol("$(colname)_$l"), names)
-    name, x .== l
+  if !isa(x, CategoricalArray)
+    throw(ArgumentError("Column $name can be cetegorical."))
   end
 
-  newcols, newnames = last.(onehot), first.(onehot)
+  xl = levels(x)
+  onehot = map(xl) do l
+    nm = Symbol("$(name)_$l")
+    nm = _name(nm, names)
+    nm, x .== l
+  end
 
-  splice!(columns, colind, newcols)
-  splice!(names, colind, newnames)
+  newcols, newnms = last.(onehot), first.(onehot)
+
+  splice!(columns, ind, newcols)
+  splice!(names, ind, newnms)
+
+  inds = ind:(ind + length(newnms) - 1)
 
   𝒯 = (; zip(names, columns)...)
   newtable = 𝒯 |> Tables.materializer(table)
-  newtable, newnames
+  newtable, (name, inds, xl, isordered(x))
 end
 
 function revert(::OneHotEncoding, newtable, cache)
-  # code...
+  cols = Tables.columns(newtable)
+  names = collect(Tables.columnnames(cols))
+  columns = [Tables.getcolumn(cols, nm) for nm in names]
+  
+  oname, inds, levels, ordered = cache
+  x = map(zip(columns[inds]...)) do row
+    levels[findfirst(row)]
+  end
+  
+  ocolumn = categorical(x; levels, ordered)
+
+  splice!(columns, inds, [ocolumn])
+  splice!(names, inds, [oname])
+
+  𝒯 = (; zip(names, columns)...)
+  𝒯 |> Tables.materializer(newtable)
 end
