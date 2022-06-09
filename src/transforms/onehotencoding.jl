@@ -19,6 +19,8 @@ struct OneHotEncoding{S<:ColSelector} <: Stateless
   col::S
 end
 
+isrevertible(::Type{<:OneHotEncoding}) = true
+
 _colname(col::Integer, names) = names[col]
 _colname(col::AbstractString, names) =
   _colname(Symbol(col), names)
@@ -72,7 +74,7 @@ function revert(::OneHotEncoding, newtable, cache)
   x = map(zip(columns[inds]...)) do row
     levels[findfirst(row)]
   end
-  
+
   ocolumn = categorical(x; levels, ordered)
 
   splice!(columns, inds, [ocolumn])
