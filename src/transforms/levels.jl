@@ -5,8 +5,8 @@
 """
     Levels(col₁ => levels₁, col₂ => levels₂, ..., colₙ => levelsₙ; ordered=nothing)
 
-Make selected columns `col₁`, `col₂`, ..., `colₙ` categorical by specifying the levels of each one.
-`ordered` keyword argument can be a tuple, vector or regex that selects the columns where `ordered=true`.
+Convert columns `col₁`, `col₂`, ..., `colₙ` to categorical arrays with given levels `levels₁`, `levels₂`, ..., `levelsₙ`.
+Optionally, specify which columns are `ordered`.
 
 # Examples
 
