@@ -3,62 +3,61 @@
 # ------------------------------------------------------------------
 
 """
-    OneHotEncoding(col₁, col₂, ..., colₙ)
-    OneHotEncoding([col₁, col₂, ..., colₙ])
-    OneHotEncoding((col₁, col₂, ..., colₙ))
+    OneHotEncoding(col)
     
-The transform that selects columns `col₁`, `col₂`, ..., `colₙ`.
-    
-    OneHotEncoding(regex)
-
-Selects the columns that match with `regex`.
+docstring.
 
 # Examples
 
 ```julia
-OneHotEncoding(1, 3, 5)
-OneHotEncoding([:a, :c, :e])
-OneHotEncoding(("a", "c", "e"))
-OneHotEncoding(r"[ace]")
+OneHotEncoding(1)
+OneHotEncoding(:a)
+OneHotEncoding("a")
 ```
 """
-struct OneHotEncoding{S<:ColSpec} <: Stateless
-    colspec::S
+struct OneHotEncoding{S<:ColSelector} <: Stateless
+  col::S
 end
-
-OneHotEncoding(cols::T...) where {T<:ColSelector} = 
-  OneHotEncoding(cols)
-
-# argument errors
-OneHotEncoding(::Tuple{}) = throw(ArgumentError("Cannot create a OneHotEncoding object with empty tuple."))
-OneHotEncoding() = throw(ArgumentError("Cannot create a OneHotEncoding object without arguments."))
 
 _levels(x) = levels(categorical(x))
 _levels(x::CategoricalArray) = levels(x)
 
+_colname(col::Integer, names) = names[col]
+_colname(col::AbstractString, names) =
+  _colname(Symbol(col), names)
+
+function _colname(col::Symbol, names)
+  @assert col ∈ names "Invalid column."
+  return col
+end
+
+_name(nm, names) = 
+  nm ∈ names ? _name(Symbol("$(nm)_"), names) : nm
+
 function apply(transform::OneHotEncoding, table)
-    cols = Tables.columns(table)
-    names = Tables.columnnames(cols)
-    snames = choose(transform.colspec, names)
+  cols    = Tables.columns(table)
+  names   = collect(Tables.columnnames(cols))
+  colname = _colname(transform.col, names)
+  colind  = findfirst(==(colname), names)
+  columns = [Tables.getcolumn(cols, nm) for nm in names]
 
-    columns = [nm => Tables.getcolumn(cols, nm) for nm in names]
-    results = map(snames) do nm
-        x = Tables.getcolumn(cols, nm)
-        levels = _levels(x)
-        map(levels) do l
-            Symbol(nm, "_", l) => x[x .== l]
-        end
-    end
-    onehotcols = collect(Iterators.flatten(results))
+  x = Tables.getcolumn(cols, colname)
+  levels = _levels(x)
+  onehot = map(levels) do l
+    name = _name(Symbol("$(colname)_$l"), names)
+    name, x .== l
+  end
 
-    𝒯 = NamedTuple([columns; onehotcols])
-    newtable = 𝒯 |> Tables.materializer(table)
-    newtable, names
+  newcols, newnames = last.(onehot), first.(onehot)
+
+  splice!(columns, colind, newcols)
+  splice!(names, colind, newnames)
+
+  𝒯 = (; zip(names, columns)...)
+  newtable = 𝒯 |> Tables.materializer(table)
+  newtable, newnames
 end
 
 function revert(::OneHotEncoding, newtable, cache)
-    cols = Tables.columns(table)
-    columns = [Tables.getcolumn(cols, nm) for nm in cache]
-    𝒯 = (; zip(cache, columns)...)
-    𝒯 |> Tables.materializer(newtable)
+  # code...
 end
