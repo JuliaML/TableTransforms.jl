@@ -1275,7 +1275,7 @@
     n, c = apply(T, t)
     @test_throws AssertionError revert(T, n, c)
   end
-  
+
   @testset "Levels" begin
     a = rand([true, false], 50)
     b = rand(["y", "n"], 50)
@@ -1353,7 +1353,7 @@
     @test isordered(n.e) == true
     tₒ = revert(T, n, c)
     @test levels(tₒ.e) == [1, 2, 3, 4]
-    @test isordered(n.e) == false
+    @test isordered(tₒ.e) == false
 
     T = Levels(:a => ["yes", "no"], :c => [1, 2, 4], :d => [1, 23, 5, 7], ordered=[:a, :d])
     n, c = apply(T, t)
