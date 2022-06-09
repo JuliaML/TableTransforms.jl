@@ -43,7 +43,7 @@ function apply(transform::OneHotEncoding, table)
   x = columns[ind]
 
   if !isa(x, CategoricalArray)
-    throw(ArgumentError("Column $name can be cetegorical."))
+    throw(ArgumentError("The $name column must be cetegorical."))
   end
 
   xl = levels(x)
