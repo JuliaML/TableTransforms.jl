@@ -955,32 +955,6 @@
     @test rt == rtₒ
   end
 
-  @testset "RowTable" begin
-    a = [3, 2, 1, 4, 5, 3]
-    b = [1, 4, 4, 5, 8, 5]
-    c = [1, 1, 6, 2, 4, 1]
-    t = Table(; a, b, c)
-    T = RowTable()
-    n, c = apply(T, t)
-    tₒ = revert(T, n, c)
-    @test typeof(n) <: Vector
-    @test Tables.rowaccess(n)
-    @test typeof(tₒ) <: Table
-  end
-
-  @testset "ColTable" begin
-    a = [3, 2, 1, 4, 5, 3]
-    b = [1, 4, 4, 5, 8, 5]
-    c = [1, 1, 6, 2, 4, 1]
-    t = Table(; a, b, c)
-    T = ColTable()
-    n, c = apply(T, t)
-    tₒ = revert(T, n, c)
-    @test typeof(n) <: NamedTuple
-    @test Tables.columnaccess(n)
-    @test typeof(tₒ) <: Table
-  end
-
   @testset "OneHot" begin
     a = categorical(Bool[0, 1, 1, 0, 1, 1])
     b = categorical(["m", "f", "m", "m", "m", "f"])
@@ -1053,6 +1027,32 @@
     # invalid column selection
     @test_throws AssertionError apply(OneHot(:c), t)
     @test_throws AssertionError apply(OneHot("c"), t)
+  end
+
+  @testset "RowTable" begin
+    a = [3, 2, 1, 4, 5, 3]
+    b = [1, 4, 4, 5, 8, 5]
+    c = [1, 1, 6, 2, 4, 1]
+    t = Table(; a, b, c)
+    T = RowTable()
+    n, c = apply(T, t)
+    tₒ = revert(T, n, c)
+    @test typeof(n) <: Vector
+    @test Tables.rowaccess(n)
+    @test typeof(tₒ) <: Table
+  end
+
+  @testset "ColTable" begin
+    a = [3, 2, 1, 4, 5, 3]
+    b = [1, 4, 4, 5, 8, 5]
+    c = [1, 1, 6, 2, 4, 1]
+    t = Table(; a, b, c)
+    T = ColTable()
+    n, c = apply(T, t)
+    tₒ = revert(T, n, c)
+    @test typeof(n) <: NamedTuple
+    @test Tables.columnaccess(n)
+    @test typeof(tₒ) <: Table
   end
 
   @testset "Identity" begin
