@@ -5,7 +5,8 @@
 """
     OneHotEncoding(col)
     
-docstring.
+Transforms categorical column `col` into one-hot columns of levels
+returned by the `levels` function of CategoricalArrays.jl.
 
 # Examples
 
