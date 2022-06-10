@@ -60,14 +60,11 @@ Get the latest stable release with Julia's package manager:
 
 ## Usage
 
-### Basic
-
-Below is a quick example with simple transforms:
+Consider the following table and its corner plot:
 
 ```@example usage
 using TableTransforms
 using Plots, PairPlots
-using Distributions
 using Random; Random.seed!(2) # hide
 gr(format=:png) # hide
 
@@ -83,12 +80,18 @@ table = (; a, b, c, d)
 table |> corner
 ```
 
+We can convert the columns to PCA scores:
+
 ```@example usage
 # convert to PCA scores
 table |> PCA() |> corner
 ```
 
+or to any marginal distribution:
+
 ```@example usage
+using Distributions
+
 # convert to any Distributions.jl
 table |> Quantile(Normal()) |> corner
 ```
@@ -118,7 +121,7 @@ The branches are placed in parallel with the `⊔` (`\sqcup<tab>`) operator.
 ⊔
 ```
 
-### Advanced
+### Reverting transforms
 
 To revert a pipeline or single transform, use the [`apply`](@ref) and [`revert`](@ref)
 functions instead. The function [`isrevertible`](@ref) can be used to check if a transform is revertible.
@@ -138,7 +141,7 @@ c = [3.4, 2.0, 3.6, -1.0]
 table = (; a, b, c)
 ```
 
-Now, let's choose a transform and check if it is reversible:
+Now, let's choose a transform and check that it is revertible:
 
 ```@example usage
 transform = Center()
@@ -152,11 +155,13 @@ newtable, cache = apply(transform, table)
 newtable
 ```
 
-Using the cache we can reverse the transform:
+Using the cache we can revert the transform:
 
 ```@example usage
 original = revert(transform, newtable, cache)
 ```
+
+### Reapplying transforms
 
 Finally, it is sometimes useful to [`reapply`](@ref) a transform that was
 "fitted" with training data to unseen test data. In this case, the
