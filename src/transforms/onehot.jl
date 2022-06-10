@@ -27,7 +27,7 @@ _colname(col::AbstractString, names) =
   _colname(Symbol(col), names)
 
 function _colname(col::Symbol, names)
-  @assert col ∈ names "Invalid column."
+  @assert col ∈ names "Invalid column selection."
   return col
 end
 
