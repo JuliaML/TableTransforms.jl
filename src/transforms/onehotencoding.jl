@@ -37,7 +37,7 @@ _name(nm, names) =
 function apply(transform::OneHotEncoding, table)
   cols = Tables.columns(table)
   names = collect(Tables.columnnames(cols))
-  columns = [Tables.getcolumn(cols, nm) for nm in names]
+  columns = AbstractVector[Tables.getcolumn(cols, nm) for nm in names]
   
   name = _colname(transform.col, names)
   ind = findfirst(==(name), names)
@@ -69,7 +69,7 @@ end
 function revert(::OneHotEncoding, newtable, cache)
   cols = Tables.columns(newtable)
   names = collect(Tables.columnnames(cols))
-  columns = [Tables.getcolumn(cols, nm) for nm in names]
+  columns = AbstractVector[Tables.getcolumn(cols, nm) for nm in names]
   
   oname, inds, levels, ordered = cache
   x = map(zip(columns[inds]...)) do row
