@@ -981,13 +981,13 @@
     @test typeof(tₒ) <: Table
   end
 
-  @testset "OneHotEncoding" begin
+  @testset "OneHot" begin
     a = categorical(Bool[0, 1, 1, 0, 1, 1])
     b = categorical(["m", "f", "m", "m", "m", "f"])
     c = categorical([3, 2, 2, 1, 1, 3])
     t = Table(; a, b, c)
 
-    T = OneHotEncoding(1)
+    T = OneHot(1)
     n, c = apply(T, t)
     @test Tables.columnnames(n) == (:a_false, :a_true, :b, :c)
     @test n.a_false == Bool[1, 0, 0, 1, 0, 0]
@@ -995,7 +995,7 @@
     tₒ = revert(T, n, c)
     @test t == tₒ
 
-    T = OneHotEncoding(:b)
+    T = OneHot(:b)
     n, c = apply(T, t)
     @test Tables.columnnames(n) == (:a, :b_f, :b_m, :c)
     @test n.b_f == Bool[0, 1, 0, 0, 0, 1]
@@ -1003,7 +1003,7 @@
     tₒ = revert(T, n, c)
     @test t == tₒ
 
-    T = OneHotEncoding("c")
+    T = OneHot("c")
     n, c = apply(T, t)
     @test Tables.columnnames(n) == (:a, :b, :c_1, :c_2, :c_3)
     @test n.c_1 == Bool[0, 0, 0, 1, 1, 0]
@@ -1018,7 +1018,7 @@
     b_m = rand(10)
     t   = Table(; b, b_f, b_m)
 
-    T = OneHotEncoding(:b)
+    T = OneHot(:b)
     n, c = apply(T, t)
     @test Tables.columnnames(n) == (:b_f_, :b_m_, :b_f, :b_m)
     @test n.b_f_ == Bool[0, 1, 0, 0, 0, 1]
@@ -1033,7 +1033,7 @@
     b_m_ = rand(10)
     t    = Table(; b, b_f, b_m, b_f_, b_m_)
 
-    T = OneHotEncoding(:b)
+    T = OneHot(:b)
     n, c = apply(T, t)
     @test Tables.columnnames(n) == (:b_f__, :b_m__, :b_f, :b_m, :b_f_, :b_m_)
     @test n.b_f__ == Bool[0, 1, 0, 0, 0, 1]
@@ -1047,12 +1047,12 @@
     t = Table(; a, b)
 
     # non categorical column
-    @test_throws ArgumentError apply(OneHotEncoding(:b), t)
-    @test_throws ArgumentError apply(OneHotEncoding("b"), t)
+    @test_throws AssertionError apply(OneHot(:b), t)
+    @test_throws AssertionError apply(OneHot("b"), t)
 
     # invalid column selection
-    @test_throws AssertionError apply(OneHotEncoding(:c), t)
-    @test_throws AssertionError apply(OneHotEncoding("c"), t)
+    @test_throws AssertionError apply(OneHot(:c), t)
+    @test_throws AssertionError apply(OneHot("c"), t)
   end
 
   @testset "Identity" begin

@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    OneHotEncoding(col)
+    OneHot(col)
     
 Transforms categorical column `col` into one-hot columns of levels
 returned by the `levels` function of CategoricalArrays.jl.
@@ -11,16 +11,16 @@ returned by the `levels` function of CategoricalArrays.jl.
 # Examples
 
 ```julia
-OneHotEncoding(1)
-OneHotEncoding(:a)
-OneHotEncoding("a")
+OneHot(1)
+OneHot(:a)
+OneHot("a")
 ```
 """
-struct OneHotEncoding{S<:ColSelector} <: Stateless
+struct OneHot{S<:ColSelector} <: Stateless
   col::S
 end
 
-isrevertible(::Type{<:OneHotEncoding}) = true
+isrevertible(::Type{<:OneHot}) = true
 
 _colname(col::Integer, names) = names[col]
 _colname(col::AbstractString, names) =
@@ -34,18 +34,16 @@ end
 _name(nm, names) = 
   nm ∈ names ? _name(Symbol("$(nm)_"), names) : nm
 
-function apply(transform::OneHotEncoding, table)
+function apply(transform::OneHot, table)
   cols = Tables.columns(table)
   names = collect(Tables.columnnames(cols))
-  columns = AbstractVector[Tables.getcolumn(cols, nm) for nm in names]
+  columns = Any[Tables.getcolumn(cols, nm) for nm in names]
   
   name = _colname(transform.col, names)
   ind = findfirst(==(name), names)
   x = columns[ind]
 
-  if !isa(x, CategoricalArray)
-    throw(ArgumentError("The $name column must be cetegorical."))
-  end
+  assert_categorical(x)
 
   xl = levels(x)
   onehot = map(xl) do l
@@ -54,11 +52,11 @@ function apply(transform::OneHotEncoding, table)
     nm, x .== l
   end
 
-  newcols, newnms = last.(onehot), first.(onehot)
+  newnms, newcols = first.(onehot), last.(onehot)
 
-  splice!(columns, ind, newcols)
   splice!(names, ind, newnms)
-
+  splice!(columns, ind, newcols)
+  
   inds = ind:(ind + length(newnms) - 1)
 
   𝒯 = (; zip(names, columns)...)
@@ -66,10 +64,10 @@ function apply(transform::OneHotEncoding, table)
   newtable, (name, inds, xl, isordered(x))
 end
 
-function revert(::OneHotEncoding, newtable, cache)
+function revert(::OneHot, newtable, cache)
   cols = Tables.columns(newtable)
   names = collect(Tables.columnnames(cols))
-  columns = AbstractVector[Tables.getcolumn(cols, nm) for nm in names]
+  columns = Any[Tables.getcolumn(cols, nm) for nm in names]
   
   oname, inds, levels, ordered = cache
   x = map(zip(columns[inds]...)) do row
@@ -78,8 +76,8 @@ function revert(::OneHotEncoding, newtable, cache)
 
   ocolumn = categorical(x; levels, ordered)
 
-  splice!(columns, inds, [ocolumn])
   splice!(names, inds, [oname])
+  splice!(columns, inds, [ocolumn])
 
   𝒯 = (; zip(names, columns)...)
   𝒯 |> Tables.materializer(newtable)

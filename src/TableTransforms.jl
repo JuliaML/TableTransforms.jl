@@ -38,7 +38,7 @@ export
   Coerce,
   RowTable,
   ColTable,
-  OneHotEncoding,
+  OneHot,
   Identity,
   Center,
   Scale,
