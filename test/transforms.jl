@@ -1,6 +1,8 @@
 @testset "Transforms" begin
-  # using MersenneTwister for compatibility between Julia versions
+  # using MersenneTwister for backward
+  # compatibility with old Julia versions
   rng = MersenneTwister(42)
+
   @testset "Select" begin
     a = rand(4000)
     b = rand(4000)
@@ -304,44 +306,242 @@
     @test_throws AssertionError apply(Reject(["x1", "x2", "y1", "y2"]), t)
   end
 
-  @testset "TableSelection" begin
+  @testset "Rename" begin
     a = rand(4000)
     b = rand(4000)
     c = rand(4000)
     d = rand(4000)
-    e = rand(4000)
-    f = rand(4000)
-    t = Table(; a, b, c, d, e, f)
+    t = Table(; a, b, c, d)
 
-    # Tables.jl interface
-    s = TableTransforms.TableSelection(t, [:a, :b, :e])
-    @test Tables.istable(s) == true
-    @test Tables.columnaccess(s) == true
-    @test Tables.rowaccess(s) == false
-    @test Tables.columns(s) === s
-    @test Tables.columnnames(s) == [:a, :b, :e]
-    @test Tables.schema(s).names == (:a, :b, :e)
-    @test Tables.schema(s).types == (Float64, Float64, Float64)
-    @test Tables.materializer(s) == Tables.materializer(t)
+    T = Rename(Dict(:a => :x))
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:x, :b, :c, :d)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
 
-    # getcolumn
-    cols = Tables.columns(t)
-    @test Tables.getcolumn(s, :a) == Tables.getcolumn(cols, :a)
-    @test Tables.getcolumn(s, 1) == Tables.getcolumn(cols, 1)
-    @test Tables.getcolumn(s, 3) == Tables.getcolumn(cols, :e)
+    T = Rename(Dict(:a => :x, :c => :y))
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:x, :b, :y, :d)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # rename with dictionary of strings
+    T = Rename(Dict("a" => "x", "c" => "y"))
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:x, :b, :y, :d)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # rename with mixed dictionary
+    T = Rename(Dict("a" => :x, :c => "y"))
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:x, :b, :y, :d)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # rename with string pairs
+    T = Rename("a" => "x", "c" => "y")
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:x, :b, :y, :d)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # rename with symbol pairs
+    T = Rename(:a => :x, :c => :y)
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:x, :b, :y, :d)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # rename with mixed pairs
+    T = Rename("a" => :x)
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:x, :b, :c, :d)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+    
+    T = Rename("a" => :x, :c => "y")
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:x, :b, :y, :d)
+    tₒ = revert(T, n, c)
+    @test t == tₒ
 
     # row table
     rt = Tables.rowtable(t)
-    s = TableTransforms.TableSelection(rt, [:a, :b, :e])
-    cols = Tables.columns(rt)
-    @test Tables.getcolumn(s, :a) == Tables.getcolumn(cols, :a)
-    @test Tables.getcolumn(s, 1) == Tables.getcolumn(cols, 1)
-    @test Tables.getcolumn(s, 3) == Tables.getcolumn(cols, :e)
+    T = Rename(:a => :x, :c => :y)
+    n, c = apply(T, rt)
+    @test Tables.isrowtable(n)
+    rtₒ = revert(T, n, c)
+    @test rt == rtₒ
 
-    # throws
-    @test_throws AssertionError TableTransforms.TableSelection(t, [:a, :b, :z])
-    s = TableTransforms.TableSelection(t, [:a, :b, :e])
-    @test_throws ErrorException Tables.getcolumn(s, :f)
+    # reapply test
+    T = Rename(:b => :x, :d => :y)
+    n1, c1 = apply(T, t)
+    n2 = reapply(T, t, c1)
+    @test n1 == n2
+  end
+
+  @testset "StdNames" begin
+    names = ["apple banana", "apple\tbanana", "apple_banana", "apple-banana", "apple_Banana"]
+    for name in names
+      @test TableTransforms._camel(name) == "AppleBanana"
+      @test TableTransforms._snake(name) == "apple_banana"
+      @test TableTransforms._upper(name) == "APPLEBANANA"
+    end
+
+    names = ["a", "A", "_a", "_A", "a ", "A "]
+    for name in names
+      @test TableTransforms._camel(name) == "A"
+      @test TableTransforms._snake(name) == "a"
+      @test TableTransforms._upper(name) == "A"
+    end
+
+    # special characters
+    name = "a&B"
+    @test TableTransforms._clean(name) == "aB"
+    
+    name = "apple#"
+    @test TableTransforms._clean(name) == "apple"
+
+    name = "apple-tree"
+    @test TableTransforms._clean(name) == "apple-tree"
+
+    # invariance test
+    names = ["AppleTree", "BananaFruit", "PearSeed"]
+    for name in names
+      @test TableTransforms._camel(name) == name
+    end
+
+    names = ["apple_tree", "banana_fruit", "pear_seed"]
+    for name in names
+      @test TableTransforms._snake(name) == name
+    end
+
+    names = ["APPLETREE", "BANANAFRUIT", "PEARSEED"]
+    for name in names
+      @test TableTransforms._upper(name) == name
+    end
+
+    # uniqueness test
+    names = (Symbol("AppleTree"), Symbol("apple tree"), Symbol("apple_tree"))
+    cols = ([1,2,3], [4,5,6], [7,8,9])
+    t = Table(; zip(names, cols)...)
+    rt = Tables.rowtable(t)
+    T = StdNames(:upper)
+    n, c = apply(T, rt)
+    columns = Tables.columns(n)
+    columnnames = Tables.columnnames(columns)
+    @test columnnames == (:APPLETREE, :APPLETREE_, :APPLETREE__)
+    
+    # row table test
+    names = (:a, Symbol("apple tree"), Symbol("banana tree"))
+    cols = ([1,2,3], [4,5,6], [7,8,9])
+    t = Table(; zip(names, cols)...)
+    rt = Tables.rowtable(t)
+    T = StdNames()
+    n, c = apply(T, rt)
+    @test Tables.isrowtable(n)
+    @test isrevertible(T)
+    rtₒ = revert(T, n, c)
+    @test rt == rtₒ
+
+    # reapply test
+    T = StdNames()
+    n1, c1 = apply(T, rt)
+    n2 = reapply(T, n1, c1)
+    @test n1 == n2
+  end
+
+  @testset "Sort" begin
+    a = [5, 3, 1, 2]
+    b = [2, 4, 8, 5]
+    c = [3, 2, 1, 4]
+    d = [4, 3, 7, 5]
+    t = Table(; a, b, c, d)
+
+    T = Sort(:a)
+    n, c = apply(T, t)
+    @test Tables.schema(t) == Tables.schema(n)
+    @test n.a == [1, 2, 3, 5]
+    @test n.b == [8, 5, 4, 2]
+    @test n.c == [1, 4, 2, 3]
+    @test n.d == [7, 5, 3, 4]
+    @test isrevertible(T) == true
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # descending order test
+    T = Sort(:b, rev=true)
+    n, c = apply(T, t)
+    @test Tables.schema(t) == Tables.schema(n)
+    @test n.a == [1, 2, 3, 5]
+    @test n.b == [8, 5, 4, 2]
+    @test n.c == [1, 4, 2, 3]
+    @test n.d == [7, 5, 3, 4]
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # random test
+    a = rand(200)
+    b = rand(200)
+    c = rand(200)
+    d = rand(200)
+    t = Table(; a, b, c, d)
+
+    T = Sort(:c)
+    n, c = apply(T, t)
+
+    @test Tables.schema(t) == Tables.schema(n)
+    @test issetequal(Tables.rowtable(t), Tables.rowtable(n))
+    @test issorted(Tables.getcolumn(n, :c))
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # sort by multiple columns
+    a = [-2, -1, -2, 2, 1, -1, 1, 2]
+    b = [-8, -4, 6, 9, 8, 2, 2, -8]
+    c = [-3, 6, 5, 4, -8, -7, -1, -10]
+    t = Table(; a, b, c)
+
+    T = Sort(1, 2)
+    n, c = apply(T, t)
+    @test n.a == [-2, -2, -1, -1, 1, 1, 2, 2]
+    @test n.b == [-8, 6, -4, 2, 2, 8, -8, 9]
+    @test n.c == [-3, 5, 6, -7, -1, -8, -10, 4]
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    T = Sort([:a, :c], rev=true)
+    n, c = apply(T, t)
+    @test n.a == [2, 2, 1, 1, -1, -1, -2, -2]
+    @test n.b == [9, -8, 2, 8, -4, 2, 6, -8]
+    @test n.c == [4, -10, -1, -8, 6, -7, 5, -3]
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    T = Sort(("b", "c"), by=row -> abs.(row))
+    n, c = apply(T, t)
+    @test n.a == [1, -1, -1, -2, -2, 1, 2, 2]
+    @test n.b == [2, 2, -4, 6, -8, 8, -8, 9]
+    @test n.c == [-1, -7, 6, 5, -3, -8, -10, 4]
+    tₒ = revert(T, n, c)
+    @test t == tₒ
+
+    # throws: Sort without arguments
+    @test_throws ArgumentError Sort()
+    @test_throws ArgumentError Sort(())
+
+    # throws: empty selection
+    @test_throws AssertionError apply(Sort(r"x"), t)
+    @test_throws AssertionError apply(Sort(Symbol[]), t)
+    @test_throws AssertionError apply(Sort(String[]), t)
+
+    # throws: columns that do not exist in the original table
+    @test_throws AssertionError apply(Sort([:d, :e]), t)
+    @test_throws AssertionError apply(Sort(("d", "e")), t)
+
+    # Invalid kwarg
+    @test_throws MethodError apply(Sort(:a, :b, test=1), t)
   end
 
   @testset "Filter" begin
@@ -630,152 +830,6 @@
     @test_throws AssertionError apply(DropMissing(("g", "h")), t)
   end
 
-  @testset "Rename" begin
-    a = rand(4000)
-    b = rand(4000)
-    c = rand(4000)
-    d = rand(4000)
-    t = Table(; a, b, c, d)
-
-    T = Rename(Dict(:a => :x))
-    n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:x, :b, :c, :d)
-    tₒ = revert(T, n, c)
-    @test t == tₒ
-
-    T = Rename(Dict(:a => :x, :c => :y))
-    n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:x, :b, :y, :d)
-    tₒ = revert(T, n, c)
-    @test t == tₒ
-
-    # rename with dictionary of strings
-    T = Rename(Dict("a" => "x", "c" => "y"))
-    n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:x, :b, :y, :d)
-    tₒ = revert(T, n, c)
-    @test t == tₒ
-
-    # rename with mixed dictionary
-    T = Rename(Dict("a" => :x, :c => "y"))
-    n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:x, :b, :y, :d)
-    tₒ = revert(T, n, c)
-    @test t == tₒ
-
-    # rename with string pairs
-    T = Rename("a" => "x", "c" => "y")
-    n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:x, :b, :y, :d)
-    tₒ = revert(T, n, c)
-    @test t == tₒ
-
-    # rename with symbol pairs
-    T = Rename(:a => :x, :c => :y)
-    n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:x, :b, :y, :d)
-    tₒ = revert(T, n, c)
-    @test t == tₒ
-
-    # rename with mixed pairs
-    T = Rename("a" => :x)
-    n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:x, :b, :c, :d)
-    tₒ = revert(T, n, c)
-    @test t == tₒ
-    
-    T = Rename("a" => :x, :c => "y")
-    n, c = apply(T, t)
-    @test Tables.columnnames(n) == (:x, :b, :y, :d)
-    tₒ = revert(T, n, c)
-    @test t == tₒ
-
-    # row table
-    rt = Tables.rowtable(t)
-    T = Rename(:a => :x, :c => :y)
-    n, c = apply(T, rt)
-    @test Tables.isrowtable(n)
-    rtₒ = revert(T, n, c)
-    @test rt == rtₒ
-
-    # reapply test
-    T = Rename(:b => :x, :d => :y)
-    n1, c1 = apply(T, t)
-    n2 = reapply(T, t, c1)
-    @test n1 == n2
-  end
-
-  @testset "StdNames" begin
-    names = ["apple banana", "apple\tbanana", "apple_banana", "apple-banana", "apple_Banana"]
-    for name in names
-      @test TableTransforms._camel(name) == "AppleBanana"
-      @test TableTransforms._snake(name) == "apple_banana"
-      @test TableTransforms._upper(name) == "APPLEBANANA"
-    end
-
-    names = ["a", "A", "_a", "_A", "a ", "A "]
-    for name in names
-      @test TableTransforms._camel(name) == "A"
-      @test TableTransforms._snake(name) == "a"
-      @test TableTransforms._upper(name) == "A"
-    end
-
-    # special characters
-    name = "a&B"
-    @test TableTransforms._clean(name) == "aB"
-    
-    name = "apple#"
-    @test TableTransforms._clean(name) == "apple"
-
-    name = "apple-tree"
-    @test TableTransforms._clean(name) == "apple-tree"
-
-    # invariance test
-    names = ["AppleTree", "BananaFruit", "PearSeed"]
-    for name in names
-      @test TableTransforms._camel(name) == name
-    end
-
-    names = ["apple_tree", "banana_fruit", "pear_seed"]
-    for name in names
-      @test TableTransforms._snake(name) == name
-    end
-
-    names = ["APPLETREE", "BANANAFRUIT", "PEARSEED"]
-    for name in names
-      @test TableTransforms._upper(name) == name
-    end
-
-    # uniqueness test
-    names = (Symbol("AppleTree"), Symbol("apple tree"), Symbol("apple_tree"))
-    cols = ([1,2,3], [4,5,6], [7,8,9])
-    t = Table(; zip(names, cols)...)
-    rt = Tables.rowtable(t)
-    T = StdNames(:upper)
-    n, c = apply(T, rt)
-    columns = Tables.columns(n)
-    columnnames = Tables.columnnames(columns)
-    @test columnnames == (:APPLETREE, :APPLETREE_, :APPLETREE__)
-    
-    # row table test
-    names = (:a, Symbol("apple tree"), Symbol("banana tree"))
-    cols = ([1,2,3], [4,5,6], [7,8,9])
-    t = Table(; zip(names, cols)...)
-    rt = Tables.rowtable(t)
-    T = StdNames()
-    n, c = apply(T, rt)
-    @test Tables.isrowtable(n)
-    @test isrevertible(T)
-    rtₒ = revert(T, n, c)
-    @test rt == rtₒ
-
-    # reapply test
-    T = StdNames()
-    n1, c1 = apply(T, rt)
-    n2 = reapply(T, n1, c1)
-    @test n1 == n2
-  end
-
   @testset "Replace" begin
     a = [3, 2, 1, 4, 5, 3]
     b = [2, 4, 4, 5, 8, 5]
@@ -955,6 +1009,120 @@
     @test rt == rtₒ
   end
 
+  @testset "Levels" begin
+    a = rand([true, false], 50)
+    b = rand(["y", "n"], 50)
+    c = rand(1:3, 50)
+    t = Table(; a, b, c)
+
+    T = Levels(2 => ["n", "y", "m"])
+    n, c = apply(T, t)
+    @test levels(n.b) == ["n", "y", "m"]
+    @test isordered(n.b) == false
+    tₒ = revert(T, n, c)
+    @test tₒ == t
+
+    T = Levels(:b => ["n", "y", "m"], :c => 1:4, ordered=[:c])
+    n, c = apply(T, t)
+    @test levels(n.b) == ["n", "y", "m"]
+    @test isordered(n.b) == false
+    @test levels(n.c) == [1, 2, 3, 4]
+    @test isordered(n.c) == true
+    tₒ = revert(T, n, c)
+    @test tₒ == t
+
+    T = Levels("b" => ["n", "y", "m"], "c" => 1:4, ordered=["b"])
+    n, c = apply(T, t)
+    @test levels(n.b) == ["n", "y", "m"]
+    @test isordered(n.b) == true
+    @test levels(n.c) == [1, 2, 3, 4]
+    @test isordered(n.c) == false
+    tₒ = revert(T, n, c)
+    @test tₒ == t
+
+    # categorical columns
+    a = categorical(["yes", "no", "no", "no", "yes"]) 
+    b = categorical([1, 2, 4, 2, 8], ordered=false) 
+    c = categorical([1, 2, 1, 2, 1]) 
+    d = [1, 23, 5, 7, 7]
+    e = categorical([2, 3, 1, 4, 1])
+    t = Table(; a, b, c, d, e)
+
+    T = Levels(:a => ["yes", "no"], :c => [1, 2, 4], :d => [1, 23, 5, 7], :e => 1:5)
+    n, c = apply(T, t)
+    @test levels(n.a) == ["yes", "no"]
+    @test levels(n.c) == [1, 2, 4]
+    @test levels(n.d) == [1, 23, 5, 7]
+    @test levels(n.e) == [1, 2, 3, 4, 5]
+    tₒ = revert(T, n, c)
+    @test levels(tₒ.a) == ["no", "yes"]
+    @test levels(tₒ.c) == [1, 2]
+    @test levels(tₒ.e) == [1, 2, 3, 4]
+
+    T = Levels("a" => ["yes", "no"], "c" => [1, 2, 4])
+    n, c = apply(T, t)
+    @test levels(n.a) == ["yes", "no"]
+    @test levels(n.c) == [1, 2, 4]
+    tₒ = revert(T, n, c)
+    @test levels(tₒ.a) == ["no", "yes"]
+    @test levels(tₒ.c) == [1, 2]
+
+    T = Levels(:a => ["yes", "no"], :c => [1, 2, 4], :d => [1, 23, 5, 7])
+    n, c = apply(T, t)
+    @test levels(n.a) == ["yes", "no"]
+    @test levels(n.c) == [1, 2, 4]
+    @test levels(n.d) == [1, 23, 5, 7]
+    tₒ = revert(T, n, c)
+    @test levels(tₒ.a) == ["no", "yes"]
+    @test levels(tₒ.c) == [1, 2]
+
+    T = Levels("a" => ["yes", "no"], "c" => [1, 2, 4], "e" => 5:-1:1, ordered=["e"])
+    n, c = apply(T, t)
+    @test levels(n.a) == ["yes", "no"]
+    @test levels(n.c) == [1, 2, 4]
+    @test levels(n.e) == [5, 4, 3, 2, 1]
+    @test isordered(n.a) == false
+    @test isordered(n.c) == false
+    @test isordered(n.e) == true
+    tₒ = revert(T, n, c)
+    @test levels(tₒ.e) == [1, 2, 3, 4]
+    @test isordered(tₒ.e) == false
+
+    T = Levels(:a => ["yes", "no"], :c => [1, 2, 4], :d => [1, 23, 5, 7], ordered=[:a, :d])
+    n, c = apply(T, t)
+    @test levels(n.a) == ["yes", "no"]
+    @test levels(n.c) == [1, 2, 4]
+    @test levels(n.d) == [1, 23, 5, 7]
+    @test isordered(n.a) == true
+    @test isordered(n.c) == false
+    @test isordered(n.d) == true
+    tₒ = revert(T, n, c)
+    @test typeof(tₒ.d) == Vector{Int64}
+    @test isordered(tₒ.a) == false
+
+    a = rand([true, false], 50)
+    b = rand(["y", "n"], 50)
+    c = rand(1:3, 50)
+    t = Table(; a, b, c)
+
+    # throws: Levels without arguments
+    @test_throws ArgumentError Levels()
+
+    # throws: columns that do not exist in the original table
+    T = Levels(:x => ["n", "y", "m"], :y => 1:4)
+    @test_throws AssertionError apply(T, t)
+    T = Levels("x" => ["n", "y", "m"], "y" => 1:4)
+    @test_throws AssertionError apply(T, t)
+
+    # throws: invalid ordered column selection
+    T = Levels(:b => ["n", "y", "m"], :c => 1:4, ordered=[:a])
+    @test_throws AssertionError apply(T, t)
+    T = Levels("b" => ["n", "y", "m"], "c" => 1:4, ordered=["a"])
+    @test_throws AssertionError apply(T, t)
+    T = Levels("b" => ["n", "y", "m"], "c" => 1:4, ordered=r"xy")
+    @test_throws AssertionError apply(T, t)
+  end
+
   @testset "OneHot" begin
     a = categorical(Bool[0, 1, 1, 0, 1, 1])
     b = categorical(["m", "f", "m", "m", "m", "f"])
@@ -1029,32 +1197,6 @@
     @test_throws AssertionError apply(OneHot("c"), t)
   end
 
-  @testset "RowTable" begin
-    a = [3, 2, 1, 4, 5, 3]
-    b = [1, 4, 4, 5, 8, 5]
-    c = [1, 1, 6, 2, 4, 1]
-    t = Table(; a, b, c)
-    T = RowTable()
-    n, c = apply(T, t)
-    tₒ = revert(T, n, c)
-    @test typeof(n) <: Vector
-    @test Tables.rowaccess(n)
-    @test typeof(tₒ) <: Table
-  end
-
-  @testset "ColTable" begin
-    a = [3, 2, 1, 4, 5, 3]
-    b = [1, 4, 4, 5, 8, 5]
-    c = [1, 1, 6, 2, 4, 1]
-    t = Table(; a, b, c)
-    T = ColTable()
-    n, c = apply(T, t)
-    tₒ = revert(T, n, c)
-    @test typeof(n) <: NamedTuple
-    @test Tables.columnaccess(n)
-    @test typeof(tₒ) <: Table
-  end
-
   @testset "Identity" begin
     x = rand(4000)
     y = rand(4000)
@@ -1075,7 +1217,6 @@
   end
 
   @testset "Center" begin
-    # using rng for reproducible results
     x = rand(rng, Normal(2, 1), 4000)
     y = rand(rng, Normal(5, 1), 4000)
     t = Table(; x, y)
@@ -1117,7 +1258,6 @@
     tₒ = revert(T, n, c)
     @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
-    # using rng for reproducible results
     x = rand(rng, Normal(4, 3), 4000)
     y = rand(rng, Normal(7, 5), 4000)
     t = Table(; x, y)
@@ -1160,7 +1300,6 @@
   end
 
   @testset "ZScore" begin
-    # using rng for reproducible results
     x = rand(rng, Normal(7, 10), 4000)
     y = rand(rng, Normal(15, 2), 4000)
     t = Table(; x, y)
@@ -1191,6 +1330,15 @@
     @test Tables.isrowtable(n)
     rtₒ = revert(T, n, c)
     @test Tables.matrix(rt) ≈ Tables.matrix(rtₒ)
+
+    # make sure transform works with single-column tables
+    t = Table(x=rand(10000))
+    n, c = apply(ZScore(), t)
+    r = revert(ZScore(), n, c)
+    @test isapprox(mean(n.x), 0.0, atol=1e-8)
+    @test isapprox(std(n.x), 1.0, atol=1e-8)
+    @test isapprox(mean(r.x), mean(t.x), atol=1e-8)
+    @test isapprox(std(r.x), std(t.x), atol=1e-8)
   end
 
   @testset "Quantile" begin
@@ -1350,212 +1498,6 @@
     @test_throws AssertionError revert(T, n, c)
   end
 
-  @testset "Levels" begin
-    a = rand([true, false], 50)
-    b = rand(["y", "n"], 50)
-    c = rand(1:3, 50)
-    t = Table(; a, b, c)
-
-    T = Levels(2 => ["n", "y", "m"])
-    n, c = apply(T, t)
-    @test levels(n.b) == ["n", "y", "m"]
-    @test isordered(n.b) == false
-    tₒ = revert(T, n, c)
-    @test tₒ == t
-
-    T = Levels(:b => ["n", "y", "m"], :c => 1:4, ordered=[:c])
-    n, c = apply(T, t)
-    @test levels(n.b) == ["n", "y", "m"]
-    @test isordered(n.b) == false
-    @test levels(n.c) == [1, 2, 3, 4]
-    @test isordered(n.c) == true
-    tₒ = revert(T, n, c)
-    @test tₒ == t
-
-    T = Levels("b" => ["n", "y", "m"], "c" => 1:4, ordered=["b"])
-    n, c = apply(T, t)
-    @test levels(n.b) == ["n", "y", "m"]
-    @test isordered(n.b) == true
-    @test levels(n.c) == [1, 2, 3, 4]
-    @test isordered(n.c) == false
-    tₒ = revert(T, n, c)
-    @test tₒ == t
-
-    # categorical columns
-    a = categorical(["yes", "no", "no", "no", "yes"]) 
-    b = categorical([1, 2, 4, 2, 8], ordered=false) 
-    c = categorical([1, 2, 1, 2, 1]) 
-    d = [1, 23, 5, 7, 7]
-    e = categorical([2, 3, 1, 4, 1])
-    t = Table(; a, b, c, d, e)
-
-    T = Levels(:a => ["yes", "no"], :c => [1, 2, 4], :d => [1, 23, 5, 7], :e => 1:5)
-    n, c = apply(T, t)
-    @test levels(n.a) == ["yes", "no"]
-    @test levels(n.c) == [1, 2, 4]
-    @test levels(n.d) == [1, 23, 5, 7]
-    @test levels(n.e) == [1, 2, 3, 4, 5]
-    tₒ = revert(T, n, c)
-    @test levels(tₒ.a) == ["no", "yes"]
-    @test levels(tₒ.c) == [1, 2]
-    @test levels(tₒ.e) == [1, 2, 3, 4]
-
-    T = Levels("a" => ["yes", "no"], "c" => [1, 2, 4])
-    n, c = apply(T, t)
-    @test levels(n.a) == ["yes", "no"]
-    @test levels(n.c) == [1, 2, 4]
-    tₒ = revert(T, n, c)
-    @test levels(tₒ.a) == ["no", "yes"]
-    @test levels(tₒ.c) == [1, 2]
-
-    T = Levels(:a => ["yes", "no"], :c => [1, 2, 4], :d => [1, 23, 5, 7])
-    n, c = apply(T, t)
-    @test levels(n.a) == ["yes", "no"]
-    @test levels(n.c) == [1, 2, 4]
-    @test levels(n.d) == [1, 23, 5, 7]
-    tₒ = revert(T, n, c)
-    @test levels(tₒ.a) == ["no", "yes"]
-    @test levels(tₒ.c) == [1, 2]
-
-    T = Levels("a" => ["yes", "no"], "c" => [1, 2, 4], "e" => 5:-1:1, ordered=["e"])
-    n, c = apply(T, t)
-    @test levels(n.a) == ["yes", "no"]
-    @test levels(n.c) == [1, 2, 4]
-    @test levels(n.e) == [5, 4, 3, 2, 1]
-    @test isordered(n.a) == false
-    @test isordered(n.c) == false
-    @test isordered(n.e) == true
-    tₒ = revert(T, n, c)
-    @test levels(tₒ.e) == [1, 2, 3, 4]
-    @test isordered(tₒ.e) == false
-
-    T = Levels(:a => ["yes", "no"], :c => [1, 2, 4], :d => [1, 23, 5, 7], ordered=[:a, :d])
-    n, c = apply(T, t)
-    @test levels(n.a) == ["yes", "no"]
-    @test levels(n.c) == [1, 2, 4]
-    @test levels(n.d) == [1, 23, 5, 7]
-    @test isordered(n.a) == true
-    @test isordered(n.c) == false
-    @test isordered(n.d) == true
-    tₒ = revert(T, n, c)
-    @test typeof(tₒ.d) == Vector{Int64}
-    @test isordered(tₒ.a) == false
-
-    a = rand([true, false], 50)
-    b = rand(["y", "n"], 50)
-    c = rand(1:3, 50)
-    t = Table(; a, b, c)
-
-    # throws: Levels without arguments
-    @test_throws ArgumentError Levels()
-
-    # throws: columns that do not exist in the original table
-    T = Levels(:x => ["n", "y", "m"], :y => 1:4)
-    @test_throws AssertionError apply(T, t)
-    T = Levels("x" => ["n", "y", "m"], "y" => 1:4)
-    @test_throws AssertionError apply(T, t)
-
-    # throws: invalid ordered column selection
-    T = Levels(:b => ["n", "y", "m"], :c => 1:4, ordered=[:a])
-    @test_throws AssertionError apply(T, t)
-    T = Levels("b" => ["n", "y", "m"], "c" => 1:4, ordered=["a"])
-    @test_throws AssertionError apply(T, t)
-    T = Levels("b" => ["n", "y", "m"], "c" => 1:4, ordered=r"xy")
-    @test_throws AssertionError apply(T, t)
-  end
-
-  @testset "Sort" begin
-    a = [5, 3, 1, 2]
-    b = [2, 4, 8, 5]
-    c = [3, 2, 1, 4]
-    d = [4, 3, 7, 5]
-    t = Table(; a, b, c, d)
-
-    T = Sort(:a)
-    n, c = apply(T, t)
-    @test Tables.schema(t) == Tables.schema(n)
-    @test n.a == [1, 2, 3, 5]
-    @test n.b == [8, 5, 4, 2]
-    @test n.c == [1, 4, 2, 3]
-    @test n.d == [7, 5, 3, 4]
-    @test isrevertible(T) == true
-    tₒ = revert(T, n, c)
-    @test t == tₒ
-
-    # descending order test
-    T = Sort(:b, rev=true)
-    n, c = apply(T, t)
-    @test Tables.schema(t) == Tables.schema(n)
-    @test n.a == [1, 2, 3, 5]
-    @test n.b == [8, 5, 4, 2]
-    @test n.c == [1, 4, 2, 3]
-    @test n.d == [7, 5, 3, 4]
-    tₒ = revert(T, n, c)
-    @test t == tₒ
-
-    # random test
-    a = rand(200)
-    b = rand(200)
-    c = rand(200)
-    d = rand(200)
-    t = Table(; a, b, c, d)
-
-    T = Sort(:c)
-    n, c = apply(T, t)
-
-    @test Tables.schema(t) == Tables.schema(n)
-    @test issetequal(Tables.rowtable(t), Tables.rowtable(n))
-    @test issorted(Tables.getcolumn(n, :c))
-    tₒ = revert(T, n, c)
-    @test t == tₒ
-
-    # sort by multiple columns
-    a = [-2, -1, -2, 2, 1, -1, 1, 2]
-    b = [-8, -4, 6, 9, 8, 2, 2, -8]
-    c = [-3, 6, 5, 4, -8, -7, -1, -10]
-    t = Table(; a, b, c)
-
-    T = Sort(1, 2)
-    n, c = apply(T, t)
-    @test n.a == [-2, -2, -1, -1, 1, 1, 2, 2]
-    @test n.b == [-8, 6, -4, 2, 2, 8, -8, 9]
-    @test n.c == [-3, 5, 6, -7, -1, -8, -10, 4]
-    tₒ = revert(T, n, c)
-    @test t == tₒ
-
-    T = Sort([:a, :c], rev=true)
-    n, c = apply(T, t)
-    @test n.a == [2, 2, 1, 1, -1, -1, -2, -2]
-    @test n.b == [9, -8, 2, 8, -4, 2, 6, -8]
-    @test n.c == [4, -10, -1, -8, 6, -7, 5, -3]
-    tₒ = revert(T, n, c)
-    @test t == tₒ
-
-    T = Sort(("b", "c"), by=row -> abs.(row))
-    n, c = apply(T, t)
-    @test n.a == [1, -1, -1, -2, -2, 1, 2, 2]
-    @test n.b == [2, 2, -4, 6, -8, 8, -8, 9]
-    @test n.c == [-1, -7, 6, 5, -3, -8, -10, 4]
-    tₒ = revert(T, n, c)
-    @test t == tₒ
-
-    # throws: Sort without arguments
-    @test_throws ArgumentError Sort()
-    @test_throws ArgumentError Sort(())
-
-    # throws: empty selection
-    @test_throws AssertionError apply(Sort(r"x"), t)
-    @test_throws AssertionError apply(Sort(Symbol[]), t)
-    @test_throws AssertionError apply(Sort(String[]), t)
-
-    # throws: columns that do not exist in the original table
-    @test_throws AssertionError apply(Sort([:d, :e]), t)
-    @test_throws AssertionError apply(Sort(("d", "e")), t)
-
-    # Invalid kwarg
-    @test_throws MethodError apply(Sort(:a, :b, test=1), t)
-  end
-
   @testset "EigenAnalysis" begin
     # PCA test
     x = rand(Normal(0, 10), 1500)
@@ -1599,7 +1541,6 @@
     tₒ = revert(T, n, c)
     @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
-    # using rng for reproducible results
     x = rand(rng, Normal(0, 10), 4000)
     y = x + rand(rng, Normal(0, 2), 4000)
     t₁ = Table(; x, y)
@@ -1722,6 +1663,32 @@
     @test isapprox(Σ[3,3], 1; atol=1e-6)
   end
 
+  @testset "RowTable" begin
+    a = [3, 2, 1, 4, 5, 3]
+    b = [1, 4, 4, 5, 8, 5]
+    c = [1, 1, 6, 2, 4, 1]
+    t = Table(; a, b, c)
+    T = RowTable()
+    n, c = apply(T, t)
+    tₒ = revert(T, n, c)
+    @test typeof(n) <: Vector
+    @test Tables.rowaccess(n)
+    @test typeof(tₒ) <: Table
+  end
+
+  @testset "ColTable" begin
+    a = [3, 2, 1, 4, 5, 3]
+    b = [1, 4, 4, 5, 8, 5]
+    c = [1, 1, 6, 2, 4, 1]
+    t = Table(; a, b, c)
+    T = ColTable()
+    n, c = apply(T, t)
+    tₒ = revert(T, n, c)
+    @test typeof(n) <: NamedTuple
+    @test Tables.columnaccess(n)
+    @test typeof(tₒ) <: Table
+  end
+
   @testset "Sequential" begin
     x = rand(Normal(0, 10), 1500)
     y = x + rand(Normal(0, 2), 1500)
@@ -1816,17 +1783,5 @@
     @test t == n
     tₒ = revert(T, n, c)
     @test tₒ == t
-  end
-
-  @testset "Miscellaneous" begin
-    # make sure transforms work with
-    # single-column tables
-    t = Table(x=rand(10000))
-    n, c = apply(ZScore(), t)
-    r = revert(ZScore(), n, c)
-    @test isapprox(mean(n.x), 0.0, atol=1e-8)
-    @test isapprox(std(n.x), 1.0, atol=1e-8)
-    @test isapprox(mean(r.x), mean(t.x), atol=1e-8)
-    @test isapprox(std(r.x), std(t.x), atol=1e-8)
   end
 end

@@ -14,18 +14,6 @@ Select
 Reject
 ```
 
-## Filter
-
-```@docs
-Filter
-```
-
-## DropMissing
-
-```@docs
-DropMissing
-```
-
 ## Rename
 
 ```@docs
@@ -36,6 +24,24 @@ Rename
 
 ```@docs
 StdNames
+```
+
+## Sort
+
+```@docs
+Sort
+```
+
+## Filter
+
+```@docs
+Filter
+```
+
+## DropMissing
+
+```@docs
+DropMissing
 ```
 
 ## Replace
@@ -56,22 +62,16 @@ Coalesce
 Coerce
 ```
 
+## Levels
+
+```@docs
+Levels
+```
+
 ## OneHot
 
 ```@docs
 OneHot
-```
-
-## RowTable
-
-```@docs
-RowTable
-```
-
-## ColTable
-
-```@docs
-ColTable
 ```
 
 ## Identity
@@ -122,18 +122,6 @@ Quantile
 Functional
 ```
 
-## Levels
-
-```@docs
-Levels
-```
-
-## Sort
-
-```@docs
-Sort
-```
-
 ## EigenAnalysis
 
 ```@docs
@@ -156,6 +144,18 @@ DRS
 
 ```@docs
 SDS
+```
+
+## RowTable
+
+```@docs
+RowTable
+```
+
+## ColTable
+
+```@docs
+ColTable
 ```
 
 ## Sequential
