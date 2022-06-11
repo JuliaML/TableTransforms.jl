@@ -1197,6 +1197,24 @@
     @test_throws AssertionError apply(OneHot("c"), t)
   end
 
+  @testset "NarrowTypes" begin
+    a = Integer[4, 6, 5, 9, 3, 1]
+    b = Number[1, 0, 1, true, false, true]
+    c = Any[5, 6, 7, 1.5, 1.6, 1.7]
+    t = Table(; a, b, c)
+
+    T = NarrowTypes()
+    n, c = apply(T, t)
+    @test eltype(n.a) == Int
+    @test eltype(n.b) == Integer
+    @test eltype(n.c) == Real
+    tₒ = revert(T, n, c)
+    @test eltype(tₒ.a) == Integer
+    @test eltype(tₒ.b) == Number
+    @test eltype(tₒ.c) == Any 
+    @test t == tₒ
+  end
+
   @testset "Identity" begin
     x = rand(4000)
     y = rand(4000)

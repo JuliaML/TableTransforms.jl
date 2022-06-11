@@ -39,6 +39,7 @@ export
   Coerce,
   Levels,
   OneHot,
+  NarrowTypes,
   Identity,
   Center,
   Scale,
