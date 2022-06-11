@@ -50,6 +50,12 @@ DropMissing
 Replace
 ```
 
+## NarrowTypes
+
+```@docs
+NarrowTypes
+```
+
 ## Coalesce
 
 ```@docs

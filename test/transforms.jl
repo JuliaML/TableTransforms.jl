@@ -921,6 +921,24 @@
     @test_throws ArgumentError Replace()
   end
 
+  @testset "NarrowTypes" begin
+    a = Integer[4, 6, 5, 9, 3, 1]
+    b = Number[1, 0, 1, true, false, true]
+    c = Any[5, 6, 7, 1.5, 1.6, 1.7]
+    t = Table(; a, b, c)
+
+    T = NarrowTypes()
+    n, c = apply(T, t)
+    @test eltype(n.a) == Int
+    @test eltype(n.b) == Integer
+    @test eltype(n.c) == Real
+    tₒ = revert(T, n, c)
+    @test eltype(tₒ.a) == Integer
+    @test eltype(tₒ.b) == Number
+    @test eltype(tₒ.c) == Any 
+    @test t == tₒ
+  end
+
   @testset "Coalesce" begin
     a = [3, 2, missing, 4, 5, 3]
     b = [missing, 4, 4, 5, 8, 5]
@@ -1195,24 +1213,6 @@
     # invalid column selection
     @test_throws AssertionError apply(OneHot(:c), t)
     @test_throws AssertionError apply(OneHot("c"), t)
-  end
-
-  @testset "NarrowTypes" begin
-    a = Integer[4, 6, 5, 9, 3, 1]
-    b = Number[1, 0, 1, true, false, true]
-    c = Any[5, 6, 7, 1.5, 1.6, 1.7]
-    t = Table(; a, b, c)
-
-    T = NarrowTypes()
-    n, c = apply(T, t)
-    @test eltype(n.a) == Int
-    @test eltype(n.b) == Integer
-    @test eltype(n.c) == Real
-    tₒ = revert(T, n, c)
-    @test eltype(tₒ.a) == Integer
-    @test eltype(tₒ.b) == Number
-    @test eltype(tₒ.c) == Any 
-    @test t == tₒ
   end
 
   @testset "Identity" begin
