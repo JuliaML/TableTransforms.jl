@@ -10,6 +10,5 @@ end
 
 # assert that column is categorical
 function assert_categorical(x)
-  T = elscitype(x)
-  @assert T <: Finite "The selected column must be cetegorical."
+  @assert elscitype(x) <: Finite "The selected column must be categorical."
 end
