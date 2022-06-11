@@ -16,30 +16,21 @@ OneHot(:a)
 OneHot("a")
 ```
 """
-struct OneHot{S<:ColSelector} <: Stateless
-  col::S
+struct OneHot{S<:ColSpec} <: Stateless
+  colspec::S
+  function OneHot(col::C) where {C<:ColSelector} 
+    new{Vector{C}}([col])
+  end
 end
 
 isrevertible(::Type{<:OneHot}) = true
 
-_colname(col::Integer, names) = names[col]
-_colname(col::AbstractString, names) =
-  _colname(Symbol(col), names)
-
-function _colname(col::Symbol, names)
-  @assert col ∈ names "Invalid column selection."
-  return col
-end
-
-_name(nm, names) = 
-  nm ∈ names ? _name(Symbol("$(nm)_"), names) : nm
-
 function apply(transform::OneHot, table)
   cols = Tables.columns(table)
-  names = collect(Tables.columnnames(cols))
+  names = Tables.columnnames(cols) |> collect
   columns = Any[Tables.getcolumn(cols, nm) for nm in names]
   
-  name = _colname(transform.col, names)
+  name = choose(transform.colspec, names)[1]
   ind = findfirst(==(name), names)
   x = columns[ind]
 
@@ -48,7 +39,9 @@ function apply(transform::OneHot, table)
   xl = levels(x)
   onehot = map(xl) do l
     nm = Symbol("$(name)_$l")
-    nm = _name(nm, names)
+    while nm ∈ names
+      nm = Symbol("$(nm)_")
+    end
     nm, x .== l
   end
 
@@ -66,7 +59,7 @@ end
 
 function revert(::OneHot, newtable, cache)
   cols = Tables.columns(newtable)
-  names = collect(Tables.columnnames(cols))
+  names = Tables.columnnames(cols) |> collect
   columns = Any[Tables.getcolumn(cols, nm) for nm in names]
   
   oname, inds, levels, ordered = cache

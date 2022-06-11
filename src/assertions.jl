@@ -10,5 +10,6 @@ end
 
 # assert that column is categorical
 function assert_categorical(x)
-  @assert x isa CategoricalArray "The selected column must be cetegorical."
+  T = elscitype(x)
+  @assert T <: Finite "The selected column must be cetegorical."
 end
