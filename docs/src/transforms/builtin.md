@@ -56,6 +56,12 @@ Coalesce
 Coerce
 ```
 
+## OneHot
+
+```@docs
+OneHot
+```
+
 ## RowTable
 
 ```@docs
@@ -63,6 +69,7 @@ RowTable
 ```
 
 ## ColTable
+
 ```@docs
 ColTable
 ```

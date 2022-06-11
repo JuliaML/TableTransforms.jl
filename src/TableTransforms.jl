@@ -36,6 +36,7 @@ export
   Replace,
   Coalesce,
   Coerce,
+  OneHot,
   RowTable,
   ColTable,
   Identity,
