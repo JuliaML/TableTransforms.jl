@@ -5,7 +5,7 @@
 """
     Sample([rng], [wv::AbstractWeights], n; replace=true, ordered=false)
 
-Sample table rows by forwarding arguments to the `sample` function of StatsBase.jl.
+Sample table rows by forwarding arguments to the `sample` function from StatsBase.jl.
 Optionally, a random number generator `rng` and a weight vector `wv` can be used.
 
 # Examples

@@ -1197,6 +1197,59 @@
     @test_throws AssertionError apply(OneHot("c"), t)
   end
 
+  @testset "Sample" begin
+    a = [3, 6, 2, 7, 8, 3]
+    b = [8, 5, 1, 2, 3, 4]
+    c = [1, 8, 5, 2, 9, 4]
+    t = Table(; a, b, c)
+    trows = Tables.rowtable(t) 
+
+    T = Sample(30)
+    n, c = apply(T, t)
+    @test length(n.a) == 30
+
+    T = Sample(6, replace=false)
+    n, c = apply(T, t)
+    @test n.a ⊆ t.a
+    @test n.b ⊆ t.b
+    @test n.c ⊆ t.c
+
+    T = Sample(30, ordered=true)
+    n, c = apply(T, t)
+    @test unique(Tables.rowtable(n)) == trows
+
+    T = Sample(6, replace=false, ordered=true)
+    n, c = apply(T, t)
+    @test n.a ⊆ t.a
+    @test n.b ⊆ t.b
+    @test n.c ⊆ t.c
+    @test unique(Tables.rowtable(n)) == trows
+
+    # with rng
+    rng = MersenneTwister(2)
+    T = Sample(rng, 8)
+    n, c = apply(T, t)
+    @test n.a == [3, 7, 8, 2, 2, 6, 2, 6]
+    @test n.b == [8, 2, 3, 1, 1, 5, 1, 5]
+    @test n.c == [1, 2, 9, 5, 5, 8, 5, 8]
+
+    #with weights
+    rng = MersenneTwister(2)
+    wv = pweights([0.1, 0.25, 0.15, 0.25, 0.1, 0.15])
+    T = Sample(rng, wv, 10_000)
+    n, c = apply(T, t)
+    nrows = Tables.rowtable(n)
+    @test isapprox(count(==(trows[1]), nrows) / 10_000, 0.10, atol=0.01)
+    @test isapprox(count(==(trows[2]), nrows) / 10_000, 0.25, atol=0.01)
+    @test isapprox(count(==(trows[3]), nrows) / 10_000, 0.15, atol=0.01)
+    @test isapprox(count(==(trows[4]), nrows) / 10_000, 0.25, atol=0.01)
+    @test isapprox(count(==(trows[5]), nrows) / 10_000, 0.10, atol=0.01)
+    @test isapprox(count(==(trows[6]), nrows) / 10_000, 0.15, atol=0.01)
+
+    # throws
+    @test_throws AssertionError revert(T, n, c)
+  end
+
   @testset "Identity" begin
     x = rand(4000)
     y = rand(4000)
