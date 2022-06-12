@@ -1226,17 +1226,15 @@
     @test unique(Tables.rowtable(n)) == trows
 
     # with rng
-    rng = MersenneTwister(2)
-    T = Sample(rng, 8)
+    T = Sample(MersenneTwister(2), 8)
     n, c = apply(T, t)
     @test n.a == [3, 7, 8, 2, 2, 6, 2, 6]
     @test n.b == [8, 2, 3, 1, 1, 5, 1, 5]
     @test n.c == [1, 2, 9, 5, 5, 8, 5, 8]
 
     #with weights
-    rng = MersenneTwister(2)
     wv = pweights([0.1, 0.25, 0.15, 0.25, 0.1, 0.15])
-    T = Sample(rng, wv, 10_000)
+    T = Sample(MersenneTwister(2), wv, 10_000)
     n, c = apply(T, t)
     nrows = Tables.rowtable(n)
     @test isapprox(count(==(trows[1]), nrows) / 10_000, 0.10, atol=0.01)
