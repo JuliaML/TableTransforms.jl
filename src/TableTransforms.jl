@@ -12,6 +12,8 @@ using LinearAlgebra
 using Statistics
 using PrettyTables
 using CategoricalArrays
+using Random
+using StatsBase
 
 import Distributions: ContinuousUnivariateDistribution
 import Distributions: quantile, cdf
@@ -39,6 +41,7 @@ export
   Coerce,
   Levels,
   OneHot,
+  Sample,
   Identity,
   Center,
   Scale,
