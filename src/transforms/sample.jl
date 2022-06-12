@@ -53,7 +53,7 @@ function apply(transform::Sample, table)
   rows = Tables.rowtable(table)
 
   rng     = transform.rng
-  wv = transform.wv
+  wv      = transform.wv
   n       = transform.n
   replace = transform.replace
   ordered = transform.ordered
