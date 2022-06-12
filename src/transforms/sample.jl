@@ -3,11 +3,10 @@
 # ------------------------------------------------------------------
 
 """
-    Sample([rng], n; replace=true, ordered=false)
+    Sample([rng], [wv::AbstractWeights], n; replace=true, ordered=false)
 
 Sample table rows by forwarding arguments to the `sample` function of StatsBase.jl.
-Optionally, a specific `rng` random number generator can be used by passing it as the first argument
-(default is `Random.GLOBAL_RNG`).
+Optionally, a random number generator `rng` and a weight vector `wv` can be used.
 
 # Examples
 
@@ -20,20 +19,33 @@ Sample(1_000, replace=false, ordered=true)
 using Random
 rng = MersenneTwister(2)
 Sample(rng, 1_000)
+
+# with wv
+using StatsBase
+wv = pweights([0.2, 0.1, 0.3])
+Sample(wv, 1_000)
+Sample(rng, wv, 1_000)
 ```
 """
-struct Sample{R<:AbstractRNG} <: Stateless
+struct Sample{R<:AbstractRNG,W} <: Stateless
   rng::R
+  wv::W
   n::Int
   replace::Bool
   ordered::Bool
 end
 
+Sample(rng::AbstractRNG, wv::AbstractWeights, n::Int; replace=true, ordered=false) =
+  Sample(rng, wv, n, replace, ordered)
+
 Sample(rng::AbstractRNG, n::Int; replace=true, ordered=false) =
-  Sample(rng, n, replace, ordered)
+  Sample(rng, nothing, n, replace, ordered)
+
+Sample(wv::AbstractWeights, n::Int; replace=true, ordered=false) =
+  Sample(Random.GLOBAL_RNG, wv, n, replace, ordered)
 
 Sample(n::Int; replace=true, ordered=false) =
-  Sample(Random.GLOBAL_RNG, n, replace, ordered)
+  Sample(Random.GLOBAL_RNG, nothing, n, replace, ordered)
 
 isrevertible(::Type{<:Sample}) = false
 
@@ -41,11 +53,16 @@ function apply(transform::Sample, table)
   rows = Tables.rowtable(table)
 
   rng     = transform.rng
+  wv = transform.wv
   n       = transform.n
   replace = transform.replace
   ordered = transform.ordered
 
-  newrows = sample(rng, rows, n; replace, ordered)
+  if isnothing(wv)
+    newrows = sample(rng, rows, n; replace, ordered)
+  else
+    newrows = sample(rng, rows, wv, n; replace, ordered)
+  end
 
   newtable = newrows |> Tables.materializer(table)
   newtable, nothing
