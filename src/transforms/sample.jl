@@ -20,7 +20,7 @@ using Random
 rng = MersenneTwister(2)
 Sample(rng, 1_000)
 
-# with wv
+# with weights
 using StatsBase
 wv = pweights([0.2, 0.1, 0.3])
 Sample(wv, 1_000)

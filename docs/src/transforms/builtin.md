@@ -74,6 +74,12 @@ Levels
 OneHot
 ```
 
+## Sample
+
+```@docs
+Sample
+```
+
 ## Identity
 
 ```@docs
