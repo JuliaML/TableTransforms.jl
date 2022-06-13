@@ -42,10 +42,10 @@ Sample(rng::AbstractRNG, n::Int; replace=true, ordered=false) =
   Sample(rng, nothing, n, replace, ordered)
 
 Sample(wv::AbstractWeights, n::Int; replace=true, ordered=false) =
-  Sample(Random.GLOBAL_RNG, wv, n, replace, ordered)
+  Sample(GLOBAL_RNG, wv, n, replace, ordered)
 
 Sample(n::Int; replace=true, ordered=false) =
-  Sample(Random.GLOBAL_RNG, nothing, n, replace, ordered)
+  Sample(GLOBAL_RNG, nothing, n, replace, ordered)
 
 isrevertible(::Type{<:Sample}) = false
 
@@ -65,6 +65,7 @@ function apply(transform::Sample, table)
   end
 
   newtable = newrows |> Tables.materializer(table)
+
   newtable, nothing
 end
 

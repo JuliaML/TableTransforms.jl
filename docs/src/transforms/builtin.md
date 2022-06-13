@@ -32,6 +32,12 @@ StdNames
 Sort
 ```
 
+## Sample
+
+```@docs
+Sample
+```
+
 ## Filter
 
 ```@docs
@@ -72,12 +78,6 @@ Levels
 
 ```@docs
 OneHot
-```
-
-## Sample
-
-```@docs
-Sample
 ```
 
 ## Identity
