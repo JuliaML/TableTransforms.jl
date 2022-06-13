@@ -32,4 +32,4 @@ end
 
 colapply(transform::Replace, x, c) = [get(transform.pairs, xᵢ, xᵢ) for xᵢ in x]
 
-colrevert(transform::Replace, x, c) = [get(c, i, x[i]) for i in 1:length(x)]
+colrevert(::Replace, y, c) = [get(c, i, y[i]) for i in 1:length(y)]

@@ -27,4 +27,4 @@ colcache(::Coalesce, x) = findall(ismissing, x)
 
 colapply(tramsform::Coalesce, x, c) = coalesce.(x, tramsform.value)
 
-colrevert(::Coalesce, x, c) = [i ∈ c ? missing : x[i] for i in 1:length(x)]
+colrevert(::Coalesce, y, c) = [i ∈ c ? missing : y[i] for i in 1:length(y)]
