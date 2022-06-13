@@ -18,6 +18,21 @@ struct Parallel <: Transform
   transforms::Vector{Transform}
 end
 
+function Base.show(io::IO, transform::Parallel)
+  print(io, transform.transforms[1])
+  for t in transform.transforms[2:end]
+    print(io, " ⊔ $t")
+  end
+end
+
+function Base.show(io::IO, ::MIME"text/plain", transform::Parallel)
+  println(io, "Parallel of transforms:")
+  print(io, " $(transform.transforms[1])")
+  for t in transform.transforms[2:end]
+    print(io, " ⊔ $t")
+  end
+end
+
 isrevertible(p::Parallel) = any(isrevertible, p.transforms)
 
 function apply(p::Parallel, table)
