@@ -32,6 +32,12 @@ StdNames
 Sort
 ```
 
+## Sample
+
+```@docs
+Sample
+```
+
 ## Filter
 
 ```@docs

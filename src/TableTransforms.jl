@@ -8,10 +8,12 @@ using Tables
 using ScientificTypes
 using Distributions: Normal
 using Transducers: tcollect
+using StatsBase: AbstractWeights, sample
 using LinearAlgebra
 using Statistics
 using PrettyTables
 using CategoricalArrays
+using Random: AbstractRNG, GLOBAL_RNG
 
 import Distributions: ContinuousUnivariateDistribution
 import Distributions: quantile, cdf
@@ -32,6 +34,7 @@ export
   Rename,
   StdNames,
   Sort,
+  Sample,
   Filter,
   DropMissing,
   Replace,
