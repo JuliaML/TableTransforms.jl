@@ -12,6 +12,7 @@ using StatsBase: AbstractWeights, sample
 using LinearAlgebra
 using Statistics
 using PrettyTables
+using AbstractTrees
 using CategoricalArrays
 using Random: AbstractRNG, GLOBAL_RNG
 

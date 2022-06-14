@@ -18,19 +18,16 @@ struct Sequential <: Transform
   transforms::Vector{Transform}
 end
 
-function Base.show(io::IO, transform::Sequential)
-  print(io, transform.transforms[1])
-  for t in transform.transforms[2:end]
-    print(io, " → $t")
-  end
-end
+# AbstractTrees interface
+AbstractTrees.nodevalue(::Sequential) = Sequential
+AbstractTrees.children(s::Sequential) = s.transforms
 
-function Base.show(io::IO, ::MIME"text/plain", transform::Sequential)
-  println(io, "Sequential of transforms:")
-  print(io, " $(transform.transforms[1])")
-  for t in transform.transforms[2:end]
-    print(io, " → $t")
-  end
+Base.show(io::IO, s::Sequential) =
+  print(io, join(s.transforms, " → "))
+
+function Base.show(io::IO, ::MIME"text/plain", s::Sequential)
+  tree = repr_tree(s, context=io)[1:end-1] # remove \n at end
+  print(io, tree)
 end
 
 isrevertible(s::Sequential) = all(isrevertible, s.transforms)

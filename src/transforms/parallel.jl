@@ -18,19 +18,16 @@ struct Parallel <: Transform
   transforms::Vector{Transform}
 end
 
-function Base.show(io::IO, transform::Parallel)
-  print(io, transform.transforms[1])
-  for t in transform.transforms[2:end]
-    print(io, " ⊔ $t")
-  end
-end
+# AbstractTrees interface
+AbstractTrees.nodevalue(::Parallel) = Parallel
+AbstractTrees.children(p::Parallel) = p.transforms
 
-function Base.show(io::IO, ::MIME"text/plain", transform::Parallel)
-  println(io, "Parallel of transforms:")
-  print(io, " $(transform.transforms[1])")
-  for t in transform.transforms[2:end]
-    print(io, " ⊔ $t")
-  end
+Base.show(io::IO, p::Parallel) =
+  print(io, join(p.transforms, " ⊔ "))
+
+function Base.show(io::IO, ::MIME"text/plain", p::Parallel)
+  tree = repr_tree(p, context=io)[1:end-1] # remove \n at end
+  print(io, tree)
 end
 
 isrevertible(p::Parallel) = any(isrevertible, p.transforms)
