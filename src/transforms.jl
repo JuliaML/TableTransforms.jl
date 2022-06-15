@@ -113,6 +113,24 @@ isrevertible(::Type{<:Transform}) = false
 
 (transform::Transform)(table) = apply(transform, table) |> first
 
+# Generic shows
+function Base.show(io::IO, transform::Transform)
+  T = typeof(transform)
+  vals = getfield.(Ref(transform), fieldnames(T))
+  strs = repr.(vals, context=io)
+  print(io, "$(nameof(T))($(join(strs, ", ")))")
+end
+
+function Base.show(io::IO, ::MIME"text/plain", transform::Transform)
+  T = typeof(transform)
+  print(io, "$(nameof(T)) transform with parameters:")
+  for field in fieldnames(T)
+    val = getfield(transform, field)
+    str = repr(val, context=io)
+    print(io, "\n $field = $str")
+  end
+end
+
 # --------------------
 # STATELESS FALLBACKS
 # --------------------
