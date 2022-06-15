@@ -42,7 +42,8 @@ end
 testfiles = [
   "distributions.jl",
   "colspec.jl",
-  "transforms.jl"
+  "transforms.jl",
+  "shows.jl"
 ]
 
 @testset "TableTransforms.jl" begin
