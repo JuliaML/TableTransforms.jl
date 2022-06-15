@@ -7,15 +7,15 @@
 
     # compact mode
     iostr = sprint(show, pipeline)
-    @test iostr == "Select{Tuple{Symbol, Symbol}}((:x, :z)) → ZScore() → Scale{Int64}(0, 1)"
+    @test iostr == "Select((:x, :z)) → ZScore() → Scale(0, 1)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
     @test iostr == """
     Sequential
-    ├─ Select{Tuple{Symbol, Symbol}}((:x, :z))
+    ├─ Select((:x, :z))
     ├─ ZScore()
-    └─ Scale{Int64}(0, 1)"""
+    └─ Scale(0, 1)"""
   end
 
   @testset "Parallel" begin
@@ -26,15 +26,15 @@
 
     # compact mode
     iostr = sprint(show, pipeline)
-    @test iostr == "Scale{Float64}(0.3, 0.6) ⊔ EigenAnalysis(:VDV, nothing, 1.0) ⊔ Functional{typeof(cos)}(cos)"
+    @test iostr == "Scale(0.3, 0.6) ⊔ EigenAnalysis(:VDV, nothing, 1.0) ⊔ Functional(cos)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
     @test iostr == """
     Parallel
-    ├─ Scale{Float64}(0.3, 0.6)
+    ├─ Scale(0.3, 0.6)
     ├─ EigenAnalysis(:VDV, nothing, 1.0)
-    └─ Functional{typeof(cos)}(cos)"""
+    └─ Functional(cos)"""
 
     # Parallel with Sequential
     f1 = ZScore()
@@ -45,7 +45,7 @@
 
     # compact mode
     iostr = sprint(show, pipeline)
-    @test iostr == "ZScore() → Scale{Float64}(0.25, 0.75) ⊔ Functional{typeof(cos)}(cos) → Scale{Float64}(0.25, 0.75)"
+    @test iostr == "ZScore() → Scale(0.25, 0.75) ⊔ Functional(cos) → Scale(0.25, 0.75)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
@@ -53,9 +53,9 @@
     Parallel
     ├─ Sequential
     │  ├─ ZScore()
-    │  └─ Scale{Float64}(0.25, 0.75)
+    │  └─ Scale(0.25, 0.75)
     └─ Sequential
-       ├─ Functional{typeof(cos)}(cos)
-       └─ Scale{Float64}(0.25, 0.75)"""
+       ├─ Functional(cos)
+       └─ Scale(0.25, 0.75)"""
   end
 end
