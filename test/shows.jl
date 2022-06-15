@@ -1,5 +1,4 @@
 @testset "Shows" begin
-  io = IOBuffer()
   @testset "Sequential" begin
     t1 = Select(:x, :z)
     t2 = ZScore()
@@ -7,13 +6,11 @@
     pipeline = t1 → t2 → t3
 
     # compact mode
-    show(io, pipeline)
-    iostr = String(take!(io))
+    iostr = sprint(show, pipeline)
     @test iostr == "Select{Tuple{Symbol, Symbol}}((:x, :z)) → ZScore() → Scale{Int64}(0, 1)"
 
     # full mode
-    show(io, MIME("text/plain"), pipeline)
-    iostr = String(take!(io))
+    iostr = sprint(show, MIME("text/plain"), pipeline)
     @test iostr == """
     Sequential
     ├─ Select{Tuple{Symbol, Symbol}}((:x, :z))
@@ -28,13 +25,11 @@
     pipeline = t1 ⊔ t2 ⊔ t3
 
     # compact mode
-    show(io, pipeline)
-    iostr = String(take!(io))
+    iostr = sprint(show, pipeline)
     @test iostr == "Scale{Float64}(0.3, 0.6) ⊔ EigenAnalysis(:VDV, nothing, 1.0) ⊔ Functional{typeof(cos)}(cos)"
 
     # full mode
-    show(io, MIME("text/plain"), pipeline)
-    iostr = String(take!(io))
+    iostr = sprint(show, MIME("text/plain"), pipeline)
     @test iostr == """
     Parallel
     ├─ Scale{Float64}(0.3, 0.6)
@@ -49,13 +44,11 @@
     pipeline = (f1 → f2) ⊔ (f3 → f4)
 
     # compact mode
-    show(io, pipeline)
-    iostr = String(take!(io))
+    iostr = sprint(show, pipeline)
     @test iostr == "ZScore() → Scale{Float64}(0.25, 0.75) ⊔ Functional{typeof(cos)}(cos) → Scale{Float64}(0.25, 0.75)"
 
     # full mode
-    show(io, MIME("text/plain"), pipeline)
-    iostr = String(take!(io))
+    iostr = sprint(show, MIME("text/plain"), pipeline)
     @test iostr == """
     Parallel
     ├─ Sequential

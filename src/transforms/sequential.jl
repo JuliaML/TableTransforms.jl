@@ -26,8 +26,8 @@ Base.show(io::IO, s::Sequential) =
   print(io, join(s.transforms, " → "))
 
 function Base.show(io::IO, ::MIME"text/plain", s::Sequential)
-  tree = repr_tree(s, context=io)[1:end-1] # remove \n at end
-  print(io, tree)
+  tree = repr_tree(s, context=io)
+  print(io, tree[begin:end-1]) # remove \n at end
 end
 
 isrevertible(s::Sequential) = all(isrevertible, s.transforms)
