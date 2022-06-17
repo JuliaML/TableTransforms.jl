@@ -34,7 +34,7 @@ function apply(transform::Levels, table)
   names = Tables.columnnames(cols)
   snames = choose(transform.colspec, names)
   ordered = choose(transform.ordered, snames)
-  levels = transform.levels
+  tlevels = transform.levels
   
   results = map(names) do nm
     x = Tables.getcolumn(cols, nm)
@@ -42,10 +42,11 @@ function apply(transform::Levels, table)
       assert_categorical(x)
       
       o = nm ∈ ordered
-      l = levels[findfirst(==(nm), snames)]
+      l = tlevels[findfirst(==(nm), snames)]
+      y = categorical(x, levels=l, ordered=o)
       xl, xo = levels(x), isordered(x)
       revfunc = y -> categorical(y, levels=xl, ordered=xo)
-      categorical(x, levels=l, ordered=o), revfunc
+      return y, revfunc
     end
     x, identity
   end
