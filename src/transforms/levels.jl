@@ -38,17 +38,21 @@ function apply(transform::Levels, table)
   
   results = map(names) do nm
     x = Tables.getcolumn(cols, nm)
+    
     if nm ∈ snames
       assert_categorical(x)
       
       o = nm ∈ ordered
       l = tlevels[findfirst(==(nm), snames)]
       y = categorical(x, levels=l, ordered=o)
+      
       xl, xo = levels(x), isordered(x)
       revfunc = y -> categorical(y, levels=xl, ordered=xo)
-      return y, revfunc
+    else
+      y, revfunc = x, identity
     end
-    x, identity
+
+    y, revfunc
   end
 
   columns, cache = first.(results), last.(results)
