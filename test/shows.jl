@@ -9,8 +9,8 @@
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
-    Select transform with parameters:
-     colspec = (:a, :b, :c)"""
+    Select transform
+    └─ colspec = (:a, :b, :c)"""
   end
 
   @testset "Reject" begin
@@ -23,8 +23,8 @@
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
-    Reject transform with parameters:
-     colspec = (:a, :b, :c)"""
+    Reject transform
+    └─ colspec = (:a, :b, :c)"""
   end
 
   @testset "Rename" begin
@@ -38,8 +38,8 @@
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
-    Rename transform with parameters:
-     names = $pairs"""
+    Rename transform
+    └─ names = $pairs"""
   end
 
   @testset "StdNames" begin
@@ -52,8 +52,8 @@
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
-    StdNames transform with parameters:
-     spec = :upper"""
+    StdNames transform
+    └─ spec = :upper"""
   end
 
   @testset "Sort" begin
@@ -66,9 +66,9 @@
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
-    Sort transform with parameters:
-     colspec = [:a, :c]
-     kwargs = (rev = true,)"""
+    Sort transform
+    ├─ colspec = [:a, :c]
+    └─ kwargs = (rev = true,)"""
   end
 
   @testset "Sample" begin
@@ -81,12 +81,12 @@
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
-    Sample transform with parameters:
-     rng = Random._GLOBAL_RNG()
-     wv = nothing
-     n = 30
-     replace = false
-     ordered = true"""
+    Sample transform
+    ├─ rng = Random._GLOBAL_RNG()
+    ├─ wv = nothing
+    ├─ n = 30
+    ├─ replace = false
+    └─ ordered = true"""
   end
 
   @testset "Filter" begin
@@ -100,8 +100,8 @@
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
-    Filter transform with parameters:
-     func = $(typeof(func))()"""
+    Filter transform
+    └─ func = $(typeof(func))()"""
   end
 
   @testset "DropMissing" begin
@@ -114,8 +114,8 @@
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
-    DropMissing transform with parameters:
-     colspec = (:a, :b, :c)"""
+    DropMissing transform
+    └─ colspec = (:a, :b, :c)"""
   end
 
   @testset "Replace" begin
@@ -129,8 +129,8 @@
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
-    Replace transform with parameters:
-     pairs = $pairs"""
+    Replace transform
+    └─ pairs = $pairs"""
   end
 
   @testset "Coalesce" begin
@@ -143,8 +143,8 @@
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
-    Coalesce transform with parameters:
-     value = 0"""
+    Coalesce transform
+    └─ value = 0"""
   end
   
   @testset "Coerce" begin
@@ -157,10 +157,10 @@
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
-    Coerce transform with parameters:
-     pairs = (:a => Continuous, :b => Count)
-     tight = false
-     verbosity = 1"""
+    Coerce transform
+    ├─ pairs = (:a => Continuous, :b => Count)
+    ├─ tight = false
+    └─ verbosity = 1"""
   end
 
   @testset "Levels" begin
@@ -173,10 +173,10 @@
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
-    Levels transform with parameters:
-     colspec = (:a, :b)
-     ordered = r"[ab]"
-     levels = (["n", "y"], 1:3)"""
+    Levels transform
+    ├─ colspec = (:a, :b)
+    ├─ ordered = r"[ab]"
+    └─ levels = (["n", "y"], 1:3)"""
   end
 
   @testset "OneHot" begin
@@ -189,8 +189,8 @@
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
-    OneHot transform with parameters:
-     colspec = [:a]"""
+    OneHot transform
+    └─ colspec = [:a]"""
   end
 
   @testset "Identity" begin
@@ -202,7 +202,7 @@
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
-    @test iostr == "Identity transform with parameters:"
+    @test iostr == "Identity transform"
   end
 
   @testset "Center" begin
@@ -214,7 +214,7 @@
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
-    @test iostr == "Center transform with parameters:"
+    @test iostr == "Center transform"
   end
 
   @testset "Scale" begin
@@ -227,9 +227,9 @@
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
-    Scale transform with parameters:
-     low = 0.25
-     high = 0.75"""
+    Scale transform
+    ├─ low = 0.25
+    └─ high = 0.75"""
   end
 
   @testset "ZScore" begin
@@ -241,7 +241,7 @@
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
-    @test iostr == "ZScore transform with parameters:"
+    @test iostr == "ZScore transform"
   end
 
   @testset "Quantile" begin
@@ -254,8 +254,8 @@
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
-    Quantile transform with parameters:
-     dist = Normal{Float64}(μ=0.0, σ=1.0)"""
+    Quantile transform
+    └─ dist = Normal{Float64}(μ=0.0, σ=1.0)"""
   end
 
   @testset "Functional" begin
@@ -268,8 +268,8 @@
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
-    Functional transform with parameters:
-     func = sin"""
+    Functional transform
+    └─ func = sin"""
   end
 
   @testset "EigenAnalysis" begin
@@ -282,10 +282,10 @@
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
-    EigenAnalysis transform with parameters:
-     proj = :VDV
-     maxdim = nothing
-     pratio = 1.0"""
+    EigenAnalysis transform
+    ├─ proj = :VDV
+    ├─ maxdim = nothing
+    └─ pratio = 1.0"""
   end
 
   @testset "RowTable" begin
@@ -297,7 +297,7 @@
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
-    @test iostr == "RowTable transform with parameters:"
+    @test iostr == "RowTable transform"
   end
 
   @testset "ColTable" begin
@@ -309,7 +309,7 @@
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
-    @test iostr == "ColTable transform with parameters:"
+    @test iostr == "ColTable transform"
   end
 
   @testset "Sequential" begin

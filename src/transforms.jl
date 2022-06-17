@@ -123,11 +123,15 @@ end
 
 function Base.show(io::IO, ::MIME"text/plain", transform::Transform)
   T = typeof(transform)
-  print(io, "$(nameof(T)) transform with parameters:")
-  for field in fieldnames(T)
+  print(io, "$(nameof(T)) transform")
+  
+  fnames = fieldnames(T)
+  len = length(fnames)
+  for (i, field) in enumerate(fnames)
+    div = i == len ? "\n└─ " : "\n├─ "
     val = getfield(transform, field)
     str = repr(val, context=io)
-    print(io, "\n $field = $str")
+    print(io, "$div$field = $str")
   end
 end
 
