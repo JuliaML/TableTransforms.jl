@@ -1061,9 +1061,9 @@
   end
 
   @testset "Levels" begin
-    a = rand([true, false], 50)
-    b = rand(["y", "n"], 50)
-    c = rand(1:3, 50)
+    a = categorical(rand([true, false], 50))
+    b = categorical(rand(["y", "n"], 50))
+    c = categorical(rand(1:3, 50))
     t = Table(; a, b, c)
 
     T = Levels(2 => ["n", "y", "m"])
@@ -1091,11 +1091,10 @@
     tₒ = revert(T, n, c)
     @test tₒ == t
 
-    # categorical columns
     a = categorical(["yes", "no", "no", "no", "yes"]) 
     b = categorical([1, 2, 4, 2, 8], ordered=false) 
     c = categorical([1, 2, 1, 2, 1]) 
-    d = [1, 23, 5, 7, 7]
+    d = categorical([1, 23, 5, 7, 7])
     e = categorical([2, 3, 1, 4, 1])
     t = Table(; a, b, c, d, e)
 
@@ -1148,12 +1147,11 @@
     @test isordered(n.c) == false
     @test isordered(n.d) == true
     tₒ = revert(T, n, c)
-    @test typeof(tₒ.d) == Vector{Int64}
     @test isordered(tₒ.a) == false
 
     a = rand([true, false], 50)
-    b = rand(["y", "n"], 50)
-    c = rand(1:3, 50)
+    b = categorical(rand(["y", "n"], 50))
+    c = categorical(rand(1:3, 50))
     t = Table(; a, b, c)
 
     # throws: Levels without arguments
@@ -1163,6 +1161,10 @@
     T = Levels(:x => ["n", "y", "m"], :y => 1:4)
     @test_throws AssertionError apply(T, t)
     T = Levels("x" => ["n", "y", "m"], "y" => 1:4)
+    @test_throws AssertionError apply(T, t)
+
+    # throws: non categorical collumn
+    T = Levels(:a => [true, false], ordered=[:a])
     @test_throws AssertionError apply(T, t)
 
     # throws: invalid ordered column selection
