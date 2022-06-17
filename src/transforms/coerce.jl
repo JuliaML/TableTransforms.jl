@@ -12,6 +12,7 @@ This transform wraps the ScientificTypes.coerce function. Please see their docst
 # Examples
 
 ```julia
+using ScientificTypes
 Coerce(:col1 => Continuous, :col2 => Count)
 ```
 """
