@@ -1147,7 +1147,6 @@
     @test isordered(n.c) == false
     @test isordered(n.d) == true
     tₒ = revert(T, n, c)
-    @test typeof(tₒ.d) == Vector{Int64}
     @test isordered(tₒ.a) == false
 
     a = rand([true, false], 50)
