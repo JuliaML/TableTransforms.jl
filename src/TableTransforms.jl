@@ -19,9 +19,9 @@ using Random: AbstractRNG, GLOBAL_RNG
 import Distributions: ContinuousUnivariateDistribution
 import Distributions: quantile, cdf
 
+include("colspec.jl")
 include("assertions.jl")
 include("distributions.jl")
-include("colspec.jl")
 include("transforms.jl")
 
 export
