@@ -1,4 +1,5 @@
 using TableTransforms
+using TableTransforms: choose, ColSpec, TableSelection
 using Distributions
 using Tables
 using TypedTables
@@ -41,7 +42,8 @@ end
 # list of tests
 testfiles = [
   "distributions.jl",
-  "colspec.jl",
+  # "colspec.jl",
+  "newcolspec.jl",
   "transforms.jl",
   "shows.jl"
 ]
