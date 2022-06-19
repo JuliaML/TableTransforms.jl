@@ -4,13 +4,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Select((:a, :b, :c))"
+    @test iostr == "Select(NameSpec([:a, :b, :c]))"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Select transform
-    └─ colspec = (:a, :b, :c)"""
+    └─ colspec = NameSpec([:a, :b, :c])"""
   end
 
   @testset "Reject" begin
@@ -18,13 +18,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Reject((:a, :b, :c))"
+    @test iostr == "Reject(NameSpec([:a, :b, :c]))"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Reject transform
-    └─ colspec = (:a, :b, :c)"""
+    └─ colspec = NameSpec([:a, :b, :c])"""
   end
 
   @testset "Rename" begin
@@ -61,13 +61,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Sort([:a, :c], (rev = true,))"
+    @test iostr == "Sort(NameSpec([:a, :c]), (rev = true,))"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Sort transform
-    ├─ colspec = [:a, :c]
+    ├─ colspec = NameSpec([:a, :c])
     └─ kwargs = (rev = true,)"""
   end
 
@@ -109,13 +109,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "DropMissing((:a, :b, :c))"
+    @test iostr == "DropMissing(NameSpec([:a, :b, :c])))"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     DropMissing transform
-    └─ colspec = (:a, :b, :c)"""
+    └─ colspec = NameSpec([:a, :b, :c]))"""
   end
 
   @testset "Replace" begin
@@ -168,14 +168,14 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Levels((:a, :b), r\"[ab]\", ([\"n\", \"y\"], 1:3))"
+    @test iostr == "Levels(NameSpec([:a, :b]), RegexSpec(r\"[ab]\"), ([\"n\", \"y\"], 1:3))"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Levels transform
-    ├─ colspec = (:a, :b)
-    ├─ ordered = r"[ab]"
+    ├─ colspec = NameSpec([:a, :b])
+    ├─ ordered = RegexSpec(r"[ab]")
     └─ levels = (["n", "y"], 1:3)"""
   end
 
@@ -184,13 +184,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "OneHot([:a])"
+    @test iostr == "OneHot(NameSpec([:a]))"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     OneHot transform
-    └─ colspec = [:a]"""
+    └─ colspec = NameSpec([:a])"""
   end
 
   @testset "Identity" begin
@@ -320,13 +320,13 @@
 
     # compact mode
     iostr = sprint(show, pipeline)
-    @test iostr == "Select((:x, :z)) → ZScore() → Scale(0, 1)"
+    @test iostr == "Select(NameSpec([:x, :z])) → ZScore() → Scale(0, 1)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
     @test iostr == """
     Sequential
-    ├─ Select((:x, :z))
+    ├─ Select(NameSpec([:x, :z]))
     ├─ ZScore()
     └─ Scale(0, 1)"""
   end
