@@ -22,8 +22,8 @@ struct Levels{S<:ColSpec,O<:ColSpec,L} <: Stateless
   levels::L
 end
 
-Levels(pairs::Pair{T}...; ordered::ColSpec=nothing) where {T<:ColSelector} =
-  Levels(first.(pairs), ordered, last.(pairs))
+Levels(pairs::Pair{T}...; ordered=nothing) where {T<:ColSelector} =
+  Levels(ColSpec(first.(pairs)), ColSpec(ordered), last.(pairs))
 
 Levels(; kwargs...) = throw(ArgumentError("Cannot create a Levels object without arguments."))
 

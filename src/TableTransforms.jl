@@ -21,7 +21,8 @@ import Distributions: quantile, cdf
 
 include("assertions.jl")
 include("distributions.jl")
-include("colspec.jl")
+# include("colspec.jl")
+include("newcolspec.jl")
 include("transforms.jl")
 
 export
