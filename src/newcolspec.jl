@@ -8,7 +8,7 @@ const ColSelector = Union{Symbol,Integer,AbstractString}
 """
     ColSpec  
 
-`ColSpec` is a parent type of all spec types used to filter columns. 
+`ColSpec` is the parent type of all spec types used to select columns.
 The `ColSpec` abstract type together with the `ColSelector` union type 
 and the `choose` function form the ColSpec interface.
 
