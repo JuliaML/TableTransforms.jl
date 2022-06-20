@@ -72,6 +72,8 @@
   @test_throws AssertionError TableTransforms.ColSpec(Symbol[])
   @test_throws AssertionError TableTransforms.ColSpec(String[])
   @test_throws AssertionError TableTransforms.ColSpec(Int[])
+  @test_throws ArgumentError TableTransforms.ColSpec(())
+  @test_throws ArgumentError TableTransforms.ColSpec(missing)
 
   # type stability
   colspec = TableTransforms.ColSpec([:a, :b])
