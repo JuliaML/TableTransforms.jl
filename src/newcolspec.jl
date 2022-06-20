@@ -3,13 +3,13 @@
 # ------------------------------------------------------------------
 
 # types used to select a column
-const ColSelector = Union{Symbol,Integer,AbstractString}
+const Col = Union{Symbol,Integer,AbstractString}
 
 """
     ColSpec  
 
 `ColSpec` is the parent type of all spec types used to select columns.
-The `ColSpec` abstract type together with the `ColSelector` union type 
+The `ColSpec` abstract type together with the `Col` union type 
 and the `choose` function form the ColSpec interface.
 
 To implement the ColSpec interface, the following steps must be performed:
@@ -43,10 +43,10 @@ end
 ```
 
 If you need to create constructors that accept 
-individual column selectors use the `ColSelector` type. Example:
+individual column selectors use the `Col` type. Example:
 
 ```julia
-function MyTransform(args::T...) where {T<:ColSelector}
+function MyTransform(args::T...) where {T<:Col}
   MyTransform(ColSpec(args))
 end
 ```

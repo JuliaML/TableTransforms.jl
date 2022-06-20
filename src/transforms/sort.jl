@@ -31,7 +31,7 @@ end
 
 Sort(spec; kwargs...) = Sort(ColSpec(spec), values(kwargs))
 
-Sort(cols::T...; kwargs...) where {T<:ColSelector} = 
+Sort(cols::T...; kwargs...) where {T<:Col} = 
   Sort(ColSpec(cols), values(kwargs))
 
 Sort(; kwargs...) = throw(ArgumentError("Cannot create a Sort object without arguments."))

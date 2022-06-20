@@ -72,7 +72,7 @@ end
 
 Select(spec) = Select(ColSpec(spec))
 
-Select(cols::T...) where {T<:ColSelector} = 
+Select(cols::T...) where {T<:Col} = 
   Select(ColSpec(cols))
 
 Select() = throw(ArgumentError("Cannot create a Select object without arguments."))
@@ -154,7 +154,7 @@ end
 
 Reject(spec) = Reject(ColSpec(spec))
 
-Reject(cols::T...) where {T<:ColSelector} = 
+Reject(cols::T...) where {T<:Col} = 
   Reject(ColSpec(cols))
 
 # argumet erros

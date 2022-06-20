@@ -1,5 +1,4 @@
 using TableTransforms
-using TableTransforms: choose, ColSpec, TableSelection
 using Distributions
 using Tables
 using TypedTables

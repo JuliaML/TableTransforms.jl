@@ -3,92 +3,104 @@
   tupnames = (:a, :b, :c, :d, :e, :f)
 
   # vector of symbols
-  spec = [:a, :c, :e]
-  snames = choose(ColSpec(spec), vecnames)
+  colspec = TableTransforms.ColSpec([:a, :c, :e])
+  snames = TableTransforms.choose(colspec, vecnames)
   @test snames == [:a, :c, :e]
-  snames = choose(ColSpec(spec), tupnames)
+  snames = TableTransforms.choose(colspec, tupnames)
   @test snames == [:a, :c, :e]
 
   # tuple of symbols
-  spec = (:a, :c, :e)
-  snames = choose(ColSpec(spec), vecnames)
+  colspec = TableTransforms.ColSpec((:a, :c, :e))
+  snames = TableTransforms.choose(colspec, vecnames)
   @test snames == [:a, :c, :e]
-  snames = choose(ColSpec(spec), tupnames)
+  snames = TableTransforms.choose(colspec, tupnames)
   @test snames == [:a, :c, :e]
 
   # vector of strings
-  spec = ["a", "c", "e"]
-  snames = choose(ColSpec(spec), vecnames)
+  colspec = TableTransforms.ColSpec(["a", "c", "e"])
+  snames = TableTransforms.choose(colspec, vecnames)
   @test snames == [:a, :c, :e]
-  snames = choose(ColSpec(spec), tupnames)
+  snames = TableTransforms.choose(colspec, tupnames)
   @test snames == [:a, :c, :e]
 
   # tuple of strings
-  spec = ("a", "c", "e")
-  snames = choose(ColSpec(spec), vecnames)
+  colspec = TableTransforms.ColSpec(("a", "c", "e"))
+  snames = TableTransforms.choose(colspec, vecnames)
   @test snames == [:a, :c, :e]
-  snames = choose(ColSpec(spec), tupnames)
+  snames = TableTransforms.choose(colspec, tupnames)
   @test snames == [:a, :c, :e]
 
   # vector of integers
-  spec = [1, 3, 5]
-  snames = choose(ColSpec(spec), vecnames)
+  colspec = TableTransforms.ColSpec([1, 3, 5])
+  snames = TableTransforms.choose(colspec, vecnames)
   @test snames == [:a, :c, :e]
-  snames = choose(ColSpec(spec), tupnames)
+  snames = TableTransforms.choose(colspec, tupnames)
   @test snames == [:a, :c, :e]
 
   # tuple of integers
-  spec = (1, 3, 5)
-  snames = choose(ColSpec(spec), vecnames)
+  colspec = TableTransforms.ColSpec((1, 3, 5))
+  snames = TableTransforms.choose(colspec, vecnames)
   @test snames == [:a, :c, :e]
-  snames = choose(ColSpec(spec), tupnames)
+  snames = TableTransforms.choose(colspec, tupnames)
   @test snames == [:a, :c, :e]
 
   # regex
-  spec = r"[ace]"
-  snames = choose(ColSpec(spec), vecnames)
+  colspec = TableTransforms.ColSpec(r"[ace]")
+  snames = TableTransforms.choose(colspec, vecnames)
   @test snames == [:a, :c, :e]
-  snames = choose(ColSpec(spec), tupnames)
+  snames = TableTransforms.choose(colspec, tupnames)
   @test snames == [:a, :c, :e]
 
   # colon
-  snames = choose(ColSpec(:), vecnames)
+  colspec = TableTransforms.ColSpec(:)
+  snames = TableTransforms.choose(colspec, vecnames)
   @test snames == [:a, :b, :c, :d, :e, :f]
-  snames = choose(ColSpec(:), tupnames)
+  snames = TableTransforms.choose(colspec, tupnames)
   @test snames == [:a, :b, :c, :d, :e, :f]
 
   # nothing
-  snames = choose(ColSpec(nothing), vecnames)
+  colspec = TableTransforms.ColSpec(nothing)
+  snames = TableTransforms.choose(colspec, vecnames)
   @test snames == Symbol[]
-  snames = choose(ColSpec(nothing), tupnames)
+  snames = TableTransforms.choose(colspec, tupnames)
   @test snames == Symbol[]
 
   # throws
-  @test_throws AssertionError choose(ColSpec(r"x"), vecnames)
-  @test_throws AssertionError choose(ColSpec(r"x"), tupnames)
-  @test_throws AssertionError ColSpec(Symbol[])
-  @test_throws AssertionError ColSpec(String[])
-  @test_throws AssertionError ColSpec(Int[])
+  colspec = TableTransforms.ColSpec(r"x")
+  @test_throws AssertionError TableTransforms.choose(colspec, vecnames)
+  @test_throws AssertionError TableTransforms.choose(colspec, tupnames)
+  @test_throws AssertionError TableTransforms.ColSpec(Symbol[])
+  @test_throws AssertionError TableTransforms.ColSpec(String[])
+  @test_throws AssertionError TableTransforms.ColSpec(Int[])
 
   # type stability
-  @inferred choose(ColSpec([:a, :b]), vecnames)
-  @inferred choose(ColSpec([:a, :b]), tupnames)
-  @inferred choose(ColSpec((:a, :b)), vecnames)
-  @inferred choose(ColSpec((:a, :b)), tupnames)
-  @inferred choose(ColSpec(["a", "b"]), vecnames)
-  @inferred choose(ColSpec(["a", "b"]), tupnames)
-  @inferred choose(ColSpec(("a", "b")), vecnames)
-  @inferred choose(ColSpec(("a", "b")), tupnames)
-  @inferred choose(ColSpec([1, 2]), vecnames)
-  @inferred choose(ColSpec([1, 2]), tupnames)
-  @inferred choose(ColSpec((1, 2)), vecnames)
-  @inferred choose(ColSpec((1, 2)), tupnames)
-  @inferred choose(ColSpec(r"[ab]"), vecnames)
-  @inferred choose(ColSpec(r"[ab]"), tupnames)
-  @inferred choose(ColSpec(:), vecnames)
-  @inferred choose(ColSpec(:), tupnames)
-  @inferred choose(ColSpec(nothing), vecnames)
-  @inferred choose(ColSpec(nothing), tupnames)
+  colspec = TableTransforms.ColSpec([:a, :b])
+  @inferred TableTransforms.choose(colspec, vecnames)
+  @inferred TableTransforms.choose(colspec, tupnames)
+  colspec = TableTransforms.ColSpec((:a, :b))
+  @inferred TableTransforms.choose(colspec, vecnames)
+  @inferred TableTransforms.choose(colspec, tupnames)
+  colspec = TableTransforms.ColSpec(["a", "b"])
+  @inferred TableTransforms.choose(colspec, vecnames)
+  @inferred TableTransforms.choose(colspec, tupnames)
+  colspec = TableTransforms.ColSpec(("a", "b"))
+  @inferred TableTransforms.choose(colspec, vecnames)
+  @inferred TableTransforms.choose(colspec, tupnames)
+  colspec = TableTransforms.ColSpec([1, 2])
+  @inferred TableTransforms.choose(colspec, vecnames)
+  @inferred TableTransforms.choose(colspec, tupnames)
+  colspec = TableTransforms.ColSpec((1, 2))
+  @inferred TableTransforms.choose(colspec, vecnames)
+  @inferred TableTransforms.choose(colspec, tupnames)
+  colspec = TableTransforms.ColSpec(r"[ab]")
+  @inferred TableTransforms.choose(colspec, vecnames)
+  @inferred TableTransforms.choose(colspec, tupnames)
+  colspec = TableTransforms.ColSpec(:)
+  @inferred TableTransforms.choose(colspec, vecnames)
+  @inferred TableTransforms.choose(colspec, tupnames)
+  colspec = TableTransforms.ColSpec(nothing)
+  @inferred TableTransforms.choose(colspec, vecnames)
+  @inferred TableTransforms.choose(colspec, tupnames)
 end
 
 @testset "TableSelection" begin
@@ -101,7 +113,7 @@ end
   t = Table(; a, b, c, d, e, f)
 
   # Tables.jl interface
-  s = TableSelection(t, [:a, :b, :e])
+  s = TableTransforms.TableSelection(t, [:a, :b, :e])
   @test Tables.istable(s) == true
   @test Tables.columnaccess(s) == true
   @test Tables.rowaccess(s) == false
@@ -119,14 +131,14 @@ end
 
   # row table
   rt = Tables.rowtable(t)
-  s = TableSelection(rt, [:a, :b, :e])
+  s = TableTransforms.TableSelection(rt, [:a, :b, :e])
   cols = Tables.columns(rt)
   @test Tables.getcolumn(s, :a) == Tables.getcolumn(cols, :a)
   @test Tables.getcolumn(s, 1) == Tables.getcolumn(cols, 1)
   @test Tables.getcolumn(s, 3) == Tables.getcolumn(cols, :e)
 
   # throws
-  @test_throws AssertionError TableSelection(t, [:a, :b, :z])
-  s = TableSelection(t, [:a, :b, :e])
+  @test_throws AssertionError TableTransforms.TableSelection(t, [:a, :b, :z])
+  s = TableTransforms.TableSelection(t, [:a, :b, :e])
   @test_throws ErrorException Tables.getcolumn(s, :f)
 end

@@ -18,7 +18,7 @@ OneHot("a")
 """
 struct OneHot{S<:ColSpec} <: Stateless
   colspec::S
-  function OneHot(col::C) where {C<:ColSelector}
+  function OneHot(col::Col)
     colspec = ColSpec([col])
     new{typeof(colspec)}(colspec)
   end

@@ -85,7 +85,7 @@ DropMissing() = DropMissing(AllSpec())
 
 DropMissing(spec) = DropMissing(ColSpec(spec))
 
-DropMissing(cols::T...) where {T<:ColSelector} =
+DropMissing(cols::T...) where {T<:Col} =
   DropMissing(ColSpec(cols))
 
 isrevertible(::Type{<:DropMissing}) = true
