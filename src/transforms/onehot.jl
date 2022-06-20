@@ -19,7 +19,7 @@ OneHot("a")
 struct OneHot{S<:ColSpec} <: Stateless
   colspec::S
   function OneHot(col::Col)
-    colspec = ColSpec([col])
+    colspec = ascolspec([col])
     new{typeof(colspec)}(colspec)
   end
 end

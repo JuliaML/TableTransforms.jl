@@ -70,10 +70,10 @@ struct Select{S<:ColSpec} <: Stateless
   colspec::S
 end
 
-Select(spec) = Select(ColSpec(spec))
+Select(spec) = Select(ascolspec(spec))
 
 Select(cols::T...) where {T<:Col} = 
-  Select(ColSpec(cols))
+  Select(ascolspec(cols))
 
 Select() = throw(ArgumentError("Cannot create a Select object without arguments."))
 
@@ -152,10 +152,10 @@ struct Reject{S<:ColSpec} <: Stateless
   colspec::S
 end
 
-Reject(spec) = Reject(ColSpec(spec))
+Reject(spec) = Reject(ascolspec(spec))
 
 Reject(cols::T...) where {T<:Col} = 
-  Reject(ColSpec(cols))
+  Reject(ascolspec(cols))
 
 # argumet erros
 Reject() = throw(ArgumentError("Cannot create a Reject object without arguments."))

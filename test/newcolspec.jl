@@ -1,106 +1,106 @@
-@testset "ColSpec" begin
+@testset "ascolspec" begin
   vecnames = [:a, :b, :c, :d, :e, :f]
   tupnames = (:a, :b, :c, :d, :e, :f)
 
   # vector of symbols
-  colspec = TableTransforms.ColSpec([:a, :c, :e])
+  colspec = TableTransforms.ascolspec([:a, :c, :e])
   snames = TableTransforms.choose(colspec, vecnames)
   @test snames == [:a, :c, :e]
   snames = TableTransforms.choose(colspec, tupnames)
   @test snames == [:a, :c, :e]
 
   # tuple of symbols
-  colspec = TableTransforms.ColSpec((:a, :c, :e))
+  colspec = TableTransforms.ascolspec((:a, :c, :e))
   snames = TableTransforms.choose(colspec, vecnames)
   @test snames == [:a, :c, :e]
   snames = TableTransforms.choose(colspec, tupnames)
   @test snames == [:a, :c, :e]
 
   # vector of strings
-  colspec = TableTransforms.ColSpec(["a", "c", "e"])
+  colspec = TableTransforms.ascolspec(["a", "c", "e"])
   snames = TableTransforms.choose(colspec, vecnames)
   @test snames == [:a, :c, :e]
   snames = TableTransforms.choose(colspec, tupnames)
   @test snames == [:a, :c, :e]
 
   # tuple of strings
-  colspec = TableTransforms.ColSpec(("a", "c", "e"))
+  colspec = TableTransforms.ascolspec(("a", "c", "e"))
   snames = TableTransforms.choose(colspec, vecnames)
   @test snames == [:a, :c, :e]
   snames = TableTransforms.choose(colspec, tupnames)
   @test snames == [:a, :c, :e]
 
   # vector of integers
-  colspec = TableTransforms.ColSpec([1, 3, 5])
+  colspec = TableTransforms.ascolspec([1, 3, 5])
   snames = TableTransforms.choose(colspec, vecnames)
   @test snames == [:a, :c, :e]
   snames = TableTransforms.choose(colspec, tupnames)
   @test snames == [:a, :c, :e]
 
   # tuple of integers
-  colspec = TableTransforms.ColSpec((1, 3, 5))
+  colspec = TableTransforms.ascolspec((1, 3, 5))
   snames = TableTransforms.choose(colspec, vecnames)
   @test snames == [:a, :c, :e]
   snames = TableTransforms.choose(colspec, tupnames)
   @test snames == [:a, :c, :e]
 
   # regex
-  colspec = TableTransforms.ColSpec(r"[ace]")
+  colspec = TableTransforms.ascolspec(r"[ace]")
   snames = TableTransforms.choose(colspec, vecnames)
   @test snames == [:a, :c, :e]
   snames = TableTransforms.choose(colspec, tupnames)
   @test snames == [:a, :c, :e]
 
   # colon
-  colspec = TableTransforms.ColSpec(:)
+  colspec = TableTransforms.ascolspec(:)
   snames = TableTransforms.choose(colspec, vecnames)
   @test snames == [:a, :b, :c, :d, :e, :f]
   snames = TableTransforms.choose(colspec, tupnames)
   @test snames == [:a, :b, :c, :d, :e, :f]
 
   # nothing
-  colspec = TableTransforms.ColSpec(nothing)
+  colspec = TableTransforms.ascolspec(nothing)
   snames = TableTransforms.choose(colspec, vecnames)
   @test snames == Symbol[]
   snames = TableTransforms.choose(colspec, tupnames)
   @test snames == Symbol[]
 
   # throws
-  colspec = TableTransforms.ColSpec(r"x")
+  colspec = TableTransforms.ascolspec(r"x")
   @test_throws AssertionError TableTransforms.choose(colspec, vecnames)
   @test_throws AssertionError TableTransforms.choose(colspec, tupnames)
-  @test_throws AssertionError TableTransforms.ColSpec(Symbol[])
-  @test_throws AssertionError TableTransforms.ColSpec(String[])
-  @test_throws AssertionError TableTransforms.ColSpec(Int[])
-  @test_throws ArgumentError TableTransforms.ColSpec(())
-  @test_throws ArgumentError TableTransforms.ColSpec(missing)
+  @test_throws AssertionError TableTransforms.ascolspec(Symbol[])
+  @test_throws AssertionError TableTransforms.ascolspec(String[])
+  @test_throws AssertionError TableTransforms.ascolspec(Int[])
+  @test_throws ArgumentError TableTransforms.ascolspec(())
+  @test_throws ArgumentError TableTransforms.ascolspec(missing)
 
   # type stability
-  colspec = TableTransforms.ColSpec([:a, :b])
+  colspec = TableTransforms.ascolspec([:a, :b])
   @inferred TableTransforms.choose(colspec, vecnames)
   @inferred TableTransforms.choose(colspec, tupnames)
-  colspec = TableTransforms.ColSpec((:a, :b))
+  colspec = TableTransforms.ascolspec((:a, :b))
   @inferred TableTransforms.choose(colspec, vecnames)
   @inferred TableTransforms.choose(colspec, tupnames)
-  colspec = TableTransforms.ColSpec(["a", "b"])
+  colspec = TableTransforms.ascolspec(["a", "b"])
   @inferred TableTransforms.choose(colspec, vecnames)
   @inferred TableTransforms.choose(colspec, tupnames)
-  colspec = TableTransforms.ColSpec(("a", "b"))
+  colspec = TableTransforms.ascolspec(("a", "b"))
   @inferred TableTransforms.choose(colspec, vecnames)
   @inferred TableTransforms.choose(colspec, tupnames)
-  colspec = TableTransforms.ColSpec([1, 2])
+  colspec = TableTransforms.ascolspec([1, 2])
   @inferred TableTransforms.choose(colspec, vecnames)
   @inferred TableTransforms.choose(colspec, tupnames)
-  colspec = TableTransforms.ColSpec((1, 2))
+  colspec = TableTransforms.ascolspec((1, 2))
   @inferred TableTransforms.choose(colspec, vecnames)
   @inferred TableTransforms.choose(colspec, tupnames)
-  colspec = TableTransforms.ColSpec(r"[ab]")
+  colspec = TableTransforms.ascolspec(r"[ab]")
   @inferred TableTransforms.choose(colspec, vecnames)
   @inferred TableTransforms.choose(colspec, tupnames)
-  colspec = TableTransforms.ColSpec(:)
+  colspec = TableTransforms.ascolspec(:)
   @inferred TableTransforms.choose(colspec, vecnames)
   @inferred TableTransforms.choose(colspec, tupnames)
-  colspec = TableTransforms.ColSpec(nothing)
+  colspec = TableTransforms.ascolspec(nothing)
   @inferred TableTransforms.choose(colspec, vecnames)
   @inferred TableTransforms.choose(colspec, tupnames)
 end

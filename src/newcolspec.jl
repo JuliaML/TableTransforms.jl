@@ -2,14 +2,18 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-# types used to select a column
+"""
+    Col
+
+Union of types used to select a column.
+"""
 const Col = Union{Symbol,Integer,AbstractString}
 
 """
     ColSpec  
 
 `ColSpec` is the parent type of all spec types used to select columns.
-The `ColSpec` abstract type together with the `Col` union type 
+The `ColSpec` abstract type together with the `Col` union type, the `ascolspec` function
 and the `choose` function form the ColSpec interface.
 
 To implement the ColSpec interface, the following steps must be performed:
@@ -23,11 +27,11 @@ struct MyTransform{S<:ColSpec,#= other type params =#}
 end
 ```
 
-2 - Convert spec to ColSpec using the `ColSpec` type constructor:
+2 - Convert spec to ColSpec using the `ascolspec` function:
 
 ```julia
 MyTransform(spec, #= other arguments =#) = 
-  MyTransform(ColSpec(spec), #= other arguments =#)
+  MyTransform(ascolspec(spec), #= other arguments =#)
 ```
 
 3 - Use `choose(colspec, names)` function in apply:
@@ -47,39 +51,38 @@ individual column selectors use the `Col` type. Example:
 
 ```julia
 function MyTransform(args::T...) where {T<:Col}
-  MyTransform(ColSpec(args))
+  MyTransform(ascolspec(args))
 end
 ```
 """
 abstract type ColSpec end
 
 """
-    ColSpec(spec)
+    ascolspec(spec)
 
-The `ColSpec` type constructor returns a ColSpec object 
-corresponding to the `spec` argument.
+Returns a `ColSpec` object corresponding to the `spec` argument.
 
 # Examples
 
 ```julia
-ColSpec([:a, :b, :c]) # NameSpec
-ColSpec((:a, :b, :c)) # NameSpec
-ColSpec(["a", "b", "c"]) # NameSpec
-ColSpec(("a", "b", "c")) # NameSpec
-ColSpec(1:10) # IndexSpec
-ColSpec((1, 2, 3)) # IndexSpec
-ColSpec(r"[abc]") # RegexSpec
-ColSpec(:) # AllSpec
-ColSpec(nothing) # NoneSpec
+ascolspec([:a, :b, :c]) # NameSpec
+ascolspec((:a, :b, :c)) # NameSpec
+ascolspec(["a", "b", "c"]) # NameSpec
+ascolspec(("a", "b", "c")) # NameSpec
+ascolspec(1:10) # IndexSpec
+ascolspec((1, 2, 3)) # IndexSpec
+ascolspec(r"[abc]") # RegexSpec
+ascolspec(:) # AllSpec
+ascolspec(nothing) # NoneSpec
 # if the argument is a ColSpec, return it
-ColSpec(NoneSpec()) # NoneSpec
+ascolspec(NoneSpec()) # NoneSpec
 ```
 """
-ColSpec(colspec::ColSpec) = colspec
+ascolspec(colspec::ColSpec) = colspec
 
 # argument errors
-ColSpec(::Tuple{}) = throw(ArgumentError("Invalid column spec."))
-ColSpec(::Any) = throw(ArgumentError("Invalid column spec."))
+ascolspec(::Tuple{}) = throw(ArgumentError("Invalid column spec."))
+ascolspec(::Any) = throw(ArgumentError("Invalid column spec."))
 
 """
     choose(colspec::ColSpec, names) -> Vector{Symbol}
@@ -124,6 +127,7 @@ Symbol[]
 """
 function choose end
 
+# NameSpec: select columns using names
 struct NameSpec <: ColSpec
   names::Vector{Symbol}
   function NameSpec(names)
@@ -132,13 +136,14 @@ struct NameSpec <: ColSpec
   end
 end
 
-ColSpec(names::AbstractVector{Symbol}) = NameSpec(names)
-ColSpec(names::AbstractVector{<:AbstractString}) = NameSpec(Symbol.(names))
-ColSpec(names::NTuple{N,Symbol}) where {N} = NameSpec(collect(names))
-ColSpec(names::NTuple{N,<:AbstractString}) where {N} = NameSpec(collect(Symbol.(names)))
+ascolspec(names::AbstractVector{Symbol}) = NameSpec(names)
+ascolspec(names::AbstractVector{<:AbstractString}) = NameSpec(Symbol.(names))
+ascolspec(names::NTuple{N,Symbol}) where {N} = NameSpec(collect(names))
+ascolspec(names::NTuple{N,<:AbstractString}) where {N} = NameSpec(collect(Symbol.(names)))
 
 choose(colspec::NameSpec, names) = _choose(colspec.names, names)
 
+# IndexSpec: select columns using indices
 struct IndexSpec <: ColSpec
   inds::Vector{Int}
   function IndexSpec(inds)
@@ -147,17 +152,18 @@ struct IndexSpec <: ColSpec
   end
 end
 
-ColSpec(inds::AbstractVector{<:Integer}) = IndexSpec(inds)
-ColSpec(inds::NTuple{N,<:Integer}) where {N} = IndexSpec(collect(inds))
+ascolspec(inds::AbstractVector{<:Integer}) = IndexSpec(inds)
+ascolspec(inds::NTuple{N,<:Integer}) where {N} = IndexSpec(collect(inds))
 
 choose(colspec::IndexSpec, names::Tuple) = choose(colspec, collect(names))
 choose(colspec::IndexSpec, names::Vector) = names[colspec.inds]
 
+# RegexSpec: select columns than match with regex
 struct RegexSpec <: ColSpec
   regex::Regex
 end
 
-ColSpec(regex::Regex) = RegexSpec(regex)
+ascolspec(regex::Regex) = RegexSpec(regex)
 
 choose(colspec::RegexSpec, names::Tuple) = choose(colspec, collect(names))
 function choose(colspec::RegexSpec, names::Vector)
@@ -167,16 +173,18 @@ function choose(colspec::RegexSpec, names::Vector)
   _choose(snames, names)
 end
 
+# AllSpec: select all columns
 struct AllSpec <: ColSpec end
 
-ColSpec(::Colon) = AllSpec()
+ascolspec(::Colon) = AllSpec()
 
 choose(::AllSpec, names::Tuple) = collect(names)
 choose(::AllSpec, names::Vector) = names
 
+# NoneSpec: select no column
 struct NoneSpec <: ColSpec end
 
-ColSpec(::Nothing) = NoneSpec()
+ascolspec(::Nothing) = NoneSpec()
 
 choose(::NoneSpec, names) = Symbol[]
 
