@@ -14,7 +14,7 @@ and the `choose` function form the ColSpec interface.
 
 To implement the ColSpec interface, the following steps must be performed:
 
-1 - Add colspec fied:
+1 - Add colspec field:
 
 ```julia
 struct MyTransform{S<:ColSpec,#= other type params =#}
