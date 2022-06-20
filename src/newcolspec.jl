@@ -53,30 +53,6 @@ end
 """
 abstract type ColSpec end
 
-struct NameSpec <: ColSpec
-  names::Vector{Symbol}
-  function NameSpec(names)
-    @assert !isempty(names) "Invalid column selection."
-    new(names)
-  end
-end
-
-struct IndexSpec <: ColSpec
-  inds::Vector{Int}
-  function IndexSpec(inds)
-    @assert !isempty(inds) "Invalid column selection."
-    new(inds)
-  end
-end
-
-struct RegexSpec <: ColSpec
-  regex::Regex
-end
-
-struct AllSpec <: ColSpec end
-
-struct NoneSpec <: ColSpec end
-
 """
     ColSpec(spec)
 
@@ -101,21 +77,7 @@ ColSpec(NoneSpec()) # NoneSpec
 """
 ColSpec(colspec::ColSpec) = colspec
 
-ColSpec(names::AbstractVector{Symbol}) = NameSpec(names)
-ColSpec(names::AbstractVector{<:AbstractString}) = NameSpec(Symbol.(names))
-ColSpec(names::NTuple{N,Symbol}) where {N} = NameSpec(collect(names))
-ColSpec(names::NTuple{N,<:AbstractString}) where {N} = NameSpec(collect(Symbol.(names)))
-
-ColSpec(inds::AbstractVector{<:Integer}) = IndexSpec(inds)
-ColSpec(inds::NTuple{N,<:Integer}) where {N} = IndexSpec(collect(inds))
-
-ColSpec(regex::Regex) = RegexSpec(regex)
-
-ColSpec(::Colon) = AllSpec()
-
-ColSpec(::Nothing) = NoneSpec()
-
-# ArgumentError
+# argument errors
 ColSpec(::Tuple{}) = throw(ArgumentError("Invalid column spec."))
 ColSpec(::Any) = throw(ArgumentError("Invalid column spec."))
 
@@ -160,10 +122,42 @@ julia> choose(NoneSpec(), names)
 Symbol[]
 ```
 """
+function choose end
+
+struct NameSpec <: ColSpec
+  names::Vector{Symbol}
+  function NameSpec(names)
+    @assert !isempty(names) "Invalid column selection."
+    new(names)
+  end
+end
+
+ColSpec(names::AbstractVector{Symbol}) = NameSpec(names)
+ColSpec(names::AbstractVector{<:AbstractString}) = NameSpec(Symbol.(names))
+ColSpec(names::NTuple{N,Symbol}) where {N} = NameSpec(collect(names))
+ColSpec(names::NTuple{N,<:AbstractString}) where {N} = NameSpec(collect(Symbol.(names)))
+
 choose(colspec::NameSpec, names) = _choose(colspec.names, names)
+
+struct IndexSpec <: ColSpec
+  inds::Vector{Int}
+  function IndexSpec(inds)
+    @assert !isempty(inds) "Invalid column selection."
+    new(inds)
+  end
+end
+
+ColSpec(inds::AbstractVector{<:Integer}) = IndexSpec(inds)
+ColSpec(inds::NTuple{N,<:Integer}) where {N} = IndexSpec(collect(inds))
 
 choose(colspec::IndexSpec, names::Tuple) = choose(colspec, collect(names))
 choose(colspec::IndexSpec, names::Vector) = names[colspec.inds]
+
+struct RegexSpec <: ColSpec
+  regex::Regex
+end
+
+ColSpec(regex::Regex) = RegexSpec(regex)
 
 choose(colspec::RegexSpec, names::Tuple) = choose(colspec, collect(names))
 function choose(colspec::RegexSpec, names::Vector)
@@ -173,11 +167,20 @@ function choose(colspec::RegexSpec, names::Vector)
   _choose(snames, names)
 end
 
+struct AllSpec <: ColSpec end
+
+ColSpec(::Colon) = AllSpec()
+
 choose(::AllSpec, names::Tuple) = collect(names)
 choose(::AllSpec, names::Vector) = names
 
+struct NoneSpec <: ColSpec end
+
+ColSpec(::Nothing) = NoneSpec()
+
 choose(::NoneSpec, names) = Symbol[]
 
+# helper functions
 function _choose(snames::Vector{Symbol}, names)
   # validate columns
   @assert snames ⊆ names "Invalid column selection."
