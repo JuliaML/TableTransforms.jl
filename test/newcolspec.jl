@@ -1,4 +1,4 @@
-@testset "ascolspec" begin
+@testset "ColSpec" begin
   vecnames = [:a, :b, :c, :d, :e, :f]
   tupnames = (:a, :b, :c, :d, :e, :f)
 

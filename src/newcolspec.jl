@@ -60,7 +60,7 @@ abstract type ColSpec end
 """
     ascolspec(spec)
 
-Returns a `ColSpec` object corresponding to the `spec` argument.
+Converts the `spec` argument to a `ColSpec` object.
 
 # Examples
 
