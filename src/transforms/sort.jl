@@ -29,10 +29,10 @@ struct Sort{S<:ColSpec,T} <: Stateless
   kwargs::T
 end
 
-Sort(spec; kwargs...) = Sort(ascolspec(spec), values(kwargs))
+Sort(spec; kwargs...) = Sort(colspec(spec), values(kwargs))
 
 Sort(cols::T...; kwargs...) where {T<:Col} = 
-  Sort(ascolspec(cols), values(kwargs))
+  Sort(colspec(cols), values(kwargs))
 
 Sort(; kwargs...) = throw(ArgumentError("Cannot create a Sort object without arguments."))
 
