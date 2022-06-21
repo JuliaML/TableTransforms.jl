@@ -50,9 +50,8 @@ If you need to create constructors that accept
 individual column selectors use the `Col` type. Example:
 
 ```julia
-function MyTransform(args::T...) where {T<:Col}
+MyTransform(args::T...) where {T<:Col} = 
   MyTransform(colspec(args))
-end
 ```
 """
 abstract type ColSpec end
@@ -78,7 +77,7 @@ colspec(nothing) # NoneSpec
 colspec(NoneSpec()) # NoneSpec
 ```
 """
-colspec(colspec::ColSpec) = colspec
+colspec(spec::ColSpec) = spec
 
 # argument errors
 colspec(::Tuple{}) = throw(ArgumentError("Invalid column spec."))
