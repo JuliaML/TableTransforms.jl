@@ -94,13 +94,13 @@ Choose column `names` using `colspec`.
 ```julia
 julia> names = (:a, :b, :c, :d, :e, :f);
 
-julia> choose(ColSpec(["a", "c", "e"]), names)
+julia> choose(ascolspec(["a", "c", "e"]), names)
 3-element Vector{Symbol}:
  :a
  :c
  :e
 
-julia> choose(ColSpec((1, 3, 5)), names)
+julia> choose(ascolspec((1, 3, 5)), names)
 3-element Vector{Symbol}:
  :a
  :c
