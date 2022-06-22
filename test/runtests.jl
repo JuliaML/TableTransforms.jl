@@ -41,8 +41,7 @@ end
 # list of tests
 testfiles = [
   "distributions.jl",
-  # "colspec.jl",
-  "newcolspec.jl",
+  "colspec.jl",
   "transforms.jl",
   "shows.jl"
 ]
