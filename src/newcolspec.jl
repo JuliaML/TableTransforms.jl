@@ -135,6 +135,8 @@ struct NameSpec <: ColSpec
   end
 end
 
+Base.show(io::IO, colspec::NameSpec) = print(io, colspec.names)
+
 colspec(names::AbstractVector{Symbol}) = NameSpec(names)
 colspec(names::AbstractVector{<:AbstractString}) = NameSpec(Symbol.(names))
 colspec(names::NTuple{N,Symbol}) where {N} = NameSpec(collect(names))
@@ -151,6 +153,8 @@ struct IndexSpec <: ColSpec
   end
 end
 
+Base.show(io::IO, colspec::IndexSpec) = print(io, colspec.inds)
+
 colspec(inds::AbstractVector{<:Integer}) = IndexSpec(inds)
 colspec(inds::NTuple{N,<:Integer}) where {N} = IndexSpec(collect(inds))
 
@@ -161,6 +165,8 @@ choose(colspec::IndexSpec, names::Vector) = names[colspec.inds]
 struct RegexSpec <: ColSpec
   regex::Regex
 end
+
+Base.show(io::IO, colspec::RegexSpec) = print(io, colspec.regex)
 
 colspec(regex::Regex) = RegexSpec(regex)
 
@@ -175,6 +181,8 @@ end
 # AllSpec: select all columns
 struct AllSpec <: ColSpec end
 
+Base.show(io::IO, ::AllSpec) = print(io, "all")
+
 colspec(::Colon) = AllSpec()
 
 choose(::AllSpec, names::Tuple) = collect(names)
@@ -182,6 +190,8 @@ choose(::AllSpec, names::Vector) = names
 
 # NoneSpec: select no column
 struct NoneSpec <: ColSpec end
+
+Base.show(io::IO, ::NoneSpec) = print(io, "none")
 
 colspec(::Nothing) = NoneSpec()
 

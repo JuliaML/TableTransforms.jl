@@ -4,13 +4,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Select(TableTransforms.NameSpec([:a, :b, :c]))"
+    @test iostr == "Select([:a, :b, :c])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Select transform
-    └─ colspec = TableTransforms.NameSpec([:a, :b, :c])"""
+    └─ colspec = [:a, :b, :c]"""
   end
 
   @testset "Reject" begin
@@ -18,13 +18,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Reject(TableTransforms.NameSpec([:a, :b, :c]))"
+    @test iostr == "Reject([:a, :b, :c])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Reject transform
-    └─ colspec = TableTransforms.NameSpec([:a, :b, :c])"""
+    └─ colspec = [:a, :b, :c]"""
   end
 
   @testset "Rename" begin
@@ -61,13 +61,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Sort(TableTransforms.NameSpec([:a, :c]), (rev = true,))"
+    @test iostr == "Sort([:a, :c], (rev = true,))"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Sort transform
-    ├─ colspec = TableTransforms.NameSpec([:a, :c])
+    ├─ colspec = [:a, :c]
     └─ kwargs = (rev = true,)"""
   end
 
@@ -109,13 +109,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "DropMissing(TableTransforms.NameSpec([:a, :b, :c]))"
+    @test iostr == "DropMissing([:a, :b, :c])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     DropMissing transform
-    └─ colspec = TableTransforms.NameSpec([:a, :b, :c])"""
+    └─ colspec = [:a, :b, :c]"""
   end
 
   @testset "Replace" begin
@@ -168,14 +168,14 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Levels(TableTransforms.NameSpec([:a, :b]), TableTransforms.RegexSpec(r\"[ab]\"), ([\"n\", \"y\"], 1:3))"
+    @test iostr == "Levels([:a, :b], r\"[ab]\", ([\"n\", \"y\"], 1:3))"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Levels transform
-    ├─ colspec = TableTransforms.NameSpec([:a, :b])
-    ├─ ordered = TableTransforms.RegexSpec(r"[ab]")
+    ├─ colspec = [:a, :b]
+    ├─ ordered = r"[ab]"
     └─ levels = (["n", "y"], 1:3)"""
   end
 
@@ -184,13 +184,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "OneHot(TableTransforms.NameSpec([:a]))"
+    @test iostr == "OneHot([:a])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     OneHot transform
-    └─ colspec = TableTransforms.NameSpec([:a])"""
+    └─ colspec = [:a]"""
   end
 
   @testset "Identity" begin
@@ -320,13 +320,13 @@
 
     # compact mode
     iostr = sprint(show, pipeline)
-    @test iostr == "Select(TableTransforms.NameSpec([:x, :z])) → ZScore() → Scale(0, 1)"
+    @test iostr == "Select([:x, :z]) → ZScore() → Scale(0, 1)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
     @test iostr == """
     Sequential
-    ├─ Select(NameSpec([:x, :z]))
+    ├─ Select([:x, :z])
     ├─ ZScore()
     └─ Scale(0, 1)"""
   end
