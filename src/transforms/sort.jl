@@ -29,14 +29,11 @@ struct Sort{S<:ColSpec,T} <: Stateless
   kwargs::T
 end
 
-Sort(colspec::S; kwargs...) where {S<:ColSpec} = 
-  Sort(colspec, values(kwargs))
+Sort(spec; kwargs...) = Sort(colspec(spec), values(kwargs))
 
-Sort(cols::T...; kwargs...) where {T<:ColSelector} = 
-  Sort(cols, values(kwargs))
+Sort(cols::T...; kwargs...) where {T<:Col} = 
+  Sort(colspec(cols), values(kwargs))
 
-# argument errors
-Sort(::Tuple{}; kwargs...) = throw(ArgumentError("Cannot create a Sort object with empty tuple."))
 Sort(; kwargs...) = throw(ArgumentError("Cannot create a Sort object without arguments."))
 
 isrevertible(::Type{<:Sort}) = true

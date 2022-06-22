@@ -4,13 +4,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Select((:a, :b, :c))"
+    @test iostr == "Select([:a, :b, :c])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Select transform
-    └─ colspec = (:a, :b, :c)"""
+    └─ colspec = [:a, :b, :c]"""
   end
 
   @testset "Reject" begin
@@ -18,13 +18,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Reject((:a, :b, :c))"
+    @test iostr == "Reject([:a, :b, :c])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Reject transform
-    └─ colspec = (:a, :b, :c)"""
+    └─ colspec = [:a, :b, :c]"""
   end
 
   @testset "Rename" begin
@@ -109,13 +109,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "DropMissing((:a, :b, :c))"
+    @test iostr == "DropMissing([:a, :b, :c])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     DropMissing transform
-    └─ colspec = (:a, :b, :c)"""
+    └─ colspec = [:a, :b, :c]"""
   end
 
   @testset "Replace" begin
@@ -168,13 +168,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Levels((:a, :b), r\"[ab]\", ([\"n\", \"y\"], 1:3))"
+    @test iostr == "Levels([:a, :b], r\"[ab]\", ([\"n\", \"y\"], 1:3))"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Levels transform
-    ├─ colspec = (:a, :b)
+    ├─ colspec = [:a, :b]
     ├─ ordered = r"[ab]"
     └─ levels = (["n", "y"], 1:3)"""
   end
@@ -320,13 +320,13 @@
 
     # compact mode
     iostr = sprint(show, pipeline)
-    @test iostr == "Select((:x, :z)) → ZScore() → Scale(0, 1)"
+    @test iostr == "Select([:x, :z]) → ZScore() → Scale(0, 1)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
     @test iostr == """
     Sequential
-    ├─ Select((:x, :z))
+    ├─ Select([:x, :z])
     ├─ ZScore()
     └─ Scale(0, 1)"""
   end

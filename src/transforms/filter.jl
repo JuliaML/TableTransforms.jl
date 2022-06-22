@@ -81,16 +81,16 @@ struct DropMissing{S<:ColSpec} <: Stateless
   colspec::S
 end
 
-DropMissing(::Tuple{}) = throw(ArgumentError("Cannot create a DropMissing object with empty tuple."))
+DropMissing() = DropMissing(AllSpec())
 
-DropMissing() = DropMissing(:)
+DropMissing(spec) = DropMissing(colspec(spec))
 
-DropMissing(cols::T...) where {T<:ColSelector} =
-  DropMissing(cols)
+DropMissing(cols::T...) where {T<:Col} =
+  DropMissing(colspec(cols))
 
 isrevertible(::Type{<:DropMissing}) = true
 
-_ftrans(::DropMissing{Colon}, cols) =
+_ftrans(::DropMissing{AllSpec}, cols) =
   Filter(row -> all(!ismissing, row))
 
 _ftrans(::DropMissing, cols) =

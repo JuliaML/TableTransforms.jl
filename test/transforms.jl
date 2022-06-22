@@ -150,8 +150,8 @@
 
     # throws: empty selection
     @test_throws AssertionError apply(Select(r"a"), t)
-    @test_throws AssertionError apply(Select(Symbol[]), t)
-    @test_throws AssertionError apply(Select(String[]), t)
+    @test_throws AssertionError Select(Symbol[])
+    @test_throws AssertionError Select(String[])
 
     # throws: columns that do not exist in the original table
     @test_throws AssertionError apply(Select(:x3, :y3), t)
@@ -295,6 +295,11 @@
     # throws: Reject without arguments
     @test_throws ArgumentError Reject()
     @test_throws ArgumentError Reject(())
+
+    # throws: empty rejection
+    @test_throws AssertionError apply(Reject(r"a"), t)
+    @test_throws AssertionError Reject(Symbol[])
+    @test_throws AssertionError Reject(String[])
 
     # throws: reject all columns
     @test_throws AssertionError apply(Reject(r"[xy]"), t)
@@ -533,8 +538,8 @@
 
     # throws: empty selection
     @test_throws AssertionError apply(Sort(r"x"), t)
-    @test_throws AssertionError apply(Sort(Symbol[]), t)
-    @test_throws AssertionError apply(Sort(String[]), t)
+    @test_throws AssertionError Sort(Symbol[])
+    @test_throws AssertionError Sort(String[])
 
     # throws: columns that do not exist in the original table
     @test_throws AssertionError apply(Sort([:d, :e]), t)
@@ -869,8 +874,8 @@
 
     # throws: empty selection
     @test_throws AssertionError apply(DropMissing(r"g"), t)
-    @test_throws AssertionError apply(DropMissing(Symbol[]), t)
-    @test_throws AssertionError apply(DropMissing(String[]), t)
+    @test_throws AssertionError DropMissing(Symbol[])
+    @test_throws AssertionError DropMissing(String[])
 
     # throws: columns that do not exist in the original table
     @test_throws AssertionError apply(DropMissing(:g, :h), t)

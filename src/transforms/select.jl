@@ -70,12 +70,12 @@ struct Select{S<:ColSpec} <: Stateless
   colspec::S
 end
 
-# argument errors
-Select(::Tuple{}) = throw(ArgumentError("Cannot create a Select object with empty tuple."))
-Select() = throw(ArgumentError("Cannot create a Select object without arguments."))
+Select(spec) = Select(colspec(spec))
 
-Select(cols::T...) where {T<:ColSelector} = 
-  Select(cols)
+Select(cols::T...) where {T<:Col} = 
+  Select(colspec(cols))
+
+Select() = throw(ArgumentError("Cannot create a Select object without arguments."))
 
 isrevertible(::Type{<:Select}) = true
 
@@ -152,13 +152,14 @@ struct Reject{S<:ColSpec} <: Stateless
   colspec::S
 end
 
-# argumet erros
-Reject(::Tuple{}) = throw(ArgumentError("Cannot create a Reject object with empty tuple."))
-Reject(::Colon) = throw(ArgumentError("Cannot reject all columns."))
-Reject() = throw(ArgumentError("Cannot create a Reject object without arguments."))
+Reject(spec) = Reject(colspec(spec))
 
-Reject(cols::T...) where {T<:ColSelector} = 
-  Reject(cols)
+Reject(cols::T...) where {T<:Col} = 
+  Reject(colspec(cols))
+
+# argumet erros
+Reject() = throw(ArgumentError("Cannot create a Reject object without arguments."))
+Reject(::AllSpec) = throw(ArgumentError("Cannot reject all columns."))
 
 isrevertible(::Type{<:Reject}) = true
 
