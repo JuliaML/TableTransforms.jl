@@ -16,19 +16,20 @@ Apply the corresponding `funcᵢ` function to each `colᵢ` column.
 ```julia
 Functional(cos)
 Functional(sin)
+Functional(1 => cos, 2 => sin)
 Functional(:a => cos, :b => sin)
 Functional("a" => cos, "b" => sin)
 ```
 """
-struct Functional{F} <: Stateless
+struct Functional{S<:ColSpec,F} <: Stateless
+  colspec::S
   func::F
 end
 
-Functional(pairs::Pair{Symbol}...) =
-  Functional(NamedTuple(pairs))
+Functional(func) = Functional(AllSpec(), func)
 
-Functional(pairs::Pair{K}...) where {K<:AbstractString} =
-  Functional(NamedTuple(Symbol(k) => v for (k, v) in pairs))
+Functional(pairs::Pair{T}...) where {T<:Col} =
+  Functional(colspec(first.(pairs)), last.(pairs))
 
 Functional() = throw(ArgumentError("Cannot create a Functional object without arguments."))
 
@@ -48,29 +49,32 @@ inverse(::typeof(identity)) = identity
 # fallback to nothing
 inverse(::Any) = nothing
 
-isrevertible(transform::Functional) =
+isrevertible(transform::Functional{S}) where {S} =
   !isnothing(inverse(transform.func))
 
-isrevertible(transform::Functional{<:NamedTuple}) =
-  all(!isnothing, inverse.(values(transform.func)))
-
-_functuple(func, names) = NamedTuple(nm => func for nm in names)
-_functuple(func::NamedTuple, names) = func
+isrevertible(transform::Functional{S,<:Tuple}) where {S} =
+  all(!isnothing, inverse.(transform.func))
 
 function apply(transform::Functional, table) 
   cols = Tables.columns(table)
   names = Tables.columnnames(cols)
-  funcs = _functuple(transform.func, names)
+  snames = choose(transform.colspec, names)
+  funcs = Dict(snames .=> transform.func)
   
-  ncols = map(names) do nm
+  columns = map(names) do nm
     x = Tables.getcolumn(cols, nm)
-    func = get(funcs, nm, identity)
-    func.(x)
+    if nm ∈ snames
+      func = funcs[nm]
+      y = func.(x)
+    else
+      y = x
+    end
+    y
   end
 
-  𝒯 = (; zip(names, ncols)...)
+  𝒯 = (; zip(names, columns)...)
   newtable = 𝒯 |> Tables.materializer(table)
-  return newtable, nothing
+  return newtable, (snames, funcs)
 end
 
 function revert(transform::Functional, newtable, cache)
@@ -78,15 +82,21 @@ function revert(transform::Functional, newtable, cache)
 
   cols = Tables.columns(newtable)
   names = Tables.columnnames(cols)
-  funcs = _functuple(transform.func, names)
+  
+  snames, funcs = cache
 
-  ocols = map(names) do nm
-    x = Tables.getcolumn(cols, nm)
-    func = get(funcs, nm, identity)
-    invfunc = inverse(func)
-    invfunc.(x)
+  columns = map(names) do nm
+    y = Tables.getcolumn(cols, nm)
+    if nm ∈ snames
+      func = funcs[nm]
+      invfunc = inverse(func)
+      x = invfunc.(y)
+    else
+      x = y
+    end
+    x
   end
 
-  𝒯 = (; zip(names, ocols)...)
+  𝒯 = (; zip(names, columns)...)
   𝒯 |> Tables.materializer(newtable)
 end
