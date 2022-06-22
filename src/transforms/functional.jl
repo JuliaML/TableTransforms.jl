@@ -55,11 +55,14 @@ isrevertible(transform::Functional{S}) where {S} =
 isrevertible(transform::Functional{S,<:Tuple}) where {S} =
   all(!isnothing, inverse.(transform.func))
 
+_funcdict(func, names) = Dict(nm => func for nm in names)
+_funcdict(func::Tuple, names) = Dict(names .=> func)
+
 function apply(transform::Functional, table) 
   cols = Tables.columns(table)
   names = Tables.columnnames(cols)
   snames = choose(transform.colspec, names)
-  funcs = Dict(snames .=> transform.func)
+  funcs = _funcdict(transform.func, snames)
   
   columns = map(names) do nm
     x = Tables.getcolumn(cols, nm)

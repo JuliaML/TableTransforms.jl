@@ -263,12 +263,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Functional(sin)"
+    @test iostr == "Functional(all, sin)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Functional transform
+    ├─ colspec = all
     └─ func = sin"""
   end
 
@@ -339,7 +340,7 @@
 
     # compact mode
     iostr = sprint(show, pipeline)
-    @test iostr == "Scale(0.3, 0.6) ⊔ EigenAnalysis(:VDV, nothing, 1.0) ⊔ Functional(cos)"
+    @test iostr == "Scale(0.3, 0.6) ⊔ EigenAnalysis(:VDV, nothing, 1.0) ⊔ Functional(all, cos)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
@@ -347,7 +348,7 @@
     Parallel
     ├─ Scale(0.3, 0.6)
     ├─ EigenAnalysis(:VDV, nothing, 1.0)
-    └─ Functional(cos)"""
+    └─ Functional(all, cos)"""
 
     # Parallel with Sequential
     f1 = ZScore()
@@ -358,7 +359,7 @@
 
     # compact mode
     iostr = sprint(show, pipeline)
-    @test iostr == "ZScore() → Scale(0.25, 0.75) ⊔ Functional(cos) → Scale(0.25, 0.75)"
+    @test iostr == "ZScore() → Scale(0.25, 0.75) ⊔ Functional(all, cos) → Scale(0.25, 0.75)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
@@ -368,7 +369,7 @@
     │  ├─ ZScore()
     │  └─ Scale(0.25, 0.75)
     └─ Sequential
-       ├─ Functional(cos)
+       ├─ Functional(all, cos)
        └─ Scale(0.25, 0.75)"""
   end
 end
