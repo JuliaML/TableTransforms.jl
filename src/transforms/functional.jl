@@ -49,10 +49,10 @@ inverse(::typeof(identity)) = identity
 # fallback to nothing
 inverse(::Any) = nothing
 
-isrevertible(transform::Functional{S}) where {S} =
+isrevertible(transform::Functional{AllSpec}) =
   !isnothing(inverse(transform.func))
 
-isrevertible(transform::Functional{S,<:Tuple}) where {S} =
+isrevertible(transform::Functional) =
   all(!isnothing, inverse.(transform.func))
 
 _funcdict(func, names) = Dict(nm => func for nm in names)
