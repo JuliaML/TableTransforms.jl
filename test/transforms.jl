@@ -1502,6 +1502,18 @@
 
     # apply functions to specific columns
     x = π*rand(1500)
+    y = 2*(rand(1500) .- 0.5)
+    z = x + y
+    t = Table(; x, y, z)
+    T = Functional(1 => cos, 2 => acos)
+    n, c = apply(T, t)
+    @test all(x -> -1 ≤ x ≤ 1, n.x)
+    @test all(y -> 0 ≤ y ≤ π, n.y)
+    @test t.z == n.z
+    tₒ = revert(T, n, c)
+    @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+
+    x = π*rand(1500)
     y = π*(rand(1500) .- 0.5)
     z = x + y
     t = Table(; x, y, z)
@@ -1525,10 +1537,14 @@
     tₒ = revert(T, n, c)
     @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
+    T = Functional(1 => cos, 2 => sin)
+    @test isrevertible(T) == true
     T = Functional(:x => cos, :y => sin)
     @test isrevertible(T) == true
     T = Functional("x" => cos, "y" => sin)
     @test isrevertible(T) == true
+    T = Functional(1 => abs, 2 => sin)
+    @test isrevertible(T) == false
     T = Functional(:x => abs, :y => sin)
     @test isrevertible(T) == false
     T = Functional("x" => abs, "y" => sin)
