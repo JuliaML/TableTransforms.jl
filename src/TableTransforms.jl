@@ -39,6 +39,7 @@ export
   Filter,
   DropMissing,
   Replace,
+  NarrowTypes,
   Coalesce,
   Coerce,
   Levels,
