@@ -21,6 +21,7 @@ using PrettyTables
 using AbstractTrees
 using CategoricalArrays
 using Random
+using Optim: optimize, minimizer
 
 import Distributions: ContinuousUnivariateDistribution
 import Distributions: quantile, cdf
@@ -62,6 +63,7 @@ export
   Functional,
   EigenAnalysis,
   PCA, DRS, SDS,
+  ProjectionPursuit,
   RowTable,
   ColTable,
   Sequential,
