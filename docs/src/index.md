@@ -50,14 +50,6 @@ our long term vision is more ambitious. We aim to provide a complete
 user experience with fully-featured pipelines that include standardization
 of column names, imputation of missing data, and more.*
 
-## Installation
-
-Get the latest stable release with Julia's package manager:
-
-```julia
-] add TableTransforms
-```
-
 ## Usage
 
 Consider the following table and its corner plot:
