@@ -11,7 +11,7 @@ using ReferenceTests, ImageIO
 using StatsBase
 
 # set default configurations for plots
-gr(ms=2, mc=:black, aspectratio=:equal,
+gr(ms=1, mc=:black, aspectratio=:equal,
    label=false, size=(600,400))
 
 # workaround GR warnings
