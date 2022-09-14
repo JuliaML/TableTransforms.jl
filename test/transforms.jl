@@ -413,6 +413,26 @@
     @test n.x3 == t.c
     @test n.x4 == t.d
 
+    T = SelectRename("a" => "x", "c" => "y")
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:x, :y)
+    @test n.x == t.a
+    @test n.y == t.c
+
+    T = SelectRename("b" => "x", "d" => "y")
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:x, :y)
+    @test n.x == t.b
+    @test n.y == t.d
+
+    T = SelectRename("a" => "x1", "b" => "x2", "c" => "x3", "d" => "x4")
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == (:x1, :x2, :x3, :x4)
+    @test n.x1 == t.a
+    @test n.x2 == t.b
+    @test n.x3 == t.c
+    @test n.x4 == t.d
+
     # row table
     rt = Tables.rowtable(t)
     T = SelectRename(:a => :x, :c => :y)
