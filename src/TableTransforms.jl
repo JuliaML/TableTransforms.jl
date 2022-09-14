@@ -32,6 +32,7 @@ export
   # built-in
   Select,
   Reject,
+  SelectRename,
   Rename,
   StdNames,
   Sort,

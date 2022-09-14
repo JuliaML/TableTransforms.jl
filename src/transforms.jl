@@ -235,6 +235,7 @@ end
 
 include("transforms/select.jl")
 include("transforms/rename.jl")
+include("transforms/selectrename.jl")
 include("transforms/stdnames.jl")
 include("transforms/sort.jl")
 include("transforms/sample.jl")
