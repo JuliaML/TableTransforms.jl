@@ -322,13 +322,13 @@
 
     # compact mode
     iostr = sprint(show, pipeline)
-    @test iostr == "Select([:x, :z]) → ZScore() → Scale(0, 1)"
+    @test iostr == "Select([:x, :z], nothing) → ZScore() → Scale(0, 1)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
     @test iostr == """
     Sequential
-    ├─ Select([:x, :z])
+    ├─ Select([:x, :z], nothing)
     ├─ ZScore()
     └─ Scale(0, 1)"""
   end
