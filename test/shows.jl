@@ -76,17 +76,17 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Sample(Random._GLOBAL_RNG(), nothing, 30, false, true)"
+    @test iostr == "Sample(30, Any[], false, true, Random._GLOBAL_RNG())"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Sample transform
-    ├─ rng = Random._GLOBAL_RNG()
-    ├─ wv = nothing
-    ├─ n = 30
+    ├─ size = 30
+    ├─ weights = Any[]
     ├─ replace = false
-    └─ ordered = true"""
+    ├─ ordered = true
+    └─ rng = Random._GLOBAL_RNG()"""
   end
 
   @testset "Filter" begin

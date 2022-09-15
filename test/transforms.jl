@@ -556,7 +556,7 @@
     t = Table(; a, b, c)
     trows = Tables.rowtable(t) 
 
-    T = Sample(30)
+    T = Sample(30, replace=true)
     n, c = apply(T, t)
     @test length(n.a) == 30
 
@@ -566,7 +566,7 @@
     @test n.b ⊆ t.b
     @test n.c ⊆ t.c
 
-    T = Sample(30, ordered=true)
+    T = Sample(30, replace=true, ordered=true)
     n, c = apply(T, t)
     @test unique(Tables.rowtable(n)) == trows
 
@@ -578,15 +578,15 @@
     @test Tables.rowtable(n) == trows
 
     # with rng
-    T = Sample(MersenneTwister(2), 8)
+    T = Sample(8, replace=true, rng=MersenneTwister(2))
     n, c = apply(T, t)
     @test n.a == [3, 7, 8, 2, 2, 6, 2, 6]
     @test n.b == [8, 2, 3, 1, 1, 5, 1, 5]
     @test n.c == [1, 2, 9, 5, 5, 8, 5, 8]
 
     #with weights
-    wv = pweights([0.1, 0.25, 0.15, 0.25, 0.1, 0.15])
-    T = Sample(MersenneTwister(2), wv, 10_000)
+    w = [0.1, 0.25, 0.15, 0.25, 0.1, 0.15]
+    T = Sample(10_000, w, replace=true, rng=MersenneTwister(2))
     n, c = apply(T, t)
     nrows = Tables.rowtable(n)
     @test isapprox(count(==(trows[1]), nrows) / 10_000, 0.10, atol=0.01)
