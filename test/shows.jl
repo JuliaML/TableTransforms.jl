@@ -4,13 +4,14 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Select([:a, :b, :c])"
+    @test iostr == "Select([:a, :b, :c], nothing)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Select transform
-    └─ colspec = [:a, :b, :c]"""
+    ├─ colspec = [:a, :b, :c]
+    └─ newnames = nothing"""
   end
 
   @testset "Reject" begin
