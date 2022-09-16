@@ -33,10 +33,18 @@ struct Sample{W,RNG} <: Stateless
   rng::RNG
 end
 
-Sample(size::Int, weights=nothing;
+Sample(size::Int;
+       replace=false, ordered=false,
+       rng=Random.GLOBAL_RNG) =
+  Sample(size, nothing, replace, ordered, rng)
+  
+Sample(size::Int, weights::AbstractWeights;
        replace=false, ordered=false,
        rng=Random.GLOBAL_RNG) =
   Sample(size, weights, replace, ordered, rng)
+  
+Sample(size::Int, weights; kwargs...) =
+  Sample(size, Weights(collect(weights)); kwargs...)
 
 isrevertible(::Type{<:Sample}) = false
 
@@ -52,8 +60,7 @@ function apply(transform::Sample, table)
   newrows = if isnothing(weights)
     sample(rng, rows, size; replace, ordered)
   else
-    ws = Weights(collect(weights))
-    sample(rng, rows, ws, size; replace, ordered)
+    sample(rng, rows, weights, size; replace, ordered)
   end
 
   newtable = newrows |> Tables.materializer(table)

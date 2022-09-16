@@ -8,6 +8,7 @@ using Tables
 using ScientificTypes
 using Distributions: Normal
 using Transducers: tcollect
+using StatsBase: AbstractWeights
 using StatsBase: Weights, sample
 using LinearAlgebra
 using Statistics
