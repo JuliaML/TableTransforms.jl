@@ -585,7 +585,7 @@
     @test n.c == [1, 2, 9, 5, 5, 8, 5, 8]
 
     #with weights
-    w = [0.1, 0.25, 0.15, 0.25, 0.1, 0.15]
+    w = pweights([0.1, 0.25, 0.15, 0.25, 0.1, 0.15])
     T = Sample(10_000, w, replace=true, rng=MersenneTwister(2))
     n, c = apply(T, t)
     nrows = Tables.rowtable(n)
