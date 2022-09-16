@@ -55,6 +55,11 @@ Tables.materializer(t::TableSelection) =
     Select((col₁, col₂, ..., colₙ))
     
 The transform that selects columns `col₁`, `col₂`, ..., `colₙ`.
+
+    Select(col₁ => newcol₁, col₂ => newcol₂, ..., colₙ => newcolₙ)
+
+Selects the columns `col₁`, `col₂`, ..., `colₙ`
+and rename them to `newcol₁`, `newcol₂`, ..., `newcolₙ`.
     
     Select(regex)
 
@@ -66,24 +71,25 @@ Selects the columns that match with `regex`.
 Select(1, 3, 5)
 Select([:a, :c, :e])
 Select(("a", "c", "e"))
+Select(1 => :x, 3 => :y)
+Select(:a => :x, :b => :y)
+Select("a" => "x", "b" => "y")
 Select(r"[ace]")
 ```
 """
-struct Select{S<:ColSpec,N} <: Stateless
+struct Select{S<:ColSpec} <: Stateless
   colspec::S
-  newnames::N
+  newnames::Union{Vector{Symbol},Nothing}
 end
 
 Select(spec) = Select(colspec(spec), nothing)
+Select(cols::T...) where {T<:Col} = Select(cols)
 
-Select(cols::T...) where {T<:Col} = 
-  Select(colspec(cols), nothing)
+Select(pairs::Pair{T,Symbol}...) where {T<:Col} = 
+  Select(colspec(first.(pairs)), collect(last.(pairs)))
 
-Select(cols::Pair{T,Symbol}...) where {T<:Col} = 
-  Select(colspec(first.(cols)), collect(last.(cols)))
-
-Select(cols::Pair{T,S}...) where {T<:Col,S<:AbstractString} = 
-  Select(colspec(first.(cols)), collect(Symbol.(last.(cols))))
+Select(pairs::Pair{T,S}...) where {T<:Col,S<:AbstractString} = 
+  Select(colspec(first.(pairs)), collect(Symbol.(last.(pairs))))
 
 Select() = throw(ArgumentError("Cannot create a Select object without arguments."))
 
@@ -91,7 +97,7 @@ isrevertible(::Type{<:Select}) = true
 
 # utils
 _newnames(::Nothing, select) = select
-_newnames(names::Select, select) = names
+_newnames(names::Vector{Symbol}, select) = names
 
 function apply(transform::Select, table)
   # original columns

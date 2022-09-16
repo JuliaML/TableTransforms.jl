@@ -12,6 +12,20 @@
     Select transform
     ├─ colspec = [:a, :b, :c]
     └─ newnames = nothing"""
+
+    # selection with renaming
+    T = Select(:a => :x, :b => :y)
+
+    # compact mode
+    iostr = sprint(show, T)
+    @test iostr == "Select([:a, :b], [:x, :y])"
+
+    # full mode
+    iostr = sprint(show, MIME("text/plain"), T)
+    @test iostr == """
+    Select transform
+    ├─ colspec = [:a, :b]
+    └─ newnames = [:x, :y]"""
   end
 
   @testset "Reject" begin
