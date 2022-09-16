@@ -3,10 +3,11 @@
 # ------------------------------------------------------------------
 
 """
-    Sample([rng], [wv::AbstractWeights], n; replace=true, ordered=false)
+    Sample(size, [weights]; replace=true, ordered=false, rng=GLOBAL_RNG)
 
-Sample table rows by forwarding arguments to the `sample` function from StatsBase.jl.
-Optionally, a random number generator `rng` and a weight vector `wv` can be used.
+Sample `size` rows of table using `weights` with or without replacement depending
+on the option `replace`. The option `ordered` can be used to return samples in
+the same order of the original table.
 
 # Examples
 
@@ -18,56 +19,51 @@ Sample(1_000, replace=false, ordered=true)
 # with rng
 using Random
 rng = MersenneTwister(2)
-Sample(rng, 1_000)
+Sample(1_000, rng=rng)
 
 # with weights
-using StatsBase
-wv = pweights([0.2, 0.1, 0.3])
-Sample(wv, 1_000)
-Sample(rng, wv, 1_000)
+Sample(10, rand(100))
 ```
 """
-struct Sample{R<:AbstractRNG,W} <: Stateless
-  rng::R
-  wv::W
-  n::Int
+struct Sample{W,RNG} <: Stateless
+  size::Int
+  weights::W
   replace::Bool
   ordered::Bool
+  rng::RNG
 end
 
-Sample(rng::AbstractRNG, wv::AbstractWeights, n::Int; replace=true, ordered=false) =
-  Sample(rng, wv, n, replace, ordered)
-
-Sample(rng::AbstractRNG, n::Int; replace=true, ordered=false) =
-  Sample(rng, nothing, n, replace, ordered)
-
-Sample(wv::AbstractWeights, n::Int; replace=true, ordered=false) =
-  Sample(GLOBAL_RNG, wv, n, replace, ordered)
-
-Sample(n::Int; replace=true, ordered=false) =
-  Sample(GLOBAL_RNG, nothing, n, replace, ordered)
+Sample(size::Int;
+       replace=false, ordered=false,
+       rng=Random.GLOBAL_RNG) =
+  Sample(size, nothing, replace, ordered, rng)
+  
+Sample(size::Int, weights::AbstractWeights;
+       replace=false, ordered=false,
+       rng=Random.GLOBAL_RNG) =
+  Sample(size, weights, replace, ordered, rng)
+  
+Sample(size::Int, weights; kwargs...) =
+  Sample(size, Weights(collect(weights)); kwargs...)
 
 isrevertible(::Type{<:Sample}) = false
 
 function apply(transform::Sample, table)
   rows = Tables.rowtable(table)
 
-  rng     = transform.rng
-  wv      = transform.wv
-  n       = transform.n
+  size    = transform.size
+  weights = transform.weights
   replace = transform.replace
   ordered = transform.ordered
+  rng     = transform.rng
 
-  if isnothing(wv)
-    newrows = sample(rng, rows, n; replace, ordered)
+  newrows = if isnothing(weights)
+    sample(rng, rows, size; replace, ordered)
   else
-    newrows = sample(rng, rows, wv, n; replace, ordered)
+    sample(rng, rows, weights, size; replace, ordered)
   end
 
   newtable = newrows |> Tables.materializer(table)
 
   newtable, nothing
 end
-
-revert(::Sample, newtable, cache) = 
-  throw(AssertionError("Transform is not revertible."))
