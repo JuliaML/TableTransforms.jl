@@ -30,8 +30,8 @@ function apply(transform::Filter, table)
   # selected and rejected rows/inds
   sinds = findall(transform.func, rows)
   rinds = setdiff(1:length(rows), sinds)
-  srows = rows[sinds]
-  rrows = rows[rinds]
+  srows = view(rows, sinds)
+  rrows = view(rows, rinds)
 
   newtable = srows |> Tables.materializer(table)
 
