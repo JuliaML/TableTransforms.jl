@@ -33,7 +33,7 @@ struct Sample{W,RNG} <: Stateless
   rng::RNG
 end
 
-Sample(size::Int, weights=[];
+Sample(size::Int, weights=nothing;
        replace=false, ordered=false,
        rng=Random.GLOBAL_RNG) =
   Sample(size, weights, replace, ordered, rng)
@@ -49,7 +49,7 @@ function apply(transform::Sample, table)
   ordered = transform.ordered
   rng     = transform.rng
 
-  newrows = if isempty(weights)
+  newrows = if isnothing(weights)
     sample(rng, rows, size; replace, ordered)
   else
     ws = Weights(collect(weights))
@@ -60,6 +60,3 @@ function apply(transform::Sample, table)
 
   newtable, nothing
 end
-
-revert(::Sample, newtable, cache) = 
-  throw(AssertionError("Transform is not revertible."))

@@ -595,9 +595,6 @@
     @test isapprox(count(==(trows[4]), nrows) / 10_000, 0.25, atol=0.01)
     @test isapprox(count(==(trows[5]), nrows) / 10_000, 0.10, atol=0.01)
     @test isapprox(count(==(trows[6]), nrows) / 10_000, 0.15, atol=0.01)
-
-    # throws
-    @test_throws AssertionError revert(T, n, c)
   end
 
   @testset "Filter" begin
