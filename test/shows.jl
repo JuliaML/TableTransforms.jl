@@ -4,13 +4,28 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Select([:a, :b, :c])"
+    @test iostr == "Select([:a, :b, :c], nothing)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Select transform
-    └─ colspec = [:a, :b, :c]"""
+    ├─ colspec = [:a, :b, :c]
+    └─ newnames = nothing"""
+
+    # selection with renaming
+    T = Select(:a => :x, :b => :y)
+
+    # compact mode
+    iostr = sprint(show, T)
+    @test iostr == "Select([:a, :b], [:x, :y])"
+
+    # full mode
+    iostr = sprint(show, MIME("text/plain"), T)
+    @test iostr == """
+    Select transform
+    ├─ colspec = [:a, :b]
+    └─ newnames = [:x, :y]"""
   end
 
   @testset "Reject" begin
@@ -321,13 +336,13 @@
 
     # compact mode
     iostr = sprint(show, pipeline)
-    @test iostr == "Select([:x, :z]) → ZScore() → Scale(0, 1)"
+    @test iostr == "Select([:x, :z], nothing) → ZScore() → Scale(0, 1)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
     @test iostr == """
     Sequential
-    ├─ Select([:x, :z])
+    ├─ Select([:x, :z], nothing)
     ├─ ZScore()
     └─ Scale(0, 1)"""
   end

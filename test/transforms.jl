@@ -98,6 +98,89 @@
     n2 = reapply(T, t, c1)
     @test n1 == n2
 
+    # selection with renaming
+    a = rand(4000)
+    b = rand(4000)
+    c = rand(4000)
+    d = rand(4000)
+    t = Table(; a, b, c, d)
+
+    # integer => symbol
+    T = Select(1 => :x, 3 => :y)
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == [:x, :y]
+    @test Tables.getcolumn(n, :x) == t.a
+    @test Tables.getcolumn(n, :y) == t.c
+
+    # integer => string
+    T = Select(2 => "x", 4 => "y")
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == [:x, :y]
+    @test Tables.getcolumn(n, :x) == t.b
+    @test Tables.getcolumn(n, :y) == t.d
+
+    # symbol => symbol
+    T = Select(:a => :x, :c => :y)
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == [:x, :y]
+    @test Tables.getcolumn(n, :x) == t.a
+    @test Tables.getcolumn(n, :y) == t.c
+
+    # symbol => string
+    T = Select(:b => "x", :d => "y")
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == [:x, :y]
+    @test Tables.getcolumn(n, :x) == t.b
+    @test Tables.getcolumn(n, :y) == t.d
+
+    T = Select(:a => :x1, :b => :x2, :c => :x3, :d => :x4)
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == [:x1, :x2, :x3, :x4]
+    @test Tables.getcolumn(n, :x1) == t.a
+    @test Tables.getcolumn(n, :x2) == t.b
+    @test Tables.getcolumn(n, :x3) == t.c
+    @test Tables.getcolumn(n, :x4) == t.d
+
+    # string => symbol
+    T = Select("a" => :x, "c" => :y)
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == [:x, :y]
+    @test Tables.getcolumn(n, :x) == t.a
+    @test Tables.getcolumn(n, :y) == t.c
+
+    # string => string
+    T = Select("b" => "x", "d" => "y")
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == [:x, :y]
+    @test Tables.getcolumn(n, :x) == t.b
+    @test Tables.getcolumn(n, :y) == t.d
+
+    T = Select("a" => "x1", "b" => "x2", "c" => "x3", "d" => "x4")
+    n, c = apply(T, t)
+    @test Tables.columnnames(n) == [:x1, :x2, :x3, :x4]
+    @test Tables.getcolumn(n, :x1) == t.a
+    @test Tables.getcolumn(n, :x2) == t.b
+    @test Tables.getcolumn(n, :x3) == t.c
+    @test Tables.getcolumn(n, :x4) == t.d
+
+    # row table
+    rt = Tables.rowtable(t)
+    cols = Tables.columns(rt)
+
+    T = Select(:a => :x, :c => :y)
+    n, c = apply(T, rt)
+    @test Tables.columnnames(n) == [:x, :y]
+    @test Tables.getcolumn(n, :x) == Tables.getcolumn(cols, :a)
+    @test Tables.getcolumn(n, :y) == Tables.getcolumn(cols, :c)
+    rtₒ = revert(T, n, c)
+    @test rt == rtₒ
+
+    # reapply test
+    T = Select(:b => :x, :d => :y)
+    n1, c1 = apply(T, t)
+    n2 = reapply(T, t, c1)
+    @test n1 == n2
+
     # selection with Regex
     T = Select(r"[dcb]")
     n, c = apply(T, t)
