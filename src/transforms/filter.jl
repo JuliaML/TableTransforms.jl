@@ -34,7 +34,8 @@ function apply(transform::Filter, table)
   rrows = rows[rinds]
 
   newtable = srows |> Tables.materializer(table)
-  return newtable, zip(rinds, rrows)
+
+  newtable, zip(rinds, rrows)
 end
 
 function revert(::Filter, newtable, cache)
@@ -102,20 +103,23 @@ _nonmissing(::Type{Union{Missing,T}}, x) where {T} = collect(T, x)
 _nonmissing(x) = _nonmissing(eltype(x), x)
 
 function apply(transform::DropMissing, table)
-  cols = Tables.columns(table)
-  names = Tables.columnnames(cols)
-  types = Tables.schema(table).types
+  schema = Tables.schema(table)
+  names  = schema.names
+  types  = schema.types
   snames = choose(transform.colspec, names)
   ftrans = _ftrans(transform, snames)
+
   newtable, fcache = apply(ftrans, table)
 
-  # post-processing
+  # drop Missing type
   ncols = Tables.columns(newtable)
   pcols = map(names) do n
     x = Tables.getcolumn(ncols, n)
     n ∈ snames ? _nonmissing(x) : x
   end
+
   𝒯 = (; zip(names, pcols)...)
+
   ptable = 𝒯 |> Tables.materializer(newtable)
 
   ptable, (ftrans, fcache, types)
