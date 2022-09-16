@@ -183,7 +183,7 @@ Reject(::AllSpec) = throw(ArgumentError("Cannot reject all columns."))
 isrevertible(::Type{<:Reject}) = true
 
 function apply(transform::Reject, table)
-  cols = Tables.columns(table)
+  cols    = Tables.columns(table)
   allcols = Tables.columnnames(cols)
   reject  = choose(transform.colspec, allcols)
   select  = setdiff(allcols, reject)
