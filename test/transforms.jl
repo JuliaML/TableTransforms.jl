@@ -554,9 +554,14 @@
     @test n.b == [8, 5, 4, 2]
     @test n.c == [1, 4, 2, 3]
     @test n.d == [7, 5, 3, 4]
-    @test isrevertible(T) == true
+
+    @test isrevertible(T)
     tₒ = revert(T, n, c)
     @test t == tₒ
+
+    @test isindexable(T)
+    inds, _ = indices(T, t)
+    @test sort(inds) == 1:4
 
     # descending order test
     T = Sort(:b, rev=true)
@@ -643,6 +648,11 @@
     n, c = apply(T, t)
     @test length(n.a) == 30
 
+    @test !isrevertible(T)
+    @test isindexable(T)
+    inds, _ = indices(T, t)
+    @test inds ⊆ 1:6
+
     T = Sample(6, replace=false)
     n, c = apply(T, t)
     @test n.a ⊆ t.a
@@ -708,9 +718,14 @@
     @test n.f == [4, 4, 2]
 
     # revert test
-    @test isrevertible(T) == true
+    @test isrevertible(T)
     tₒ = revert(T, n, c)
     @test t == tₒ
+
+    # indexable test
+    @test isindexable(T) == true
+    inds, _ = indices(T, t)
+    @test inds == [1, 2, 6]
 
     T = Filter(row -> any(>(5), row))
     n, c = apply(T, t)
@@ -790,7 +805,7 @@
     @test n.f == [4, 5]
 
     # revert test
-    @test isrevertible(T) == true
+    @test isrevertible(T)
     tₒ = revert(T, n, c)
     cols = Tables.columns(t)
     colsₒ = Tables.columns(tₒ)
@@ -993,7 +1008,7 @@
     @test n.d == [4, 3, 7, -5, 4, -1]
     @test n.e == [-5, -5, 2, 6, -5, 2]
     @test n.f == [4, 4, 3, 4, -5, 2]
-    @test isrevertible(T) == true
+    @test isrevertible(T)
     tₒ = revert(T, n, c)
     @test t == tₒ
 
@@ -1085,7 +1100,7 @@
     @test n.f == [4, 0, 3, 4, 5, 2]
 
     # revert test
-    @test isrevertible(T) == true
+    @test isrevertible(T)
     tₒ = revert(T, n, c)
     cols = Tables.columns(t)
     colsₒ = Tables.columns(tₒ)
@@ -1574,7 +1589,7 @@
     T = Functional(x -> x)
     n, c = apply(T, t)
     @test t == n
-    @test isrevertible(T) == false
+    @test !isrevertible(T)
 
     # functor tests
     x = rand(1500)
@@ -1587,7 +1602,7 @@
     @test f.(y) == n.y
     @test all(≥(1), n.x)
     @test all(≥(1), n.y)
-    @test isrevertible(T) == false
+    @test !isrevertible(T)
 
     # apply functions to specific columns
     x = π*rand(1500)
@@ -1627,17 +1642,17 @@
     @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
     T = Functional(1 => cos, 2 => sin)
-    @test isrevertible(T) == true
+    @test isrevertible(T)
     T = Functional(:x => cos, :y => sin)
-    @test isrevertible(T) == true
+    @test isrevertible(T)
     T = Functional("x" => cos, "y" => sin)
-    @test isrevertible(T) == true
+    @test isrevertible(T)
     T = Functional(1 => abs, 2 => sin)
-    @test isrevertible(T) == false
+    @test !isrevertible(T)
     T = Functional(:x => abs, :y => sin)
-    @test isrevertible(T) == false
+    @test !isrevertible(T)
     T = Functional("x" => abs, "y" => sin)
-    @test isrevertible(T) == false
+    @test !isrevertible(T)
 
     # row table
     x = π*rand(1500)

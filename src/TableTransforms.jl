@@ -28,7 +28,11 @@ include("transforms.jl")
 export
   # interface
   isrevertible,
-  apply, revert, reapply,
+  isindexable,
+  indices,
+  apply,
+  revert,
+  reapply,
 
   # built-in
   Select,

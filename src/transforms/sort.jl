@@ -38,30 +38,45 @@ Sort(; kwargs...) = throw(ArgumentError("Cannot create a Sort object without arg
 
 isrevertible(::Type{<:Sort}) = true
 
-function apply(transform::Sort, table)
-  cols = Tables.columns(table)
-  names = Tables.columnnames(cols)
+isindexable(::Type{<:Sort}) = true
+
+function indices(transform::Sort, table)
+  cols   = Tables.columns(table)
+  names  = Tables.columnnames(cols)
   snames = choose(transform.colspec, names)
   
   # use selected columns to calculate new order
-  scols = collect(zip(Tables.getcolumn.(Ref(cols), snames)...))
-  inds = sortperm(scols; transform.kwargs...)
+  scols = Tables.getcolumn.(Ref(cols), snames)
+  stups = collect(zip(scols...))
+  sinds = sortperm(stups; transform.kwargs...)
 
-  # sort rows
+  sinds, nothing
+end
+
+function apply(transform::Sort, table)
+  # collect all rows
   rows = Tables.rowtable(table)
-  rows = rows[inds]
 
-  newtable = rows |> Tables.materializer(table)
-  newtable, inds
+  # sorting indices
+  sinds, _ = indices(transform, table)
+
+  # sorted rows
+  srows = view(rows, sinds)
+
+  newtable = srows |> Tables.materializer(table)
+
+  newtable, sinds
 end
 
 function revert(::Sort, newtable, cache)
-  # use cache to recalculate old order
-  inds = sortperm(cache)
-
-  # undo rows sort
+  # collect all rows
   rows = Tables.rowtable(newtable)
-  rows = rows[inds]
 
-  rows |> Tables.materializer(newtable)
+  # reverting indices
+  sinds = cache
+  rinds = sortperm(sinds)
+
+  rrows = view(rows, rinds)
+
+  rrows |> Tables.materializer(newtable)
 end

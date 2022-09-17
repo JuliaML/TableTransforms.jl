@@ -24,24 +24,46 @@ end
 
 isrevertible(::Type{<:Filter}) = true
 
+isindexable(::Type{<:Filter}) = true
+
+function indices(transform::Filter, table)
+  # lazy row iterator
+  rows  = Tables.rows(table)
+
+  # selected indices
+  sinds, nrows = Int[], 0
+  for (i, row) in enumerate(rows)
+    transform.func(row) && push!(sinds, i)
+    nrows += 1
+  end
+
+  # rejected indices
+  rinds = setdiff(1:nrows, sinds)
+
+  sinds, rinds
+end
+
 function apply(transform::Filter, table)
+  # collect all rows
   rows = Tables.rowtable(table)
 
-  # selected and rejected rows/inds
-  sinds = findall(transform.func, rows)
-  rinds = setdiff(1:length(rows), sinds)
-  srows = view(rows, sinds)
-  rrows = view(rows, rinds)
+  # selected/rejected indices
+  sinds, rinds = indices(transform, table)
+
+  # selected/rejected rows
+  srows, rrows = view(rows, sinds), view(rows, rinds)
 
   newtable = srows |> Tables.materializer(table)
 
-  newtable, zip(rinds, rrows)
+  newtable, (rinds, rrows)
 end
 
 function revert(::Filter, newtable, cache)
+  # collect all rows
   rows = Tables.rowtable(newtable)
 
-  for (i, row) in cache
+  rinds, rrows = cache
+  for (i, row) in zip(rinds, rrows)
     insert!(rows, i, row)
   end
 
@@ -128,14 +150,16 @@ end
 function revert(::DropMissing, newtable, cache)
   ftrans, fcache, types = cache
 
-  # pre-processing
+  # reintroduce Missing type
   cols = Tables.columns(newtable)
   names = Tables.columnnames(cols)
   pcols = map(zip(types, names)) do (T, n)
     x = Tables.getcolumn(cols, n)
     collect(T, x)
   end
+
   𝒯 = (; zip(names, pcols)...)
+
   ptable = 𝒯 |> Tables.materializer(newtable)
 
   revert(ftrans, ptable, fcache)

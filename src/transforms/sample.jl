@@ -48,8 +48,12 @@ Sample(size::Int, weights; kwargs...) =
 
 isrevertible(::Type{<:Sample}) = false
 
-function apply(transform::Sample, table)
+isindexable(::Type{<:Sample}) = true
+
+function indices(transform::Sample, table)
+  # retrieve all valid indices
   rows = Tables.rowtable(table)
+  inds = 1:length(rows)
 
   size    = transform.size
   weights = transform.weights
@@ -57,13 +61,25 @@ function apply(transform::Sample, table)
   ordered = transform.ordered
   rng     = transform.rng
 
-  newrows = if isnothing(weights)
-    sample(rng, rows, size; replace, ordered)
+  # sample a subset of indices
+  sinds = if isnothing(weights)
+    sample(rng, inds, size; replace, ordered)
   else
-    sample(rng, rows, weights, size; replace, ordered)
+    sample(rng, inds, weights, size; replace, ordered)
   end
 
-  newtable = newrows |> Tables.materializer(table)
+  sinds, nothing
+end
+
+function apply(transform::Sample, table)
+  # collect all rows
+  rows = Tables.rowtable(table)
+
+  sinds, _ = indices(transform, table)
+
+  srows = view(rows, sinds)
+
+  newtable = srows |> Tables.materializer(table)
 
   newtable, nothing
 end

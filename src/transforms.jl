@@ -35,6 +35,15 @@ Tells whether or not the `transform` is revertible, i.e. supports a
 function isrevertible end
 
 """
+    isindexable(transform)
+
+Tells whether or not the `transform` is indexable, i.e. can be
+implemented in terms of row [`indices`](@ref). Defaults to `false`
+for new types.
+"""
+function isindexable end
+
+"""
     newtable, cache = apply(transform, table)
 
 Apply the `transform` on the `table`. Return the `newtable` and a
@@ -52,6 +61,16 @@ Only defined when the `transform` [`isrevertible`](@ref).
 function revert end
 
 """
+    newinds, cache = indices(transform, table)
+
+Return indices `newinds` of rows of original `table` corresponding to
+the `newtable` that would be obtained by applying the `transform` with
+with the [`apply`](@ref) function, and a `cache`. Only defined when the
+`transform` [`isindexable`](@ref).
+"""
+function indices end
+
+"""
     Stateless
 
 This trait is useful to signal that we can [`reapply`](@ref) a transform
@@ -60,7 +79,7 @@ This trait is useful to signal that we can [`reapply`](@ref) a transform
 abstract type Stateless <: Transform end
 
 """
-    reapply(transform, table, cache)
+    newtable = reapply(transform, table, cache)
 
 Reapply the `transform` to (a possibly different) `table` using a `cache`
 that was created with a previous [`apply`](@ref) call.
@@ -110,6 +129,9 @@ assertions(::Type{<:Transform}) = []
 
 isrevertible(transform::Transform) = isrevertible(typeof(transform))
 isrevertible(::Type{<:Transform}) = false
+
+isindexable(transform::Transform) = isindexable(typeof(transform))
+isindexable(::Type{<:Transform}) = false
 
 (transform::Transform)(table) = apply(transform, table) |> first
 
