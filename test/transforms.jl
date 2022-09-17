@@ -560,7 +560,7 @@
     @test t == tₒ
 
     @test isindexable(T)
-    inds, _ = indices(T, t)
+    inds, _ = TableTransforms.indices(T, t)
     @test sort(inds) == 1:4
 
     # descending order test
@@ -650,7 +650,7 @@
 
     @test !isrevertible(T)
     @test isindexable(T)
-    inds, _ = indices(T, t)
+    inds, _ = TableTransforms.indices(T, t)
     @test inds ⊆ 1:6
 
     T = Sample(6, replace=false)
@@ -724,7 +724,7 @@
 
     # indexable test
     @test isindexable(T) == true
-    inds, _ = indices(T, t)
+    inds, _ = TableTransforms.indices(T, t)
     @test inds == [1, 2, 6]
 
     T = Filter(row -> any(>(5), row))

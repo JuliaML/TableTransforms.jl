@@ -29,7 +29,6 @@ export
   # interface
   isrevertible,
   isindexable,
-  indices,
   apply,
   revert,
   reapply,
