@@ -678,11 +678,14 @@
     b = [8, 5, 1, 2, 3, 4]
     c = [1, 8, 5, 2, 9, 4]
     t = Table(; a, b, c)
-    trows = Tables.rowtable(t) 
 
     T = Sample(30, replace=true)
     n, c = apply(T, t)
     @test length(n.a) == 30
+
+    @test isrevertible(T)
+    r = revert(T, n, c)
+    @test r == t
 
     T = Sample(6, replace=false)
     n, c = apply(T, t)
@@ -690,8 +693,12 @@
     @test n.b ⊆ t.b
     @test n.c ⊆ t.c
 
+    r = revert(T, n, c)
+    @test r == t
+
     T = Sample(30, replace=true, ordered=true)
     n, c = apply(T, t)
+    trows = Tables.rowtable(t) 
     @test unique(Tables.rowtable(n)) == trows
 
     T = Sample(6, replace=false, ordered=true)

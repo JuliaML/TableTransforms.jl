@@ -46,7 +46,7 @@ Sample(size::Int, weights::AbstractWeights;
 Sample(size::Int, weights; kwargs...) =
   Sample(size, Weights(collect(weights)); kwargs...)
 
-isrevertible(::Type{<:Sample}) = false
+isrevertible(::Type{<:Sample}) = true
 
 function preprocess(transform::Sample, table)
   # retrieve valid indices
@@ -60,11 +60,14 @@ function preprocess(transform::Sample, table)
   rng     = transform.rng
 
   # sample a subset of indices
-  if isnothing(weights)
+  sinds = if isnothing(weights)
     sample(rng, inds, size; replace, ordered)
   else
     sample(rng, inds, weights, size; replace, ordered)
   end
+  rinds = setdiff(inds, sinds)
+
+  sinds, rinds
 end
 
 function applyfeat(::Sample, table, prep)
@@ -72,12 +75,32 @@ function applyfeat(::Sample, table, prep)
   rows = Tables.rowtable(table)
 
   # preprocessed indices
-  sinds = prep
+  sinds, rinds = prep
 
   # select rows
   srows = view(rows, sinds)
+  rrows = view(rows, rinds)
 
-  newtable = srows |> Tables.materializer(table)
+  stable = srows |> Tables.materializer(table)
 
-  newtable, nothing
+  stable, (sinds, rinds, rrows)
+end
+
+function revertfeat(::Sample, newtable, fcache)
+  # collect all rows
+  rows = Tables.rowtable(newtable)
+
+  sinds, rinds, rrows = fcache
+
+  uinds = sort(unique(sinds))
+  urows = map(uinds) do i
+    j = findfirst(==(i), sinds)
+    rows[j]
+  end
+
+  for (i, row) in zip(rinds, rrows)
+    insert!(urows, i, row)
+  end
+
+  urows |> Tables.materializer(newtable)
 end
