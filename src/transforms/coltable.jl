@@ -11,6 +11,6 @@ struct ColTable <: Stateless end
 
 isrevertible(::Type{ColTable}) = true
 
-apply(::ColTable, table) = Tables.columntable(table), table
+applyfeat(::ColTable, table) = Tables.columntable(table), table
 
-revert(::ColTable, newtable, cache) = cache
+revertfeat(::ColTable, newtable, cache) = cache

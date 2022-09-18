@@ -24,7 +24,7 @@ end
 
 isrevertible(::Type{<:Filter}) = true
 
-function apply(transform::Filter, table)
+function applyfeat(transform::Filter, table)
   rows = Tables.rowtable(table)
 
   # selected and rejected rows/inds
@@ -38,7 +38,7 @@ function apply(transform::Filter, table)
   newtable, zip(rinds, rrows)
 end
 
-function revert(::Filter, newtable, cache)
+function revertfeat(::Filter, newtable, cache)
   rows = Tables.rowtable(newtable)
 
   for (i, row) in cache
@@ -102,14 +102,14 @@ _nonmissing(::Type{T}, x) where {T} = x
 _nonmissing(::Type{Union{Missing,T}}, x) where {T} = collect(T, x)
 _nonmissing(x) = _nonmissing(eltype(x), x)
 
-function apply(transform::DropMissing, table)
+function applyfeat(transform::DropMissing, table)
   schema = Tables.schema(table)
   names  = schema.names
   types  = schema.types
   snames = choose(transform.colspec, names)
   ftrans = _ftrans(transform, snames)
 
-  newtable, fcache = apply(ftrans, table)
+  newtable, fcache = applyfeat(ftrans, table)
 
   # drop Missing type
   ncols = Tables.columns(newtable)
@@ -125,7 +125,7 @@ function apply(transform::DropMissing, table)
   ptable, (ftrans, fcache, types)
 end
 
-function revert(::DropMissing, newtable, cache)
+function revertfeat(::DropMissing, newtable, cache)
   ftrans, fcache, types = cache
 
   # pre-processing
@@ -138,5 +138,5 @@ function revert(::DropMissing, newtable, cache)
   𝒯 = (; zip(names, pcols)...)
   ptable = 𝒯 |> Tables.materializer(newtable)
 
-  revert(ftrans, ptable, fcache)
+  revertfeat(ftrans, ptable, fcache)
 end

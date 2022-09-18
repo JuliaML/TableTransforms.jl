@@ -27,7 +27,7 @@ Coerce(pair::Pair{Symbol,<:Type}...; tight=false, verbosity=1) =
 
 isrevertible(::Type{<:Coerce}) = true
 
-function apply(transform::Coerce, table)
+function applyfeat(transform::Coerce, table)
   newtable = coerce(table, transform.pairs...;
                     tight=transform.tight,
                     verbosity=transform.verbosity)
@@ -37,7 +37,7 @@ function apply(transform::Coerce, table)
   newtable, types
 end
 
-function revert(transform::Coerce, newtable, cache)
+function revertfeat(::Coerce, newtable, cache)
   cols = Tables.columns(newtable)
   names = Tables.columnnames(cols)
   

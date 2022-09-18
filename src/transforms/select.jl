@@ -99,7 +99,7 @@ isrevertible(::Type{<:Select}) = true
 _newnames(::Nothing, select) = select
 _newnames(names::Vector{Symbol}, select) = names
 
-function apply(transform::Select, table)
+function applyfeat(transform::Select, table)
   # original columns
   cols = Tables.columns(table)
 
@@ -122,7 +122,7 @@ function apply(transform::Select, table)
   TableSelection(table, names, select), (select, sperm, reject, rcolumns, rinds)
 end
 
-function revert(::Select, newtable, cache)
+function revertfeat(::Select, newtable, cache)
   # selected columns
   cols  = Tables.columns(newtable)
   names = Tables.columnnames(cols)
@@ -145,7 +145,7 @@ function revert(::Select, newtable, cache)
 end
 
 # reverting a single TableSelection is trivial
-revert(::Select, newtable::TableSelection, cache) = newtable.table
+revertfeat(::Select, newtable::TableSelection, cache) = newtable.table
 
 """
     Reject(col₁, col₂, ..., colₙ)
@@ -182,17 +182,17 @@ Reject(::AllSpec) = throw(ArgumentError("Cannot reject all columns."))
 
 isrevertible(::Type{<:Reject}) = true
 
-function apply(transform::Reject, table)
+function applyfeat(transform::Reject, table)
   cols    = Tables.columns(table)
   allcols = Tables.columnnames(cols)
   reject  = choose(transform.colspec, allcols)
   select  = setdiff(allcols, reject)
   strans  = Select(select)
-  newtable, scache = apply(strans, table)
+  newtable, scache = applyfeat(strans, table)
   newtable, (strans, scache)
 end
 
-function revert(::Reject, newtable, cache)
+function revertfeat(::Reject, newtable, cache)
   strans, scache = cache
-  revert(strans, newtable, scache)
+  revertfeat(strans, newtable, scache)
 end

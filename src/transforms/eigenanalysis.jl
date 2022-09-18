@@ -58,7 +58,7 @@ assertions(::Type{EigenAnalysis}) = [assert_continuous]
 
 isrevertible(::Type{EigenAnalysis}) = true
 
-function apply(transform::EigenAnalysis, table)
+function applyfeat(transform::EigenAnalysis, table)
   # basic checks
   for assertion in assertions(transform)
     assertion(table)
@@ -91,7 +91,7 @@ function apply(transform::EigenAnalysis, table)
   newtable, (μ, S, S⁻¹, onames)
 end
 
-function revert(::EigenAnalysis, newtable, cache)
+function revertfeat(::EigenAnalysis, newtable, cache)
   # table as matrix
   Z = Tables.matrix(newtable)
 
@@ -109,7 +109,7 @@ function revert(::EigenAnalysis, newtable, cache)
   𝒯 |> Tables.materializer(newtable)
 end
 
-function reapply(transform::EigenAnalysis, table, cache)
+function reapplyfeat(transform::EigenAnalysis, table, cache)
   # basic checks
   for assertion in assertions(transform)
     assertion(table)

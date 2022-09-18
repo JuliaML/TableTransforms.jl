@@ -33,7 +33,7 @@ Rename(pairs::Pair{T,S}...) where {T<:Col,S<:AbstractString} =
 
 isrevertible(::Type{<:Rename}) = true
 
-function apply(transform::Rename, table)
+function applyfeat(transform::Rename, table)
   cols   = Tables.columns(table)
   names  = Tables.columnnames(cols)
   snames = choose(transform.colspec, names)
@@ -48,7 +48,7 @@ function apply(transform::Rename, table)
   newtable, names
 end
 
-function revert(::Transform, newtable, cache)
+function revertfeat(::Rename, newtable, cache)
   cols    = Tables.columns(newtable)
   names   = Tables.columnnames(cols)
   columns = [Tables.getcolumn(cols, nm) for nm in names]

@@ -38,7 +38,7 @@ Sort(; kwargs...) = throw(ArgumentError("Cannot create a Sort object without arg
 
 isrevertible(::Type{<:Sort}) = true
 
-function apply(transform::Sort, table)
+function applyfeat(transform::Sort, table)
   cols = Tables.columns(table)
   names = Tables.columnnames(cols)
   snames = choose(transform.colspec, names)
@@ -55,7 +55,7 @@ function apply(transform::Sort, table)
   newtable, inds
 end
 
-function revert(::Sort, newtable, cache)
+function revertfeat(::Sort, newtable, cache)
   # use cache to recalculate old order
   inds = sortperm(cache)
 
