@@ -48,11 +48,11 @@ function applyfeat(transform::Rename, table, prep)
   newtable, names
 end
 
-function revertfeat(::Rename, newtable, cache)
+function revertfeat(::Rename, newtable, fcache)
   cols    = Tables.columns(newtable)
   names   = Tables.columnnames(cols)
   columns = [Tables.getcolumn(cols, nm) for nm in names]
 
-  𝒯 = (; zip(cache, columns)...)
+  𝒯 = (; zip(fcache, columns)...)
   𝒯 |> Tables.materializer(newtable)
 end

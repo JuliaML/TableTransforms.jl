@@ -80,13 +80,13 @@ function applyfeat(transform::Functional, table, prep)
   return newtable, (snames, funcs)
 end
 
-function revertfeat(transform::Functional, newtable, cache)
+function revertfeat(transform::Functional, newtable, fcache)
   @assert isrevertible(transform) "Transform is not revertible."
 
   cols = Tables.columns(newtable)
   names = Tables.columnnames(cols)
   
-  snames, funcs = cache
+  snames, funcs = fcache
 
   columns = map(names) do nm
     y = Tables.getcolumn(cols, nm)

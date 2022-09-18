@@ -13,4 +13,4 @@ isrevertible(::Type{RowTable}) = true
 
 applyfeat(::RowTable, table, prep) = Tables.rowtable(table), table
 
-revertfeat(::RowTable, newtable, cache) = cache
+revertfeat(::RowTable, newtable, fcache) = fcache

@@ -55,19 +55,19 @@ function applyfeat(transform::Levels, table, prep)
     y, revfunc
   end
 
-  columns, cache = first.(results), last.(results)
+  columns, fcache = first.(results), last.(results)
 
   𝒯 = (; zip(names, columns)...)
   newtable = 𝒯 |> Tables.materializer(table)
 
-  newtable, cache
+  newtable, fcache
 end
 
-function revertfeat(::Levels, newtable, cache)
+function revertfeat(::Levels, newtable, fcache)
   cols = Tables.columns(newtable)
   names = Tables.columnnames(cols)
 
-  columns = map(names, cache) do nm, revfunc
+  columns = map(names, fcache) do nm, revfunc
     x = Tables.getcolumn(cols, nm)
     revfunc(x)
   end

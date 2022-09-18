@@ -13,4 +13,4 @@ isrevertible(::Type{ColTable}) = true
 
 applyfeat(::ColTable, table, prep) = Tables.columntable(table), table
 
-revertfeat(::ColTable, newtable, cache) = cache
+revertfeat(::ColTable, newtable, fcache) = fcache

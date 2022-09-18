@@ -43,14 +43,14 @@ function applyfeat(transform::StdNames, table, prep)
   
   # rename transform
   rtrans = Rename(colspec(oldnames), Symbol.(newnames))
-  newtable, rcache = applyfeat(rtrans, table, nothing)
+  newtable, rcache = apply(rtrans, table)
 
   newtable, (rtrans, rcache)
 end
 
-function revertfeat(::StdNames, newtable, cache)
-  rtrans, rcache = cache
-  revertfeat(rtrans, newtable, rcache)
+function revertfeat(::StdNames, newtable, fcache)
+  rtrans, rcache = fcache
+  revert(rtrans, newtable, rcache)
 end
 
 const delim = [' ', '\t', '-', '_']
