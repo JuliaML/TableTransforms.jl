@@ -43,18 +43,18 @@
   end
 
   @testset "Rename" begin
-    pairs = Dict(:a => :x, :c => :y)
-    T = Rename(pairs)
+    T = Rename(:a => :x, :c => :y)
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Rename($pairs)"
+    @test iostr == "Rename([:a, :c], [:x, :y])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Rename transform
-    └─ names = $pairs"""
+    ├─ colspec = [:a, :c]
+    └─ newnames = [:x, :y]"""
   end
 
   @testset "StdNames" begin
