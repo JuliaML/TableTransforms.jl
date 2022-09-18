@@ -24,10 +24,6 @@ transformfiles = [
 ]
 
 @testset "Transforms" begin
-  # using MersenneTwister for backward
-  # compatibility with old Julia versions
-  rng = MersenneTwister(42)
-
   for transformfile in transformfiles
     include("transforms/$transformfile")
   end
