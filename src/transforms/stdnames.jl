@@ -22,7 +22,7 @@ StdNames() = StdNames(:upper)
 
 isrevertible(::Type{StdNames}) = true
 
-function applyfeat(transform::StdNames, table)  
+function applyfeat(transform::StdNames, table, prep)  
   # retrieve spec
   spec = transform.spec
   
@@ -43,7 +43,7 @@ function applyfeat(transform::StdNames, table)
   
   # rename transform
   rtrans = Rename(colspec(oldnames), Symbol.(newnames))
-  newtable, rcache = applyfeat(rtrans, table)
+  newtable, rcache = applyfeat(rtrans, table, nothing)
 
   newtable, (rtrans, rcache)
 end

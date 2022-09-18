@@ -58,7 +58,7 @@ isrevertible(transform::Functional) =
 _funcdict(func, names) = Dict(nm => func for nm in names)
 _funcdict(func::Tuple, names) = Dict(names .=> func)
 
-function applyfeat(transform::Functional, table) 
+function applyfeat(transform::Functional, table, prep) 
   cols = Tables.columns(table)
   names = Tables.columnnames(cols)
   snames = choose(transform.colspec, names)

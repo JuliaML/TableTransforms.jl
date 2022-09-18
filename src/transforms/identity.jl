@@ -11,6 +11,6 @@ struct Identity <: Stateless end
 
 isrevertible(::Type{Identity}) = true
 
-applyfeat(::Identity, table) = table, nothing
+apply(::Identity, table) = table, nothing
 
-revertfeat(::Identity, newtable, cache) = newtable
+revert(::Identity, newtable, cache) = newtable

@@ -24,7 +24,7 @@ end
 
 isrevertible(::Type{<:Filter}) = true
 
-function applyfeat(transform::Filter, table)
+function applyfeat(transform::Filter, table, prep)
   rows = Tables.rowtable(table)
 
   # selected and rejected rows/inds
@@ -102,14 +102,14 @@ _nonmissing(::Type{T}, x) where {T} = x
 _nonmissing(::Type{Union{Missing,T}}, x) where {T} = collect(T, x)
 _nonmissing(x) = _nonmissing(eltype(x), x)
 
-function applyfeat(transform::DropMissing, table)
+function applyfeat(transform::DropMissing, table, prep)
   schema = Tables.schema(table)
   names  = schema.names
   types  = schema.types
   snames = choose(transform.colspec, names)
   ftrans = _ftrans(transform, snames)
 
-  newtable, fcache = applyfeat(ftrans, table)
+  newtable, fcache = applyfeat(ftrans, table, nothing)
 
   # drop Missing type
   ncols = Tables.columns(newtable)

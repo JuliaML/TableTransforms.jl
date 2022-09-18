@@ -48,7 +48,7 @@ Sample(size::Int, weights; kwargs...) =
 
 isrevertible(::Type{<:Sample}) = false
 
-function applyfeat(transform::Sample, table)
+function applyfeat(transform::Sample, table, prep)
   rows = Tables.rowtable(table)
 
   size    = transform.size
