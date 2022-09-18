@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    features, metadata = split(table)
+    features, metadata = divide(table)
 
 Divide the `table` into a table with `features` and
 a `metadata` object, e.g. geospatial domain.
@@ -11,7 +11,7 @@ a `metadata` object, e.g. geospatial domain.
 divide(table) = table, nothing
 
 """
-    table = combine(features, metadata)
+    table = attach(features, metadata)
 
 Combine a table with `features` and a `metadata`
 object into a special type of `table`.
