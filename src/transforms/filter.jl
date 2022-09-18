@@ -41,7 +41,7 @@ function preprocess(transform::Filter, table)
   sinds, rinds
 end
 
-function applyfeat(transform::Filter, table, prep)
+function applyfeat(::Filter, table, prep)
   # collect all rows
   rows = Tables.rowtable(table)
 
@@ -52,16 +52,16 @@ function applyfeat(transform::Filter, table, prep)
   srows = view(rows, sinds)
   rrows = view(rows, rinds)
 
-  newtable = srows |> Tables.materializer(table)
+  stable = srows |> Tables.materializer(table)
 
-  newtable, (rinds, rrows)
+  stable, (rinds, rrows)
 end
 
-function revertfeat(::Filter, newtable, cache)
+function revertfeat(::Filter, newtable, fcache)
   # collect all rows
   rows = Tables.rowtable(newtable)
 
-  rinds, rrows = cache
+  rinds, rrows = fcache
   for (i, row) in zip(rinds, rrows)
     insert!(rows, i, row)
   end
@@ -146,8 +146,8 @@ function applyfeat(transform::DropMissing, table, prep)
   ptable, (ftrans, fcache, types)
 end
 
-function revertfeat(::DropMissing, newtable, cache)
-  ftrans, fcache, types = cache
+function revertfeat(::DropMissing, newtable, fcache)
+  ftrans, fcache, types = fcache
 
   # reintroduce Missing type
   cols = Tables.columns(newtable)

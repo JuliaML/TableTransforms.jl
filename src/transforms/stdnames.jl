@@ -48,8 +48,8 @@ function applyfeat(transform::StdNames, table, prep)
   newtable, (rtrans, rcache)
 end
 
-function revertfeat(::StdNames, newtable, cache)
-  rtrans, rcache = cache
+function revertfeat(::StdNames, newtable, fcache)
+  rtrans, rcache = fcache
   revert(rtrans, newtable, rcache)
 end
 

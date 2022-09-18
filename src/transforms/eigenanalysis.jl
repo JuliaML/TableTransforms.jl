@@ -91,12 +91,12 @@ function applyfeat(transform::EigenAnalysis, table, prep)
   newtable, (μ, S, S⁻¹, onames)
 end
 
-function revertfeat(::EigenAnalysis, newtable, cache)
+function revertfeat(::EigenAnalysis, newtable, fcache)
   # table as matrix
   Z = Tables.matrix(newtable)
 
   # retrieve cache
-  μ, S, S⁻¹, onames = cache
+  μ, S, S⁻¹, onames = fcache
 
   # undo projection
   Y = Z * S⁻¹
@@ -109,7 +109,7 @@ function revertfeat(::EigenAnalysis, newtable, cache)
   𝒯 |> Tables.materializer(newtable)
 end
 
-function reapplyfeat(transform::EigenAnalysis, table, cache)
+function reapplyfeat(transform::EigenAnalysis, table, fcache)
   # basic checks
   for assertion in assertions(transform)
     assertion(table)
@@ -119,7 +119,7 @@ function reapplyfeat(transform::EigenAnalysis, table, cache)
   X = Tables.matrix(table)
 
   # retrieve cache
-  μ, S, S⁻¹, onames = cache
+  μ, S, S⁻¹, onames = fcache
 
   # center the data
   Y = X .- μ

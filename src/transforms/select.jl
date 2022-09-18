@@ -122,7 +122,7 @@ function applyfeat(transform::Select, table, prep)
   TableSelection(table, names, select), (select, sperm, reject, rcolumns, rinds)
 end
 
-function revertfeat(::Select, newtable, cache)
+function revertfeat(::Select, newtable, fcache)
   # selected columns
   cols  = Tables.columns(newtable)
   names = Tables.columnnames(cols)
@@ -130,7 +130,7 @@ function revertfeat(::Select, newtable, cache)
   columns = Any[Tables.getcolumn(cols, name) for name in names]
 
   # rejected columns
-  select, sperm, reject, rcolumns, rinds = cache
+  select, sperm, reject, rcolumns, rinds = fcache
 
   # restore rejected columns
   onames = select[sperm]
@@ -145,7 +145,7 @@ function revertfeat(::Select, newtable, cache)
 end
 
 # reverting a single TableSelection is trivial
-revertfeat(::Select, newtable::TableSelection, cache) = newtable.table
+revertfeat(::Select, newtable::TableSelection, fcache) = newtable.table
 
 """
     Reject(col₁, col₂, ..., colₙ)
@@ -192,7 +192,7 @@ function applyfeat(transform::Reject, table, prep)
   newtable, (strans, scache)
 end
 
-function revertfeat(::Reject, newtable, cache)
-  strans, scache = cache
+function revertfeat(::Reject, newtable, fcache)
+  strans, scache = fcache
   revert(strans, newtable, scache)
 end

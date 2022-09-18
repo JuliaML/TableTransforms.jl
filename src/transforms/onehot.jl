@@ -58,12 +58,12 @@ function applyfeat(transform::OneHot, table, prep)
   newtable, (name, inds, xl, isordered(x))
 end
 
-function revertfeat(::OneHot, newtable, cache)
+function revertfeat(::OneHot, newtable, fcache)
   cols = Tables.columns(newtable)
   names = Tables.columnnames(cols) |> collect
   columns = Any[Tables.getcolumn(cols, nm) for nm in names]
   
-  oname, inds, levels, ordered = cache
+  oname, inds, levels, ordered = fcache
   x = map(zip(columns[inds]...)) do row
     levels[findfirst(row)]
   end

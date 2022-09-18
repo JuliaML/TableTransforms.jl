@@ -37,11 +37,11 @@ function applyfeat(transform::Coerce, table, prep)
   newtable, types
 end
 
-function revertfeat(::Coerce, newtable, cache)
+function revertfeat(::Coerce, newtable, fcache)
   cols = Tables.columns(newtable)
   names = Tables.columnnames(cols)
   
-  oldcols = map(zip(cache, names)) do (T, n)
+  oldcols = map(zip(fcache, names)) do (T, n)
     x = Tables.getcolumn(cols, n)
     collect(T, x)
   end

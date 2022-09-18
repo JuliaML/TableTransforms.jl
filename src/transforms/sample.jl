@@ -67,7 +67,7 @@ function preprocess(transform::Sample, table)
   end
 end
 
-function applyfeat(transform::Sample, table, prep)
+function applyfeat(::Sample, table, prep)
   # collect all rows
   rows = Tables.rowtable(table)
 

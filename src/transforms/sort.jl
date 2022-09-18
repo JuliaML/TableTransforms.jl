@@ -64,12 +64,12 @@ function applyfeat(transform::Sort, table, prep)
   newtable, sinds
 end
 
-function revertfeat(::Sort, newtable, cache)
+function revertfeat(::Sort, newtable, fcache)
   # collect all rows
   rows = Tables.rowtable(newtable)
 
   # reverting indices
-  sinds = cache
+  sinds = fcache
   rinds = sortperm(sinds)
 
   rrows = view(rows, rinds)
