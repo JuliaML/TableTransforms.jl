@@ -42,7 +42,7 @@ function apply(transform::StdNames, table)
   newnames = _unique(names)
   
   # rename transform
-  rtrans = Rename(Dict(oldnames .=> newnames))
+  rtrans = Rename(colspec(oldnames), Symbol.(newnames))
   newtable, rcache = apply(rtrans, table)
 
   newtable, (rtrans, rcache)

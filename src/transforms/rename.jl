@@ -20,7 +20,7 @@ struct Rename{S<:ColSpec} <: Stateless
   colspec::S
   newnames::Vector{Symbol}
   function Rename(colspec::S, newnames) where {S<:ColSpec}
-    @assert allunique(newnames) "New names must be unique."
+    @assert allunique(newnames) "new names must be unique"
     new{S}(colspec, newnames)
   end
 end
@@ -34,11 +34,12 @@ Rename(pairs::Pair{T,S}...) where {T<:Col,S<:AbstractString} =
 isrevertible(::Type{<:Rename}) = true
 
 function apply(transform::Rename, table)
-  cols     = Tables.columns(table)
-  names    = Tables.columnnames(cols)
-  snames   = choose(transform.colspec, names)
+  cols   = Tables.columns(table)
+  names  = Tables.columnnames(cols)
+  snames = choose(transform.colspec, names)
+  @assert transform.newnames ⊈ setdiff(names, snames) "duplicate names"
+  
   mapnames = Dict(zip(snames, transform.newnames))
-
   newnames = [get(mapnames, nm, nm) for nm in names]
   columns  = [Tables.getcolumn(cols, nm) for nm in names]
 

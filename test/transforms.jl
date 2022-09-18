@@ -507,6 +507,7 @@
 
     # throws
     @test_throws AssertionError Rename(:a => :x, :b => :x)
+    @test_throws AssertionError apply(Rename(:a => :c, :b => :d), t)
   end
 
   @testset "StdNames" begin
