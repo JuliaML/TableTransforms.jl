@@ -43,6 +43,7 @@ testfiles = [
   "distributions.jl",
   "colspec.jl",
   "transforms.jl",
+  "tableselection.jl",
   "shows.jl"
 ]
 
