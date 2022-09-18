@@ -3,55 +3,55 @@
 # ------------------------------------------------------------------
 
 """
-    Rename(:col₁ => :newcol₁, :col₂ => :newcol₂, ..., :col₁ => :newcolₙ)
+    Rename(:col₁ => :newcol₁, :col₂ => :newcol₂, ..., :colₙ => :newcolₙ)
 
-The transform that renames `col₁` to `newcol₁`, `col₂` to `newcol₂`, ...
+The transform that renames `col₁`, `col₂`, ..., `colₙ`
+to `newcol₁`, `newcol₂`, ..., `newcolₙ`.
 
 # Examples
 
 ```julia
+Rename(1 => :x, 3 => :y)
 Rename(:a => :x, :c => :y)
 Rename("a" => "x", "c" => "y")
 ```
 """
-struct Rename <: Stateless
-  names::Dict{Symbol,Symbol}
+struct Rename{S<:ColSpec} <: Stateless
+  colspec::S
+  newnames::Vector{Symbol}
+  function Rename(colspec::S, newnames) where {S<:ColSpec}
+    @assert allunique(newnames) "New names must be unique."
+    new{S}(colspec, newnames)
+  end
 end
 
-Rename(names::Dict) = _symboldict(names) |> Rename
-Rename(names::Pair) = _pairsyms(names) |> Dict |> Rename
-Rename(names...) = _pairsyms.(names) |> Dict |> Rename
+Rename(pairs::Pair{T,Symbol}...) where {T<:Col} = 
+  Rename(colspec(first.(pairs)), collect(last.(pairs)))
 
-_symboldict(names) = Dict(Symbol(k)=>Symbol(v) for (k, v) in pairs(names))
+Rename(pairs::Pair{T,S}...) where {T<:Col,S<:AbstractString} = 
+  Rename(colspec(first.(pairs)), collect(Symbol.(last.(pairs))))
 
-_pairsyms(x::Pair) = Symbol(first(x)) => Symbol(last(x))
+isrevertible(::Type{<:Rename}) = true
 
 function apply(transform::Rename, table)
-  _rename(transform.names, table)
+  cols     = Tables.columns(table)
+  names    = Tables.columnnames(cols)
+  snames   = choose(transform.colspec, names)
+  mapnames = Dict(zip(snames, transform.newnames))
+
+  newnames = [get(mapnames, nm, nm) for nm in names]
+  columns  = [Tables.getcolumn(cols, nm) for nm in names]
+
+  𝒯 = (; zip(newnames, columns)...)
+  newtable = 𝒯 |> Tables.materializer(table)
+  newtable, names
 end
 
-function revert(transform::Rename, table, cache)
-  # reversing the key-value pairs of the Dict
-  newnames = Dict(new => old for (old, new) in transform.names)
-  _rename(newnames, table) |> first
-end
+function revert(::Transform, newtable, cache)
+  cols    = Tables.columns(newtable)
+  names   = Tables.columnnames(cols)
+  columns = [Tables.getcolumn(cols, nm) for nm in names]
 
-
-function _rename(names, table)
-  cols = Tables.columns(table)
-  oldnames = Tables.columnnames(cols)
-
-  # check if requested renames exist in the table
-  @assert keys(names) ⊆ oldnames "invalid column names"
-
-  # use new names if necessary
-  newnames = map(oldnames) do oldname
-    oldname in keys(names) ? names[oldname] : oldname
-  end
-
-  # table with new tables
-  vals = [Tables.getcolumn(cols, name) for name in oldnames]
-  𝒯 = (; zip(newnames, vals)...) |> Tables.materializer(table)
-  
-  𝒯, nothing
+  𝒯 = (; zip(cache, columns)...)
+  𝒯 |> Tables.materializer(newtable)
 end
