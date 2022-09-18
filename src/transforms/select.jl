@@ -188,11 +188,11 @@ function applyfeat(transform::Reject, table, prep)
   reject  = choose(transform.colspec, allcols)
   select  = setdiff(allcols, reject)
   strans  = Select(select)
-  newtable, scache = applyfeat(strans, table, nothing)
+  newtable, scache = apply(strans, table)
   newtable, (strans, scache)
 end
 
 function revertfeat(::Reject, newtable, cache)
   strans, scache = cache
-  revertfeat(strans, newtable, scache)
+  revert(strans, newtable, scache)
 end

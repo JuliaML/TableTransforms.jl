@@ -24,24 +24,45 @@ end
 
 isrevertible(::Type{<:Filter}) = true
 
+function preprocess(transform::Filter, table)
+  # lazy row iterator
+  rows  = Tables.rows(table)
+
+  # selected indices
+  sinds, nrows = Int[], 0
+  for (i, row) in enumerate(rows)
+    transform.func(row) && push!(sinds, i)
+    nrows += 1
+  end
+
+  # rejected indices
+  rinds = setdiff(1:nrows, sinds)
+
+  sinds, rinds
+end
+
 function applyfeat(transform::Filter, table, prep)
+  # collect all rows
   rows = Tables.rowtable(table)
 
-  # selected and rejected rows/inds
-  sinds = findall(transform.func, rows)
-  rinds = setdiff(1:length(rows), sinds)
+  # preprocessed indices
+  sinds, rinds = prep
+
+  # select/reject rows
   srows = view(rows, sinds)
   rrows = view(rows, rinds)
 
   newtable = srows |> Tables.materializer(table)
 
-  newtable, zip(rinds, rrows)
+  newtable, (rinds, rrows)
 end
 
 function revertfeat(::Filter, newtable, cache)
+  # collect all rows
   rows = Tables.rowtable(newtable)
 
-  for (i, row) in cache
+  rinds, rrows = cache
+  for (i, row) in zip(rinds, rrows)
     insert!(rows, i, row)
   end
 
@@ -109,7 +130,7 @@ function applyfeat(transform::DropMissing, table, prep)
   snames = choose(transform.colspec, names)
   ftrans = _ftrans(transform, snames)
 
-  newtable, fcache = applyfeat(ftrans, table, nothing)
+  newtable, fcache = apply(ftrans, table)
 
   # drop Missing type
   ncols = Tables.columns(newtable)
@@ -128,15 +149,17 @@ end
 function revertfeat(::DropMissing, newtable, cache)
   ftrans, fcache, types = cache
 
-  # pre-processing
+  # reintroduce Missing type
   cols = Tables.columns(newtable)
   names = Tables.columnnames(cols)
   pcols = map(zip(types, names)) do (T, n)
     x = Tables.getcolumn(cols, n)
     collect(T, x)
   end
+
   𝒯 = (; zip(names, pcols)...)
+
   ptable = 𝒯 |> Tables.materializer(newtable)
 
-  revertfeat(ftrans, ptable, fcache)
+  revert(ftrans, ptable, fcache)
 end

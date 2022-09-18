@@ -48,8 +48,10 @@ Sample(size::Int, weights; kwargs...) =
 
 isrevertible(::Type{<:Sample}) = false
 
-function applyfeat(transform::Sample, table, prep)
+function preprocess(transform::Sample, table)
+  # retrieve valid indices
   rows = Tables.rowtable(table)
+  inds = 1:length(rows)
 
   size    = transform.size
   weights = transform.weights
@@ -57,13 +59,25 @@ function applyfeat(transform::Sample, table, prep)
   ordered = transform.ordered
   rng     = transform.rng
 
-  newrows = if isnothing(weights)
-    sample(rng, rows, size; replace, ordered)
+  # sample a subset of indices
+  if isnothing(weights)
+    sample(rng, inds, size; replace, ordered)
   else
-    sample(rng, rows, weights, size; replace, ordered)
+    sample(rng, inds, weights, size; replace, ordered)
   end
+end
 
-  newtable = newrows |> Tables.materializer(table)
+function applyfeat(transform::Sample, table, prep)
+  # collect all rows
+  rows = Tables.rowtable(table)
+
+  # preprocessed indices
+  sinds = prep
+
+  # select rows
+  srows = view(rows, sinds)
+
+  newtable = srows |> Tables.materializer(table)
 
   newtable, nothing
 end
