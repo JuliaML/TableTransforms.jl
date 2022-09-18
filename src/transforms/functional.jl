@@ -58,7 +58,7 @@ isrevertible(transform::Functional) =
 _funcdict(func, names) = Dict(nm => func for nm in names)
 _funcdict(func::Tuple, names) = Dict(names .=> func)
 
-function apply(transform::Functional, table) 
+function applyfeat(transform::Functional, table) 
   cols = Tables.columns(table)
   names = Tables.columnnames(cols)
   snames = choose(transform.colspec, names)
@@ -80,7 +80,7 @@ function apply(transform::Functional, table)
   return newtable, (snames, funcs)
 end
 
-function revert(transform::Functional, newtable, cache)
+function revertfeat(transform::Functional, newtable, cache)
   @assert isrevertible(transform) "Transform is not revertible."
 
   cols = Tables.columns(newtable)

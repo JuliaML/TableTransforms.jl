@@ -38,18 +38,54 @@ function isrevertible end
     newtable, cache = apply(transform, table)
 
 Apply the `transform` on the `table`. Return the `newtable` and a
-`cache` to revert the transform later.
+`cache` to revert the transform later. If the table transform is
+a feature transform, the new type only needs to implement the
+function [`applyfeat`](@ref).
 """
 function apply end
+
+"""
+    newfeat, fcache = applyfeat(transform, feat)
+
+Implementation of [`apply`](@ref) without treatment of metadata.
+This function is intended for developers of new types.
+"""
+function applyfeat end
+
+"""
+    newmeta, mcache = applymeta(transform, meta)
+
+Implementation of [`apply`](@ref) for metadata.
+This function is intended for developers of new types.
+"""
+function applymeta end
 
 """
     table = revert(transform, newtable, cache)
 
 Revert the `transform` on the `newtable` using the `cache` from the
 corresponding [`apply`](@ref) call and return the original `table`.
-Only defined when the `transform` [`isrevertible`](@ref).
+Only defined when the `transform` [`isrevertible`](@ref). If the
+table transform is a feature transform, the new type only needs to
+implement the function [`revertfeat`](@ref).
 """
 function revert end
+
+"""
+    feat = revertfeat(transform, newfeat, fcache)
+
+Implementation of [`revert`](@ref) without treatment of metadata.
+This function is intended for developers of new types.
+"""
+function revertfeat end
+
+"""
+    meta = revertmeta(transform, newmeta, mcache)
+
+Implementation of [`revert`](@ref) for metadata.
+This function is intended for developers of new types.
+"""
+function revertmeta end
 
 """
     Stateless
@@ -60,12 +96,30 @@ This trait is useful to signal that we can [`reapply`](@ref) a transform
 abstract type Stateless <: Transform end
 
 """
-    reapply(transform, table, cache)
+    newtable = reapply(transform, table, cache)
 
 Reapply the `transform` to (a possibly different) `table` using a `cache`
-that was created with a previous [`apply`](@ref) call.
+that was created with a previous [`apply`](@ref) call. If the table transform
+is a feature transform, the new type only needs to implement the function
+[`reapplyfeat`](@ref).
 """
 function reapply end
+
+"""
+    newfeat = reapplyfeat(transform, feat, fcache)
+
+Implementation of [`reapply`](@ref) without treatment of metadata.
+This function is intended for developers of new types.
+"""
+function reapplyfeat end
+
+"""
+    newmeta = reapplymeta(transform, meta, mcache)
+
+Implementation of [`reapply`](@ref) for metadata.
+This function is intended for developers of new types.
+"""
+function reapplymeta end
 
 """
     Colwise
@@ -105,15 +159,50 @@ function colcache end
 # TRANSFORM FALLBACKS
 # --------------------
 
-assertions(transform::Transform) = assertions(typeof(transform))
+assertions(transform::Transform) =
+  assertions(typeof(transform))
 assertions(::Type{<:Transform}) = []
 
-isrevertible(transform::Transform) = isrevertible(typeof(transform))
+isrevertible(transform::Transform) =
+  isrevertible(typeof(transform))
 isrevertible(::Type{<:Transform}) = false
 
-(transform::Transform)(table) = apply(transform, table) |> first
+function apply(transform::Transform, table)
+  feat, meta = divide(table)
 
-# Generic shows
+  newfeat, fcache = applyfeat(transform, feat)
+  newmeta, mcache = applymeta(transform, meta)
+
+  attach(newfeat, newmeta), (fcache, mcache)
+end
+
+function revert(transform::Transform, newtable, cache)
+  newfeat, newmeta = divide(newtable)
+  fcache,   mcache = cache
+
+  feat = revertfeat(transform, newfeat, fcache)
+  meta = revertmeta(transform, newmeta, mcache)
+
+  attach(feat, meta)
+end
+
+function reapply(transform::Transform, table, cache)
+  feat,     meta = divide(table)
+  fcache, mcache = cache
+
+  newfeat = reapplyfeat(transform, feat, fcache)
+  newmeta = reapplymeta(transform, meta, mcache)
+
+  attach(newfeat, newmeta)
+end
+
+applymeta(transform::Transform, meta) = meta, nothing
+revertmeta(transform::Transform, newmeta, mcache) = newmeta
+reapplymeta(transform::Transform, meta, mcache) = meta
+
+(transform::Transform)(table) =
+  apply(transform, table) |> first
+
 function Base.show(io::IO, transform::Transform)
   T = typeof(transform)
   vals = getfield.(Ref(transform), fieldnames(T))
@@ -123,10 +212,9 @@ end
 
 function Base.show(io::IO, ::MIME"text/plain", transform::Transform)
   T = typeof(transform)
-  print(io, "$(nameof(T)) transform")
-  
   fnames = fieldnames(T)
   len = length(fnames)
+  print(io, "$(nameof(T)) transform")
   for (i, field) in enumerate(fnames)
     div = i == len ? "\n└─ " : "\n├─ "
     val = getfield(transform, field)
@@ -139,13 +227,14 @@ end
 # STATELESS FALLBACKS
 # --------------------
 
-reapply(transform::Stateless, table, cache) = apply(transform, table) |> first
+reapply(transform::Stateless, table, cache) =
+  apply(transform, table) |> first
 
 # ------------------
 # COLWISE FALLBACKS
 # ------------------
 
-function apply(transform::Colwise, table)
+function applyfeat(transform::Colwise, table)
   # basic checks
   for assertion in assertions(transform)
     assertion(table)
@@ -176,7 +265,7 @@ function apply(transform::Colwise, table)
   𝒯, 𝒞
 end
 
-function revert(transform::Colwise, newtable, cache)
+function revertfeat(transform::Colwise, newtable, cache)
   # basic checks
   @assert isrevertible(transform) "transform is not revertible"
 
@@ -200,7 +289,7 @@ function revert(transform::Colwise, newtable, cache)
   (; vals...) |> Tables.materializer(newtable)
 end
 
-function reapply(transform::Colwise, table, cache)
+function reapplyfeat(transform::Colwise, table, cache)
   # basic checks
   for assertion in assertions(transform)
     assertion(table)

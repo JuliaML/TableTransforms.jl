@@ -20,6 +20,7 @@ using Random
 import Distributions: ContinuousUnivariateDistribution
 import Distributions: quantile, cdf
 
+include("tabletraits.jl")
 include("assertions.jl")
 include("distributions.jl")
 include("colspec.jl")
@@ -28,7 +29,9 @@ include("transforms.jl")
 export
   # interface
   isrevertible,
-  apply, revert, reapply,
+  apply,
+  revert,
+  reapply,
 
   # built-in
   Select,
