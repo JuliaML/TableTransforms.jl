@@ -58,7 +58,7 @@ assertions(::Type{EigenAnalysis}) = [assert_continuous]
 
 isrevertible(::Type{EigenAnalysis}) = true
 
-function applyfeat(transform::EigenAnalysis, table)
+function applyfeat(transform::EigenAnalysis, table, prep)
   # basic checks
   for assertion in assertions(transform)
     assertion(table)

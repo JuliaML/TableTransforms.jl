@@ -29,7 +29,7 @@ Levels(; kwargs...) = throw(ArgumentError("Cannot create a Levels object without
 
 isrevertible(transform::Levels) = true
 
-function applyfeat(transform::Levels, table)
+function applyfeat(transform::Levels, table, prep)
   cols = Tables.columns(table)
   names = Tables.columnnames(cols)
   snames = choose(transform.colspec, names)

@@ -26,7 +26,7 @@ end
 
 isrevertible(::Type{<:OneHot}) = true
 
-function applyfeat(transform::OneHot, table)
+function applyfeat(transform::OneHot, table, prep)
   cols = Tables.columns(table)
   names = Tables.columnnames(cols) |> collect
   columns = Any[Tables.getcolumn(cols, nm) for nm in names]

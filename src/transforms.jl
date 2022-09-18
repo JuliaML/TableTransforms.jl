@@ -35,6 +35,15 @@ Tells whether or not the `transform` is revertible, i.e. supports a
 function isrevertible end
 
 """
+    prep = preprocess(transform, table)
+
+Pre-process `table` with `transform` to produce a `preproc` object
+that can be used by both [`applyfeat`](@ref) and [`applymeta`](@ref).
+This function is intended for developers of new types.
+"""
+function preprocess end
+
+"""
     newtable, cache = apply(transform, table)
 
 Apply the `transform` on the `table`. Return the `newtable` and a
@@ -45,7 +54,7 @@ function [`applyfeat`](@ref).
 function apply end
 
 """
-    newfeat, fcache = applyfeat(transform, feat)
+    newfeat, fcache = applyfeat(transform, feat, prep)
 
 Implementation of [`apply`](@ref) without treatment of metadata.
 This function is intended for developers of new types.
@@ -53,7 +62,7 @@ This function is intended for developers of new types.
 function applyfeat end
 
 """
-    newmeta, mcache = applymeta(transform, meta)
+    newmeta, mcache = applymeta(transform, meta, prep)
 
 Implementation of [`apply`](@ref) for metadata.
 This function is intended for developers of new types.
@@ -167,11 +176,15 @@ isrevertible(transform::Transform) =
   isrevertible(typeof(transform))
 isrevertible(::Type{<:Transform}) = false
 
+preprocess(transform::Transform, table) = nothing
+
 function apply(transform::Transform, table)
   feat, meta = divide(table)
 
-  newfeat, fcache = applyfeat(transform, feat)
-  newmeta, mcache = applymeta(transform, meta)
+  prep = preprocess(transform, table)
+
+  newfeat, fcache = applyfeat(transform, feat, prep)
+  newmeta, mcache = applymeta(transform, meta, prep)
 
   attach(newfeat, newmeta), (fcache, mcache)
 end
@@ -196,7 +209,7 @@ function reapply(transform::Transform, table, cache)
   attach(newfeat, newmeta)
 end
 
-applymeta(transform::Transform, meta) = meta, nothing
+applymeta(transform::Transform, meta, prep) = meta, nothing
 revertmeta(transform::Transform, newmeta, mcache) = newmeta
 reapplymeta(transform::Transform, meta, mcache) = meta
 
@@ -234,7 +247,7 @@ reapply(transform::Stateless, table, cache) =
 # COLWISE FALLBACKS
 # ------------------
 
-function applyfeat(transform::Colwise, table)
+function applyfeat(transform::Colwise, table, prep)
   # basic checks
   for assertion in assertions(transform)
     assertion(table)

@@ -99,7 +99,7 @@ isrevertible(::Type{<:Select}) = true
 _newnames(::Nothing, select) = select
 _newnames(names::Vector{Symbol}, select) = names
 
-function applyfeat(transform::Select, table)
+function applyfeat(transform::Select, table, prep)
   # original columns
   cols = Tables.columns(table)
 
@@ -182,13 +182,13 @@ Reject(::AllSpec) = throw(ArgumentError("Cannot reject all columns."))
 
 isrevertible(::Type{<:Reject}) = true
 
-function applyfeat(transform::Reject, table)
+function applyfeat(transform::Reject, table, prep)
   cols    = Tables.columns(table)
   allcols = Tables.columnnames(cols)
   reject  = choose(transform.colspec, allcols)
   select  = setdiff(allcols, reject)
   strans  = Select(select)
-  newtable, scache = applyfeat(strans, table)
+  newtable, scache = applyfeat(strans, table, nothing)
   newtable, (strans, scache)
 end
 
