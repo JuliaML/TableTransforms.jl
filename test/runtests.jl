@@ -23,6 +23,10 @@ islinux = Sys.islinux()
 visualtests = !isCI || (isCI && islinux)
 datadir = joinpath(@__DIR__,"data")
 
+# using MersenneTwister for backward
+# compatibility with old Julia versions
+rng = MersenneTwister(42)
+
 # for functor tests in Functional testset
 struct Polynomial{T<:Real}
   coeffs::Vector{T}
@@ -43,6 +47,7 @@ testfiles = [
   "distributions.jl",
   "colspec.jl",
   "transforms.jl",
+  "tableselection.jl",
   "shows.jl"
 ]
 
