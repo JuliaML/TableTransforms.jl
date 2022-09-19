@@ -120,9 +120,9 @@ function reapply(p::Parallel, table, cache)
   tables  = tcollect(f(t, c) for (t, c) in itr)
 
   # features and metadata
-  divid = divide.(tables)
-  feats = first.(divid)
-  metas = last.(divid)
+  splits = divide.(tables)
+  feats  = first.(splits)
+  metas  = last.(splits)
 
   # table with concatenated features
   newfeat = tablehcat(feats)
