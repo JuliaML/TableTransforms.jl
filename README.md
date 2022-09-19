@@ -26,7 +26,7 @@ feature engineering and works with general
 
 Get the latest stable release with Julia's package manager:
 
-```julia
+```
 ] add TableTransforms
 ```
 
