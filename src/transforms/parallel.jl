@@ -42,9 +42,9 @@ function apply(p::Parallel, table)
   caches = last.(vals)
 
   # features and metadata
-  divid = divide.(tables)
-  feats = first.(divid)
-  metas = last.(divid)
+  splits = divide.(tables)
+  feats  = first.(splits)
+  metas  = last.(splits)
 
   # table with concatenated features
   newfeat = tablehcat(feats)
