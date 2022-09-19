@@ -41,8 +41,19 @@ function apply(p::Parallel, table)
   tables = first.(vals)
   caches = last.(vals)
 
-  # table with concatenated columns
-  newtable = tablehcat(tables)
+  # features and metadata
+  divid = divide.(tables)
+  feats = first.(divid)
+  metas = last.(divid)
+
+  # table with concatenated features
+  newfeat = tablehcat(feats)
+
+  # propagate metadata
+  newmeta = first(metas)
+
+  # attach new features and metatada
+  newtable = attach(newfeat, newmeta)
 
   # find first revertible transform
   ind = findfirst(isrevertible, p.transforms)
@@ -51,9 +62,9 @@ function apply(p::Parallel, table)
   rinfo = if isnothing(ind)
     nothing
   else
-    tcols  = Tables.columns.(tables)
-    tnames = Tables.columnnames.(tcols)
-    ncols  = length.(tnames)
+    fcols  = Tables.columns.(feats)
+    fnames = Tables.columnnames.(fcols)
+    ncols  = length.(fnames)
     nrcols = ncols[ind]
     start  = sum(ncols[1:ind-1]) + 1
     finish = start + nrcols - 1
@@ -71,6 +82,9 @@ function revert(p::Parallel, newtable, cache)
 
   @assert !isnothing(rinfo) "transform is not revertible"
 
+  # features and metadata
+  newfeat, newmeta = divide(newtable)
+
   # retrieve info to revert transform
   ind    = rinfo[1]
   range  = rinfo[2]
@@ -78,17 +92,22 @@ function revert(p::Parallel, newtable, cache)
   rcache = caches[ind]
 
   # columns of transformed table
-  cols  = Tables.columns(newtable)
-  names = Tables.columnnames(cols)
+  fcols = Tables.columns(newfeat)
+  names = Tables.columnnames(fcols)
 
   # retrieve subtable to revert
-  rcols  = [Tables.getcolumn(cols, j) for j in range]
   rnames = names[range]
-  𝒯 = (; zip(rnames, rcols)...)
-  rtable = 𝒯 |> Tables.materializer(newtable)
+  rcols  = [Tables.getcolumn(fcols, j) for j in range]
+  rfeat  = (; zip(rnames, rcols)...) |> Tables.materializer(newfeat)
 
   # revert transform on subtable
-  revert(rtrans, rtable, rcache)
+  feat = revert(rtrans, rfeat, rcache)
+
+  # propagate metadata
+  meta = newmeta
+
+  # attach features and metadata
+  attach(feat, meta)
 end
 
 function reapply(p::Parallel, table, cache)
@@ -100,8 +119,19 @@ function reapply(p::Parallel, table, cache)
   itr     = zip(p.transforms, caches)
   tables  = tcollect(f(t, c) for (t, c) in itr)
 
-  # table with concatenated columns
-  tablehcat(tables)
+  # features and metadata
+  divid = divide.(tables)
+  feats = first.(divid)
+  metas = last.(divid)
+
+  # table with concatenated features
+  newfeat = tablehcat(feats)
+
+  # metadata of the first table
+  newmeta = first(metas)
+
+  # attach new features and metatada
+  attach(newfeat, newmeta)
 end
 
 function tablehcat(tables)
