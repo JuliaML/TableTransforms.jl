@@ -123,43 +123,49 @@ _nonmissing(::Type{T}, x) where {T} = x
 _nonmissing(::Type{Union{Missing,T}}, x) where {T} = collect(T, x)
 _nonmissing(x) = _nonmissing(eltype(x), x)
 
-function applyfeat(transform::DropMissing, table, prep)
+function preprocess(transform::DropMissing, table)
   schema = Tables.schema(table)
   names  = schema.names
-  types  = schema.types
   snames = choose(transform.colspec, names)
   ftrans = _ftrans(transform, snames)
+  fprep  = preprocess(ftrans, table)
+  ftrans, fprep, snames
+end
 
-  newtable, fcache = apply(ftrans, table)
+function applyfeat(::DropMissing, table, prep)
+  # apply filter transform
+  ftrans, fprep, snames = prep
+  newfeat, ffcache = applyfeat(ftrans, table, fprep)
 
   # drop Missing type
-  ncols = Tables.columns(newtable)
-  pcols = map(names) do n
-    x = Tables.getcolumn(ncols, n)
+  cols  = Tables.columns(newfeat)
+  names = Tables.columnnames(cols)
+  ncols = map(names) do n
+    x = Tables.getcolumn(cols, n)
     n ∈ snames ? _nonmissing(x) : x
   end
+  𝒯 = (; zip(names, ncols)...)
+  ntable = 𝒯 |> Tables.materializer(table)
 
-  𝒯 = (; zip(names, pcols)...)
+  # original column types
+  types = Tables.schema(table).types
 
-  ptable = 𝒯 |> Tables.materializer(newtable)
-
-  ptable, (ftrans, fcache, types)
+  ntable, (ftrans, ffcache, types)
 end
 
 function revertfeat(::DropMissing, newtable, fcache)
-  ftrans, fcache, types = fcache
+  ftrans, ffcache, types = fcache
 
   # reintroduce Missing type
-  cols = Tables.columns(newtable)
-  names = Tables.columnnames(cols)
-  pcols = map(zip(types, names)) do (T, n)
-    x = Tables.getcolumn(cols, n)
+  ncols = Tables.columns(newtable)
+  names = Tables.columnnames(ncols)
+  ocols = map(zip(types, names)) do (T, n)
+    x = Tables.getcolumn(ncols, n)
     collect(T, x)
   end
+  𝒯 = (; zip(names, ocols)...)
+  otable = 𝒯 |> Tables.materializer(newtable)
 
-  𝒯 = (; zip(names, pcols)...)
-
-  ptable = 𝒯 |> Tables.materializer(newtable)
-
-  revert(ftrans, ptable, fcache)
+  # revert filter transform
+  revertfeat(ftrans, otable, ffcache)
 end
