@@ -99,9 +99,9 @@ isrevertible(::Type{<:Select}) = true
 _newnames(::Nothing, select) = select
 _newnames(names::Vector{Symbol}, select) = names
 
-function applyfeat(transform::Select, table, prep)
+function applyfeat(transform::Select, feat, prep)
   # original columns
-  cols = Tables.columns(table)
+  cols = Tables.columns(feat)
 
   # retrieve relevant column names
   allcols = collect(Tables.columnnames(cols))
@@ -119,12 +119,14 @@ function applyfeat(transform::Select, table, prep)
   # rejected columns
   rcolumns = [Tables.getcolumn(cols, name) for name in reject]
 
-  TableSelection(table, names, select), (select, sperm, reject, rcolumns, rinds)
+  fcache  = (select, sperm, reject, rcolumns, rinds)
+  newfeat = TableSelection(feat, names, select)
+  newfeat, fcache
 end
 
-function revertfeat(::Select, newtable, fcache)
+function revertfeat(::Select, newfeat, fcache)
   # selected columns
-  cols  = Tables.columns(newtable)
+  cols  = Tables.columns(newfeat)
   names = Tables.columnnames(cols)
   # https://github.com/JuliaML/TableTransforms.jl/issues/76
   columns = Any[Tables.getcolumn(cols, name) for name in names]
@@ -141,11 +143,11 @@ function revertfeat(::Select, newtable, fcache)
   end
 
   𝒯 = (; zip(onames, ocolumns)...)
-  𝒯 |> Tables.materializer(newtable)
+  𝒯 |> Tables.materializer(newfeat)
 end
 
 # reverting a single TableSelection is trivial
-revertfeat(::Select, newtable::TableSelection, fcache) = newtable.table
+revertfeat(::Select, newfeat::TableSelection, fcache) = newfeat.table
 
 """
     Reject(col₁, col₂, ..., colₙ)
@@ -182,17 +184,17 @@ Reject(::AllSpec) = throw(ArgumentError("Cannot reject all columns."))
 
 isrevertible(::Type{<:Reject}) = true
 
-function applyfeat(transform::Reject, table, prep)
-  cols    = Tables.columns(table)
+function applyfeat(transform::Reject, feat, prep)
+  cols    = Tables.columns(feat)
   allcols = Tables.columnnames(cols)
   reject  = choose(transform.colspec, allcols)
   select  = setdiff(allcols, reject)
   strans  = Select(select)
-  newtable, scache = apply(strans, table)
-  newtable, (strans, scache)
+  newfeat, sfcache = applyfeat(strans, feat, prep)
+  newfeat, (strans, sfcache)
 end
 
-function revertfeat(::Reject, newtable, fcache)
-  strans, scache = fcache
-  revert(strans, newtable, scache)
+function revertfeat(::Reject, newfeat, fcache)
+  strans, sfcache = fcache
+  revertfeat(strans, newfeat, sfcache)
 end

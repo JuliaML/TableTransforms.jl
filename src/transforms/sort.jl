@@ -49,9 +49,9 @@ function preprocess(transform::Sort, table)
   sortperm(stups; transform.kwargs...)
 end
 
-function applyfeat(transform::Sort, table, prep)
+function applyfeat(::Sort, feat, prep)
   # collect all rows
-  rows = Tables.rowtable(table)
+  rows = Tables.rowtable(feat)
 
   # sorting indices
   sinds = prep
@@ -59,14 +59,14 @@ function applyfeat(transform::Sort, table, prep)
   # sorted rows
   srows = view(rows, sinds)
 
-  newtable = srows |> Tables.materializer(table)
+  newfeat = srows |> Tables.materializer(feat)
 
-  newtable, sinds
+  newfeat, sinds
 end
 
-function revertfeat(::Sort, newtable, fcache)
+function revertfeat(::Sort, newfeat, fcache)
   # collect all rows
-  rows = Tables.rowtable(newtable)
+  rows = Tables.rowtable(newfeat)
 
   # reverting indices
   sinds = fcache
@@ -74,5 +74,5 @@ function revertfeat(::Sort, newtable, fcache)
 
   rrows = view(rows, rinds)
 
-  rrows |> Tables.materializer(newtable)
+  rrows |> Tables.materializer(newfeat)
 end

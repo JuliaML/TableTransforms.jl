@@ -41,9 +41,9 @@ function preprocess(transform::Filter, table)
   sinds, rinds
 end
 
-function applyfeat(::Filter, table, prep)
+function applyfeat(::Filter, feat, prep)
   # collect all rows
-  rows = Tables.rowtable(table)
+  rows = Tables.rowtable(feat)
 
   # preprocessed indices
   sinds, rinds = prep
@@ -52,21 +52,21 @@ function applyfeat(::Filter, table, prep)
   srows = view(rows, sinds)
   rrows = view(rows, rinds)
 
-  stable = srows |> Tables.materializer(table)
+  newfeat = srows |> Tables.materializer(feat)
 
-  stable, (rinds, rrows)
+  newfeat, (rinds, rrows)
 end
 
-function revertfeat(::Filter, newtable, fcache)
+function revertfeat(::Filter, newfeat, fcache)
   # collect all rows
-  rows = Tables.rowtable(newtable)
+  rows = Tables.rowtable(newfeat)
 
   rinds, rrows = fcache
   for (i, row) in zip(rinds, rrows)
     insert!(rows, i, row)
   end
 
-  rows |> Tables.materializer(newtable)
+  rows |> Tables.materializer(newfeat)
 end
 
 """
@@ -132,10 +132,10 @@ function preprocess(transform::DropMissing, table)
   ftrans, fprep, snames
 end
 
-function applyfeat(::DropMissing, table, prep)
+function applyfeat(::DropMissing, feat, prep)
   # apply filter transform
   ftrans, fprep, snames = prep
-  newfeat, ffcache = applyfeat(ftrans, table, fprep)
+  newfeat, ffcache = applyfeat(ftrans, feat, fprep)
 
   # drop Missing type
   cols  = Tables.columns(newfeat)
@@ -145,26 +145,26 @@ function applyfeat(::DropMissing, table, prep)
     n ∈ snames ? _nonmissing(x) : x
   end
   𝒯 = (; zip(names, ncols)...)
-  ntable = 𝒯 |> Tables.materializer(table)
+  newfeat = 𝒯 |> Tables.materializer(feat)
 
   # original column types
-  types = Tables.schema(table).types
+  types = Tables.schema(feat).types
 
-  ntable, (ftrans, ffcache, types)
+  newfeat, (ftrans, ffcache, types)
 end
 
-function revertfeat(::DropMissing, newtable, fcache)
+function revertfeat(::DropMissing, newfeat, fcache)
   ftrans, ffcache, types = fcache
 
   # reintroduce Missing type
-  ncols = Tables.columns(newtable)
+  ncols = Tables.columns(newfeat)
   names = Tables.columnnames(ncols)
   ocols = map(zip(types, names)) do (T, n)
     x = Tables.getcolumn(ncols, n)
     collect(T, x)
   end
   𝒯 = (; zip(names, ocols)...)
-  otable = 𝒯 |> Tables.materializer(newtable)
+  otable = 𝒯 |> Tables.materializer(newfeat)
 
   # revert filter transform
   revertfeat(ftrans, otable, ffcache)

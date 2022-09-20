@@ -33,8 +33,8 @@ Rename(pairs::Pair{T,S}...) where {T<:Col,S<:AbstractString} =
 
 isrevertible(::Type{<:Rename}) = true
 
-function applyfeat(transform::Rename, table, prep)
-  cols   = Tables.columns(table)
+function applyfeat(transform::Rename, feat, prep)
+  cols   = Tables.columns(feat)
   names  = Tables.columnnames(cols)
   snames = choose(transform.colspec, names)
   @assert transform.newnames ⊈ setdiff(names, snames) "duplicate names"
@@ -44,15 +44,15 @@ function applyfeat(transform::Rename, table, prep)
   columns  = [Tables.getcolumn(cols, nm) for nm in names]
 
   𝒯 = (; zip(newnames, columns)...)
-  newtable = 𝒯 |> Tables.materializer(table)
-  newtable, names
+  newfeat = 𝒯 |> Tables.materializer(feat)
+  newfeat, names
 end
 
-function revertfeat(::Rename, newtable, fcache)
-  cols    = Tables.columns(newtable)
+function revertfeat(::Rename, newfeat, fcache)
+  cols    = Tables.columns(newfeat)
   names   = Tables.columnnames(cols)
   columns = [Tables.getcolumn(cols, nm) for nm in names]
 
   𝒯 = (; zip(fcache, columns)...)
-  𝒯 |> Tables.materializer(newtable)
+  𝒯 |> Tables.materializer(newfeat)
 end
