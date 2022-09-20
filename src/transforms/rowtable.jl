@@ -11,6 +11,6 @@ struct RowTable <: Stateless end
 
 isrevertible(::Type{RowTable}) = true
 
-applyfeat(::RowTable, table, prep) = Tables.rowtable(table), table
+applyfeat(::RowTable, feat, prep) = Tables.rowtable(feat), feat
 
-revertfeat(::RowTable, newtable, fcache) = fcache
+revertfeat(::RowTable, newfeat, fcache) = fcache

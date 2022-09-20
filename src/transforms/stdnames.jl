@@ -22,12 +22,12 @@ StdNames() = StdNames(:upper)
 
 isrevertible(::Type{StdNames}) = true
 
-function applyfeat(transform::StdNames, table, prep)  
+function applyfeat(transform::StdNames, feat, prep)  
   # retrieve spec
   spec = transform.spec
   
   # retrieve column names
-  cols = Tables.columns(table)
+  cols = Tables.columns(feat)
   oldnames = string.(Tables.columnnames(cols))
   
   # clean column names
@@ -43,14 +43,14 @@ function applyfeat(transform::StdNames, table, prep)
   
   # rename transform
   rtrans = Rename(colspec(oldnames), Symbol.(newnames))
-  newtable, rcache = apply(rtrans, table)
+  newfeat, rfcache = applyfeat(rtrans, feat, prep)
 
-  newtable, (rtrans, rcache)
+  newfeat, (rtrans, rfcache)
 end
 
-function revertfeat(::StdNames, newtable, fcache)
-  rtrans, rcache = fcache
-  revert(rtrans, newtable, rcache)
+function revertfeat(::StdNames, newfeat, fcache)
+  rtrans, rfcache = fcache
+  revertfeat(rtrans, newfeat, rfcache)
 end
 
 const delim = [' ', '\t', '-', '_']

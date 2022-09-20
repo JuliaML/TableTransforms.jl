@@ -26,8 +26,8 @@ end
 
 isrevertible(::Type{<:OneHot}) = true
 
-function applyfeat(transform::OneHot, table, prep)
-  cols = Tables.columns(table)
+function applyfeat(transform::OneHot, feat, prep)
+  cols = Tables.columns(feat)
   names = Tables.columnnames(cols) |> collect
   columns = Any[Tables.getcolumn(cols, nm) for nm in names]
   
@@ -54,12 +54,12 @@ function applyfeat(transform::OneHot, table, prep)
   inds = ind:(ind + length(newnms) - 1)
 
   𝒯 = (; zip(names, columns)...)
-  newtable = 𝒯 |> Tables.materializer(table)
-  newtable, (name, inds, xl, isordered(x))
+  newfeat = 𝒯 |> Tables.materializer(feat)
+  newfeat, (name, inds, xl, isordered(x))
 end
 
-function revertfeat(::OneHot, newtable, fcache)
-  cols = Tables.columns(newtable)
+function revertfeat(::OneHot, newfeat, fcache)
+  cols = Tables.columns(newfeat)
   names = Tables.columnnames(cols) |> collect
   columns = Any[Tables.getcolumn(cols, nm) for nm in names]
   
@@ -74,5 +74,5 @@ function revertfeat(::OneHot, newtable, fcache)
   splice!(columns, inds, [ocolumn])
 
   𝒯 = (; zip(names, columns)...)
-  𝒯 |> Tables.materializer(newtable)
+  𝒯 |> Tables.materializer(newfeat)
 end

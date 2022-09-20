@@ -58,18 +58,18 @@ assertions(::Type{EigenAnalysis}) = [assert_continuous]
 
 isrevertible(::Type{EigenAnalysis}) = true
 
-function applyfeat(transform::EigenAnalysis, table, prep)
+function applyfeat(transform::EigenAnalysis, feat, prep)
   # basic checks
   for assertion in assertions(transform)
-    assertion(table)
+    assertion(feat)
   end
 
   # original columns names
-  cols = Tables.columns(table)
+  cols = Tables.columns(feat)
   onames = Tables.columnnames(cols)
 
   # table as matrix
-  X = Tables.matrix(table)
+  X = Tables.matrix(feat)
 
   # center the data
   μ = mean(X, dims=1)
@@ -86,14 +86,14 @@ function applyfeat(transform::EigenAnalysis, table, prep)
 
   # table with transformed columns
   𝒯 = (; zip(names, eachcol(Z))...)
-  newtable = 𝒯 |> Tables.materializer(table)
+  newfeat = 𝒯 |> Tables.materializer(feat)
 
-  newtable, (μ, S, S⁻¹, onames)
+  newfeat, (μ, S, S⁻¹, onames)
 end
 
-function revertfeat(::EigenAnalysis, newtable, fcache)
+function revertfeat(::EigenAnalysis, newfeat, fcache)
   # table as matrix
-  Z = Tables.matrix(newtable)
+  Z = Tables.matrix(newfeat)
 
   # retrieve cache
   μ, S, S⁻¹, onames = fcache
@@ -106,17 +106,17 @@ function revertfeat(::EigenAnalysis, newtable, fcache)
 
   # table with original columns
   𝒯 = (; zip(onames, eachcol(X))...)
-  𝒯 |> Tables.materializer(newtable)
+  𝒯 |> Tables.materializer(newfeat)
 end
 
-function reapplyfeat(transform::EigenAnalysis, table, fcache)
+function reapplyfeat(transform::EigenAnalysis, feat, fcache)
   # basic checks
   for assertion in assertions(transform)
-    assertion(table)
+    assertion(feat)
   end
 
   # table as matrix
-  X = Tables.matrix(table)
+  X = Tables.matrix(feat)
 
   # retrieve cache
   μ, S, S⁻¹, onames = fcache
@@ -132,7 +132,7 @@ function reapplyfeat(transform::EigenAnalysis, table, fcache)
 
   # table with transformed columns
   𝒯 = (; zip(names, eachcol(Z))...)
-  𝒯 |> Tables.materializer(table)
+  𝒯 |> Tables.materializer(feat)
 end
 
 _maxdim(maxdim::Int, Y) = maxdim

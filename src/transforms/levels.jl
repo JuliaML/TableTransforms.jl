@@ -29,8 +29,8 @@ Levels(; kwargs...) = throw(ArgumentError("Cannot create a Levels object without
 
 isrevertible(transform::Levels) = true
 
-function applyfeat(transform::Levels, table, prep)
-  cols = Tables.columns(table)
+function applyfeat(transform::Levels, feat, prep)
+  cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
   snames = choose(transform.colspec, names)
   ordered = choose(transform.ordered, snames)
@@ -58,13 +58,13 @@ function applyfeat(transform::Levels, table, prep)
   columns, fcache = first.(results), last.(results)
 
   𝒯 = (; zip(names, columns)...)
-  newtable = 𝒯 |> Tables.materializer(table)
+  newfeat = 𝒯 |> Tables.materializer(feat)
 
-  newtable, fcache
+  newfeat, fcache
 end
 
-function revertfeat(::Levels, newtable, fcache)
-  cols = Tables.columns(newtable)
+function revertfeat(::Levels, newfeat, fcache)
+  cols = Tables.columns(newfeat)
   names = Tables.columnnames(cols)
 
   columns = map(names, fcache) do nm, revfunc
@@ -73,5 +73,5 @@ function revertfeat(::Levels, newtable, fcache)
   end
 
   𝒯 = (; zip(names, columns)...)
-  𝒯 |> Tables.materializer(newtable)
+  𝒯 |> Tables.materializer(newfeat)
 end

@@ -247,14 +247,14 @@ reapply(transform::Stateless, table, cache) =
 # COLWISE FALLBACKS
 # ------------------
 
-function applyfeat(transform::Colwise, table, prep)
+function applyfeat(transform::Colwise, feat, prep)
   # basic checks
   for assertion in assertions(transform)
-    assertion(table)
+    assertion(feat)
   end
 
   # retrieve column names and values
-  cols  = Tables.columns(table)
+  cols  = Tables.columns(feat)
   names = Tables.columnnames(cols)
 
   # function to transform a single column
@@ -269,27 +269,28 @@ function applyfeat(transform::Colwise, table, prep)
   vals = tcollect(colfunc(n) for n in names)
 
   # new table with transformed columns
-  𝒯 = (; first.(vals)...) |> Tables.materializer(table)
+  𝒯 = (; first.(vals)...)
+  newfeat = 𝒯 |> Tables.materializer(feat)
 
   # cache values for each column
-  𝒞 = last.(vals)
+  fcache = last.(vals)
 
   # return new table and cache
-  𝒯, 𝒞
+  newfeat, fcache
 end
 
-function revertfeat(transform::Colwise, newtable, cache)
+function revertfeat(transform::Colwise, newfeat, fcache)
   # basic checks
   @assert isrevertible(transform) "transform is not revertible"
 
   # transformed columns
-  cols  = Tables.columns(newtable)
+  cols  = Tables.columns(newfeat)
   names = Tables.columnnames(cols)
   
   # function to transform a single column
   function colfunc(i)
     n = names[i]
-    c = cache[i]
+    c = fcache[i]
     y = Tables.getcolumn(cols, n)
     x = colrevert(transform, y, c)
     n => x
@@ -299,26 +300,26 @@ function revertfeat(transform::Colwise, newtable, cache)
   vals = tcollect(colfunc(i) for i in 1:length(names))
 
   # new table with transformed columns
-  (; vals...) |> Tables.materializer(newtable)
+  (; vals...) |> Tables.materializer(newfeat)
 end
 
-function reapplyfeat(transform::Colwise, table, cache)
+function reapplyfeat(transform::Colwise, feat, fcache)
   # basic checks
   for assertion in assertions(transform)
-    assertion(table)
+    assertion(feat)
   end
 
   # retrieve column names and values
-  cols  = Tables.columns(table)
+  cols  = Tables.columns(feat)
   names = Tables.columnnames(cols)
   
   # check that cache is valid
-  @assert length(names) == length(cache) "invalid cache for table"
+  @assert length(names) == length(fcache) "invalid fcache for feat"
 
   # function to transform a single column
   function colfunc(i)
     n = names[i]
-    c = cache[i]
+    c = fcache[i]
     x = Tables.getcolumn(cols, n)
     y = colapply(transform, x, c)
     n => y
@@ -328,7 +329,7 @@ function reapplyfeat(transform::Colwise, table, cache)
   vals = tcollect(colfunc(i) for i in 1:length(names))
 
   # new table with transformed columns
-  (; vals...) |> Tables.materializer(table)
+  (; vals...) |> Tables.materializer(feat)
 end
 
 # ----------------

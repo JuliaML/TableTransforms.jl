@@ -70,9 +70,9 @@ function preprocess(transform::Sample, table)
   sinds, rinds
 end
 
-function applyfeat(::Sample, table, prep)
+function applyfeat(::Sample, feat, prep)
   # collect all rows
-  rows = Tables.rowtable(table)
+  rows = Tables.rowtable(feat)
 
   # preprocessed indices
   sinds, rinds = prep
@@ -81,14 +81,14 @@ function applyfeat(::Sample, table, prep)
   srows = view(rows, sinds)
   rrows = view(rows, rinds)
 
-  stable = srows |> Tables.materializer(table)
+  newfeat = srows |> Tables.materializer(feat)
 
-  stable, (sinds, rinds, rrows)
+  newfeat, (sinds, rinds, rrows)
 end
 
-function revertfeat(::Sample, newtable, fcache)
+function revertfeat(::Sample, newfeat, fcache)
   # collect all rows
-  rows = Tables.rowtable(newtable)
+  rows = Tables.rowtable(newfeat)
 
   sinds, rinds, rrows = fcache
 
@@ -102,5 +102,5 @@ function revertfeat(::Sample, newtable, fcache)
     insert!(urows, i, row)
   end
 
-  urows |> Tables.materializer(newtable)
+  urows |> Tables.materializer(newfeat)
 end
