@@ -137,6 +137,10 @@ A transform that is applied column-by-column. In this case, the new type
 only needs to implement [`colapply`](@ref), [`colrevert`](@ref) and
 [`colcache`](@ref). Efficient fallbacks are provided that execute these
 functions in parallel for all columns with multiple threads.
+
+## Notes
+
+* All Colwise subtypes must have a colspec field.
 """
 abstract type Colwise <: Transform end
 
@@ -254,14 +258,20 @@ function applyfeat(transform::Colwise, feat, prep)
   end
 
   # retrieve column names and values
-  cols  = Tables.columns(feat)
-  names = Tables.columnnames(cols)
+  cols   = Tables.columns(feat)
+  names  = Tables.columnnames(cols)
+  snames = choose(transform.colspec, names)
 
   # function to transform a single column
   function colfunc(n)
     x = Tables.getcolumn(cols, n)
-    c = colcache(transform, x)
-    y = colapply(transform, x, c)
+    if n ∈ snames
+      c = colcache(transform, x)
+      y = colapply(transform, x, c)
+    else
+      c = nothing
+      y = x
+    end
     (n => y), c
   end
 
@@ -273,10 +283,10 @@ function applyfeat(transform::Colwise, feat, prep)
   newfeat = 𝒯 |> Tables.materializer(feat)
 
   # cache values for each column
-  fcache = last.(vals)
+  caches = last.(vals)
 
   # return new table and cache
-  newfeat, fcache
+  newfeat, (caches, snames)
 end
 
 function revertfeat(transform::Colwise, newfeat, fcache)
@@ -287,12 +297,14 @@ function revertfeat(transform::Colwise, newfeat, fcache)
   cols  = Tables.columns(newfeat)
   names = Tables.columnnames(cols)
   
+  caches, snames = fcache
+  
   # function to transform a single column
   function colfunc(i)
     n = names[i]
-    c = fcache[i]
+    c = caches[i]
     y = Tables.getcolumn(cols, n)
-    x = colrevert(transform, y, c)
+    x = n ∈ snames ? colrevert(transform, y, c) : y
     n => x
   end
 
@@ -312,16 +324,18 @@ function reapplyfeat(transform::Colwise, feat, fcache)
   # retrieve column names and values
   cols  = Tables.columns(feat)
   names = Tables.columnnames(cols)
+
+  caches, snames = fcache
   
   # check that cache is valid
-  @assert length(names) == length(fcache) "invalid fcache for feat"
+  @assert length(names) == length(caches) "invalid caches for feat"
 
   # function to transform a single column
   function colfunc(i)
     n = names[i]
-    c = fcache[i]
+    c = caches[i]
     x = Tables.getcolumn(cols, n)
-    y = colapply(transform, x, c)
+    y = n ∈ snames ? colapply(transform, x, c) : x
     n => y
   end
 
