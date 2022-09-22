@@ -14,7 +14,7 @@ Replace(1 => -1, 5 => -5)
 Replace(1 => 1.5, 5 => 5.5, 4 => true)
 ```
 """
-struct Replace{K,V} <: Colwise
+struct Replace{K,V} <: Stateless
   pairs::IdDict{K,V}
 end
 
@@ -24,12 +24,36 @@ Replace(pairs::Pair...) = Replace(IdDict(values(pairs)))
 
 isrevertible(::Type{<:Replace}) = true
 
-function colcache(transform::Replace, x)
+function applyfeat(transform::Replace, feat, prep)
+  cols  = Tables.columns(feat)
+  names = Tables.columnnames(cols)
+
   olds = keys(transform.pairs)
-  inds = [findall(v -> v === old, x) .=> old for old in olds]
-  Dict(reduce(vcat, inds))
+  values = map(names) do nm
+    x    = Tables.getcolumn(cols, nm)
+    y    = [get(transform.pairs, xᵢ, xᵢ) for xᵢ in x]
+    inds = [findall(xᵢ -> xᵢ === old, x) .=> old for old in olds]
+    rev  = Dict(reduce(vcat, inds))
+    y, rev
+  end
+
+  columns = first.(values)
+  fcache  = last.(values)
+
+  𝒯 = (; zip(names, columns)...)
+  newfeat = 𝒯 |> Tables.materializer(feat)
+  newfeat, fcache
 end
 
-colapply(transform::Replace, x, c) = [get(transform.pairs, xᵢ, xᵢ) for xᵢ in x]
+function revertfeat(::Replace, newfeat, fcache)
+  cols  = Tables.columns(newfeat)
+  names = Tables.columnnames(cols)
 
-colrevert(::Replace, y, c) = [get(c, i, y[i]) for i in 1:length(y)]
+  columns = map(names, fcache) do nm, rev
+    y = Tables.getcolumn(cols, nm)
+    [get(rev, i, y[i]) for i in eachindex(y)]
+  end
+
+  𝒯 = (; zip(names, columns)...)
+  𝒯 |> Tables.materializer(newfeat)
+end
