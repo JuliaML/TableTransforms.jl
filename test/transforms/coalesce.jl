@@ -7,7 +7,7 @@
   f = [4, missing, 3, 4, 5, 2]
   t = Table(; a, b, c, d, e, f)
 
-  T = Coalesce(0)
+  T = Coalesce(value=0)
   n, c = apply(T, t)
   @test n.a == [3, 2, 0, 4, 5, 3]
   @test n.b == [0, 4, 4, 5, 8, 5]
@@ -29,7 +29,7 @@
   end
 
   # table schema after apply and revert
-  T = Coalesce(0)
+  T = Coalesce(value=0)
   n, c = apply(T, t)
   tₒ = revert(T, n, c)
   ttypes = Tables.schema(t).types
@@ -44,7 +44,7 @@
   
   # row table
   rt = Tables.rowtable(t)
-  T = Coalesce(0)
+  T = Coalesce(value=0)
   n, c = apply(T, rt)
   @test Tables.isrowtable(n)
   rtₒ = revert(T, n, c)

@@ -31,7 +31,7 @@ Quantile(r"[ace]", dist=Normal())
 ```
 """
 struct Quantile{S<:ColSpec,D} <: Colwise
-  colspec::ColSpec
+  colspec::S
   dist::D
 end
 

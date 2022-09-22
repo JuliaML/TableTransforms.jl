@@ -149,16 +149,17 @@
   end
 
   @testset "Coalesce" begin
-    T = Coalesce(0)
+    T = Coalesce(value=0)
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Coalesce(0)"
+    @test iostr == "Coalesce(all, 0)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Coalesce transform
+    ├─ colspec = all
     └─ value = 0"""
   end
   
@@ -225,11 +226,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Center()"
+    @test iostr == "Center(all)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
-    @test iostr == "Center transform"
+    @test iostr == """
+    Center transform
+    └─ colspec = all"""
   end
 
   @testset "Scale" begin
@@ -237,12 +240,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Scale(0.25, 0.75)"
+    @test iostr == "Scale(all, 0.25, 0.75)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Scale transform
+    ├─ colspec = all
     ├─ low = 0.25
     └─ high = 0.75"""
   end
@@ -252,11 +256,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "ZScore()"
+    @test iostr == "ZScore(all)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
-    @test iostr == "ZScore transform"
+    @test iostr == """
+    ZScore transform
+    └─ colspec = all"""
   end
 
   @testset "Quantile" begin
@@ -264,12 +270,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Quantile(Normal{Float64}(μ=0.0, σ=1.0))"
+    @test iostr == "Quantile(all, Normal{Float64}(μ=0.0, σ=1.0))"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Quantile transform
+    ├─ colspec = all
     └─ dist = Normal{Float64}(μ=0.0, σ=1.0)"""
   end
 
@@ -336,15 +343,15 @@
 
     # compact mode
     iostr = sprint(show, pipeline)
-    @test iostr == "Select([:x, :z], nothing) → ZScore() → Scale(0, 1)"
+    @test iostr == "Select([:x, :z], nothing) → ZScore(all) → Scale(all, 0, 1)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
     @test iostr == """
     Sequential
     ├─ Select([:x, :z], nothing)
-    ├─ ZScore()
-    └─ Scale(0, 1)"""
+    ├─ ZScore(all)
+    └─ Scale(all, 0, 1)"""
   end
 
   @testset "Parallel" begin
@@ -355,13 +362,13 @@
 
     # compact mode
     iostr = sprint(show, pipeline)
-    @test iostr == "Scale(0.3, 0.6) ⊔ EigenAnalysis(:VDV, nothing, 1.0) ⊔ Functional(all, cos)"
+    @test iostr == "Scale(all, 0.3, 0.6) ⊔ EigenAnalysis(:VDV, nothing, 1.0) ⊔ Functional(all, cos)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
     @test iostr == """
     Parallel
-    ├─ Scale(0.3, 0.6)
+    ├─ Scale(all, 0.3, 0.6)
     ├─ EigenAnalysis(:VDV, nothing, 1.0)
     └─ Functional(all, cos)"""
 
@@ -374,17 +381,17 @@
 
     # compact mode
     iostr = sprint(show, pipeline)
-    @test iostr == "ZScore() → Scale(0.25, 0.75) ⊔ Functional(all, cos) → Scale(0.25, 0.75)"
+    @test iostr == "ZScore(all) → Scale(all, 0.25, 0.75) ⊔ Functional(all, cos) → Scale(all, 0.25, 0.75)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
     @test iostr == """
     Parallel
     ├─ Sequential
-    │  ├─ ZScore()
-    │  └─ Scale(0.25, 0.75)
+    │  ├─ ZScore(all)
+    │  └─ Scale(all, 0.25, 0.75)
     └─ Sequential
        ├─ Functional(all, cos)
-       └─ Scale(0.25, 0.75)"""
+       └─ Scale(all, 0.25, 0.75)"""
   end
 end

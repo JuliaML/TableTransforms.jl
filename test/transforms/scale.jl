@@ -42,7 +42,7 @@
   # columntype does not change
   for FT in (Float16, Float32)
     t = Table(; x=rand(FT, 10))
-    for T in (MinMax(), Scale(FT(0), FT(0.5)))
+    for T in (MinMax(), Scale(low=FT(0), high=FT(0.5)))
       n, c = apply(T, t)
       @test Tables.columntype(t, :x) == Tables.columntype(n, :x)
       tₒ = revert(T, n, c)
