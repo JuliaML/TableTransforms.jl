@@ -26,4 +26,40 @@
   @test Tables.isrowtable(n)
   rtₒ = revert(T, n, c)
   @test Tables.matrix(rt) ≈ Tables.matrix(rtₒ)
+
+  # colspec
+  z = x + y
+  t = Table(; x, y, z)
+
+  T = Center(1, 2)
+  n, c = apply(T, t)
+  μ = mean(Tables.matrix(n), dims=1)
+  @test isapprox(μ[1], 0; atol=1e-6)
+  @test isapprox(μ[2], 0; atol=1e-6)
+  tₒ = revert(T, n, c)
+  @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+
+  T = Center([:x, :y])
+  n, c = apply(T, t)
+  μ = mean(Tables.matrix(n), dims=1)
+  @test isapprox(μ[1], 0; atol=1e-6)
+  @test isapprox(μ[2], 0; atol=1e-6)
+  tₒ = revert(T, n, c)
+  @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+
+  T = Center(("x", "y"))
+  n, c = apply(T, t)
+  μ = mean(Tables.matrix(n), dims=1)
+  @test isapprox(μ[1], 0; atol=1e-6)
+  @test isapprox(μ[2], 0; atol=1e-6)
+  tₒ = revert(T, n, c)
+  @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+
+  T = Center(r"[xy]")
+  n, c = apply(T, t)
+  μ = mean(Tables.matrix(n), dims=1)
+  @test isapprox(μ[1], 0; atol=1e-6)
+  @test isapprox(μ[2], 0; atol=1e-6)
+  tₒ = revert(T, n, c)
+  @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 end
