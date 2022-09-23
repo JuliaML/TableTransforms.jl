@@ -42,11 +42,51 @@
   # columntype does not change
   for FT in (Float16, Float32)
     t = Table(; x=rand(FT, 10))
-    for T in (MinMax(), Scale(FT(0), FT(0.5)))
+    for T in (MinMax(), Scale(low=FT(0), high=FT(0.5)))
       n, c = apply(T, t)
       @test Tables.columntype(t, :x) == Tables.columntype(n, :x)
       tₒ = revert(T, n, c)
       @test Tables.columntype(t, :x) == Tables.columntype(tₒ, :x)
     end
   end
+
+  # colspec
+  z = x + y
+  t = Table(; x, y, z)
+
+  T = Scale(1, 2, low=0, high=1)
+  n, c = apply(T, t)
+  @test all(≤(1), n.x)
+  @test all(≥(0), n.x)
+  @test all(≤(1), n.y)
+  @test all(≥(0), n.y)
+  tₒ = revert(T, n, c)
+  @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+
+  T = Scale([:x, :y], low=0, high=1)
+  n, c = apply(T, t)
+  @test all(≤(1), n.x)
+  @test all(≥(0), n.x)
+  @test all(≤(1), n.y)
+  @test all(≥(0), n.y)
+  tₒ = revert(T, n, c)
+  @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+
+  T = Scale(("x", "y"), low=0, high=1)
+  n, c = apply(T, t)
+  @test all(≤(1), n.x)
+  @test all(≥(0), n.x)
+  @test all(≤(1), n.y)
+  @test all(≥(0), n.y)
+  tₒ = revert(T, n, c)
+  @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+
+  T = Scale(r"[xy]", low=0, high=1)
+  n, c = apply(T, t)
+  @test all(≤(1), n.x)
+  @test all(≥(0), n.x)
+  @test all(≤(1), n.y)
+  @test all(≥(0), n.y)
+  tₒ = revert(T, n, c)
+  @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 end

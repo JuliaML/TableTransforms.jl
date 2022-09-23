@@ -3,24 +3,44 @@
 # ------------------------------------------------------------------
 
 """
-    Quantile(distribution=Normal())
+    Quantile(; dist=Normal())
 
 The quantile transform to a given `distribution`.
+
+    Quantile(col₁, col₂, ..., colₙ; dist=Normal())
+    Quantile([col₁, col₂, ..., colₙ]; dist=Normal())
+    Quantile((col₁, col₂, ..., colₙ); dist=Normal())
+
+Applies the Quantile transform on columns `col₁`, `col₂`, ..., `colₙ`.
+
+    Quantile(regex; dist=Normal())
+
+Applies the Quantile transform on columns that match with `regex`.
 
 # Examples
 
 ```julia
+using Distributions
+
 Quantile()
-Quantile(Normal())
+Quantile(dist=Normal())
+Quantile(1, 3, 5, dist=Beta())
+Quantile([:a, :c, :e], dist=Gamma())
+Quantile(("a", "c", "e"), dist=Beta())
+Quantile(r"[ace]", dist=Normal())
 ```
 """
-struct Quantile{D} <: Colwise
+struct Quantile{S<:ColSpec,D} <: Colwise
+  colspec::S
   dist::D
 end
 
-Quantile() = Quantile(Normal())
+Quantile(; dist=Normal()) = Quantile(AllSpec(), dist)
+Quantile(spec; dist=Normal()) = Quantile(colspec(spec), dist)
+Quantile(cols::C...; dist=Normal()) where {C<:Col} = 
+  Quantile(colspec(cols), dist)
 
-assertions(::Type{Quantile}) = [assert_continuous]
+assertions(::Type{<:Quantile}) = [assert_continuous]
 
 isrevertible(::Type{<:Quantile}) = true
 

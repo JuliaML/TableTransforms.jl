@@ -7,7 +7,7 @@
   f = [4, missing, 3, 4, 5, 2]
   t = Table(; a, b, c, d, e, f)
 
-  T = Coalesce(0)
+  T = Coalesce(value=0)
   n, c = apply(T, t)
   @test n.a == [3, 2, 0, 4, 5, 3]
   @test n.b == [0, 4, 4, 5, 8, 5]
@@ -29,7 +29,7 @@
   end
 
   # table schema after apply and revert
-  T = Coalesce(0)
+  T = Coalesce(value=0)
   n, c = apply(T, t)
   tₒ = revert(T, n, c)
   ttypes = Tables.schema(t).types
@@ -44,11 +44,48 @@
   
   # row table
   rt = Tables.rowtable(t)
-  T = Coalesce(0)
+  T = Coalesce(value=0)
   n, c = apply(T, rt)
   @test Tables.isrowtable(n)
   rtₒ = revert(T, n, c)
   for (row, rowₒ) in zip(rt, rtₒ)
     @test isequalmissing(row, rowₒ)
   end
+
+  # colspec
+  T = Coalesce(1, 3, 5, value=0)
+  n, c = apply(T, t)
+  @test n.a == [3, 2, 0, 4, 5, 3]
+  @test isequalmissing(n.b, [missing, 4, 4, 5, 8, 5])
+  @test n.c == [1, 1, 6, 2, 4, 0]
+  @test isequalmissing(n.d, [4, 3, 7, 5, 4, missing])
+  @test n.e == [0, 5, 2, 6, 5, 2]
+  @test isequalmissing(n.f, [4, missing, 3, 4, 5, 2])
+
+  T = Coalesce([:b, :d, :f], value=0)
+  n, c = apply(T, t)
+  @test isequalmissing(n.a, [3, 2, missing, 4, 5, 3])
+  @test n.b == [0, 4, 4, 5, 8, 5]
+  @test isequalmissing(n.c, [1, 1, 6, 2, 4, missing])
+  @test n.d == [4, 3, 7, 5, 4, 0]
+  @test isequalmissing(n.e, [missing, 5, 2, 6, 5, 2])
+  @test n.f == [4, 0, 3, 4, 5, 2]
+
+  T = Coalesce(("a", "c", "e"), value=0)
+  n, c = apply(T, t)
+  @test n.a == [3, 2, 0, 4, 5, 3]
+  @test isequalmissing(n.b, [missing, 4, 4, 5, 8, 5])
+  @test n.c == [1, 1, 6, 2, 4, 0]
+  @test isequalmissing(n.d, [4, 3, 7, 5, 4, missing])
+  @test n.e == [0, 5, 2, 6, 5, 2]
+  @test isequalmissing(n.f, [4, missing, 3, 4, 5, 2])
+
+  T = Coalesce(r"[bdf]", value=0)
+  n, c = apply(T, t)
+  @test isequalmissing(n.a, [3, 2, missing, 4, 5, 3])
+  @test n.b == [0, 4, 4, 5, 8, 5]
+  @test isequalmissing(n.c, [1, 1, 6, 2, 4, missing])
+  @test n.d == [4, 3, 7, 5, 4, 0]
+  @test isequalmissing(n.e, [missing, 5, 2, 6, 5, 2])
+  @test n.f == [4, 0, 3, 4, 5, 2]
 end
