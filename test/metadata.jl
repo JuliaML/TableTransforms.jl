@@ -1,4 +1,4 @@
-@testset "MetaData" begin
+@testset "Metadata" begin
   @testset "ConstMeta" begin
     a = rand(100)
     b = rand(100)
