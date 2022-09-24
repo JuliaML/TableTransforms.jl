@@ -10,6 +10,8 @@ using Test, Random, Plots
 using ReferenceTests, ImageIO
 using StatsBase
 
+const TT = TableTransforms
+
 # set default configurations for plots
 gr(ms=1, mc=:black, aspectratio=:equal,
    label=false, size=(600,400))
@@ -42,11 +44,14 @@ function isequalmissing(a, b)
   return true
 end
 
+include("metatable.jl")
+
 # list of tests
 testfiles = [
   "distributions.jl",
   "colspec.jl",
   "transforms.jl",
+  "metadata.jl",
   "tableselection.jl",
   "shows.jl"
 ]
