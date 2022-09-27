@@ -1,7 +1,3 @@
-```@meta
-CurrentModule = TableTransforms
-```
-
 # TableTransforms.jl
 
 *Transforms and pipelines with tabular data.*
@@ -85,7 +81,7 @@ or to any marginal distribution:
 using Distributions
 
 # convert to any Distributions.jl
-table |> Quantile(Normal()) |> corner
+table |> Quantile(dist=Normal()) |> corner
 ```
 
 Below is a more sophisticated example with a pipeline that has
