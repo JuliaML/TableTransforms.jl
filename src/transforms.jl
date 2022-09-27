@@ -55,7 +55,7 @@ function revertmeta end
 This trait is useful to signal that we can [`reapply`](@ref) a transform
 "fitted" with training data to "test" data without relying on the `cache`.
 """
-abstract type Stateless <: StatelessTransform end
+abstract type Stateless <: TableTransform end
 
 """
     newfeat = reapplyfeat(transform, feat, fcache)
@@ -149,6 +149,13 @@ end
 applymeta(transform::TableTransform, meta, prep) = meta, nothing
 revertmeta(transform::TableTransform, newmeta, mcache) = newmeta
 reapplymeta(transform::TableTransform, meta, mcache) = meta
+
+# --------------------
+# STATELESS FALLBACKS
+# --------------------
+
+reapply(transform::Stateless, table, cache) =
+  apply(transform, table) |> first
 
 # ------------------
 # COLWISE FALLBACKS
