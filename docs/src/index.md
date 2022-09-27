@@ -1,7 +1,3 @@
-```@meta
-CurrentModule = TableTransforms
-```
-
 # TableTransforms.jl
 
 *Transforms and pipelines with tabular data.*
