@@ -21,7 +21,7 @@ Functional(:a => cos, :b => sin)
 Functional("a" => cos, "b" => sin)
 ```
 """
-struct Functional{S<:ColSpec,F} <: Stateless
+struct Functional{S<:ColSpec,F} <: StatelessTableTransform
   colspec::S
   func::F
 end

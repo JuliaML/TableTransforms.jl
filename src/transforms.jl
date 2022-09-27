@@ -50,12 +50,12 @@ This function is intended for developers of new types.
 function revertmeta end
 
 """
-    Stateless
+    StatelessTableTransform
 
 This trait is useful to signal that we can [`reapply`](@ref) a transform
 "fitted" with training data to "test" data without relying on the `cache`.
 """
-abstract type Stateless <: TableTransform end
+abstract type StatelessTableTransform <: TableTransform end
 
 """
     newfeat = reapplyfeat(transform, feat, fcache)
@@ -74,7 +74,7 @@ This function is intended for developers of new types.
 function reapplymeta end
 
 """
-    Colwise
+    ColwiseTableTransform
 
 A transform that is applied column-by-column. In this case, the new type
 only needs to implement [`colapply`](@ref), [`colrevert`](@ref) and
@@ -83,9 +83,9 @@ functions in parallel for all columns with multiple threads.
 
 ## Notes
 
-* All Colwise subtypes must have a colspec field.
+* All ColwiseTableTransform subtypes must have a colspec field.
 """
-abstract type Colwise <: TableTransform end
+abstract type ColwiseTableTransform <: TableTransform end
 
 """
     y = colapply(transform, x, c)
@@ -154,14 +154,14 @@ reapplymeta(transform::TableTransform, meta, mcache) = meta
 # STATELESS FALLBACKS
 # --------------------
 
-reapply(transform::Stateless, table, cache) =
+reapply(transform::StatelessTableTransform, table, cache) =
   apply(transform, table) |> first
 
 # ------------------
 # COLWISE FALLBACKS
 # ------------------
 
-function applyfeat(transform::Colwise, feat, prep)
+function applyfeat(transform::ColwiseTableTransform, feat, prep)
   # basic checks
   for assertion in assertions(transform)
     assertion(feat)
@@ -199,7 +199,7 @@ function applyfeat(transform::Colwise, feat, prep)
   newfeat, (caches, snames)
 end
 
-function revertfeat(transform::Colwise, newfeat, fcache)
+function revertfeat(transform::ColwiseTableTransform, newfeat, fcache)
   # basic checks
   @assert isrevertible(transform) "transform is not revertible"
 
@@ -225,7 +225,7 @@ function revertfeat(transform::Colwise, newfeat, fcache)
   (; vals...) |> Tables.materializer(newfeat)
 end
 
-function reapplyfeat(transform::Colwise, feat, fcache)
+function reapplyfeat(transform::ColwiseTableTransform, feat, fcache)
   # basic checks
   for assertion in assertions(transform)
     assertion(feat)

@@ -18,7 +18,7 @@ Filter(row -> row.a == true && row.b < 30)
 
 * The schema of the table is preserved by the transform.
 """
-struct Filter{F} <: Stateless
+struct Filter{F} <: StatelessTableTransform
   func::F 
 end
 
@@ -99,7 +99,7 @@ DropMissing(r"[bce]")
 
 * The transform can alter the element type of columns from `Union{Missing,T}` to `T`.
 """
-struct DropMissing{S<:ColSpec} <: Stateless
+struct DropMissing{S<:ColSpec} <: StatelessTableTransform
   colspec::S
 end
 

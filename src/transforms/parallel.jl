@@ -164,6 +164,6 @@ Create a [`Parallel`](@ref) transform with
 `[transform₁, transform₂, …, transformₙ]`.
 """
 ⊔(t1::TableTransform, t2::TableTransform) = Parallel([t1, t2])
-⊔(t1::TableTransform, t2::Parallel)  = Parallel([t1; t2.transforms])
-⊔(t1::Parallel, t2::TableTransform)  = Parallel([t1.transforms; t2])
-⊔(t1::Parallel, t2::Parallel)   = Parallel([t1.transforms; t2.transforms])
+⊔(t1::TableTransform, t2::Parallel)       = Parallel([t1; t2.transforms])
+⊔(t1::Parallel, t2::TableTransform)       = Parallel([t1.transforms; t2])
+⊔(t1::Parallel, t2::Parallel)             = Parallel([t1.transforms; t2.transforms])

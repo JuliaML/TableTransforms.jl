@@ -5,9 +5,9 @@
 module TableTransforms
 
 # Transforms API
-import TransformsAPI: Transform, StatelessTransform,
-  assertions, isrevertible, preprocess,
-  apply, revert, reapply
+import TransformsAPI: Transform
+import TransformsAPI: assertions, isrevertible, preprocess
+import TransformsAPI: apply, revert, reapply
 
 using Tables
 using ScientificTypes

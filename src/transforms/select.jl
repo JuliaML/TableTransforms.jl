@@ -77,7 +77,7 @@ Select("a" => "x", "b" => "y")
 Select(r"[ace]")
 ```
 """
-struct Select{S<:ColSpec} <: Stateless
+struct Select{S<:ColSpec} <: StatelessTableTransform
   colspec::S
   newnames::Union{Vector{Symbol},Nothing}
 end
@@ -169,7 +169,7 @@ Reject((2, 4, 6))
 Reject(r"[bdf]")
 ```
 """
-struct Reject{S<:ColSpec} <: Stateless
+struct Reject{S<:ColSpec} <: StatelessTableTransform
   colspec::S
 end
 
