@@ -3,55 +3,19 @@
 # ------------------------------------------------------------------
 
 """
-    Transform
+    TableTransform
 
 A transform that takes a table as input and produces a new table.
-Any transform implementing the `Transform` trait should implement the
+Any transform implementing the `TableTransform` trait should implement the
 [`apply`](@ref) function. If the transform [`isrevertible`](@ref),
 then it should also implement the [`revert`](@ref) function.
 
 A functor interface is automatically generated from the functions
-above, which means that any transform implementing the `Transform`
+above, which means that any transform implementing the `TableTransform`
 trait can be evaluated directly at any table implementing the
 [Tables.jl](https://github.com/JuliaData/Tables.jl) interface.
 """
-abstract type Transform end
-
-"""
-    assertions(transform)
-
-Returns a list of assertion functions for the `transform`. An assertion
-function is a function that takes a table as input and checks if the table
-is valid for the `transform`.
-"""
-function assertions end
-
-"""
-    isrevertible(transform)
-
-Tells whether or not the `transform` is revertible, i.e. supports a
-[`revert`](@ref) function. Defaults to `false` for new types.
-"""
-function isrevertible end
-
-"""
-    prep = preprocess(transform, table)
-
-Pre-process `table` with `transform` to produce a `preproc` object
-that can be used by both [`applyfeat`](@ref) and [`applymeta`](@ref).
-This function is intended for developers of new types.
-"""
-function preprocess end
-
-"""
-    newtable, cache = apply(transform, table)
-
-Apply the `transform` on the `table`. Return the `newtable` and a
-`cache` to revert the transform later. If the table transform is
-a feature transform, the new type only needs to implement the
-function [`applyfeat`](@ref).
-"""
-function apply end
+abstract type TableTransform <: Transform end
 
 """
     newfeat, fcache = applyfeat(transform, feat, prep)
@@ -68,17 +32,6 @@ Implementation of [`apply`](@ref) for metadata.
 This function is intended for developers of new types.
 """
 function applymeta end
-
-"""
-    table = revert(transform, newtable, cache)
-
-Revert the `transform` on the `newtable` using the `cache` from the
-corresponding [`apply`](@ref) call and return the original `table`.
-Only defined when the `transform` [`isrevertible`](@ref). If the
-table transform is a feature transform, the new type only needs to
-implement the function [`revertfeat`](@ref).
-"""
-function revert end
 
 """
     feat = revertfeat(transform, newfeat, fcache)
@@ -102,17 +55,7 @@ function revertmeta end
 This trait is useful to signal that we can [`reapply`](@ref) a transform
 "fitted" with training data to "test" data without relying on the `cache`.
 """
-abstract type Stateless <: Transform end
-
-"""
-    newtable = reapply(transform, table, cache)
-
-Reapply the `transform` to (a possibly different) `table` using a `cache`
-that was created with a previous [`apply`](@ref) call. If the table transform
-is a feature transform, the new type only needs to implement the function
-[`reapplyfeat`](@ref).
-"""
-function reapply end
+abstract type Stateless <: StatelessTransform end
 
 """
     newfeat = reapplyfeat(transform, feat, fcache)
@@ -142,7 +85,7 @@ functions in parallel for all columns with multiple threads.
 
 * All Colwise subtypes must have a colspec field.
 """
-abstract type Colwise <: Transform end
+abstract type Colwise <: TableTransform end
 
 """
     y = colapply(transform, x, c)
@@ -172,17 +115,7 @@ function colcache end
 # TRANSFORM FALLBACKS
 # --------------------
 
-assertions(transform::Transform) =
-  assertions(typeof(transform))
-assertions(::Type{<:Transform}) = []
-
-isrevertible(transform::Transform) =
-  isrevertible(typeof(transform))
-isrevertible(::Type{<:Transform}) = false
-
-preprocess(transform::Transform, table) = nothing
-
-function apply(transform::Transform, table)
+function apply(transform::TableTransform, table)
   feat, meta = divide(table)
 
   prep = preprocess(transform, table)
@@ -193,7 +126,7 @@ function apply(transform::Transform, table)
   attach(newfeat, newmeta), (fcache, mcache)
 end
 
-function revert(transform::Transform, newtable, cache)
+function revert(transform::TableTransform, newtable, cache)
   newfeat, newmeta = divide(newtable)
   fcache,   mcache = cache
 
@@ -203,7 +136,7 @@ function revert(transform::Transform, newtable, cache)
   attach(feat, meta)
 end
 
-function reapply(transform::Transform, table, cache)
+function reapply(transform::TableTransform, table, cache)
   feat,     meta = divide(table)
   fcache, mcache = cache
 
@@ -213,39 +146,9 @@ function reapply(transform::Transform, table, cache)
   attach(newfeat, newmeta)
 end
 
-applymeta(transform::Transform, meta, prep) = meta, nothing
-revertmeta(transform::Transform, newmeta, mcache) = newmeta
-reapplymeta(transform::Transform, meta, mcache) = meta
-
-(transform::Transform)(table) =
-  apply(transform, table) |> first
-
-function Base.show(io::IO, transform::Transform)
-  T = typeof(transform)
-  vals = getfield.(Ref(transform), fieldnames(T))
-  strs = repr.(vals, context=io)
-  print(io, "$(nameof(T))($(join(strs, ", ")))")
-end
-
-function Base.show(io::IO, ::MIME"text/plain", transform::Transform)
-  T = typeof(transform)
-  fnames = fieldnames(T)
-  len = length(fnames)
-  print(io, "$(nameof(T)) transform")
-  for (i, field) in enumerate(fnames)
-    div = i == len ? "\n└─ " : "\n├─ "
-    val = getfield(transform, field)
-    str = repr(val, context=io)
-    print(io, "$div$field = $str")
-  end
-end
-
-# --------------------
-# STATELESS FALLBACKS
-# --------------------
-
-reapply(transform::Stateless, table, cache) =
-  apply(transform, table) |> first
+applymeta(transform::TableTransform, meta, prep) = meta, nothing
+revertmeta(transform::TableTransform, newmeta, mcache) = newmeta
+reapplymeta(transform::TableTransform, meta, mcache) = meta
 
 # ------------------
 # COLWISE FALLBACKS

@@ -4,6 +4,11 @@
 
 module TableTransforms
 
+# Transforms API
+import TransformsAPI: Transform, StatelessTransform,
+  assertions, isrevertible, preprocess,
+  apply, revert, reapply
+
 using Tables
 using ScientificTypes
 using Distributions: Normal

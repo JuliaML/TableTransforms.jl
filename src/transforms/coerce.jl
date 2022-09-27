@@ -16,7 +16,7 @@ using ScientificTypes
 Coerce(:col1 => Continuous, :col2 => Count)
 ```
 """
-struct Coerce{P} <: Transform
+struct Coerce{P} <: TableTransform
   pairs::P
   tight::Bool
   verbosity::Int

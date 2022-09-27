@@ -81,7 +81,7 @@ function applyfeat(transform::Functional, feat, prep)
 end
 
 function revertfeat(transform::Functional, newfeat, fcache)
-  @assert isrevertible(transform) "Transform is not revertible."
+  @assert isrevertible(transform) "TableTransform is not revertible."
 
   cols = Tables.columns(newfeat)
   names = Tables.columnnames(cols)
