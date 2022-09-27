@@ -1,4 +1,5 @@
 using TableTransforms
+using TransformsAPI
 using Documenter
 
 DocMeta.setdocmeta!(TableTransforms, :DocTestSetup, :(using TableTransforms); recursive=true)

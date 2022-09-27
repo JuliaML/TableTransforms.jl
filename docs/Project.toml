@@ -5,6 +5,7 @@ PairPlots = "43a3c2be-4208-490b-832a-a21dcd55d7da"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 TableTransforms = "0d432bfd-3ee1-4ac1-886a-39f05cc69a3e"
+TransformsAPI = "756644eb-7399-463e-a86e-97605fb648cd"
 
 [compat]
 Documenter = "0.27"
