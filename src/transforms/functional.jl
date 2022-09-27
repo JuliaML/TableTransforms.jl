@@ -21,7 +21,7 @@ Functional(:a => cos, :b => sin)
 Functional("a" => cos, "b" => sin)
 ```
 """
-struct Functional{S<:ColSpec,F} <: Stateless
+struct Functional{S<:ColSpec,F} <: StatelessTableTransform
   colspec::S
   func::F
 end
@@ -81,7 +81,7 @@ function applyfeat(transform::Functional, feat, prep)
 end
 
 function revertfeat(transform::Functional, newfeat, fcache)
-  @assert isrevertible(transform) "Transform is not revertible."
+  @assert isrevertible(transform) "TableTransform is not revertible."
 
   cols = Tables.columns(newfeat)
   names = Tables.columnnames(cols)

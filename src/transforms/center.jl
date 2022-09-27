@@ -27,7 +27,7 @@ Center(("a", "c", "e"))
 Center(r"[ace]")
 ```
 """
-struct Center{S<:ColSpec} <: Colwise
+struct Center{S<:ColSpec} <: ColwiseTableTransform
   colspec::S
 end
 

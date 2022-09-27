@@ -16,7 +16,7 @@ Levels(:a => 1:3, :b => ["a", "b"], ordered=[:a])
 Levels("a" => 1:3, "b" => ["a", "b"], ordered=["b"])
 ```
 """
-struct Levels{S<:ColSpec,O<:ColSpec,L} <: Stateless
+struct Levels{S<:ColSpec,O<:ColSpec,L} <: StatelessTableTransform
   colspec::S
   ordered::O
   levels::L

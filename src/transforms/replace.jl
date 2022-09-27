@@ -14,7 +14,7 @@ Replace(1 => -1, 5 => -5)
 Replace(1 => 1.5, 5 => 5.5, 4 => true)
 ```
 """
-struct Replace{K,V} <: Stateless
+struct Replace{K,V} <: StatelessTableTransform
   pairs::IdDict{K,V}
 end
 

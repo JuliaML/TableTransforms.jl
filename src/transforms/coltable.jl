@@ -7,7 +7,7 @@
 
 The transform that applies the function `Tables.columntable` to to the input table.
 """
-struct ColTable <: Stateless end
+struct ColTable <: StatelessTableTransform end
 
 isrevertible(::Type{ColTable}) = true
 

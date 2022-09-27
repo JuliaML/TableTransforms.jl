@@ -22,13 +22,13 @@ Base.:(==)(a::MetaTable, b::MetaTable) =
 TT.divide(metatable::MetaTable) = metatable.table, metatable.meta
 TT.attach(feat, meta::Metadata) = MetaTable(feat, meta)
 
-function TT.applymeta(::TT.Transform, meta::VarMeta, prep)
+function TT.applymeta(::TT.TableTransform, meta::VarMeta, prep)
   VarMeta(meta.data .+ 2), nothing
 end
 
-function TT.revertmeta(::TT.Transform, newmeta::VarMeta, mcache)
+function TT.revertmeta(::TT.TableTransform, newmeta::VarMeta, mcache)
   VarMeta(newmeta.data .- 2)
 end
 
-TT.applymeta(::TT.Transform, meta::ConstMeta, prep) = meta, nothing
-TT.revertmeta(::TT.Transform, newmeta::ConstMeta, mcache) = newmeta
+TT.applymeta(::TT.TableTransform, meta::ConstMeta, prep) = meta, nothing
+TT.revertmeta(::TT.TableTransform, newmeta::ConstMeta, mcache) = newmeta

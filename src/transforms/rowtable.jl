@@ -7,7 +7,7 @@
 
 The transform that applies the function `Tables.rowtable` to to the input table.
 """
-struct RowTable <: Stateless end
+struct RowTable <: StatelessTableTransform end
 
 isrevertible(::Type{RowTable}) = true
 

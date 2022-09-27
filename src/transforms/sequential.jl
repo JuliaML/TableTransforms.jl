@@ -14,8 +14,8 @@ Scale(low=0.2, high=0.8) → EigenAnalysis(:VDV)
 Select(:x, :z) → ZScore() → EigenAnalysis(:V) → Scale(low=0, high=1)
 ```
 """
-struct Sequential <: Transform
-  transforms::Vector{Transform}
+struct Sequential <: TableTransform
+  transforms::Vector{TableTransform}
 end
 
 # AbstractTrees interface
@@ -70,7 +70,7 @@ end
 Create a [`Sequential`](@ref) transform with
 `[transform₁, transform₂, …, transformₙ]`.
 """
-→(t1::Transform, t2::Transform)   = Sequential([t1, t2])
-→(t1::Transform, t2::Sequential)  = Sequential([t1; t2.transforms])
-→(t1::Sequential, t2::Transform)  = Sequential([t1.transforms; t2])
-→(t1::Sequential, t2::Sequential) = Sequential([t1.transforms; t2.transforms])
+→(t1::TableTransform, t2::TableTransform) = Sequential([t1, t2])
+→(t1::TableTransform, t2::Sequential)     = Sequential([t1; t2.transforms])
+→(t1::Sequential, t2::TableTransform)     = Sequential([t1.transforms; t2])
+→(t1::Sequential, t2::Sequential)         = Sequential([t1.transforms; t2.transforms])

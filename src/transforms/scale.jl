@@ -35,7 +35,7 @@ Scale(r"[ace]", low=0.3, high=0.7)
 
 * The `low` and `high` values are restricted to the interval [0, 1].
 """
-struct Scale{S<:ColSpec,T<:Real} <: Colwise
+struct Scale{S<:ColSpec,T<:Real} <: ColwiseTableTransform
   colspec::S
   low::T
   high::T
