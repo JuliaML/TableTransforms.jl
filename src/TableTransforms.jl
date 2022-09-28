@@ -4,11 +4,6 @@
 
 module TableTransforms
 
-# Transforms API
-import TransformsAPI: Transform
-import TransformsAPI: assertions, isrevertible, preprocess
-import TransformsAPI: apply, revert, reapply
-
 using Tables
 using ScientificTypes
 using Distributions: Normal
@@ -24,6 +19,10 @@ using Random
 
 import Distributions: ContinuousUnivariateDistribution
 import Distributions: quantile, cdf
+
+import TransformsAPI: Transform
+import TransformsAPI: assertions, isrevertible, preprocess
+import TransformsAPI: apply, revert, reapply
 
 include("tabletraits.jl")
 include("assertions.jl")
