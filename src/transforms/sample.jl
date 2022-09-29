@@ -25,7 +25,7 @@ Sample(1_000, rng=rng)
 Sample(10, rand(100))
 ```
 """
-struct Sample{W,RNG} <: StatelessTableTransform
+struct Sample{W,RNG} <: StatelessFeatureTransform
   size::Int
   weights::W
   replace::Bool

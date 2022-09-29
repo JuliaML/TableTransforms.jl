@@ -39,7 +39,7 @@ EigenAnalysis(:VD, pratio=0.99)
 EigenAnalysis(:VDV, maxdim=3, pratio=0.99)
 ```
 """
-struct EigenAnalysis <: TableTransform
+struct EigenAnalysis <: FeatureTransform
   proj::Symbol
   maxdim::Union{Int,Nothing}
   pratio::Float64

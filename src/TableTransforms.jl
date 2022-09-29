@@ -31,6 +31,10 @@ include("colspec.jl")
 include("transforms.jl")
 
 export
+  # abstract types
+  TableTransform,
+  FeatureTransform,
+
   # interface
   isrevertible,
   apply,

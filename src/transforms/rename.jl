@@ -16,7 +16,7 @@ Rename(:a => :x, :c => :y)
 Rename("a" => "x", "c" => "y")
 ```
 """
-struct Rename{S<:ColSpec} <: StatelessTableTransform
+struct Rename{S<:ColSpec} <: StatelessFeatureTransform
   colspec::S
   newnames::Vector{Symbol}
   function Rename(colspec::S, newnames) where {S<:ColSpec}

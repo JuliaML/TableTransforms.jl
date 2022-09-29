@@ -24,7 +24,7 @@ Sort(("a", "c", "e"))
 Sort(r"[ace]")
 ```
 """
-struct Sort{S<:ColSpec,T} <: StatelessTableTransform
+struct Sort{S<:ColSpec,T} <: StatelessFeatureTransform
   colspec::S
   kwargs::T
 end

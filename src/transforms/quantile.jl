@@ -30,7 +30,7 @@ Quantile(("a", "c", "e"), dist=Beta())
 Quantile(r"[ace]", dist=Normal())
 ```
 """
-struct Quantile{S<:ColSpec,D} <: ColwiseTableTransform
+struct Quantile{S<:ColSpec,D} <: ColwiseFeatureTransform
   colspec::S
   dist::D
 end
