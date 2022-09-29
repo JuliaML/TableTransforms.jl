@@ -67,7 +67,5 @@ export
   PCA, DRS, SDS,
   RowTable,
   ColTable,
-  Sequential,
-  Parallel,
   →, ⊔
 end

@@ -354,7 +354,7 @@
     └─ Scale(all, 0, 1)"""
   end
 
-  @testset "Parallel" begin
+  @testset "ParallelTableTransform" begin
     t1 = Scale(low=0.3, high=0.6)
     t2 = EigenAnalysis(:VDV)
     t3 = Functional(cos)
@@ -367,12 +367,12 @@
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
     @test iostr == """
-    Parallel
+    ParallelTableTransform
     ├─ Scale(all, 0.3, 0.6)
     ├─ EigenAnalysis(:VDV, nothing, 1.0)
     └─ Functional(all, cos)"""
 
-    # Parallel with Sequential
+    # parallel and sequential
     f1 = ZScore()
     f2 = Scale()
     f3 = Functional(cos)
@@ -386,7 +386,7 @@
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
     @test iostr == """
-    Parallel
+    ParallelTableTransform
     ├─ Sequential
     │  ├─ ZScore(all)
     │  └─ Scale(all, 0.25, 0.75)
