@@ -15,7 +15,7 @@ ZScore() ⊔ EigenAnalysis(:V)
 ```
 """
 struct ParallelTableTransform <: TableTransform
-  transforms::Vector{TableTransform}
+  transforms::Vector{Transform}
 end
 
 # AbstractTrees interface
@@ -163,11 +163,11 @@ end
 Create a [`ParallelTableTransform`](@ref) transform with
 `[transform₁, transform₂, …, transformₙ]`.
 """
-⊔(t1::TableTransform, t2::TableTransform) =
+⊔(t1::Transform, t2::Transform) =
   ParallelTableTransform([t1, t2])
-⊔(t1::TableTransform, t2::ParallelTableTransform) =
+⊔(t1::Transform, t2::ParallelTableTransform) =
   ParallelTableTransform([t1; t2.transforms])
-⊔(t1::ParallelTableTransform, t2::TableTransform) =
+⊔(t1::ParallelTableTransform, t2::Transform) =
   ParallelTableTransform([t1.transforms; t2])
 ⊔(t1::ParallelTableTransform, t2::ParallelTableTransform) =
   ParallelTableTransform([t1.transforms; t2.transforms])

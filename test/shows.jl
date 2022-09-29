@@ -335,7 +335,7 @@
     @test iostr == "ColTable transform"
   end
 
-  @testset "Sequential" begin
+  @testset "SequentialTransform" begin
     t1 = Select(:x, :z)
     t2 = ZScore()
     t3 = Scale(low=0, high=1)
@@ -348,7 +348,7 @@
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
     @test iostr == """
-    Sequential
+    SequentialTransform
     ├─ Select([:x, :z], nothing)
     ├─ ZScore(all)
     └─ Scale(all, 0, 1)"""
@@ -387,10 +387,10 @@
     iostr = sprint(show, MIME("text/plain"), pipeline)
     @test iostr == """
     ParallelTableTransform
-    ├─ Sequential
+    ├─ SequentialTransform
     │  ├─ ZScore(all)
     │  └─ Scale(all, 0.25, 0.75)
-    └─ Sequential
+    └─ SequentialTransform
        ├─ Functional(all, cos)
        └─ Scale(all, 0.25, 0.75)"""
   end
