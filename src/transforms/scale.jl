@@ -35,19 +35,16 @@ Scale(r"[ace]", low=0.3, high=0.7)
 
 * The `low` and `high` values are restricted to the interval [0, 1].
 """
-struct Scale{S<:ColSpec,T<:Real} <: ColwiseFeatureTransform
+struct Scale{S<:ColSpec} <: ColwiseFeatureTransform
   colspec::S
-  low::T
-  high::T
+  low::Float64
+  high::Float64
 
-  function Scale(colspec::S, low::T, high::T) where {S<:ColSpec,T<:Real}
+  function Scale(colspec::S, low, high) where {S<:ColSpec}
     @assert 0 ≤ low ≤ high ≤ 1 "invalid quantiles"
-    new{S,T}(colspec, low, high)
+    new{S}(colspec, low, high)
   end
 end
-
-Scale(colspec::ColSpec, low::Real, high::Real) = 
-  Scale(colspec, promote(low, high)...)
 
 Scale(; low=0.25, high=0.75) = Scale(AllSpec(), low, high)
 Scale(spec; low=0.25, high=0.75) = Scale(colspec(spec), low, high)
@@ -59,8 +56,9 @@ assertions(::Type{<:Scale}) = [assert_continuous]
 isrevertible(::Type{<:Scale}) = true
 
 function colcache(transform::Scale, x)
-  levels = (transform.low, transform.high)
-  xl, xh = quantile(x, levels)
+  low = convert(eltype(x), transform.low)
+  high = convert(eltype(x), transform.high)
+  xl, xh = quantile(x, (low, high))
   xl == xh && ((xl, xh) = (zero(xl), one(xh)))
   (xl=xl, xh=xh)
 end
