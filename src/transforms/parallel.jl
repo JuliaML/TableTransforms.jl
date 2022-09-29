@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    Parallel(transforms)
+    ParallelTableTransform(transforms)
 
 A transform where `transforms` are applied in parallel.
 
@@ -14,25 +14,25 @@ Scale(low=0.3, high=0.6) ⊔ EigenAnalysis(:VDV)
 ZScore() ⊔ EigenAnalysis(:V)
 ```
 """
-struct Parallel <: TableTransform
+struct ParallelTableTransform <: TableTransform
   transforms::Vector{TableTransform}
 end
 
 # AbstractTrees interface
-AbstractTrees.nodevalue(::Parallel) = Parallel
-AbstractTrees.children(p::Parallel) = p.transforms
+AbstractTrees.nodevalue(::ParallelTableTransform) = ParallelTableTransform
+AbstractTrees.children(p::ParallelTableTransform) = p.transforms
 
-Base.show(io::IO, p::Parallel) =
+Base.show(io::IO, p::ParallelTableTransform) =
   print(io, join(p.transforms, " ⊔ "))
 
-function Base.show(io::IO, ::MIME"text/plain", p::Parallel)
+function Base.show(io::IO, ::MIME"text/plain", p::ParallelTableTransform)
   tree = repr_tree(p, context=io)
   print(io, tree[begin:end-1]) # remove \n at end
 end
 
-isrevertible(p::Parallel) = any(isrevertible, p.transforms)
+isrevertible(p::ParallelTableTransform) = any(isrevertible, p.transforms)
 
-function apply(p::Parallel, table)
+function apply(p::ParallelTableTransform, table)
   # apply transforms in parallel
   f(transform) = apply(transform, table)
   vals = tcollect(f(t) for t in p.transforms)
@@ -75,7 +75,7 @@ function apply(p::Parallel, table)
   newtable, (caches, rinfo)
 end
 
-function revert(p::Parallel, newtable, cache)
+function revert(p::ParallelTableTransform, newtable, cache)
   # retrieve cache
   caches = cache[1]
   rinfo  = cache[2]
@@ -110,7 +110,7 @@ function revert(p::Parallel, newtable, cache)
   attach(feat, meta)
 end
 
-function reapply(p::Parallel, table, cache)
+function reapply(p::ParallelTableTransform, table, cache)
   # retrieve caches
   caches = cache[1]
 
@@ -160,10 +160,14 @@ end
 """
     transform₁ ⊔ transform₂ ⊔ ⋯ ⊔ transformₙ
 
-Create a [`Parallel`](@ref) transform with
+Create a [`ParallelTableTransform`](@ref) transform with
 `[transform₁, transform₂, …, transformₙ]`.
 """
-⊔(t1::TableTransform, t2::TableTransform) = Parallel([t1, t2])
-⊔(t1::TableTransform, t2::Parallel)       = Parallel([t1; t2.transforms])
-⊔(t1::Parallel, t2::TableTransform)       = Parallel([t1.transforms; t2])
-⊔(t1::Parallel, t2::Parallel)             = Parallel([t1.transforms; t2.transforms])
+⊔(t1::TableTransform, t2::TableTransform) =
+  ParallelTableTransform([t1, t2])
+⊔(t1::TableTransform, t2::ParallelTableTransform) =
+  ParallelTableTransform([t1; t2.transforms])
+⊔(t1::ParallelTableTransform, t2::TableTransform) =
+  ParallelTableTransform([t1.transforms; t2])
+⊔(t1::ParallelTableTransform, t2::ParallelTableTransform) =
+  ParallelTableTransform([t1.transforms; t2.transforms])

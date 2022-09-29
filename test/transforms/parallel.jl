@@ -8,7 +8,7 @@
   tₒ = revert(T, n, c)
   @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
-  # check cardinality of Parallel
+  # check cardinality of parallel transform
   x = rand(Normal(0, 10), 1500)
   y = x + rand(Normal(0, 2), 1500)
   z = y + rand(Normal(0, 5), 1500)
@@ -17,7 +17,7 @@
   n = T(t)
   @test length(Tables.columnnames(n)) == 6
 
-  # distributivity with respect to Sequential
+  # distributivity with respect to sequential transform
   x = rand(Normal(0, 10), 1500)
   y = x + rand(Normal(0, 2), 1500)
   z = y + rand(Normal(0, 5), 1500)
@@ -31,7 +31,7 @@
   n₂ = P₂(t)
   @test Tables.matrix(n₁) ≈ Tables.matrix(n₂)
 
-  # reapply with Parallel transform
+  # reapply with parallel transform
   t = Table(x=rand(1000))
   T = ZScore() ⊔ Quantile()
   n1, c1 = apply(T, t)
