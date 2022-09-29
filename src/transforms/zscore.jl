@@ -28,7 +28,7 @@ ZScore(("a", "c", "e"))
 ZScore(r"[ace]")
 ```
 """
-struct ZScore{S<:ColSpec} <: ColwiseTableTransform
+struct ZScore{S<:ColSpec} <: ColwiseFeatureTransform
   colspec::S
 end
 

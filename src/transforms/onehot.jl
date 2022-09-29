@@ -16,7 +16,7 @@ OneHot(:a)
 OneHot("a")
 ```
 """
-struct OneHot{S<:ColSpec} <: StatelessTableTransform
+struct OneHot{S<:ColSpec} <: StatelessFeatureTransform
   colspec::S
   function OneHot(col::Col)
     cs = colspec([col])

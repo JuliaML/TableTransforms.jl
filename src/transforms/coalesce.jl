@@ -33,7 +33,7 @@ Coalesce(r"[ace]", value=4)
 
 * The transform can alter the element type of columns from `Union{Missing,T}` to `T`.
 """
-struct Coalesce{S<:ColSpec,T} <: ColwiseTableTransform
+struct Coalesce{S<:ColSpec,T} <: ColwiseFeatureTransform
   colspec::S
   value::T
 end

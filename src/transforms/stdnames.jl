@@ -14,7 +14,7 @@ Default to `:upper` case specification.
 * `:camel` - Camelcase, e.g. ColumnName
 * `:snake` - Snakecase, e.g. column_name
 """
-struct StdNames <: StatelessTableTransform
+struct StdNames <: StatelessFeatureTransform
   spec::Symbol
 end
 
