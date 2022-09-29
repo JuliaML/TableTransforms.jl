@@ -343,7 +343,7 @@
 
     # compact mode
     iostr = sprint(show, pipeline)
-    @test iostr == "Select([:x, :z], nothing) → ZScore(all) → Scale(all, 0, 1)"
+    @test iostr == "Select([:x, :z], nothing) → ZScore(all) → Scale(all, 0.0, 1.0)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
@@ -351,7 +351,7 @@
     SequentialTransform
     ├─ Select([:x, :z], nothing)
     ├─ ZScore(all)
-    └─ Scale(all, 0, 1)"""
+    └─ Scale(all, 0.0, 1.0)"""
   end
 
   @testset "ParallelTableTransform" begin

@@ -60,7 +60,7 @@ function colcache(transform::Scale, x)
   high = convert(eltype(x), transform.high)
   xl, xh = quantile(x, (low, high))
   xl == xh && ((xl, xh) = (zero(xl), one(xh)))
-  (xl=xl, xh=xh)
+  (; xl, xh)
 end
 
 colapply(::Scale, x, c)  = @. (x - c.xl) / (c.xh - c.xl)
