@@ -17,6 +17,7 @@ transformfiles = [
   "quantile.jl",
   "functional.jl",
   "eigenanalysis.jl",
+  "projectionpursuit.jl",
   "rowtable.jl",
   "coltable.jl",
   "sequential.jl",
