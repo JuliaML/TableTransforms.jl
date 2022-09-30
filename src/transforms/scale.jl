@@ -35,16 +35,19 @@ Scale(r"[ace]", low=0.3, high=0.7)
 
 * The `low` and `high` values are restricted to the interval [0, 1].
 """
-struct Scale{S<:ColSpec} <: ColwiseFeatureTransform
+struct Scale{S<:ColSpec,T} <: ColwiseFeatureTransform
   colspec::S
-  low::Float64
-  high::Float64
+  low::T
+  high::T
 
-  function Scale(colspec::S, low, high) where {S<:ColSpec}
+  function Scale(colspec::S, low::T, high::T) where {S<:ColSpec,T}
     @assert 0 ≤ low ≤ high ≤ 1 "invalid quantiles"
-    new{S}(colspec, low, high)
+    new{S,T}(colspec, low, high)
   end
 end
+
+Scale(colspec::ColSpec, low, high) = 
+  Scale(colspec, promote(low, high)...)
 
 Scale(; low=0.25, high=0.75) = Scale(AllSpec(), low, high)
 Scale(spec; low=0.25, high=0.75) = Scale(colspec(spec), low, high)
