@@ -58,7 +58,7 @@ function pindex(transform, Z, α)
   r = rscore(Z, α)
   I = (3/2) * mean(r)^2
   if d > 1
-    Pⱼ₋₂, Pⱼ₋₁ = ones(size(r)), r
+    Pⱼ₋₂, Pⱼ₋₁ = ones(length(r)), r
     for j = 2:d
       Pⱼ₋₂, Pⱼ₋₁ = 
         Pⱼ₋₁, (1/j) * ((2j-1) * r .* Pⱼ₋₁ - (j-1) * Pⱼ₋₂)
