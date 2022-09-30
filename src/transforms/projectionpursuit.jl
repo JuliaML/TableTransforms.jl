@@ -192,8 +192,7 @@ function revertfeat(::ProjectionPursuit, newtable, fcache)
     t = Tables.matrix(table) * Q'
   end
   
-  trans = Quantile() → EigenAnalysis(:VDV)
-  tablerev = revert(trans, t, tcache)
+  tablerev = revert(Quantile() → EigenAnalysis(:VDV), t, tcache)
 
   Z = Tables.matrix(tablerev)
   𝒯 = (; zip(names, eachcol(Z))...)
