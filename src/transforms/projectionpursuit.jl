@@ -125,6 +125,15 @@ function alphamax(transform, Z)
   neldermead(transform, Z, α)  
 end
 
+function orthobasis(α, tol)
+  q = length(α)
+  Q, R = qr([α rand(q,q-1)])
+  while norm(diag(R)) < tol
+    Q, R = qr([α rand(q,q-1)])
+  end  
+  Q
+end
+
 function rmstructure(transform, Z, α)
   q = length(α)
   
