@@ -184,19 +184,19 @@ end
 function revertfeat(::ProjectionPursuit, newtable, fcache)
   cols = Tables.columns(newtable)
   names = Tables.columnnames(cols)
-  caches, tcache = fcache
+  caches, pcache = fcache
 
   t = newtable
-  for (Q, cache) in reverse(caches)
+  for (Q, qcache) in reverse(caches)
     # rotate the data 
     Z = Tables.matrix(t) * Q
 
     # revert the transform
-    table  = revert(Quantile(1), Tables.table(Z), cache)
+    table  = revert(Quantile(1), Tables.table(Z), qcache)
     t = Tables.matrix(table) * Q'
   end
   
-  tablerev = revert(sphering(), t, tcache)
+  tablerev = revert(sphering(), t, pcache)
 
   Z = Tables.matrix(tablerev)
   𝒯 = (; zip(names, eachcol(Z))...)
