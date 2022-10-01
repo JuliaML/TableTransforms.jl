@@ -150,9 +150,10 @@ function applyfeat(transform::ProjectionPursuit, table, prep)
   cols = Tables.columns(table)
   names = Tables.columnnames(cols)
 
-  ttable, tcache = apply(Quantile() → EigenAnalysis(:VDV), table)
+  # preprocess the data to approximately spherical shape
+  ptable, pcache = apply(Quantile() → EigenAnalysis(:VDV), table)
 
-  Z = Tables.matrix(ttable)
+  Z = Tables.matrix(ptable)
   
   # standard Gaussian quantiles
   g = gaussquantiles(transform, size(Z)...) 
@@ -172,7 +173,7 @@ function applyfeat(transform::ProjectionPursuit, table, prep)
 
   𝒯 = (; zip(names, eachcol(Z))...)
   newtable = 𝒯 |> Tables.materializer(table)
-  newtable, (caches, tcache)
+  newtable, (caches, pcache)
 end
 
 function revertfeat(::ProjectionPursuit, newtable, fcache)
