@@ -138,12 +138,12 @@ function rmstructure(transform, Z, α)
   table = Tables.table(Z * Q)
   
   # remove structure of first rotated axis
-  newtable, cache = apply(Quantile(1), table)
+  newtable, qcache = apply(Quantile(1), table)
   
   # undo rotation, i.e recover original axis-aligned features
   Z₊ = Tables.matrix(newtable) * Q'
   
-  Z₊, Q, cache
+  Z₊, (Q, qcache)
 end
 
 function applyfeat(transform::ProjectionPursuit, table, prep) 
@@ -165,9 +165,9 @@ function applyfeat(transform::ProjectionPursuit, table, prep)
   caches = []
   while any(g .< I) && iter ≤ transform.maxiter
     α = alphamax(transform, Z)
-    Z, Q, cache = rmstructure(transform, Z, α)
+    Z, cache = rmstructure(transform, Z, α)
     I = pbasis(transform, Z)
-    push!(caches, (Q, cache))
+    push!(caches, cache)
     iter += 1
   end
 
