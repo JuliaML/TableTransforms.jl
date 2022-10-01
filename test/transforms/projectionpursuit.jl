@@ -23,11 +23,22 @@
     @test isapprox(Σ[2,2], 1; atol=1e-6)
     @test isapprox(Σ[3,3], 1; atol=1e-6)
   
-    a = rand(rng, Chisq(3), 4000)
-    b = rand(rng, Beta(2), 4000)
+    a = rand(rng, Arcsine(3), 4000)
+    b = rand(rng, BetaPrime(2), 4000)
     t = Table(; a, b)
+
     T = ProjectionPursuit()
     n, c = apply(T, t)
+    
+    μ = mean(Tables.matrix(n), dims=1)
+    @test isapprox(μ[1], 0; atol=1e-6)
+    @test isapprox(μ[2], 0; atol=1e-6)
+    Σ = cov(Tables.matrix(n))
+    @test isapprox(Σ[1,1], 1; atol=1e-6)
+    @test isapprox(Σ[1,2], 0; atol=1e-6)
+    @test isapprox(Σ[2,1], 0; atol=1e-6)
+    @test isapprox(Σ[2,2], 1; atol=1e-6)
+
     tₒ = revert(T, n, c)
   
     if visualtests
