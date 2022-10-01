@@ -163,15 +163,3 @@ RowTable
 ```@docs
 ColTable
 ```
-
-## Sequential
-
-```@docs
-Sequential
-```
-
-## Parallel
-
-```@docs
-Parallel
-```
