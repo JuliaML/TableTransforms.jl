@@ -135,13 +135,8 @@ function orthobasis(α, tol)
 end
 
 function rmstructure(transform, Z, α)
-  q = length(α)
-  
   # find orthonormal basis for rotation
-  Q, R = qr([α rand(q,q-1)])
-  while norm(diag(R)) < transform.tol
-    Q, R = qr([α rand(q,q-1)])
-  end
+  Q = orthobasis(α, transform.tol)
 
   # remove structure of first rotated axis
   newtable, qcache = apply(Quantile(1), Tables.table(Z * Q))
