@@ -1,5 +1,5 @@
 @testset "Quantile" begin
-  t = Table(z=rand(1000))
+  t = Table(z=rand(100))
   T = Quantile()
   n, c = apply(T, t)
   tₒ = revert(T, n, c)

@@ -31,7 +31,7 @@
   @test Tables.matrix(rt) ≈ Tables.matrix(rtₒ)
 
   # make sure transform works with single-column tables
-  t = Table(x=rand(10000))
+  t = Table(x=rand(100))
   n, c = apply(ZScore(), t)
   r = revert(ZScore(), n, c)
   @test isapprox(mean(n.x), 0.0, atol=1e-8)

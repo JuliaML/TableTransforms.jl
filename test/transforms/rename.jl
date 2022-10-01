@@ -1,8 +1,8 @@
 @testset "Rename" begin
-  a = rand(4000)
-  b = rand(4000)
-  c = rand(4000)
-  d = rand(4000)
+  a = rand(10)
+  b = rand(10)
+  c = rand(10)
+  d = rand(10)
   t = Table(; a, b, c, d)
 
   # integer => symbol

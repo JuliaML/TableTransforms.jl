@@ -28,10 +28,10 @@
   @test t == tₒ
 
   # random test
-  a = rand(200)
-  b = rand(200)
-  c = rand(200)
-  d = rand(200)
+  a = rand(10)
+  b = rand(10)
+  c = rand(10)
+  d = rand(10)
   t = Table(; a, b, c, d)
 
   T = Sort(:c)
