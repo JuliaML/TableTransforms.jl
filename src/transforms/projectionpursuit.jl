@@ -134,11 +134,8 @@ function rmstructure(transform, Z, α)
     Q, R = qr([α rand(q,q-1)])
   end
 
-  # rotate features with orthonormal basis
-  table = Tables.table(Z * Q)
-  
   # remove structure of first rotated axis
-  newtable, qcache = apply(Quantile(1), table)
+  newtable, qcache = apply(Quantile(1), Tables.table(Z * Q))
   
   # undo rotation, i.e recover original axis-aligned features
   Z₊ = Tables.matrix(newtable) * Q'
