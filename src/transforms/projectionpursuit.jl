@@ -150,8 +150,7 @@ function applyfeat(transform::ProjectionPursuit, table, prep)
   cols = Tables.columns(table)
   names = Tables.columnnames(cols)
 
-  trans = Quantile() → EigenAnalysis(:VDV)
-  ttable, tcache = apply(trans, table)
+  ttable, tcache = apply(Quantile() → EigenAnalysis(:VDV), table)
 
   Z = Tables.matrix(ttable)
   N, q = size(Z)
