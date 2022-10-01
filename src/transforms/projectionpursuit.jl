@@ -153,13 +153,12 @@ function applyfeat(transform::ProjectionPursuit, table, prep)
   ttable, tcache = apply(Quantile() → EigenAnalysis(:VDV), table)
 
   Z = Tables.matrix(ttable)
-  N, q = size(Z)
+  
+  # standard Gaussian quantiles
+  g = gaussquantiles(transform, size(Z)...) 
   
   # initialize scores along original axis-aligned features
   I = pbasis(transform, Z)
-
-  # standard Gaussian quantiles
-  g = gaussquantiles(transform, N, q) 
 
   iter = 0
   caches = []
