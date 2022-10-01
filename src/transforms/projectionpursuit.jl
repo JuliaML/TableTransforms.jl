@@ -155,13 +155,10 @@ function applyfeat(transform::ProjectionPursuit, table, prep)
   # preprocess the data to approximately spherical shape
   ptable, pcache = apply(sphering(), table)
 
+  # initialize scores and Gaussian quantiles
   Z = Tables.matrix(ptable)
-  
-  # standard Gaussian quantiles
-  g = gaussquantiles(transform, size(Z)...) 
-  
-  # initialize scores along original axis-aligned features
   I = pbasis(transform, Z)
+  g = gaussquantiles(transform, size(Z)...) 
 
   iter = 0
   caches = []
