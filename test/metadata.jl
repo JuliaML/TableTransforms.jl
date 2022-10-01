@@ -1,11 +1,11 @@
 @testset "Metadata" begin
   @testset "ConstMeta" begin
-    a = rand(100)
-    b = rand(100)
-    c = rand(100)
-    d = rand(100)
+    a = rand(10)
+    b = rand(10)
+    c = rand(10)
+    d = rand(10)
     t = Table(; a, b, c, d)
-    m = ConstMeta(fill(1, 100))
+    m = ConstMeta(fill(1, 10))
     mt = MetaTable(t, m)
 
     T = Select(1, 3)
@@ -35,12 +35,12 @@
   end
 
   @testset "VarMeta" begin
-    a = rand(100)
-    b = rand(100)
-    c = rand(100)
-    d = rand(100)
+    a = rand(10)
+    b = rand(10)
+    c = rand(10)
+    d = rand(10)
     t = Table(; a, b, c, d)
-    m = VarMeta(fill(1, 100))
+    m = VarMeta(fill(1, 10))
     mt = MetaTable(t, m)
 
     T = Reject(1, 3)

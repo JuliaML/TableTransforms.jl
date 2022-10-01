@@ -1,10 +1,10 @@
 @testset "Select" begin
-  a = rand(4000)
-  b = rand(4000)
-  c = rand(4000)
-  d = rand(4000)
-  e = rand(4000)
-  f = rand(4000)
+  a = rand(10)
+  b = rand(10)
+  c = rand(10)
+  d = rand(10)
+  e = rand(10)
+  f = rand(10)
   t = Table(; a, b, c, d, e, f)
 
   T = Select(:f, :d)
@@ -94,10 +94,10 @@
   @test n1 == n2
 
   # selection with renaming
-  a = rand(4000)
-  b = rand(4000)
-  c = rand(4000)
-  d = rand(4000)
+  a = rand(10)
+  b = rand(10)
+  c = rand(10)
+  d = rand(10)
   t = Table(; a, b, c, d)
 
   # integer => symbol
@@ -194,10 +194,10 @@
   @test tₒ == t
   @test Tables.schema(tₒ) == Tables.schema(t)
 
-  x1 = rand(4000)
-  x2 = rand(4000)
-  y1 = rand(4000)
-  y2 = rand(4000)
+  x1 = rand(10)
+  x2 = rand(10)
+  y1 = rand(10)
+  y2 = rand(10)
   t = Table(; x1, x2, y1, y2)
 
   # select columns whose names contain the character x
@@ -241,12 +241,12 @@
 end
 
 @testset "Reject" begin
-  a = rand(4000)
-  b = rand(4000)
-  c = rand(4000)
-  d = rand(4000)
-  e = rand(4000)
-  f = rand(4000)
+  a = rand(10)
+  b = rand(10)
+  c = rand(10)
+  d = rand(10)
+  e = rand(10)
+  f = rand(10)
   t = Table(; a, b, c, d, e, f)
 
   T = Reject(:f, :d)
@@ -342,10 +342,10 @@ end
   tₒ = revert(T, n, c)
   @test t == tₒ
 
-  x1 = rand(4000)
-  x2 = rand(4000)
-  y1 = rand(4000)
-  y2 = rand(4000)
+  x1 = rand(10)
+  x2 = rand(10)
+  y1 = rand(10)
+  y2 = rand(10)
   t = Table(; x1, x2, y1, y2)
 
   # reject columns whose names contain the character x

@@ -1,6 +1,6 @@
 @testset "Identity" begin
-  x = rand(4000)
-  y = rand(4000)
+  x = rand(10)
+  y = rand(10)
   t = Table(; x, y)
   T = Identity()
   n, c = apply(T, t)

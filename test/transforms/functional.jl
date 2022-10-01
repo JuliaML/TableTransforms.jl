@@ -1,6 +1,6 @@
 @testset "Functional" begin
-  x = π*rand(1500)
-  y = π*rand(1500)
+  x = π*rand(100)
+  y = π*rand(100)
   t = Table(; x, y)
   T = Functional(cos)
   n, c = apply(T, t)
@@ -9,8 +9,8 @@
   tₒ = revert(T, n, c)
   @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
-  x = 2*(rand(1500) .- 0.5)
-  y = 2*(rand(1500) .- 0.5)
+  x = 2*(rand(100) .- 0.5)
+  y = 2*(rand(100) .- 0.5)
   t = Table(; x, y)
   T = Functional(acos)
   n, c = apply(T, t)
@@ -19,8 +19,8 @@
   tₒ = revert(T, n, c)
   @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
-  x = π*(rand(1500) .- 0.5)
-  y = π*(rand(1500) .- 0.5)
+  x = π*(rand(100) .- 0.5)
+  y = π*(rand(100) .- 0.5)
   t = Table(; x, y)
   T = Functional(sin)
   n, c = apply(T, t)
@@ -29,8 +29,8 @@
   tₒ = revert(T, n, c)
   @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
-  x = 2*(rand(1500) .- 0.5)
-  y = 2*(rand(1500) .- 0.5)
+  x = 2*(rand(100) .- 0.5)
+  y = 2*(rand(100) .- 0.5)
   t = Table(; x, y)
   T = Functional(asin)
   n, c = apply(T, t)
@@ -39,8 +39,8 @@
   tₒ = revert(T, n, c)
   @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
-  x = rand(Normal(0,25), 1500)
-  y = x + rand(Normal(10,2), 1500)
+  x = rand(Normal(0,25), 100)
+  y = x + rand(Normal(10,2), 100)
   t = Table(; x, y)
   T = Functional(exp)
   n, c = apply(T, t)
@@ -49,8 +49,8 @@
   tₒ = revert(T, n, c)
   @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
-  x = rand(Normal(0,25), 1500)
-  y = x + rand(Normal(10,2), 1500)
+  x = rand(Normal(0,25), 100)
+  y = x + rand(Normal(10,2), 100)
   t = Table(; x, y)
   T = Functional(x -> x)
   n, c = apply(T, t)
@@ -58,8 +58,8 @@
   @test !isrevertible(T)
 
   # functor tests
-  x = rand(1500)
-  y = rand(1500)
+  x = rand(100)
+  y = rand(100)
   t = Table(; x, y)
   f = Polynomial(1, 2, 3) # f(x) = 1 + 2x + 3x²
   T = Functional(f)
@@ -71,8 +71,8 @@
   @test !isrevertible(T)
 
   # apply functions to specific columns
-  x = π*rand(1500)
-  y = 2*(rand(1500) .- 0.5)
+  x = π*rand(100)
+  y = 2*(rand(100) .- 0.5)
   z = x + y
   t = Table(; x, y, z)
   T = Functional(1 => cos, 2 => acos)
@@ -83,8 +83,8 @@
   tₒ = revert(T, n, c)
   @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
-  x = π*rand(1500)
-  y = π*(rand(1500) .- 0.5)
+  x = π*rand(100)
+  y = π*(rand(100) .- 0.5)
   z = x + y
   t = Table(; x, y, z)
   T = Functional(:x => cos, :y => sin)
@@ -95,8 +95,8 @@
   tₒ = revert(T, n, c)
   @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
-  x = 2*(rand(1500) .- 0.5)
-  y = 2*(rand(1500) .- 0.5)
+  x = 2*(rand(100) .- 0.5)
+  y = 2*(rand(100) .- 0.5)
   z = x + y
   t = Table(; x, y, z)
   T = Functional("x" => acos, "y" => asin)
@@ -121,8 +121,8 @@
   @test !isrevertible(T)
 
   # row table
-  x = π*rand(1500)
-  y = π*rand(1500)
+  x = π*rand(100)
+  y = π*rand(100)
   t = Table(; x, y)
   rt = Tables.rowtable(t)
   T = Functional(cos)
