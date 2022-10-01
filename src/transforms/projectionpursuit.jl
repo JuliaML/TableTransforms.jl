@@ -160,12 +160,18 @@ function applyfeat(transform::ProjectionPursuit, table, prep)
   I = pbasis(transform, Z)
   g = gaussquantiles(transform, size(Z)...) 
 
-  iter = 0
-  caches = []
+  iter = 0; caches = []
   while any(I .> g) && iter ≤ transform.maxiter
+    # choose direction with maximum projection index
     α = alphamax(transform, Z)
+    
+    # remove non-Gaussian structure
     Z, cache = rmstructure(transform, Z, α)
+    
+    # update the scores along original axes
     I = pbasis(transform, Z)
+    
+    # store cache and continue
     push!(caches, cache)
     iter += 1
   end
