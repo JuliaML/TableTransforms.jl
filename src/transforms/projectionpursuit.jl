@@ -162,7 +162,7 @@ function applyfeat(transform::ProjectionPursuit, table, prep)
 
   iter = 0
   caches = []
-  while any(g .< I) && iter ≤ transform.maxiter
+  while any(I .> g) && iter ≤ transform.maxiter
     α = alphamax(transform, Z)
     Z, cache = rmstructure(transform, Z, α)
     I = pbasis(transform, Z)
