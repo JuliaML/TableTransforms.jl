@@ -149,6 +149,7 @@ end
 sphering() = Quantile() → EigenAnalysis(:VDV)
 
 function applyfeat(transform::ProjectionPursuit, table, prep) 
+  # retrieve column names
   cols = Tables.columns(table)
   names = Tables.columnnames(cols)
 
