@@ -153,7 +153,7 @@ function applyfeat(transform::ProjectionPursuit, table, prep)
   names = Tables.columnnames(cols)
 
   # preprocess the data to approximately spherical shape
-  ptable, pcache = apply(Quantile() → EigenAnalysis(:VDV), table)
+  ptable, pcache = apply(sphering(), table)
 
   Z = Tables.matrix(ptable)
   
@@ -193,7 +193,7 @@ function revertfeat(::ProjectionPursuit, newtable, fcache)
     t = Tables.matrix(table) * Q'
   end
   
-  tablerev = revert(Quantile() → EigenAnalysis(:VDV), t, tcache)
+  tablerev = revert(sphering(), t, tcache)
 
   Z = Tables.matrix(tablerev)
   𝒯 = (; zip(names, eachcol(Z))...)
