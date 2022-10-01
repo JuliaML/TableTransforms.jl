@@ -196,9 +196,9 @@ function revertfeat(::ProjectionPursuit, newtable, fcache)
     Z = Tables.matrix(table) * Q'
   end
   
-  tablerev = revert(sphering(), Tables.table(Z), pcache)
-
-  Z = Tables.matrix(tablerev)
+  table = revert(sphering(), Tables.table(Z), pcache)
+  Z = Tables.matrix(table)
+  
   𝒯 = (; zip(names, eachcol(Z))...)
   newtable = 𝒯 |> Tables.materializer(newtable)
 end
