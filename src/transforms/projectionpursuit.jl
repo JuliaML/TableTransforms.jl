@@ -179,13 +179,16 @@ function applyfeat(transform::ProjectionPursuit, table, prep)
 
   𝒯 = (; zip(names, eachcol(Z))...)
   newtable = 𝒯 |> Tables.materializer(table)
-  newtable, (caches, pcache)
+  newtable, (pcache, caches)
 end
 
 function revertfeat(::ProjectionPursuit, newtable, fcache)
+  # retrieve column names
   cols = Tables.columns(newtable)
   names = Tables.columnnames(cols)
-  caches, pcache = fcache
+  
+  # caches to retrieve transform steps
+  pcache, caches = fcache
 
   t = newtable
   for (Q, qcache) in reverse(caches)
