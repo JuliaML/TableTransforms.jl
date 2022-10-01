@@ -146,6 +146,8 @@ function rmstructure(transform, Z, α)
   Z₊, (Q, qcache)
 end
 
+sphering() = Quantile() → EigenAnalysis(:VDV)
+
 function applyfeat(transform::ProjectionPursuit, table, prep) 
   cols = Tables.columns(table)
   names = Tables.columnnames(cols)
