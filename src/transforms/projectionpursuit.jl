@@ -98,14 +98,14 @@ function alphaguess(transform, Z)
   I = func(α)
   
   # evaluate objective along diagonals
-  diag(α, s, e) = (1/√(2+2s*α'*e)) * (α + s*e)
-  for eᵢ in eachcol(E)
+  diag(α, s, e) = (1/√(2+2s*α⋅e)) * (α + s * e)
+  for eᵢ in basis.(q, 1:q)
     d₊ = diag(α, +1, eᵢ)
     d₋ = diag(α, -1, eᵢ)
     f₊ = func(d₊)
-    f₋ = α'*eᵢ != 1.0 ? func(d₋) : 0.0
+    f₋ = α⋅eᵢ != 1.0 ? func(d₋) : 0.0
     f, d = f₊ > f₋ ? (f₊, d₊) : (f₋, d₋)
-    if f > Iₐ
+    if f > I
       α = d
       I = f
     end

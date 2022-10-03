@@ -9,6 +9,7 @@ using Statistics
 using Test, Random, Plots
 using ReferenceTests, ImageIO
 using StatsBase
+using PairPlots
 
 const TT = TableTransforms
 
