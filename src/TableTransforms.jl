@@ -23,7 +23,7 @@ import Distributions: quantile, cdf
 import TransformsAPI: Transform
 import TransformsAPI: assertions, isrevertible, preprocess
 import TransformsAPI: apply, revert, reapply
-import TransformsAPI: →
+import TransformsAPI: Identity, →
 
 include("tabletraits.jl")
 include("assertions.jl")
