@@ -46,11 +46,7 @@ isrevertible(::Type{<:ProjectionPursuit}) = true
 
 # transforms a row of random variables into a convex combination 
 # of random variables with values in [-1,1] and standard normal distribution
-function rscore(Z, α)
-  ᾱ = α ./ norm(α)
-  X = Z * ᾱ
-  2 .* cdf.(Normal(), X) .- 1
-end
+rscore(Z, α) = 2 .* cdf.(Normal(), Z * α) .- 1
 
 # projection index of sample along a given direction
 function pindex(transform, Z, α)
