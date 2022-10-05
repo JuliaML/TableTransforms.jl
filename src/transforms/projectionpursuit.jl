@@ -111,7 +111,7 @@ function alphaguess(transform, Z)
 end
 
 function neldermead(transform, Z, α₀)
-  f(α) = -pindex(transform, Z, α)
+  f(α) = -pindex(transform, Z, α ./ norm(α))
   op = optimize(f, α₀)
   minimizer(op)
 end
