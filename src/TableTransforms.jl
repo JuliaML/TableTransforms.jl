@@ -20,10 +20,10 @@ using Random
 import Distributions: ContinuousUnivariateDistribution
 import Distributions: quantile, cdf
 
-import TransformsAPI: Transform
-import TransformsAPI: assertions, isrevertible, preprocess
-import TransformsAPI: apply, revert, reapply
-import TransformsAPI: Identity, →
+import TransformsBase: Transform
+import TransformsBase: assertions, isrevertible, preprocess
+import TransformsBase: apply, revert, reapply
+import TransformsBase: Identity, →
 
 include("tabletraits.jl")
 include("assertions.jl")
