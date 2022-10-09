@@ -77,10 +77,23 @@
     @test mtₒ.meta == mt.meta
     @test Tables.matrix(mtₒ.table) ≈ Tables.matrix(mt.table)
 
+    # first revertible branch has two transforms,
+    # so metadata is increased by 2 + 2 = 4
     T = (Functional(sin) → MinMax()) ⊔ Center()
     mn, mc = apply(T, mt)
     tn, tc = apply(T, t)
-    @test mn.meta == m
+    @test mn.meta == VarMeta(m.data .+ 4)
+    @test mn.table == tn
+    mtₒ = revert(T, mn, mc)
+    @test mtₒ.meta == mt.meta
+    @test Tables.matrix(mtₒ.table) ≈ Tables.matrix(mt.table)
+
+    # first revertible branch has one transform,
+    # so metadata is increased by 2
+    T = Center() ⊔ (Functional(sin) → MinMax())
+    mn, mc = apply(T, mt)
+    tn, tc = apply(T, t)
+    @test mn.meta == VarMeta(m.data .+ 2)
     @test mn.table == tn
     mtₒ = revert(T, mn, mc)
     @test mtₒ.meta == mt.meta
