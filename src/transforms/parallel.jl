@@ -95,19 +95,16 @@ function revert(p::ParallelTableTransform, newtable, cache)
   fcols = Tables.columns(newfeat)
   names = Tables.columnnames(fcols)
 
-  # retrieve subtable to revert
+  # subset of features to revert
   rnames = names[range]
   rcols  = [Tables.getcolumn(fcols, j) for j in range]
   rfeat  = (; zip(rnames, rcols)...) |> Tables.materializer(newfeat)
 
-  # revert transform on subtable
-  feat = revert(rtrans, rfeat, rcache)
-
   # propagate metadata
-  meta = newmeta
+  rtable = attach(rfeat, newmeta)
 
-  # attach features and metadata
-  attach(feat, meta)
+  # revert transform
+  revert(rtrans, rtable, rcache)
 end
 
 function reapply(p::ParallelTableTransform, table, cache)
