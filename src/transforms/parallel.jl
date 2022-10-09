@@ -6,6 +6,10 @@
     ParallelTableTransform(transforms)
 
 A transform where `transforms` are applied in parallel.
+It [`isrevertible`](@ref) if any of the constituent
+`transforms` is revertible. In this case, the
+[`revert`](@ref) is performed with the first
+revertible transform in the list.
 
 # Examples
 
@@ -13,6 +17,11 @@ A transform where `transforms` are applied in parallel.
 Scale(low=0.3, high=0.6) ⊔ EigenAnalysis(:VDV)
 ZScore() ⊔ EigenAnalysis(:V)
 ```
+
+### Notes
+
+- Metadata is transformed with the first revertible
+  transform in the list of `transforms`.
 """
 struct ParallelTableTransform <: TableTransform
   transforms::Vector{Transform}
@@ -95,19 +104,16 @@ function revert(p::ParallelTableTransform, newtable, cache)
   fcols = Tables.columns(newfeat)
   names = Tables.columnnames(fcols)
 
-  # retrieve subtable to revert
+  # subset of features to revert
   rnames = names[range]
   rcols  = [Tables.getcolumn(fcols, j) for j in range]
   rfeat  = (; zip(rnames, rcols)...) |> Tables.materializer(newfeat)
 
-  # revert transform on subtable
-  feat = revert(rtrans, rfeat, rcache)
-
   # propagate metadata
-  meta = newmeta
+  rtable = attach(rfeat, newmeta)
 
-  # attach features and metadata
-  attach(feat, meta)
+  # revert transform
+  revert(rtrans, rtable, rcache)
 end
 
 function reapply(p::ParallelTableTransform, table, cache)
