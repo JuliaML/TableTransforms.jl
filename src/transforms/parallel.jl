@@ -6,6 +6,10 @@
     ParallelTableTransform(transforms)
 
 A transform where `transforms` are applied in parallel.
+It [`isrevertible`](@ref) if any of the constituent
+`transforms` is revertible. In this case, the
+[`revert`](@ref) is performed with the first
+revertible transform in the list.
 
 # Examples
 
@@ -13,6 +17,11 @@ A transform where `transforms` are applied in parallel.
 Scale(low=0.3, high=0.6) ⊔ EigenAnalysis(:VDV)
 ZScore() ⊔ EigenAnalysis(:V)
 ```
+
+### Notes
+
+- Metadata is transformed with the first revertible
+  transform in the list of `transforms`.
 """
 struct ParallelTableTransform <: TableTransform
   transforms::Vector{Transform}
