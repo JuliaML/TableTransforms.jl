@@ -76,5 +76,14 @@
     mtₒ = revert(T, mn, mc)
     @test mtₒ.meta == mt.meta
     @test Tables.matrix(mtₒ.table) ≈ Tables.matrix(mt.table)
+
+    T = (Functional(sin) → MinMax()) ⊔ Center()
+    mn, mc = apply(T, mt)
+    tn, tc = apply(T, t)
+    @test mn.meta == m
+    @test mn.table == tn
+    mtₒ = revert(T, mn, mc)
+    @test mtₒ.meta == mt.meta
+    @test Tables.matrix(mtₒ.table) ≈ Tables.matrix(mt.table)
   end
 end
