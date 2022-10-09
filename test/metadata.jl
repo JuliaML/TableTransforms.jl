@@ -4,7 +4,7 @@
     b = rand(10)
     c = rand(10)
     d = rand(10)
-    t = TypedTables.Table(; a, b, c, d)
+    t = Table(; a, b, c, d)
     m = ConstMeta(fill(1, 10))
     mt = MetaTable(t, m)
 
