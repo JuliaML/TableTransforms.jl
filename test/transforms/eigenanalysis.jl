@@ -53,13 +53,13 @@
 
   # visual tests    
   if visualtests
-    p₁ = scatter(t₁.x, t₁.y, label="Original")
-    p₂ = scatter(t₂.PC1, t₂.PC2, label="V")
-    p₃ = scatter(t₃.PC1, t₃.PC2, label="VD")
-    p₄ = scatter(t₄.PC1, t₄.PC2, label="VDV")
-    p₅ = scatter(t₅.PC1, t₅.PC2, label="PCA")
-    p₆ = scatter(t₆.PC1, t₆.PC2, label="DRS")
-    p₇ = scatter(t₇.PC1, t₇.PC2, label="SDS")
+    p₁ = scatter(t₁.x, t₁.y, label="Original", aspectratio=:equal)
+    p₂ = scatter(t₂.PC1, t₂.PC2, label="V", aspectratio=:equal)
+    p₃ = scatter(t₃.PC1, t₃.PC2, label="VD", aspectratio=:equal)
+    p₄ = scatter(t₄.PC1, t₄.PC2, label="VDV", aspectratio=:equal)
+    p₅ = scatter(t₅.PC1, t₅.PC2, label="PCA", aspectratio=:equal)
+    p₆ = scatter(t₆.PC1, t₆.PC2, label="DRS", aspectratio=:equal)
+    p₇ = scatter(t₇.PC1, t₇.PC2, label="SDS", aspectratio=:equal)
     p = plot(p₁, p₂, p₃, p₄, layout=(2,2))
     q = plot(p₂, p₃, p₄, p₅, p₆, p₇, layout=(2,3))
 

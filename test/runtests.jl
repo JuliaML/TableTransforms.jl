@@ -14,8 +14,7 @@ using PairPlots
 const TT = TableTransforms
 
 # set default configurations for plots
-gr(ms=1, mc=:black, aspectratio=:equal,
-   label=false, size=(600,400))
+gr(ms=1, mc=:black, label=false, size=(600,400))
 
 # workaround GR warnings
 ENV["GKSwstype"] = "100"

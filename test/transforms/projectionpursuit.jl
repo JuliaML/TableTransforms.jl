@@ -36,10 +36,8 @@
   @test isapprox(Σ[4,4], 1; atol=1e-6)
 
   if visualtests
-    p₁ = corner(t, title="Original")
-    p₂ = corner(n, title="Transformed")
-    @test_reference joinpath(datadir, "projectionpursuit-1.png") p₁
-    @test_reference joinpath(datadir, "projectionpursuit-2.png") p₂
+    p = corner(n, title="Transformed")
+    @test_reference joinpath(datadir, "projectionpursuit-1.png") p
   end
 
   a = rand(rng, Arcsine(3), 4000)
@@ -62,10 +60,8 @@
   
   if visualtests
     p₁ = corner(t, title="Original")
-    p₂ = corner(n, title="Transformed")
-    p₃ = corner(tₒ, title="Reverted")
-    @test_reference joinpath(datadir, "projectionpursuit-3.png") p₁
-    @test_reference joinpath(datadir, "projectionpursuit-4.png") p₂
-    @test_reference joinpath(datadir, "projectionpursuit-5.png") p₃
+    p₂ = corner(tₒ, title="Reverted")
+    p = plot(p₁, p₂, layout=(1,2), size=(900,500))
+    @test_reference joinpath(datadir, "projectionpursuit-2.png") p
   end
-  end
+end
