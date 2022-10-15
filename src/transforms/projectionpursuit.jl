@@ -39,7 +39,7 @@ struct ProjectionPursuit{T} <: StatelessFeatureTransform
   n::Int
 end
 
-ProjectionPursuit(;tol=1e-6, maxiter=100, deg=5, perc=.95, n=100) =
+ProjectionPursuit(;tol=1e-6, maxiter=100, deg=5, perc=.1, n=100) =
   ProjectionPursuit{typeof(tol)}(tol, maxiter, deg, perc, n)
 
 isrevertible(::Type{<:ProjectionPursuit}) = true
@@ -90,7 +90,7 @@ function alphaguess(transform, Z)
   
   # evaluate objective along axes
   j = argmax(j -> func(basis(q, j)), 1:q)
-  α = basis(q, j)
+  α = float(basis(q, j))
   I = func(α)
   
   # evaluate objective along diagonals
