@@ -39,7 +39,7 @@ struct ProjectionPursuit{T} <: StatelessFeatureTransform
   n::Int
 end
 
-ProjectionPursuit(;tol=1e-6, maxiter=100, deg=5, perc=.1, n=100) =
+ProjectionPursuit(;tol=1e-6, maxiter=100, deg=5, perc=.95, n=100) =
   ProjectionPursuit{typeof(tol)}(tol, maxiter, deg, perc, n)
 
 isrevertible(::Type{<:ProjectionPursuit}) = true
@@ -65,7 +65,7 @@ function pindex(transform, Z, α)
 end
 
 # j-th element of the canonical basis in ℝᵈ
-basis(d, j) = 1:d .== j
+basis(d, j) = float(1:d .== j)
 
 # index for all vectors in the canonical basis
 function pbasis(transform, Z)
@@ -76,7 +76,7 @@ end
 # projection index of the standard multivariate Gaussian
 function gaussquantiles(transform, N, q)
   n = transform.n
-  p = transform.perc
+  p = 1.0 - transform.perc
   Is = [pbasis(transform, randn(N, q)) for i in 1:n]
   I  = reduce(hcat, Is)
   quantile.(eachrow(I), p)
@@ -90,7 +90,7 @@ function alphaguess(transform, Z)
   
   # evaluate objective along axes
   j = argmax(j -> func(basis(q, j)), 1:q)
-  α = float(basis(q, j))
+  α = basis(q, j)
   I = func(α)
   
   # evaluate objective along diagonals
