@@ -66,8 +66,9 @@
   
   if visualtests
     p₁ = corner(t, title="Original")
-    p₂ = corner(tₒ, title="Reverted")
-    p = plot(p₁, p₂, layout=(1,2), size=(900,500))
+    p₂ = corner(n, title="Transformed")
+    p₃ = corner(tₒ, title="Reverted")
+    p = plot(p₁, p₂, p₃, layout=(1,3), size=(1350,500))
     @test_reference joinpath(datadir, "projectionpursuit-3.png") p
   end
 end
