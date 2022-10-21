@@ -39,7 +39,7 @@ struct ProjectionPursuit{T} <: StatelessFeatureTransform
   n::Int
 end
 
-ProjectionPursuit(;tol=1e-6, maxiter=100, deg=5, perc=.95, n=100) =
+ProjectionPursuit(;tol=1e-6, maxiter=100, deg=5, perc=.9, n=100) =
   ProjectionPursuit{typeof(tol)}(tol, maxiter, deg, perc, n)
 
 isrevertible(::Type{<:ProjectionPursuit}) = true
