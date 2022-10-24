@@ -1,5 +1,5 @@
 using TableTransforms
-using TransformsAPI
+using TransformsBase
 using Documenter
 
 DocMeta.setdocmeta!(TableTransforms, :DocTestSetup, :(using TableTransforms); recursive=true)
@@ -8,7 +8,7 @@ DocMeta.setdocmeta!(TableTransforms, :DocTestSetup, :(using TableTransforms); re
 ENV["GKSwstype"] = "100"
 
 makedocs(;
-  modules=[TableTransforms, TransformsAPI],
+  modules=[TableTransforms, TransformsBase],
   authors="Júlio Hoffimann <julio.hoffimann@gmail.com> and contributors",
   repo="https://github.com/JuliaML/TableTransforms.jl/blob/{commit}{path}#{line}",
   sitename="TableTransforms.jl",

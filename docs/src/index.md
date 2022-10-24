@@ -115,9 +115,9 @@ To revert a pipeline or single transform, use the [`apply`](@ref) and [`revert`]
 functions instead. The function [`isrevertible`](@ref) can be used to check if a transform is revertible.
 
 ```@docs
-TransformsAPI.apply
-TransformsAPI.revert
-TransformsAPI.isrevertible
+apply
+revert
+isrevertible
 ```
 
 To exemplify the use of these functions, let's create a table:
@@ -156,7 +156,7 @@ Finally, it is sometimes useful to [`reapply`](@ref) a transform that was
 cache from a previous [`apply`](@ref) call is used:
 
 ```@docs
-TransformsAPI.reapply
+reapply
 ```
 
 Consider the following example:
