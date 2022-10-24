@@ -5,6 +5,7 @@
 struct TableSelection{T,C}
   table::T
   cols::C
+  ncols::Int
   names::Vector{Symbol}
   onames::Vector{Symbol}
   mapnames::Dict{Symbol,Symbol}
@@ -12,8 +13,9 @@ struct TableSelection{T,C}
   function TableSelection(table::T, names, onames) where {T}
     cols = Tables.columns(table)
     @assert onames ⊆ Tables.columnnames(cols)
+    ncols = length(names)
     mapnames = Dict(zip(names, onames))
-    new{T,typeof(cols)}(table, cols, names, onames, mapnames)
+    new{T,typeof(cols)}(table, cols, ncols, names, onames, mapnames)
   end
 end
 
@@ -38,8 +40,12 @@ Tables.columns(t::TableSelection) = t
 Tables.rowaccess(::Type{<:TableSelection}) = true
 Tables.rows(t::TableSelection) = SelectionRows(t)
 Tables.columnnames(t::TableSelection) = t.names
-Tables.getcolumn(t::TableSelection, i::Int) =
+
+function Tables.getcolumn(t::TableSelection, i::Int)
+  i > t.ncols && error("Table has no column with index $i.")
   Tables.getcolumn(t.cols, t.names[i])
+end
+
 function Tables.getcolumn(t::TableSelection, nm::Symbol)
   nm ∉ t.names && error("Table has no column $nm.")
   Tables.getcolumn(t.cols, t.mapnames[nm])
@@ -63,8 +69,7 @@ struct SelectionRow{T<:TableSelection}
   ind::Int
 end
 
-SelectionRow(t::TableSelection, ind::Int) =
-  SelectionRow(t, length(t.names), ind)
+SelectionRow(t::TableSelection, ind::Int) = SelectionRow(t, t.ncols, ind)
 
 function Base.:(==)(a::SelectionRow, b::SelectionRow)
   a.ind   != b.ind   && return false
@@ -100,11 +105,9 @@ Base.getindex(row::SelectionRow, i::Int) = Tables.getcolumn(row, i)
 # Tables.jl row interface
 Tables.columnnames(row::SelectionRow) = row.selection.names
 Tables.getcolumn(row::SelectionRow, i::Int) =
-  Tables.getcolumn(row, row.selection.names[i])
-function Tables.getcolumn(row::SelectionRow, nm::Symbol)
-  nm ∉ row.selection.names && error("Row has no column $nm.")
+  Tables.getcolumn(row.selection, i)[row.ind]
+Tables.getcolumn(row::SelectionRow, nm::Symbol) =
   Tables.getcolumn(row.selection, nm)[row.ind]
-end
 
 # SelectionRows
 struct SelectionRows{T<:TableSelection}
