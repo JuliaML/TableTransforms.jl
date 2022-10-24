@@ -13,7 +13,7 @@
   s = TableTransforms.TableSelection(t, newnames, select)
   @test Tables.istable(s) == true
   @test Tables.columnaccess(s) == true
-  @test Tables.rowaccess(s) == false
+  @test Tables.rowaccess(s) == true
   @test Tables.columns(s) === s
   @test Tables.columnnames(s) == [:a, :b, :e]
   @test Tables.schema(s).names == (:a, :b, :e)

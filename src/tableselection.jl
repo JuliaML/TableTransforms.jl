@@ -8,6 +8,7 @@ struct TableSelection{T,C}
   names::Vector{Symbol}
   onames::Vector{Symbol}
   mapnames::Dict{Symbol,Symbol}
+
   function TableSelection(table::T, names, onames) where {T}
     cols = Tables.columns(table)
     @assert onames ⊆ Tables.columnnames(cols)
@@ -35,7 +36,7 @@ Tables.istable(::Type{<:TableSelection}) = true
 Tables.columnaccess(::Type{<:TableSelection}) = true
 Tables.columns(t::TableSelection) = t
 Tables.rowaccess(::Type{<:TableSelection}) = true
-Tables.rows(t::TableSelection) = SelectionRows(t, _nrows(t.cols))
+Tables.rows(t::TableSelection) = SelectionRows(t)
 Tables.columnnames(t::TableSelection) = t.names
 Tables.getcolumn(t::TableSelection, i::Int) =
   Tables.getcolumn(t.cols, t.names[i])
@@ -58,16 +59,16 @@ end
 # SelectionRow
 struct SelectionRow{T<:TableSelection}
   selection::T
-  rowind::Int
   ncols::Int
+  ind::Int
 end
 
-SelectionRow(t::TableSelection, rowind::Int) =
-  SelectionRow(t, rowind, length(t.names))
+SelectionRow(t::TableSelection, ind::Int) =
+  SelectionRow(t, length(t.names), ind)
 
 function Base.:(==)(a::SelectionRow, b::SelectionRow)
-  a.ncols  != b.ncols  && return false
-  a.rowind != b.rowind && return false
+  a.ind   != b.ind   && return false
+  a.ncols != b.ncols && return false
   a.selection == b.selection
 end
 
@@ -96,13 +97,13 @@ Base.firstindex(::SelectionRow) = 1
 Base.lastindex(row::SelectionRow) = row.ncols
 Base.getindex(row::SelectionRow, i::Int) = Tables.getcolumn(row, i)
 
-# Tables.jl interface
+# Tables.jl row interface
 Tables.columnnames(row::SelectionRow) = row.selection.names
 Tables.getcolumn(row::SelectionRow, i::Int) =
   Tables.getcolumn(row, row.selection.names[i])
 function Tables.getcolumn(row::SelectionRow, nm::Symbol)
   nm ∉ row.selection.names && error("Row has no column $nm.")
-  Tables.getcolumn(row.selection, nm)[row.rowind]
+  Tables.getcolumn(row.selection, nm)[row.ind]
 end
 
 # SelectionRows
@@ -110,6 +111,8 @@ struct SelectionRows{T<:TableSelection}
   selection::T
   nrows::Int
 end
+
+SelectionRows(t::TableSelection) = SelectionRows(t, _nrows(t.cols))
 
 function Base.:(==)(a::SelectionRows, b::SelectionRows)
   a.nrows != b.nrows && return false
