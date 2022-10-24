@@ -163,15 +163,3 @@ RowTable
 ```@docs
 ColTable
 ```
-
-## SequentialTransform
-
-```@docs
-TransformsBase.SequentialTransform
-```
-
-## ParallelTableTransform
-
-```@docs
-TableTransforms.ParallelTableTransform
-```
