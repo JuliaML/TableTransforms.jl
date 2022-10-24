@@ -29,6 +29,7 @@ include("tabletraits.jl")
 include("assertions.jl")
 include("distributions.jl")
 include("colspec.jl")
+include("tableselection.jl")
 include("transforms.jl")
 
 export
