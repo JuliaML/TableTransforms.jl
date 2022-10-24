@@ -103,7 +103,7 @@ Base.lastindex(row::SelectionRow) = row.ncols
 Base.getindex(row::SelectionRow, i::Int) = Tables.getcolumn(row, i)
 
 # Tables.jl row interface
-Tables.columnnames(row::SelectionRow) = row.selection.names
+Tables.columnnames(row::SelectionRow) = Tables.columnnames(row.selection)
 Tables.getcolumn(row::SelectionRow, i::Int) =
   Tables.getcolumn(row.selection, i)[row.ind]
 Tables.getcolumn(row::SelectionRow, nm::Symbol) =
