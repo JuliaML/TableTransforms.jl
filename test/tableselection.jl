@@ -36,6 +36,9 @@
     @test Tables.getcolumn(s, :x) == t.c
     @test Tables.getcolumn(s, :y) == t.d
     @test Tables.getcolumn(s, :z) == t.f
+    @test Tables.getcolumn(s, 1)  == t.c
+    @test Tables.getcolumn(s, 2)  == t.d
+    @test Tables.getcolumn(s, 3)  == t.f
   
     # row table
     select = [:a, :b, :e]

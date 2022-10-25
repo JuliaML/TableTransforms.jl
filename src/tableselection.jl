@@ -43,7 +43,7 @@ Tables.columnnames(t::TableSelection) = t.names
 
 function Tables.getcolumn(t::TableSelection, i::Int)
   i > t.ncols && error("Table has no column with index $i.")
-  Tables.getcolumn(t.cols, t.names[i])
+  Tables.getcolumn(t.cols, t.mapnames[t.names[i]])
 end
 
 function Tables.getcolumn(t::TableSelection, nm::Symbol)
