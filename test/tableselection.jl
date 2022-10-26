@@ -59,6 +59,7 @@
     s = TableTransforms.TableSelection(t, [:x, :y, :z], [:c, :d, :f])
     @test_throws ErrorException Tables.getcolumn(s, :c)
     @test_throws ErrorException Tables.getcolumn(s, 4)
+    @test_throws ErrorException Tables.getcolumn(s, -2)
   end
 
   @testset "SelectionRow" begin
@@ -95,7 +96,7 @@
       srow = TableTransforms.SelectionRow(s, i)
       @test firstindex(srow) == 1
       @test lastindex(srow)  == lastindex(row)
-      for j in eachindex(row)
+      for j in eachindex(srow)
         @test srow[j] == row[j]
       end
     end
@@ -139,7 +140,7 @@
     # Indexing interface
     @test firstindex(srows) == 1
     @test lastindex(srows)  == TableTransforms._nrows(s.cols)
-    for i in 1:length(srows)
+    for i in eachindex(srows)
       @test srows[i] == TableTransforms.SelectionRow(s, i)
     end
   end
