@@ -42,7 +42,7 @@ Tables.rows(t::TableSelection) = SelectionRows(t)
 Tables.columnnames(t::TableSelection) = t.names
 
 function Tables.getcolumn(t::TableSelection, i::Int)
-  i > t.ncols && error("Table has no column with index $i.")
+  1 ≤ i ≤ t.ncols || error("Table has no column with index $i.")
   Tables.getcolumn(t.cols, t.mapnames[t.names[i]])
 end
 
@@ -100,6 +100,7 @@ Base.IteratorEltype(::Type{<:SelectionRow}) = Base.EltypeUnknown()
 # Indexing interface
 Base.firstindex(::SelectionRow) = 1
 Base.lastindex(row::SelectionRow) = row.ncols
+Base.eachindex(row::SelectionRow) = 1:row.ncols
 Base.getindex(row::SelectionRow, i::Int) = Tables.getcolumn(row, i)
 
 # Tables.jl row interface
@@ -134,7 +135,7 @@ end
 Base.iterate(s::SelectionRows, state::Int=1) =
   state > s.nrows ? nothing : (s[state], state + 1)
 
-Base.length(row::SelectionRows) = row.nrows
+Base.length(s::SelectionRows) = s.nrows
 Base.eltype(::Type{SelectionRows{T}}) where {T} = SelectionRow{T}
 Base.IteratorSize(::Type{<:SelectionRows}) = Base.HasLength()
 Base.IteratorEltype(::Type{<:SelectionRows}) = Base.HasEltype()
@@ -142,6 +143,7 @@ Base.IteratorEltype(::Type{<:SelectionRows}) = Base.HasEltype()
 # Indexing interface
 Base.firstindex(::SelectionRows) = 1
 Base.lastindex(s::SelectionRows) = s.nrows
+Base.eachindex(s::SelectionRows) = 1:s.nrows
 Base.getindex(s::SelectionRows, i::Int) = SelectionRow(s.selection, i)
 
 # Tables.jl interface
