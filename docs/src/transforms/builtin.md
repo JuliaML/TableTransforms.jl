@@ -152,6 +152,12 @@ DRS
 SDS
 ```
 
+## ProjectionPursuit
+
+```@docs
+ProjectionPursuit
+```
+
 ## RowTable
 
 ```@docs
