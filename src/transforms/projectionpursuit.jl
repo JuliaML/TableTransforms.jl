@@ -13,7 +13,7 @@ non-Gaussianity known as the projection index `I(α)`. The samples projected alo
 transformed with the [`Quantile`](@ref) transform to remove the non-Gaussian structure. The
 other coordinates in the rotated orthonormal basis `Q = [α ...]` are left untouched.
 
-The non-singularity of Q is controlled by assuring that norm(det(Q)) ≥ `tol`. The iterative 
+The non-singularity of `Q` is controlled by assuring that `norm(det(Q)) ≥ tol`. The iterative 
 process terminates whenever the transformed samples are "more Gaussian" than `perc`% of `n`
 randomly generated samples from the standard multivariate Gaussian distribution, or when the 
 number of iterations reaches a maximum `maxiter`.
