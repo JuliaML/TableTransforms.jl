@@ -30,7 +30,6 @@ ProjectionPursuit(tol=1e-4, maxiter=250, deg=5, perc=.95, n=100)
 See [https://doi.org/10.2307/2289161](https://doi.org/10.2307/2289161) for 
 further details.
 """
-
 struct ProjectionPursuit{T} <: StatelessFeatureTransform
   tol::T
   maxiter::Int
