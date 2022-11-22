@@ -1,4 +1,4 @@
-# Related packages
+# Related
 
 - [FeatureTransforms.jl](https://github.com/invenia/FeatureTransforms.jl)
   has transforms, but they are not fully revertible. Some of their
