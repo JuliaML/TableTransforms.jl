@@ -111,8 +111,8 @@ end
 
 function neldermead(transform, Z, α₀)
   f(α) = -pindex(transform, Z, α ./ norm(α))
-  op = optimize(f, α₀)
-  minimizer(op)
+  (_, minimizer) = optimise(f, α₀, std(α₀))
+  miminizer
 end
 
 function alphamax(transform, Z)
