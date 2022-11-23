@@ -112,7 +112,8 @@ end
 function neldermead(transform, Z, α₀)
   f(α) = -pindex(transform, Z, α ./ norm(α))
   l = std(α₀)
-  (minimiser, _) = NelderMead.optimise(f, α₀, iszero(l) ? one(l) : l)
+  (minimiser, _) = NelderMead.optimise(f, α₀, iszero(l) ? one(l) : l,
+                                       xtol_rel=10eps())
   minimiser
 end
 
