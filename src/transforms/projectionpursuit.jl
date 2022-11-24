@@ -111,7 +111,7 @@ end
 
 function neldermead(transform, Z, α₀)
   f(α) = -pindex(transform, Z, α ./ norm(α))
-  res = optimise(f, α₀, 1, xtol_rel=10eps())
+  res = optimise(f, α₀, 1/2, xtol_rel=10eps())
   first(res)
 end
 
