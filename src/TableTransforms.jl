@@ -16,7 +16,7 @@ using PrettyTables
 using AbstractTrees
 using CategoricalArrays
 using Random
-using Optim: optimize, minimizer
+using NelderMead: optimise
 
 import Distributions: ContinuousUnivariateDistribution
 import Distributions: quantile, cdf
