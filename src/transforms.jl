@@ -174,12 +174,12 @@ function applyfeat(transform::ColwiseFeatureTransform, feat, prep)
   cols   = Tables.columns(feat)
   names  = Tables.columnnames(cols)
   snames = choose(transform.colspec, names)
-  scols = feat |> Select(snames)
+  sfeat  = feat |> Select(snames)
 
   # basic checks
   for assertion in assertions(transform)
     # Perform the assertion on the selected columns of the input table
-    assertion(scols)
+    assertion(sfeat)
   end
   
   # function to transform a single column
