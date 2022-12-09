@@ -170,16 +170,17 @@ reapply(transform::StatelessFeatureTransform, table, cache) =
 # ------------------
 
 function applyfeat(transform::ColwiseFeatureTransform, feat, prep)
-  # basic checks
-  for assertion in assertions(transform)
-    assertion(feat)
-  end
-
   # retrieve column names and values
-  cols   = Tables.columns(feat)
+  cols   = Tables.columns(feat) 
   names  = Tables.columnnames(cols)
-  snames = choose(transform.colspec, names)
+  snames = choose(transform.colspec, names) 
 
+  # basic checks 
+  for assertion in assertions(transform) 
+    # Perform the assertion on the selected columns of the input table
+    assertion(feat[:, snames]) 
+  end
+  
   # function to transform a single column
   function colfunc(n)
     x = Tables.getcolumn(cols, n)
