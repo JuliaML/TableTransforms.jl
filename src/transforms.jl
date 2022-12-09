@@ -178,7 +178,7 @@ function applyfeat(transform::ColwiseFeatureTransform, feat, prep)
   # basic checks 
   for assertion in assertions(transform) 
     # Perform the assertion on the selected columns of the input table
-    assertion(feat[:, snames]) 
+    assertion(feat |> Select(snames)) 
   end
   
   # function to transform a single column
