@@ -86,4 +86,14 @@
   @test isapprox(σ[2], 1; atol=1e-6)
   tₒ = revert(T, n, c)
   @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+  
+  a=rand(Int,3)
+  b=rand(3)
+  t = Table(; a, b)
+  T = ZScore(:b)
+  n, c = apply(T, t)
+  @test isapprox(mean(n.b), 0; atol=1e-6)
+  @test isapprox(std(n.b), 1; atol=1e-6)
+  tₒ = revert(T, n, c)
+  @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 end
