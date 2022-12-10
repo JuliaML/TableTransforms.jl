@@ -87,8 +87,8 @@
   tₒ = revert(T, n, c)
   @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
   
-  a=rand(Int,3)
-  b=rand(3)
+  a = rand(Int, 10)
+  b = rand(10)
   t = Table(; a, b)
   T = ZScore(:b)
   n, c = apply(T, t)
