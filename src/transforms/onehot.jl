@@ -3,10 +3,12 @@
 # ------------------------------------------------------------------
 
 """
-    OneHot(col)
+    OneHot(col, categorical)
     
 Transforms categorical column `col` into one-hot columns of levels
 returned by the `levels` function of CategoricalArrays.jl.
+Returns CategoryType columns by default. The `categorical` parameter
+can be set to false to get Bool columns after transformation.
 
 # Examples
 
@@ -16,11 +18,12 @@ OneHot(:a)
 OneHot("a")
 ```
 """
-struct OneHot{S<:ColSpec} <: StatelessFeatureTransform
+struct OneHot{S<:ColSpec, T<:Bool} <: StatelessFeatureTransform
   colspec::S
-  function OneHot(col::Col)
+  categorical::T
+  function OneHot(col::Col, categorical::Bool=true)
     cs = colspec([col])
-    new{typeof(cs)}(cs)
+    new{typeof(cs), typeof(categorical)}(cs, categorical)
   end
 end
 
@@ -30,7 +33,7 @@ function applyfeat(transform::OneHot, feat, prep)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols) |> collect
   columns = Any[Tables.getcolumn(cols, nm) for nm in names]
-  
+
   name = choose(transform.colspec, names)[1]
   ind = findfirst(==(name), names)
   x = columns[ind]
@@ -47,7 +50,9 @@ function applyfeat(transform::OneHot, feat, prep)
   end
 
   newnms, newcols = first.(onehot), last.(onehot)
-
+  if transform.category
+    newcols = [CategoricalArray(new_column, ordered=true) for new_column in newcols]
+  end
   splice!(names, ind, newnms)
   splice!(columns, ind, newcols)
   
