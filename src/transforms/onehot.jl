@@ -4,12 +4,16 @@
 
 """
     OneHot(col, categorical)
-    
+
 Transforms categorical column `col` into one-hot columns of levels
 returned by the `levels` function of CategoricalArrays.jl.
-Returns CategoryType columns by default. The `categorical` parameter
-can be set to false to get Bool columns after transformation.
-
+The `categorical` parameter is a bool type parameter, with `true` as
+default value.
+When `categorical` parameter is:
+  (i)  true:  the one-hot columns are of categorical type with values 
+            of either `true` or `false`
+  (ii) false: the one-hot columns are of bit type with values 
+            of either `1` or `0`
 # Examples
 
 ```julia
@@ -18,12 +22,12 @@ OneHot(:a)
 OneHot("a")
 ```
 """
-struct OneHot{S<:ColSpec, T<:Bool} <: StatelessFeatureTransform
+struct OneHot{S<:ColSpec} <: StatelessFeatureTransform
   colspec::S
-  categorical::T
+  categorical::Bool
   function OneHot(col::Col, categorical::Bool=true)
     cs = colspec([col])
-    new{typeof(cs), typeof(categorical)}(cs, categorical)
+    new{typeof(cs)}(cs, categorical)
   end
 end
 
@@ -50,8 +54,8 @@ function applyfeat(transform::OneHot, feat, prep)
   end
 
   newnms, newcols = first.(onehot), last.(onehot)
-  if transform.categorical
-    newcols = [CategoricalArray(new_column, ordered=true) for new_column in newcols]
+  if transform.categorical == true
+    newcols = [categorical(newcol; levels=nothing, ordered=false, compress=false) for newcol in newcols]
   end
   splice!(names, ind, newnms)
   splice!(columns, ind, newcols)
@@ -74,7 +78,6 @@ function revertfeat(::OneHot, newfeat, fcache)
   end
 
   ocolumn = categorical(x; levels, ordered)
-
   splice!(names, inds, [oname])
   splice!(columns, inds, [ocolumn])
 
