@@ -7,13 +7,10 @@
 
 Transforms categorical column `col` into one-hot columns of levels
 returned by the `levels` function of CategoricalArrays.jl.
-The `categorical` parameter is a bool type parameter, with `true` as
-default value.
-When `categorical` parameter is:
-  (i)  true:  the one-hot columns are of categorical type with values 
-            of either `true` or `false`
-  (ii) false: the one-hot columns are of bit type with values 
-            of either `1` or `0`
+The `categorical` parameter is a bool type parameter, if set to true, 
+the one-hot columns will be categorical vectors, if set to false, 
+the one-hot columns will be bit vectors.
+
 # Examples
 
 ```julia
@@ -78,6 +75,7 @@ function revertfeat(::OneHot, newfeat, fcache)
   end
 
   ocolumn = categorical(x; levels, ordered)
+
   splice!(names, inds, [oname])
   splice!(columns, inds, [ocolumn])
 
