@@ -64,8 +64,8 @@
   t = Table(; a, b)
 
   # non categorical column
-  @test_throws AssertionError apply(OneHot(:b; categorical=false), t)
-  @test_throws AssertionError apply(OneHot("b"; categorical=false), t)
+  @test_throws AssertionError apply(OneHot(:b), t)
+  @test_throws AssertionError apply(OneHot("b"), t)
 
   # invalid column selection
   @test_throws AssertionError apply(OneHot(:c; categorical=false), t)
