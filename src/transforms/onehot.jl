@@ -7,9 +7,8 @@
 
 Transforms categorical column `col` into one-hot columns of levels
 returned by the `levels` function of CategoricalArrays.jl.
-The `categorical` parameter is a bool type parameter; 
-if set to true the one-hot columns will be categorical vectors, 
-if set to false the one-hot columns will be bit vectors.
+The `categorical` option can be used to convert resulting
+columns to categorical arrays as opposed to boolean vectors.
 
 # Examples
 
