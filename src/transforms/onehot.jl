@@ -50,8 +50,8 @@ function applyfeat(transform::OneHot, feat, prep)
   end
 
   newnms, newcols = first.(onehot), last.(onehot)
-  if transform.categorical == true
-    newcols = [categorical(newcol; levels=nothing, ordered=false, compress=false) for newcol in newcols]
+  if transform.categorical
+    newcols = categorical.(newcols)
   end
   splice!(names, ind, newnms)
   splice!(columns, ind, newcols)
