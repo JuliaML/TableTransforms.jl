@@ -19,12 +19,12 @@ OneHot("a")
 OneHot("a", categorical=false)
 ```
 """
-struct OneHot{S<:ColSpec} <: StatelessFeatureTransform 
+struct OneHot{S<:ColSpec} <: StatelessFeatureTransform
   colspec::S
   categorical::Bool
   function OneHot(col, categorical)
     cs = colspec([col])
-    new{typeof(cs)}(cs, categorical) 
+    new{typeof(cs)}(cs, categorical)
   end
 end
 
