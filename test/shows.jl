@@ -207,7 +207,7 @@
     @test iostr == """
     OneHot transform
     ├─ colspec = [:a]
-    └─ categorical = true"""
+    └─ categ = true"""
   end
 
   @testset "Identity" begin
