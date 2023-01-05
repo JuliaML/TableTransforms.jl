@@ -4,6 +4,31 @@
   c = categorical([3, 2, 2, 1, 1, 3])
   t = Table(; a, b, c)
 
+  T = OneHot(1; categorical=true)
+  n, c = apply(T, t)
+  @test Tables.columnnames(n) == (:a_false, :a_true, :b, :c)
+  @test n.a_false == categorical(Bool[1, 0, 0, 1, 0, 0])
+  @test n.a_true  == categorical(Bool[0, 1, 1, 0, 1, 1])
+  tₒ = revert(T, n, c)
+  @test t == tₒ
+
+  T = OneHot(:b; categorical=true)
+  n, c = apply(T, t)
+  @test Tables.columnnames(n) == (:a, :b_f, :b_m, :c)
+  @test n.b_f == categorical(Bool[0, 1, 0, 0, 0, 1])
+  @test n.b_m == categorical(Bool[1, 0, 1, 1, 1, 0])
+  tₒ = revert(T, n, c)
+  @test t == tₒ
+
+  T = OneHot("c"; categorical=true)
+  n, c = apply(T, t)
+  @test Tables.columnnames(n) == (:a, :b, :c_1, :c_2, :c_3)
+  @test n.c_1 == categorical(Bool[0, 0, 0, 1, 1, 0])
+  @test n.c_2 == categorical(Bool[0, 1, 1, 0, 0, 0])
+  @test n.c_3 == categorical(Bool[1, 0, 0, 0, 0, 1])
+  tₒ = revert(T, n, c)
+  @test t == tₒ
+
   T = OneHot(1; categorical=false)
   n, c = apply(T, t)
   @test Tables.columnnames(n) == (:a_false, :a_true, :b, :c)
