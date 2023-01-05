@@ -3,11 +3,11 @@
 # ------------------------------------------------------------------
 
 """
-    OneHot(col; categorical=true)
+    OneHot(col; categ=true)
 
 Transforms categorical column `col` into one-hot columns of levels
 returned by the `levels` function of CategoricalArrays.jl.
-The `categorical` option can be used to convert resulting
+The `categ` option can be used to convert resulting
 columns to categorical arrays as opposed to boolean vectors.
 
 # Examples
@@ -16,19 +16,19 @@ columns to categorical arrays as opposed to boolean vectors.
 OneHot(1)
 OneHot(:a)
 OneHot("a")
-OneHot("a", categorical=false)
+OneHot("a", categ=false)
 ```
 """
 struct OneHot{S<:ColSpec} <: StatelessFeatureTransform
   colspec::S
-  categorical::Bool
-  function OneHot(col, categorical)
+  categ::Bool
+  function OneHot(col, categ)
     cs = colspec([col])
-    new{typeof(cs)}(cs, categorical)
+    new{typeof(cs)}(cs, categ)
   end
 end
 
-OneHot(col; categorical=true) = OneHot(col, categorical)
+OneHot(col; categ=true) = OneHot(col, categ)
 
 isrevertible(::Type{<:OneHot}) = true
 
@@ -55,7 +55,7 @@ function applyfeat(transform::OneHot, feat, prep)
   newnms, newcols = first.(onehot), last.(onehot)
 
   # convert to categorical arrays if necessary
-  newcols = transform.categorical ? categorical.(newcols, levels=[false, true]) : newcols
+  newcols = transform.categ ? categorical.(newcols, levels=[false, true]) : newcols
   
   splice!(names, ind, newnms)
   splice!(columns, ind, newcols)
