@@ -200,13 +200,14 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "OneHot([:a])"
+    @test iostr == "OneHot([:a], true)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     OneHot transform
-    └─ colspec = [:a]"""
+    ├─ colspec = [:a]
+    └─ categ = true"""
   end
 
   @testset "Identity" begin

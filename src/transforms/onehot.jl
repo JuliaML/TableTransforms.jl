@@ -3,10 +3,12 @@
 # ------------------------------------------------------------------
 
 """
-    OneHot(col)
-    
+    OneHot(col; categ=true)
+
 Transforms categorical column `col` into one-hot columns of levels
 returned by the `levels` function of CategoricalArrays.jl.
+The `categ` option can be used to convert resulting
+columns to categorical arrays as opposed to boolean vectors.
 
 # Examples
 
@@ -14,15 +16,19 @@ returned by the `levels` function of CategoricalArrays.jl.
 OneHot(1)
 OneHot(:a)
 OneHot("a")
+OneHot("a", categ=false)
 ```
 """
 struct OneHot{S<:ColSpec} <: StatelessFeatureTransform
   colspec::S
-  function OneHot(col::Col)
+  categ::Bool
+  function OneHot(col, categ)
     cs = colspec([col])
-    new{typeof(cs)}(cs)
+    new{typeof(cs)}(cs, categ)
   end
 end
+
+OneHot(col; categ=true) = OneHot(col, categ)
 
 isrevertible(::Type{<:OneHot}) = true
 
@@ -30,7 +36,7 @@ function applyfeat(transform::OneHot, feat, prep)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols) |> collect
   columns = Any[Tables.getcolumn(cols, nm) for nm in names]
-  
+
   name = choose(transform.colspec, names)[1]
   ind = findfirst(==(name), names)
   x = columns[ind]
@@ -48,6 +54,9 @@ function applyfeat(transform::OneHot, feat, prep)
 
   newnms, newcols = first.(onehot), last.(onehot)
 
+  # convert to categorical arrays if necessary
+  newcols = transform.categ ? categorical.(newcols, levels=[false, true]) : newcols
+  
   splice!(names, ind, newnms)
   splice!(columns, ind, newcols)
   
@@ -65,7 +74,7 @@ function revertfeat(::OneHot, newfeat, fcache)
   
   oname, inds, levels, ordered = fcache
   x = map(zip(columns[inds]...)) do row
-    levels[findfirst(row)]
+    levels[findfirst(==(true), row)]
   end
 
   ocolumn = categorical(x; levels, ordered)
