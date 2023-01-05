@@ -55,7 +55,7 @@ function applyfeat(transform::OneHot, feat, prep)
   newnms, newcols = first.(onehot), last.(onehot)
 
   # convert to categorical arrays if necessary
-  newcols = transform.categorical ? categorical.(newcols, levels=[true, false]) : newcols
+  newcols = transform.categorical ? categorical.(newcols, levels=[false, true]) : newcols
   
   splice!(names, ind, newnms)
   splice!(columns, ind, newcols)
