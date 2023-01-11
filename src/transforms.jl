@@ -58,6 +58,14 @@ This function is intended for developers of new types.
 function revertmeta end
 
 """
+    StatelessTableTransform
+
+This trait is useful to signal that we can [`reapply`](@ref) a transform
+"fitted" with training data to "test" data without relying on the `cache`.
+"""
+abstract type StatelessTableTransform <: TableTransform end
+
+"""
     StatelessFeatureTransform
 
 This trait is useful to signal that we can [`reapply`](@ref) a transform
@@ -161,6 +169,9 @@ reapplymeta(::FeatureTransform, meta, mcache) = meta
 # --------------------
 # STATELESS FALLBACKS
 # --------------------
+
+reapply(transform::StatelessTableTransform, table, cache) =
+  apply(transform, table) |> first
 
 reapply(transform::StatelessFeatureTransform, table, cache) =
   apply(transform, table) |> first
