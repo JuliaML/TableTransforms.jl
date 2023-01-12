@@ -1,7 +1,7 @@
 name = "TableTransforms"
 uuid = "0d432bfd-3ee1-4ac1-886a-39f05cc69a3e"
 authors = ["Júlio Hoffimann <julio.hoffimann@gmail.com> and contributors"]
-version = "1.7.3"
+version = "1.8.0"
 
 [deps]
 AbstractTrees = "1520ce14-60c1-5f80-bbc7-55ef81b5835c"
