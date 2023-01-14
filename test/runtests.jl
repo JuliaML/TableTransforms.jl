@@ -3,7 +3,7 @@ using Distributions
 using Tables
 using TypedTables
 using CategoricalArrays
-using ScientificTypes: Count, Multiclass
+using ScientificTypes: Continuous, Count, Finite, Multiclass
 using LinearAlgebra
 using Statistics
 using Test, Random, Plots
@@ -50,6 +50,7 @@ include("metatable.jl")
 testfiles = [
   "distributions.jl",
   "colspec.jl",
+  "assertions.jl",
   "transforms.jl",
   "metadata.jl",
   "tableselection.jl",

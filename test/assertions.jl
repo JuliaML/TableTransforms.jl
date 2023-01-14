@@ -1,0 +1,30 @@
+@testset "Assertions" begin
+  a = rand(10)
+  b = rand(10)
+  c = rand(1:10, 10)
+  d = rand(1:10, 10)
+  e = categorical(rand(["y", "n"], 10))
+  f = categorical(rand(["y", "n"], 10))
+  table = Table(; a, b, c, d, e, f)
+
+  colspec = TT.colspec([:a, :b])
+  assertion = TT.SciTypeAssertion{Continuous}(colspec)
+  @test isnothing(assertion(table))
+  colspec = TT.colspec([:a, :b, :c])
+  assertion = TT.SciTypeAssertion{Continuous}(colspec)
+  @test_throws AssertionError assertion(table)
+
+  colspec = TT.colspec([:c, :d])
+  assertion = TT.SciTypeAssertion{Count}(colspec)
+  @test isnothing(assertion(table))
+  colspec = TT.colspec([:c, :d, :e])
+  assertion = TT.SciTypeAssertion{Count}(colspec)
+  @test_throws AssertionError assertion(table)
+
+  colspec = TT.colspec([:e, :f])
+  assertion = TT.SciTypeAssertion{Finite}(colspec)
+  @test isnothing(assertion(table))
+  colspec = TT.colspec([:d, :e, :f])
+  assertion = TT.SciTypeAssertion{Finite}(colspec)
+  @test_throws AssertionError assertion(table)
+end

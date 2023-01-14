@@ -2,13 +2,27 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-# assert that all columns are continuous
-function assert_continuous(table)
-  types = schema(table).scitypes
-  @assert all(T <: Continuous for T in types) "columns must hold continuous variables"
+"""
+    SciTypeAssertion{T}(colspec = AllSpec())
+
+Asserts that the columns in the `colspec` have a scientific type `T`.
+"""
+struct SciTypeAssertion{T,S<:ColSpec}
+  colspec::S
 end
 
-# assert that column is categorical
-function assert_categorical(x)
-  @assert elscitype(x) <: Finite "The selected column must be categorical."
+SciTypeAssertion{T}(colspec::S) where {T,S<:ColSpec} = 
+  SciTypeAssertion{T,S}(colspec)
+
+SciTypeAssertion{T}() where {T} = SciTypeAssertion{T}(AllSpec())
+
+function (assertion::SciTypeAssertion{T})(table) where {T}
+  cols = Tables.columns(table)
+  names = Tables.columnnames(cols)
+  snames = choose(assertion.colspec, names)
+
+  for nm in snames
+    x = Tables.getcolumn(cols, nm)
+    @assert elscitype(x) <: T "The column '$nm' is not of scientific type $T"
+  end
 end

@@ -37,7 +37,7 @@ ZScore(spec) = ZScore(colspec(spec))
 ZScore(cols::C...) where {C<:Col} = 
   ZScore(colspec(cols))
 
-assertions(::Type{<:ZScore}) = [assert_continuous]
+assertions(transform::ZScore) = [SciTypeAssertion{Continuous}(transform.colspec)]
 
 isrevertible(::Type{<:ZScore}) = true
 

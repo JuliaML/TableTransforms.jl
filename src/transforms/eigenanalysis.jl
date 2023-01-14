@@ -54,16 +54,11 @@ end
 EigenAnalysis(proj; maxdim=nothing, pratio=1.0) = 
   EigenAnalysis(proj, maxdim, pratio)
 
-assertions(::Type{EigenAnalysis}) = [assert_continuous]
+assertions(::Type{EigenAnalysis}) = [SciTypeAssertion{Continuous}()]
 
 isrevertible(::Type{EigenAnalysis}) = true
 
 function applyfeat(transform::EigenAnalysis, feat, prep)
-  # basic checks
-  for assertion in assertions(transform)
-    assertion(feat)
-  end
-
   # original columns names
   cols = Tables.columns(feat)
   onames = Tables.columnnames(cols)

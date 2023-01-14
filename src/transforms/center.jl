@@ -36,7 +36,7 @@ Center(spec) = Center(colspec(spec))
 Center(cols::C...) where {C<:Col} = 
   Center(colspec(cols))
 
-assertions(::Type{<:Center}) = [assert_continuous]
+assertions(transform::Center) = [SciTypeAssertion{Continuous}(transform.colspec)]
 
 isrevertible(::Type{<:Center}) = true
 

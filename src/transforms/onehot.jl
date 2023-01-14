@@ -30,6 +30,8 @@ end
 
 OneHot(col; categ=true) = OneHot(col, categ)
 
+assertions(transform::OneHot) = [SciTypeAssertion{Finite}(transform.colspec)]
+
 isrevertible(::Type{<:OneHot}) = true
 
 function applyfeat(transform::OneHot, feat, prep)
@@ -40,8 +42,6 @@ function applyfeat(transform::OneHot, feat, prep)
   name = choose(transform.colspec, names)[1]
   ind = findfirst(==(name), names)
   x = columns[ind]
-
-  assert_categorical(x)
 
   xl = levels(x)
   onehot = map(xl) do l

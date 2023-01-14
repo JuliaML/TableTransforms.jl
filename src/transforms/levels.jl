@@ -27,7 +27,9 @@ Levels(pairs::Pair{T}...; ordered=nothing) where {T<:Col} =
 
 Levels(; kwargs...) = throw(ArgumentError("Cannot create a Levels object without arguments."))
 
-isrevertible(transform::Levels) = true
+assertions(transform::Levels) = [SciTypeAssertion{Finite}(transform.colspec)]
+
+isrevertible(::Type{<:Levels}) = true
 
 function applyfeat(transform::Levels, feat, prep)
   cols = Tables.columns(feat)
@@ -39,9 +41,7 @@ function applyfeat(transform::Levels, feat, prep)
   results = map(names) do nm
     x = Tables.getcolumn(cols, nm)
     
-    if nm ∈ snames
-      assert_categorical(x)
-      
+    if nm ∈ snames      
       o = nm ∈ ordered
       l = tlevels[findfirst(==(nm), snames)]
       y = categorical(x, levels=l, ordered=o)
