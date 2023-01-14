@@ -54,7 +54,7 @@ Scale(spec; low=0.25, high=0.75) = Scale(colspec(spec), low, high)
 Scale(cols::C...; low=0.25, high=0.75) where {C<:Col} = 
   Scale(colspec(cols), low, high)
 
-assertions(::Type{<:Scale}) = [assert_continuous]
+assertions(transform::Scale) = [SciTypeAssertion{Continuous}(transform.colspec)]
 
 isrevertible(::Type{<:Scale}) = true
 

@@ -132,6 +132,10 @@ function colcache end
 # --------------------
 
 function apply(transform::FeatureTransform, table)
+  for assertion in assertions(transform)
+    check(assertion, table)
+  end
+
   feat, meta = divide(table)
 
   prep = preprocess(transform, table)
@@ -143,6 +147,8 @@ function apply(transform::FeatureTransform, table)
 end
 
 function revert(transform::FeatureTransform, newtable, cache)
+  @assert isrevertible(transform) "Transform is not revertible"
+
   newfeat, newmeta = divide(newtable)
   fcache,   mcache = cache
 
@@ -153,6 +159,10 @@ function revert(transform::FeatureTransform, newtable, cache)
 end
 
 function reapply(transform::FeatureTransform, table, cache)
+  for assertion in assertions(transform)
+    check(assertion, table)
+  end
+
   feat,     meta = divide(table)
   fcache, mcache = cache
 
@@ -185,12 +195,6 @@ function applyfeat(transform::ColwiseFeatureTransform, feat, prep)
   cols   = Tables.columns(feat)
   names  = Tables.columnnames(cols)
   snames = choose(transform.colspec, names)
-  sfeat  = feat |> Select(snames)
-
-  # basic checks
-  for assertion in assertions(transform)
-    assertion(sfeat)
-  end
   
   # function to transform a single column
   function colfunc(n)
@@ -220,9 +224,6 @@ function applyfeat(transform::ColwiseFeatureTransform, feat, prep)
 end
 
 function revertfeat(transform::ColwiseFeatureTransform, newfeat, fcache)
-  # basic checks
-  @assert isrevertible(transform) "transform is not revertible"
-
   # transformed columns
   cols  = Tables.columns(newfeat)
   names = Tables.columnnames(cols)
@@ -246,11 +247,6 @@ function revertfeat(transform::ColwiseFeatureTransform, newfeat, fcache)
 end
 
 function reapplyfeat(transform::ColwiseFeatureTransform, feat, fcache)
-  # basic checks
-  for assertion in assertions(transform)
-    assertion(feat)
-  end
-
   # retrieve column names and values
   cols  = Tables.columns(feat)
   names = Tables.columnnames(cols)

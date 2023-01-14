@@ -26,10 +26,10 @@ import TransformsBase: assertions, isrevertible, preprocess
 import TransformsBase: apply, revert, reapply
 import TransformsBase: Identity, →
 
-include("tabletraits.jl")
-include("assertions.jl")
-include("distributions.jl")
 include("colspec.jl")
+include("assertions.jl")
+include("tabletraits.jl")
+include("distributions.jl")
 include("tableselection.jl")
 include("transforms.jl")
 
