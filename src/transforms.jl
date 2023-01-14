@@ -132,11 +132,11 @@ function colcache end
 # --------------------
 
 function apply(transform::FeatureTransform, table)
-  for assertion in assertions(transform)
-    check(assertion, table)
-  end
-
   feat, meta = divide(table)
+
+  for assertion in assertions(transform)
+    check(assertion, feat)
+  end
 
   prep = preprocess(transform, table)
 
@@ -159,12 +159,12 @@ function revert(transform::FeatureTransform, newtable, cache)
 end
 
 function reapply(transform::FeatureTransform, table, cache)
-  for assertion in assertions(transform)
-    check(assertion, table)
-  end
-
   feat,     meta = divide(table)
   fcache, mcache = cache
+
+  for assertion in assertions(transform)
+    check(assertion, feat)
+  end
 
   newfeat = reapplyfeat(transform, feat, fcache)
   newmeta = reapplymeta(transform, meta, mcache)

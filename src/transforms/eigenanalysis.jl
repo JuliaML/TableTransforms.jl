@@ -59,11 +59,6 @@ assertions(::Type{EigenAnalysis}) = [SciTypeAssertion{Continuous}()]
 isrevertible(::Type{EigenAnalysis}) = true
 
 function applyfeat(transform::EigenAnalysis, feat, prep)
-  # basic checks
-  for assertion in assertions(transform)
-    assertion(feat)
-  end
-
   # original columns names
   cols = Tables.columns(feat)
   onames = Tables.columnnames(cols)
