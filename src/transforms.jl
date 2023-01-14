@@ -135,7 +135,7 @@ function apply(transform::FeatureTransform, table)
   feat, meta = divide(table)
 
   for assertion in assertions(transform)
-    check(assertion, feat)
+    assertion(feat)
   end
 
   prep = preprocess(transform, table)
@@ -163,7 +163,7 @@ function reapply(transform::FeatureTransform, table, cache)
   fcache, mcache = cache
 
   for assertion in assertions(transform)
-    check(assertion, feat)
+    assertion(feat)
   end
 
   newfeat = reapplyfeat(transform, feat, fcache)
