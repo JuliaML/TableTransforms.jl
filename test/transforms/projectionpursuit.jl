@@ -4,9 +4,9 @@
   b = [3randn(rng, N÷2); 2randn(rng, N÷2)]
   c = randn(rng, N)
   d = c .+ 0.6randn(rng, N)
-  t = (;a, b, c, d)
+  t = (; a, b, c, d)
   
-  T = ProjectionPursuit()
+  T = ProjectionPursuit(rng=MersenneTwister(2))
   n, c = apply(T, t)
 
   @test Tables.columnnames(n) == (:a, :b, :c, :d)
@@ -50,7 +50,7 @@
   b = rand(rng, BetaPrime(2), 4000)
   t = Table(; a, b)
 
-  T = ProjectionPursuit()
+  T = ProjectionPursuit(rng=MersenneTwister(2))
   n, c = apply(T, t)
   
   μ = mean(Tables.matrix(n), dims=1)
