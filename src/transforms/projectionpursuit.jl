@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    ProjectionPursuit(;tol=1e-6, maxiter=100, deg=5, perc=.9, n=100)
+    ProjectionPursuit(; tol=1e-6, maxiter=100, deg=5, perc=0.9, n=100, rng=Random.GLOBAL_RNG)
 
 The projection pursuit multivariate transform converts any multivariate distribution into
 the standard multivariate Gaussian distribution.
@@ -23,23 +23,29 @@ number of iterations reaches a maximum `maxiter`.
 ```julia
 ProjectionPursuit()
 ProjectionPursuit(deg=10)
-ProjectionPursuit(perc=.85, n=50)
-ProjectionPursuit(tol=1e-4, maxiter=250, deg=5, perc=.95, n=100)
+ProjectionPursuit(perc=0.85, n=50)
+ProjectionPursuit(tol=1e-4, maxiter=250, deg=5, perc=0.95, n=100)
+
+# with rng
+using Random
+rng = MersenneTwister(2)
+ProjectionPursuit(perc=0.85, n=50, rng=rng)
 ```
 
 See [https://doi.org/10.2307/2289161](https://doi.org/10.2307/2289161) for 
 further details.
 """
-struct ProjectionPursuit{T} <: StatelessFeatureTransform
+struct ProjectionPursuit{T,RNG} <: StatelessFeatureTransform
   tol::T
   maxiter::Int
   deg::Int
   perc::T
   n::Int
+  rng::RNG
 end
 
-ProjectionPursuit(;tol=1e-6, maxiter=100, deg=5, perc=.9, n=100) =
-  ProjectionPursuit{typeof(tol)}(tol, maxiter, deg, perc, n)
+ProjectionPursuit(; tol=1e-6, maxiter=100, deg=5, perc=0.9, n=100, rng=Random.GLOBAL_RNG) =
+  ProjectionPursuit{typeof(tol),typeof(rng)}(tol, maxiter, deg, perc, n, rng)
 
 isrevertible(::Type{<:ProjectionPursuit}) = true
 
@@ -54,7 +60,7 @@ function pindex(transform, Z, α)
   I = (3/2) * mean(r)^2
   if d > 1
     Pⱼ₋₂, Pⱼ₋₁ = ones(length(r)), r
-    for j = 2:d
+    for j in 2:d
       Pⱼ₋₂, Pⱼ₋₁ = 
         Pⱼ₋₁, (1/j) * ((2j-1) * r .* Pⱼ₋₁ - (j-1) * Pⱼ₋₂)
       I += ((2j+1)/2) * (mean(Pⱼ₋₁))^2
@@ -76,7 +82,8 @@ end
 function gaussquantiles(transform, N, q)
   n = transform.n
   p = 1.0 - transform.perc
-  Is = [pbasis(transform, randn(N, q)) for i in 1:n]
+  rng = transform.rng
+  Is = [pbasis(transform, randn(rng, N, q)) for i in 1:n]
   I  = reduce(hcat, Is)
   quantile.(eachrow(I), p)
 end
@@ -119,18 +126,20 @@ function alphamax(transform, Z)
   neldermead(transform, Z, α)  
 end
 
-function orthobasis(α, tol)
+function orthobasis(transform, α)
+  tol = transform.tol
+  rng = transform.rng
   q = length(α)
-  Q, R = qr([α rand(q,q-1)])
+  Q, R = qr([α rand(rng, q, q-1)])
   while norm(diag(R)) < tol
-    Q, R = qr([α rand(q,q-1)])
+    Q, R = qr([α rand(rng, q, q-1)])
   end  
   Q
 end
 
 function rmstructure(transform, Z, α)
   # find orthonormal basis for rotation
-  Q = orthobasis(α, transform.tol)
+  Q = orthobasis(transform, α)
 
   # remove structure of first rotated axis
   newtable, qcache = apply(Quantile(1), Tables.table(Z * Q))
