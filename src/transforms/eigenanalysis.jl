@@ -105,11 +105,6 @@ function revertfeat(::EigenAnalysis, newfeat, fcache)
 end
 
 function reapplyfeat(transform::EigenAnalysis, feat, fcache)
-  # basic checks
-  for assertion in assertions(transform)
-    assertion(feat)
-  end
-
   # table as matrix
   X = Tables.matrix(feat)
 
