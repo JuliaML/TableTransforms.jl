@@ -56,10 +56,10 @@ function applyfeat(transform::OneHot, feat, prep)
 
   # convert to categorical arrays if necessary
   newcols = transform.categ ? categorical.(newcols, levels=[false, true]) : newcols
-  
+
   splice!(names, ind, newnms)
   splice!(columns, ind, newcols)
-  
+
   inds = ind:(ind + length(newnms) - 1)
 
   𝒯 = (; zip(names, columns)...)
@@ -71,7 +71,7 @@ function revertfeat(::OneHot, newfeat, fcache)
   cols = Tables.columns(newfeat)
   names = Tables.columnnames(cols) |> collect
   columns = Any[Tables.getcolumn(cols, nm) for nm in names]
-  
+
   oname, inds, levels, ordered = fcache
   x = map(zip(columns[inds]...)) do row
     levels[findfirst(==(true), row)]

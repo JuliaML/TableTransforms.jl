@@ -33,18 +33,12 @@ struct Sample{W,RNG} <: StatelessFeatureTransform
   rng::RNG
 end
 
-Sample(size::Int;
-       replace=false, ordered=false,
-       rng=Random.GLOBAL_RNG) =
-  Sample(size, nothing, replace, ordered, rng)
-  
-Sample(size::Int, weights::AbstractWeights;
-       replace=false, ordered=false,
-       rng=Random.GLOBAL_RNG) =
+Sample(size::Int; replace=false, ordered=false, rng=Random.GLOBAL_RNG) = Sample(size, nothing, replace, ordered, rng)
+
+Sample(size::Int, weights::AbstractWeights; replace=false, ordered=false, rng=Random.GLOBAL_RNG) =
   Sample(size, weights, replace, ordered, rng)
-  
-Sample(size::Int, weights; kwargs...) =
-  Sample(size, Weights(collect(weights)); kwargs...)
+
+Sample(size::Int, weights; kwargs...) = Sample(size, Weights(collect(weights)); kwargs...)
 
 isrevertible(::Type{<:Sample}) = true
 
@@ -53,11 +47,11 @@ function preprocess(transform::Sample, table)
   rows = Tables.rowtable(table)
   inds = 1:length(rows)
 
-  size    = transform.size
+  size = transform.size
   weights = transform.weights
   replace = transform.replace
   ordered = transform.ordered
-  rng     = transform.rng
+  rng = transform.rng
 
   # sample a subset of indices
   sinds = if isnothing(weights)

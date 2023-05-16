@@ -37,15 +37,15 @@ function applyfeat(transform::Levels, feat, prep)
   snames = choose(transform.colspec, names)
   ordered = choose(transform.ordered, snames)
   tlevels = transform.levels
-  
+
   results = map(names) do nm
     x = Tables.getcolumn(cols, nm)
-    
-    if nm ∈ snames      
+
+    if nm ∈ snames
       o = nm ∈ ordered
       l = tlevels[findfirst(==(nm), snames)]
       y = categorical(x, levels=l, ordered=o)
-      
+
       xl, xo = levels(x), isordered(x)
       revfunc = y -> categorical(y, levels=xl, ordered=xo)
     else

@@ -29,9 +29,9 @@
   tₒ = revert(T, n, c)
   @test tₒ == t
 
-  a = categorical(["yes", "no", "no", "no", "yes"]) 
-  b = categorical([1, 2, 4, 2, 8], ordered=false) 
-  c = categorical([1, 2, 1, 2, 1]) 
+  a = categorical(["yes", "no", "no", "no", "yes"])
+  b = categorical([1, 2, 4, 2, 8], ordered=false)
+  c = categorical([1, 2, 1, 2, 1])
   d = categorical([1, 23, 5, 7, 7])
   e = categorical([2, 3, 1, 4, 1])
   t = Table(; a, b, c, d, e)

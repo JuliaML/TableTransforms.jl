@@ -38,10 +38,9 @@ end
 Select(spec) = Select(colspec(spec), nothing)
 Select(cols::T...) where {T<:Col} = Select(cols)
 
-Select(pairs::Pair{T,Symbol}...) where {T<:Col} = 
-  Select(colspec(first.(pairs)), collect(last.(pairs)))
+Select(pairs::Pair{T,Symbol}...) where {T<:Col} = Select(colspec(first.(pairs)), collect(last.(pairs)))
 
-Select(pairs::Pair{T,S}...) where {T<:Col,S<:AbstractString} = 
+Select(pairs::Pair{T,S}...) where {T<:Col,S<:AbstractString} =
   Select(colspec(first.(pairs)), collect(Symbol.(last.(pairs))))
 
 Select() = throw(ArgumentError("Cannot create a Select object without arguments."))
@@ -58,9 +57,9 @@ function applyfeat(transform::Select, feat, prep)
 
   # retrieve relevant column names
   allcols = collect(Tables.columnnames(cols))
-  select  = choose(transform.colspec, allcols)
-  names   = _newnames(transform.newnames, select)
-  reject  = setdiff(allcols, select)
+  select = choose(transform.colspec, allcols)
+  names = _newnames(transform.newnames, select)
+  reject = setdiff(allcols, select)
 
   # keep track of indices to revert later
   sinds = indexin(select, allcols)
@@ -72,14 +71,14 @@ function applyfeat(transform::Select, feat, prep)
   # rejected columns
   rcolumns = [Tables.getcolumn(cols, name) for name in reject]
 
-  fcache  = (select, sperm, reject, rcolumns, rinds)
+  fcache = (select, sperm, reject, rcolumns, rinds)
   newfeat = TableSelection(feat, names, select)
   newfeat, fcache
 end
 
 function revertfeat(::Select, newfeat, fcache)
   # selected columns
-  cols  = Tables.columns(newfeat)
+  cols = Tables.columns(newfeat)
   names = Tables.columnnames(cols)
   # https://github.com/JuliaML/TableTransforms.jl/issues/76
   columns = Any[Tables.getcolumn(cols, name) for name in names]
@@ -128,8 +127,7 @@ end
 
 Reject(spec) = Reject(colspec(spec))
 
-Reject(cols::T...) where {T<:Col} = 
-  Reject(colspec(cols))
+Reject(cols::T...) where {T<:Col} = Reject(colspec(cols))
 
 # argumet erros
 Reject() = throw(ArgumentError("Cannot create a Reject object without arguments."))
@@ -138,11 +136,11 @@ Reject(::AllSpec) = throw(ArgumentError("Cannot reject all columns."))
 isrevertible(::Type{<:Reject}) = true
 
 function applyfeat(transform::Reject, feat, prep)
-  cols    = Tables.columns(feat)
+  cols = Tables.columns(feat)
   allcols = Tables.columnnames(cols)
-  reject  = choose(transform.colspec, allcols)
-  select  = setdiff(allcols, reject)
-  strans  = Select(select)
+  reject = choose(transform.colspec, allcols)
+  select = setdiff(allcols, reject)
+  strans = Select(select)
   newfeat, sfcache = applyfeat(strans, feat, prep)
   newfeat, (strans, sfcache)
 end

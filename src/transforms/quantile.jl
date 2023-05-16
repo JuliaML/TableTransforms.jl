@@ -37,8 +37,7 @@ end
 
 Quantile(; dist=Normal()) = Quantile(AllSpec(), dist)
 Quantile(spec; dist=Normal()) = Quantile(colspec(spec), dist)
-Quantile(cols::C...; dist=Normal()) where {C<:Col} = 
-  Quantile(colspec(cols), dist)
+Quantile(cols::C...; dist=Normal()) where {C<:Col} = Quantile(colspec(cols), dist)
 
 assertions(transform::Quantile) = [SciTypeAssertion{Continuous}(transform.colspec)]
 

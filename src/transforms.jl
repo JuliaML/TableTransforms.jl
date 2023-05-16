@@ -150,7 +150,7 @@ function revert(transform::FeatureTransform, newtable, cache)
   @assert isrevertible(transform) "Transform is not revertible"
 
   newfeat, newmeta = divide(newtable)
-  fcache,   mcache = cache
+  fcache, mcache = cache
 
   feat = revertfeat(transform, newfeat, fcache)
   meta = revertmeta(transform, newmeta, mcache)
@@ -159,7 +159,7 @@ function revert(transform::FeatureTransform, newtable, cache)
 end
 
 function reapply(transform::FeatureTransform, table, cache)
-  feat,     meta = divide(table)
+  feat, meta = divide(table)
   fcache, mcache = cache
 
   for assertion in assertions(transform)
@@ -180,11 +180,9 @@ reapplymeta(::FeatureTransform, meta, mcache) = meta
 # STATELESS FALLBACKS
 # --------------------
 
-reapply(transform::StatelessTableTransform, table, cache) =
-  apply(transform, table) |> first
+reapply(transform::StatelessTableTransform, table, cache) = apply(transform, table) |> first
 
-reapply(transform::StatelessFeatureTransform, table, cache) =
-  apply(transform, table) |> first
+reapply(transform::StatelessFeatureTransform, table, cache) = apply(transform, table) |> first
 
 # ------------------
 # COLWISE FALLBACKS
@@ -192,10 +190,10 @@ reapply(transform::StatelessFeatureTransform, table, cache) =
 
 function applyfeat(transform::ColwiseFeatureTransform, feat, prep)
   # retrieve column names and values
-  cols   = Tables.columns(feat)
-  names  = Tables.columnnames(cols)
+  cols = Tables.columns(feat)
+  names = Tables.columnnames(cols)
   snames = choose(transform.colspec, names)
-  
+
   # function to transform a single column
   function colfunc(n)
     x = Tables.getcolumn(cols, n)
@@ -225,11 +223,11 @@ end
 
 function revertfeat(transform::ColwiseFeatureTransform, newfeat, fcache)
   # transformed columns
-  cols  = Tables.columns(newfeat)
+  cols = Tables.columns(newfeat)
   names = Tables.columnnames(cols)
-  
+
   caches, snames = fcache
-  
+
   # function to transform a single column
   function colfunc(i)
     n = names[i]
@@ -248,11 +246,11 @@ end
 
 function reapplyfeat(transform::ColwiseFeatureTransform, feat, fcache)
   # retrieve column names and values
-  cols  = Tables.columns(feat)
+  cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
 
   caches, snames = fcache
-  
+
   # check that cache is valid
   @assert length(names) == length(caches) "invalid caches for feat"
 

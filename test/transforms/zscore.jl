@@ -17,7 +17,7 @@
   if visualtests
     p₁ = scatter(t.x, t.y, label="Original", aspectratio=:equal)
     p₂ = scatter(n.x, n.y, label="ZScore", aspectratio=:equal)
-    p = plot(p₁, p₂, layout=(1,2))
+    p = plot(p₁, p₂, layout=(1, 2))
 
     @test_reference joinpath(datadir, "zscore.png") p
   end
@@ -86,7 +86,7 @@
   @test isapprox(σ[2], 1; atol=1e-6)
   tₒ = revert(T, n, c)
   @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
-  
+
   a = rand(Int, 10)
   b = rand(10)
   t = Table(; a, b)

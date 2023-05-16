@@ -59,13 +59,12 @@ rscore(Z, α) = 2 .* cdf.(Normal(), Z * α) .- 1
 function pindex(transform, Z, α)
   d = transform.deg
   r = rscore(Z, α)
-  I = (3/2) * mean(r)^2
+  I = (3 / 2) * mean(r)^2
   if d > 1
     Pⱼ₋₂, Pⱼ₋₁ = ones(length(r)), r
     for j in 2:d
-      Pⱼ₋₂, Pⱼ₋₁ = 
-        Pⱼ₋₁, (1/j) * ((2j-1) * r .* Pⱼ₋₁ - (j-1) * Pⱼ₋₂)
-      I += ((2j+1)/2) * (mean(Pⱼ₋₁))^2
+      Pⱼ₋₂, Pⱼ₋₁ = Pⱼ₋₁, (1 / j) * ((2j - 1) * r .* Pⱼ₋₁ - (j - 1) * Pⱼ₋₂)
+      I += ((2j + 1) / 2) * (mean(Pⱼ₋₁))^2
     end
   end
   I
@@ -86,56 +85,56 @@ function gaussquantiles(transform, N, q)
   p = 1.0 - transform.perc
   rng = transform.rng
   Is = [pbasis(transform, randn(rng, N, q)) for i in 1:n]
-  I  = reduce(hcat, Is)
+  I = reduce(hcat, Is)
   quantile.(eachrow(I), p)
 end
 
 function alphaguess(transform, Z)
   q = size(Z, 2)
-  
+
   # objective function
   func(α) = pindex(transform, Z, α)
-  
+
   # evaluate objective along axes
   j = argmax(j -> func(basis(q, j)), 1:q)
   α = basis(q, j)
   I = func(α)
-  
+
   # evaluate objective along diagonals
-  diag(α, s, e) = (1/√(2+2s*α⋅e)) * (α + s * e)
+  diag(α, s, e) = (1 / √(2 + 2s * α ⋅ e)) * (α + s * e)
   for eᵢ in basis.(q, 1:q)
     d₊ = diag(α, +1, eᵢ)
     d₋ = diag(α, -1, eᵢ)
     f₊ = func(d₊)
-    f₋ = α⋅eᵢ != 1.0 ? func(d₋) : 0.0
+    f₋ = α ⋅ eᵢ != 1.0 ? func(d₋) : 0.0
     f, d = f₊ > f₋ ? (f₊, d₊) : (f₋, d₋)
     if f > I
       α = d
       I = f
     end
   end
-  
+
   α
 end
 
 function neldermead(transform, Z, α₀)
   f(α) = -pindex(transform, Z, α ./ norm(α))
-  optimise(f, α₀, 1/2, xtol_rel=10eps()) |> first
+  optimise(f, α₀, 1 / 2, xtol_rel=10eps()) |> first
 end
 
 function alphamax(transform, Z)
   α = alphaguess(transform, Z)
-  neldermead(transform, Z, α)  
+  neldermead(transform, Z, α)
 end
 
 function orthobasis(transform, α)
   tol = transform.tol
   rng = transform.rng
   q = length(α)
-  Q, R = qr([α rand(rng, q, q-1)])
+  Q, R = qr([α rand(rng, q, q - 1)])
   while norm(diag(R)) < tol
-    Q, R = qr([α rand(rng, q, q-1)])
-  end  
+    Q, R = qr([α rand(rng, q, q - 1)])
+  end
   Q
 end
 
@@ -145,16 +144,16 @@ function rmstructure(transform, Z, α)
 
   # remove structure of first rotated axis
   newtable, qcache = apply(Quantile(1), Tables.table(Z * Q))
-  
+
   # undo rotation, i.e recover original axis-aligned features
   Z₊ = Tables.matrix(newtable) * Q'
-  
+
   Z₊, (Q, qcache)
 end
 
 sphering() = Quantile() → EigenAnalysis(:VDV)
 
-function applyfeat(transform::ProjectionPursuit, table, prep) 
+function applyfeat(transform::ProjectionPursuit, table, prep)
   # retrieve column names
   cols = Tables.columns(table)
   names = Tables.columnnames(cols)
@@ -165,19 +164,20 @@ function applyfeat(transform::ProjectionPursuit, table, prep)
   # initialize scores and Gaussian quantiles
   Z = Tables.matrix(ptable)
   I = pbasis(transform, Z)
-  g = gaussquantiles(transform, size(Z)...) 
+  g = gaussquantiles(transform, size(Z)...)
 
-  iter = 0; caches = []
+  iter = 0
+  caches = []
   while any(I .> g) && iter ≤ transform.maxiter
     # choose direction with maximum projection index
     α = alphamax(transform, Z)
-    
+
     # remove non-Gaussian structure
     Z, cache = rmstructure(transform, Z, α)
-    
+
     # update the scores along original axes
     I = pbasis(transform, Z)
-    
+
     # store cache and continue
     push!(caches, cache)
     iter += 1
@@ -192,7 +192,7 @@ function revertfeat(::ProjectionPursuit, newtable, fcache)
   # retrieve column names
   cols = Tables.columns(newtable)
   names = Tables.columnnames(cols)
-  
+
   # caches to retrieve transform steps
   pcache, caches = fcache
 
@@ -201,10 +201,10 @@ function revertfeat(::ProjectionPursuit, newtable, fcache)
     table = revert(Quantile(1), Tables.table(Z * Q), qcache)
     Z = Tables.matrix(table) * Q'
   end
-  
+
   table = revert(sphering(), Tables.table(Z), pcache)
   Z = Tables.matrix(table)
-  
+
   𝒯 = (; zip(names, eachcol(Z))...)
   newtable = 𝒯 |> Tables.materializer(newtable)
 end

@@ -40,8 +40,8 @@
   @test ntypes[4] == Int
   @test ntypes[5] == Int
   @test ntypes[6] == Int
-  @test ttypes == Tables.schema(tₒ).types  
-  
+  @test ttypes == Tables.schema(tₒ).types
+
   # row table
   rt = Tables.rowtable(t)
   T = Coalesce(value=0)

@@ -19,14 +19,14 @@ Filter(row -> row.a == true && row.b < 30)
 * The schema of the table is preserved by the transform.
 """
 struct Filter{F} <: StatelessFeatureTransform
-  func::F 
+  func::F
 end
 
 isrevertible(::Type{<:Filter}) = true
 
 function preprocess(transform::Filter, table)
   # lazy row iterator
-  rows  = Tables.rows(table)
+  rows = Tables.rows(table)
 
   # selected indices
   sinds, nrows = Int[], 0
@@ -107,16 +107,13 @@ DropMissing() = DropMissing(AllSpec())
 
 DropMissing(spec) = DropMissing(colspec(spec))
 
-DropMissing(cols::T...) where {T<:Col} =
-  DropMissing(colspec(cols))
+DropMissing(cols::T...) where {T<:Col} = DropMissing(colspec(cols))
 
 isrevertible(::Type{<:DropMissing}) = true
 
-_ftrans(::DropMissing{AllSpec}, cols) =
-  Filter(row -> all(!ismissing, row))
+_ftrans(::DropMissing{AllSpec}, cols) = Filter(row -> all(!ismissing, row))
 
-_ftrans(::DropMissing, cols) =
-  Filter(row -> all(!ismissing, getindex.(Ref(row), cols)))
+_ftrans(::DropMissing, cols) = Filter(row -> all(!ismissing, getindex.(Ref(row), cols)))
 
 # nonmissing 
 _nonmissing(::Type{T}, x) where {T} = x
@@ -125,10 +122,10 @@ _nonmissing(x) = _nonmissing(eltype(x), x)
 
 function preprocess(transform::DropMissing, table)
   schema = Tables.schema(table)
-  names  = schema.names
+  names = schema.names
   snames = choose(transform.colspec, names)
   ftrans = _ftrans(transform, snames)
-  fprep  = preprocess(ftrans, table)
+  fprep = preprocess(ftrans, table)
   ftrans, fprep, snames
 end
 
@@ -138,7 +135,7 @@ function applyfeat(::DropMissing, feat, prep)
   newfeat, ffcache = applyfeat(ftrans, feat, fprep)
 
   # drop Missing type
-  cols  = Tables.columns(newfeat)
+  cols = Tables.columns(newfeat)
   names = Tables.columnnames(cols)
   ncols = map(names) do n
     x = Tables.getcolumn(cols, n)

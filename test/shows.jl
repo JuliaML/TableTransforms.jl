@@ -162,7 +162,7 @@
     ├─ colspec = all
     └─ value = 0"""
   end
-  
+
   @testset "Coerce" begin
     T = Coerce(:a => Continuous, :b => Count)
 

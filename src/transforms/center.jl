@@ -33,8 +33,7 @@ end
 
 Center() = Center(AllSpec())
 Center(spec) = Center(colspec(spec))
-Center(cols::C...) where {C<:Col} = 
-  Center(colspec(cols))
+Center(cols::C...) where {C<:Col} = Center(colspec(cols))
 
 assertions(transform::Center) = [SciTypeAssertion{Continuous}(transform.colspec)]
 
@@ -42,6 +41,6 @@ isrevertible(::Type{<:Center}) = true
 
 colcache(::Center, x) = mean(x)
 
-colapply(::Center, x, μ)  = @. x - μ
+colapply(::Center, x, μ) = @. x - μ
 
 colrevert(::Center, y, μ) = @. y + μ

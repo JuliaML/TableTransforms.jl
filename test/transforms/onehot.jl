@@ -8,9 +8,9 @@
   n, c = apply(T, t)
   @test Tables.columnnames(n) == (:a_false, :a_true, :b, :c)
   @test n.a_false == categorical(Bool[1, 0, 0, 1, 0, 0])
-  @test n.a_true  == categorical(Bool[0, 1, 1, 0, 1, 1])
+  @test n.a_true == categorical(Bool[0, 1, 1, 0, 1, 1])
   @test n.a_false isa CategoricalVector{Bool}
-  @test n.a_true  isa CategoricalVector{Bool}
+  @test n.a_true isa CategoricalVector{Bool}
   tₒ = revert(T, n, c)
   @test t == tₒ
 
@@ -40,7 +40,7 @@
   n, c = apply(T, t)
   @test Tables.columnnames(n) == (:a_false, :a_true, :b, :c)
   @test n.a_false == Bool[1, 0, 0, 1, 0, 0]
-  @test n.a_true  == Bool[0, 1, 1, 0, 1, 1]
+  @test n.a_true == Bool[0, 1, 1, 0, 1, 1]
   tₒ = revert(T, n, c)
   @test t == tₒ
 
@@ -62,10 +62,10 @@
   @test t == tₒ
 
   # name formatting
-  b   = categorical(["m", "f", "m", "m", "m", "f"])
+  b = categorical(["m", "f", "m", "m", "m", "f"])
   b_f = rand(10)
   b_m = rand(10)
-  t   = Table(; b, b_f, b_m)
+  t = Table(; b, b_f, b_m)
 
   T = OneHot(:b; categ=false)
   n, c = apply(T, t)
@@ -75,12 +75,12 @@
   tₒ = revert(T, n, c)
   @test t == tₒ
 
-  b    = categorical(["m", "f", "m", "m", "m", "f"])
-  b_f  = rand(10)
-  b_m  = rand(10)
+  b = categorical(["m", "f", "m", "m", "m", "f"])
+  b_f = rand(10)
+  b_m = rand(10)
   b_f_ = rand(10)
   b_m_ = rand(10)
-  t    = Table(; b, b_f, b_m, b_f_, b_m_)
+  t = Table(; b, b_f, b_m, b_f_, b_m_)
 
   T = OneHot(:b; categ=false)
   n, c = apply(T, t)

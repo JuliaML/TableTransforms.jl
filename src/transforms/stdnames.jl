@@ -22,14 +22,14 @@ StdNames() = StdNames(:upper)
 
 isrevertible(::Type{StdNames}) = true
 
-function applyfeat(transform::StdNames, feat, prep)  
+function applyfeat(transform::StdNames, feat, prep)
   # retrieve spec
   spec = transform.spec
-  
+
   # retrieve column names
   cols = Tables.columns(feat)
   oldnames = string.(Tables.columnnames(cols))
-  
+
   # clean column names
   cleaned = _clean.(oldnames)
 
@@ -40,7 +40,7 @@ function applyfeat(transform::StdNames, feat, prep)
 
   # make names unique
   newnames = _unique(names)
-  
+
   # rename transform
   rtrans = Rename(colspec(oldnames), Symbol.(newnames))
   newfeat, rfcache = applyfeat(rtrans, feat, prep)
@@ -56,7 +56,7 @@ end
 const delim = [' ', '\t', '-', '_']
 
 _clean(name) = filter(c -> isdigit(c) || isletter(c) || c ∈ delim, name)
-  
+
 function _unique(names)
   newnames = String[]
   for name in names

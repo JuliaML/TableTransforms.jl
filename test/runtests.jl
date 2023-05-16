@@ -14,7 +14,7 @@ using PairPlots
 const TT = TableTransforms
 
 # set default configurations for plots
-gr(ms=1, mc=:black, label=false, size=(600,400))
+gr(ms=1, mc=:black, label=false, size=(600, 400))
 
 # workaround GR warnings
 ENV["GKSwstype"] = "100"
@@ -23,7 +23,7 @@ ENV["GKSwstype"] = "100"
 isCI = "CI" ∈ keys(ENV)
 islinux = Sys.islinux()
 visualtests = !isCI || (isCI && islinux)
-datadir = joinpath(@__DIR__,"data")
+datadir = joinpath(@__DIR__, "data")
 
 # using MersenneTwister for backward
 # compatibility with old Julia versions
@@ -34,7 +34,7 @@ struct Polynomial{T<:Real}
   coeffs::Vector{T}
 end
 Polynomial(args::T...) where {T<:Real} = Polynomial(collect(args))
-(p::Polynomial)(x) = sum(a * x^(i-1) for (i, a) in enumerate(p.coeffs))
+(p::Polynomial)(x) = sum(a * x^(i - 1) for (i, a) in enumerate(p.coeffs))
 
 function isequalmissing(a, b)
   length(a) == length(b) || return false
@@ -47,15 +47,8 @@ end
 include("metatable.jl")
 
 # list of tests
-testfiles = [
-  "distributions.jl",
-  "colspec.jl",
-  "assertions.jl",
-  "transforms.jl",
-  "metadata.jl",
-  "tableselection.jl",
-  "shows.jl"
-]
+testfiles =
+  ["distributions.jl", "colspec.jl", "assertions.jl", "transforms.jl", "metadata.jl", "tableselection.jl", "shows.jl"]
 
 @testset "TableTransforms.jl" begin
   for testfile in testfiles

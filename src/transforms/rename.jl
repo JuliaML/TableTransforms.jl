@@ -25,23 +25,22 @@ struct Rename{S<:ColSpec} <: StatelessFeatureTransform
   end
 end
 
-Rename(pairs::Pair{T,Symbol}...) where {T<:Col} = 
-  Rename(colspec(first.(pairs)), collect(last.(pairs)))
+Rename(pairs::Pair{T,Symbol}...) where {T<:Col} = Rename(colspec(first.(pairs)), collect(last.(pairs)))
 
-Rename(pairs::Pair{T,S}...) where {T<:Col,S<:AbstractString} = 
+Rename(pairs::Pair{T,S}...) where {T<:Col,S<:AbstractString} =
   Rename(colspec(first.(pairs)), collect(Symbol.(last.(pairs))))
 
 isrevertible(::Type{<:Rename}) = true
 
 function applyfeat(transform::Rename, feat, prep)
-  cols   = Tables.columns(feat)
-  names  = Tables.columnnames(cols)
+  cols = Tables.columns(feat)
+  names = Tables.columnnames(cols)
   snames = choose(transform.colspec, names)
   @assert transform.newnames ⊈ setdiff(names, snames) "duplicate names"
-  
+
   mapnames = Dict(zip(snames, transform.newnames))
   newnames = [get(mapnames, nm, nm) for nm in names]
-  columns  = [Tables.getcolumn(cols, nm) for nm in names]
+  columns = [Tables.getcolumn(cols, nm) for nm in names]
 
   𝒯 = (; zip(newnames, columns)...)
   newfeat = 𝒯 |> Tables.materializer(feat)
@@ -49,8 +48,8 @@ function applyfeat(transform::Rename, feat, prep)
 end
 
 function revertfeat(::Rename, newfeat, fcache)
-  cols    = Tables.columns(newfeat)
-  names   = Tables.columnnames(cols)
+  cols = Tables.columns(newfeat)
+  names = Tables.columnnames(cols)
   columns = [Tables.getcolumn(cols, nm) for nm in names]
 
   𝒯 = (; zip(fcache, columns)...)

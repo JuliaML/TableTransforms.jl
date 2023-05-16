@@ -31,12 +31,11 @@ end
 AbstractTrees.nodevalue(::ParallelTableTransform) = ParallelTableTransform
 AbstractTrees.children(p::ParallelTableTransform) = p.transforms
 
-Base.show(io::IO, p::ParallelTableTransform) =
-  print(io, join(p.transforms, " ⊔ "))
+Base.show(io::IO, p::ParallelTableTransform) = print(io, join(p.transforms, " ⊔ "))
 
 function Base.show(io::IO, ::MIME"text/plain", p::ParallelTableTransform)
   tree = repr_tree(p, context=io)
-  print(io, tree[begin:end-1]) # remove \n at end
+  print(io, tree[begin:(end - 1)]) # remove \n at end
 end
 
 isrevertible(p::ParallelTableTransform) = any(isrevertible, p.transforms)
@@ -52,8 +51,8 @@ function apply(p::ParallelTableTransform, table)
 
   # features and metadata
   splits = divide.(tables)
-  feats  = first.(splits)
-  metas  = last.(splits)
+  feats = first.(splits)
+  metas = last.(splits)
 
   # table with concatenated features
   newfeat = tablehcat(feats)
@@ -71,13 +70,13 @@ function apply(p::ParallelTableTransform, table)
   rinfo = if isnothing(ind)
     nothing
   else
-    fcols  = Tables.columns.(feats)
+    fcols = Tables.columns.(feats)
     fnames = Tables.columnnames.(fcols)
-    ncols  = length.(fnames)
+    ncols = length.(fnames)
     nrcols = ncols[ind]
-    start  = sum(ncols[1:ind-1]) + 1
+    start = sum(ncols[1:(ind - 1)]) + 1
     finish = start + nrcols - 1
-    range  = start:finish
+    range = start:finish
     (ind, range)
   end
 
@@ -87,7 +86,7 @@ end
 function revert(p::ParallelTableTransform, newtable, cache)
   # retrieve cache
   caches = cache[1]
-  rinfo  = cache[2]
+  rinfo = cache[2]
 
   @assert !isnothing(rinfo) "transform is not revertible"
 
@@ -95,8 +94,8 @@ function revert(p::ParallelTableTransform, newtable, cache)
   newfeat, newmeta = divide(newtable)
 
   # retrieve info to revert transform
-  ind    = rinfo[1]
-  range  = rinfo[2]
+  ind = rinfo[1]
+  range = rinfo[2]
   rtrans = p.transforms[ind]
   rcache = caches[ind]
 
@@ -106,8 +105,8 @@ function revert(p::ParallelTableTransform, newtable, cache)
 
   # subset of features to revert
   rnames = names[range]
-  rcols  = [Tables.getcolumn(fcols, j) for j in range]
-  rfeat  = (; zip(rnames, rcols)...) |> Tables.materializer(newfeat)
+  rcols = [Tables.getcolumn(fcols, j) for j in range]
+  rfeat = (; zip(rnames, rcols)...) |> Tables.materializer(newfeat)
 
   # propagate metadata
   rtable = attach(rfeat, newmeta)
@@ -122,13 +121,13 @@ function reapply(p::ParallelTableTransform, table, cache)
 
   # reapply transforms in parallel
   f(t, c) = reapply(t, table, c)
-  itr     = zip(p.transforms, caches)
-  tables  = tcollect(f(t, c) for (t, c) in itr)
+  itr = zip(p.transforms, caches)
+  tables = tcollect(f(t, c) for (t, c) in itr)
 
   # features and metadata
   splits = divide.(tables)
-  feats  = first.(splits)
-  metas  = last.(splits)
+  feats = first.(splits)
+  metas = last.(splits)
 
   # table with concatenated features
   newfeat = tablehcat(feats)
@@ -150,7 +149,7 @@ function tablehcat(tables)
     vals = [Tables.getcolumn(cols, var) for var in vars]
     for (var, val) in zip(vars, vals)
       while var ∈ varsdict
-        var = Symbol(var,:_)
+        var = Symbol(var, :_)
       end
       push!(varsdict, var)
       push!(allvars, var)
@@ -169,11 +168,7 @@ end
 Create a [`ParallelTableTransform`](@ref) transform with
 `[transform₁, transform₂, …, transformₙ]`.
 """
-⊔(t1::Transform, t2::Transform) =
-  ParallelTableTransform([t1, t2])
-⊔(t1::Transform, t2::ParallelTableTransform) =
-  ParallelTableTransform([t1; t2.transforms])
-⊔(t1::ParallelTableTransform, t2::Transform) =
-  ParallelTableTransform([t1.transforms; t2])
-⊔(t1::ParallelTableTransform, t2::ParallelTableTransform) =
-  ParallelTableTransform([t1.transforms; t2.transforms])
+⊔(t1::Transform, t2::Transform) = ParallelTableTransform([t1, t2])
+⊔(t1::Transform, t2::ParallelTableTransform) = ParallelTableTransform([t1; t2.transforms])
+⊔(t1::ParallelTableTransform, t2::Transform) = ParallelTableTransform([t1.transforms; t2])
+⊔(t1::ParallelTableTransform, t2::ParallelTableTransform) = ParallelTableTransform([t1.transforms; t2.transforms])
