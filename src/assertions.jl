@@ -11,8 +11,7 @@ struct SciTypeAssertion{T,S<:ColSpec}
   colspec::S
 end
 
-SciTypeAssertion{T}(colspec::S) where {T,S<:ColSpec} = 
-  SciTypeAssertion{T,S}(colspec)
+SciTypeAssertion{T}(colspec::S) where {T,S<:ColSpec} = SciTypeAssertion{T,S}(colspec)
 
 SciTypeAssertion{T}() where {T} = SciTypeAssertion{T}(AllSpec())
 

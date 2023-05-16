@@ -20,17 +20,14 @@ struct TableSelection{T,C}
 end
 
 function Base.:(==)(a::TableSelection, b::TableSelection)
-  a.names  != b.names  && return false
+  a.names != b.names && return false
   a.onames != b.onames && return false
   all(nm -> Tables.getcolumn(a, nm) == Tables.getcolumn(b, nm), a.names)
 end
 
 function Base.show(io::IO, t::TableSelection)
   println(io, "TableSelection")
-  pretty_table(io, t,
-    vcrop_mode=:middle,
-    newline_at_end=false
-  )
+  pretty_table(io, t, vcrop_mode=:middle, newline_at_end=false)
 end
 
 # Tables.jl interface
@@ -49,13 +46,12 @@ function Tables.getcolumn(t::TableSelection, nm::Symbol)
   Tables.getcolumn(t.cols, t.mapnames[nm])
 end
 
-Tables.materializer(t::TableSelection) =
-  Tables.materializer(t.table)
+Tables.materializer(t::TableSelection) = Tables.materializer(t.table)
 
 function Tables.schema(t::TableSelection)
   schema = Tables.schema(t.cols)
-  names  = schema.names
-  types  = schema.types
-  inds   = indexin(t.onames, collect(names))
+  names = schema.names
+  types = schema.types
+  inds = indexin(t.onames, collect(names))
   Tables.Schema(t.names, types[inds])
 end

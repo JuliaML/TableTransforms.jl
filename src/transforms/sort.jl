@@ -31,16 +31,15 @@ end
 
 Sort(spec; kwargs...) = Sort(colspec(spec), values(kwargs))
 
-Sort(cols::T...; kwargs...) where {T<:Col} = 
-  Sort(colspec(cols), values(kwargs))
+Sort(cols::T...; kwargs...) where {T<:Col} = Sort(colspec(cols), values(kwargs))
 
 Sort(; kwargs...) = throw(ArgumentError("Cannot create a Sort object without arguments."))
 
 isrevertible(::Type{<:Sort}) = true
 
 function preprocess(transform::Sort, table)
-  cols   = Tables.columns(table)
-  names  = Tables.columnnames(cols)
+  cols = Tables.columns(table)
+  names = Tables.columnnames(cols)
   snames = choose(transform.colspec, names)
 
   # use selected columns to calculate new indices

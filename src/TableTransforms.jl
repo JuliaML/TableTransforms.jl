@@ -67,9 +67,12 @@ export
   Quantile,
   Functional,
   EigenAnalysis,
-  PCA, DRS, SDS,
+  PCA,
+  DRS,
+  SDS,
   ProjectionPursuit,
   RowTable,
   ColTable,
-  →, ⊔
+  →,
+  ⊔
 end

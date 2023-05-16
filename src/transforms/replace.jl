@@ -25,20 +25,20 @@ Replace(pairs::Pair...) = Replace(IdDict(values(pairs)))
 isrevertible(::Type{<:Replace}) = true
 
 function applyfeat(transform::Replace, feat, prep)
-  cols  = Tables.columns(feat)
+  cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
 
   olds = keys(transform.pairs)
   values = map(names) do nm
-    x    = Tables.getcolumn(cols, nm)
-    y    = [get(transform.pairs, xᵢ, xᵢ) for xᵢ in x]
+    x = Tables.getcolumn(cols, nm)
+    y = [get(transform.pairs, xᵢ, xᵢ) for xᵢ in x]
     inds = [findall(xᵢ -> xᵢ === old, x) .=> old for old in olds]
-    rev  = Dict(reduce(vcat, inds))
+    rev = Dict(reduce(vcat, inds))
     y, rev
   end
 
   columns = first.(values)
-  fcache  = last.(values)
+  fcache = last.(values)
 
   𝒯 = (; zip(names, columns)...)
   newfeat = 𝒯 |> Tables.materializer(feat)
@@ -46,7 +46,7 @@ function applyfeat(transform::Replace, feat, prep)
 end
 
 function revertfeat(::Replace, newfeat, fcache)
-  cols  = Tables.columns(newfeat)
+  cols = Tables.columns(newfeat)
   names = Tables.columnnames(cols)
 
   columns = map(names, fcache) do nm, rev

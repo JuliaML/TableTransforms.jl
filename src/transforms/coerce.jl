@@ -22,30 +22,27 @@ struct Coerce{P} <: FeatureTransform
   verbosity::Int
 end
 
-Coerce(pair::Pair{Symbol,<:Type}...; tight=false, verbosity=1) = 
-  Coerce(pair, tight, verbosity)
+Coerce(pair::Pair{Symbol,<:Type}...; tight=false, verbosity=1) = Coerce(pair, tight, verbosity)
 
 isrevertible(::Type{<:Coerce}) = true
 
 function applyfeat(transform::Coerce, feat, prep)
-  newtable = coerce(feat, transform.pairs...;
-                    tight=transform.tight,
-                    verbosity=transform.verbosity)
+  newtable = coerce(feat, transform.pairs...; tight=transform.tight, verbosity=transform.verbosity)
 
   types = Tables.schema(feat).types
-  
+
   newtable, types
 end
 
 function revertfeat(::Coerce, newfeat, fcache)
   cols = Tables.columns(newfeat)
   names = Tables.columnnames(cols)
-  
+
   oldcols = map(zip(fcache, names)) do (T, n)
     x = Tables.getcolumn(cols, n)
     collect(T, x)
   end
-    
+
   𝒯 = (; zip(names, oldcols)...)
   𝒯 |> Tables.materializer(newfeat)
 end

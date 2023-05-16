@@ -3,7 +3,7 @@
   y = x + rand(Normal(0, 2), 1500)
   z = y + rand(Normal(0, 5), 1500)
   t = Table(; x, y, z)
-  
+
   T = Scale(low=0.2, high=0.8) → EigenAnalysis(:VDV)
   n, c = apply(T, t)
   tₒ = revert(T, n, c)

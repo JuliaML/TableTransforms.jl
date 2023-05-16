@@ -28,42 +28,39 @@ end
 
 Functional(func) = Functional(AllSpec(), func)
 
-Functional(pairs::Pair{T}...) where {T<:Col} =
-  Functional(colspec(first.(pairs)), last.(pairs))
+Functional(pairs::Pair{T}...) where {T<:Col} = Functional(colspec(first.(pairs)), last.(pairs))
 
 Functional() = throw(ArgumentError("Cannot create a Functional object without arguments."))
 
 # known invertible functions
-inverse(::typeof(log))  = exp
-inverse(::typeof(exp))  = log
-inverse(::typeof(cos))  = acos
+inverse(::typeof(log)) = exp
+inverse(::typeof(exp)) = log
+inverse(::typeof(cos)) = acos
 inverse(::typeof(acos)) = cos
-inverse(::typeof(sin))  = asin
+inverse(::typeof(sin)) = asin
 inverse(::typeof(asin)) = sin
-inverse(::typeof(cosd))  = acosd
+inverse(::typeof(cosd)) = acosd
 inverse(::typeof(acosd)) = cosd
-inverse(::typeof(sind))  = asind
+inverse(::typeof(sind)) = asind
 inverse(::typeof(asind)) = sind
 inverse(::typeof(identity)) = identity
 
 # fallback to nothing
 inverse(::Any) = nothing
 
-isrevertible(transform::Functional{AllSpec}) =
-  !isnothing(inverse(transform.func))
+isrevertible(transform::Functional{AllSpec}) = !isnothing(inverse(transform.func))
 
-isrevertible(transform::Functional) =
-  all(!isnothing, inverse.(transform.func))
+isrevertible(transform::Functional) = all(!isnothing, inverse.(transform.func))
 
 _funcdict(func, names) = Dict(nm => func for nm in names)
 _funcdict(func::Tuple, names) = Dict(names .=> func)
 
-function applyfeat(transform::Functional, feat, prep) 
+function applyfeat(transform::Functional, feat, prep)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
   snames = choose(transform.colspec, names)
   funcs = _funcdict(transform.func, snames)
-  
+
   columns = map(names) do nm
     x = Tables.getcolumn(cols, nm)
     if nm ∈ snames
@@ -85,7 +82,7 @@ function revertfeat(transform::Functional, newfeat, fcache)
 
   cols = Tables.columns(newfeat)
   names = Tables.columnnames(cols)
-  
+
   snames, funcs = fcache
 
   columns = map(names) do nm

@@ -51,8 +51,7 @@ struct EigenAnalysis <: FeatureTransform
   end
 end
 
-EigenAnalysis(proj; maxdim=nothing, pratio=1.0) = 
-  EigenAnalysis(proj, maxdim, pratio)
+EigenAnalysis(proj; maxdim=nothing, pratio=1.0) = EigenAnalysis(proj, maxdim, pratio)
 
 assertions(::Type{EigenAnalysis}) = [SciTypeAssertion{Continuous}()]
 
@@ -130,10 +129,10 @@ _maxdim(::Nothing, Y) = size(Y, 2)
 
 function outdim(transform, Y, λ)
   pratio = transform.pratio
-  csums  = cumsum(λ) 
+  csums = cumsum(λ)
   ratios = csums ./ last(csums)
-  mdim   = _maxdim(transform.maxdim, Y)
-  pdim   = findfirst(≥(pratio), ratios)
+  mdim = _maxdim(transform.maxdim, Y)
+  pdim = findfirst(≥(pratio), ratios)
   min(mdim, pdim)
 end
 
@@ -144,15 +143,15 @@ function eigenmatrices(transform, Y)
   λ, V = eigen(Σ, sortby=λ -> -real(λ))
 
   if proj == :V
-    S   = V
+    S = V
     S⁻¹ = transpose(V)
   elseif proj == :VD
-    Λ   = Diagonal(sqrt.(λ))
-    S   = V * inv(Λ)
+    Λ = Diagonal(sqrt.(λ))
+    S = V * inv(Λ)
     S⁻¹ = Λ * transpose(V)
   elseif proj == :VDV
-    Λ   = Diagonal(sqrt.(λ))
-    S   = V * inv(Λ) * transpose(V)
+    Λ = Diagonal(sqrt.(λ))
+    S = V * inv(Λ) * transpose(V)
     S⁻¹ = V * Λ * transpose(V)
   end
 
@@ -177,8 +176,7 @@ PCA(pratio=0.86)
 PCA(maxdim=2, pratio=0.86)
 ```
 """
-PCA(; maxdim=nothing, pratio=1.0) = 
-  ZScore() → EigenAnalysis(:V, maxdim, pratio)
+PCA(; maxdim=nothing, pratio=1.0) = ZScore() → EigenAnalysis(:V, maxdim, pratio)
 
 """
     DRS(; maxdim=nothing, pratio=1.0)
@@ -196,8 +194,7 @@ DRS(pratio=0.87)
 DRS(maxdim=3, pratio=0.87)
 ```
 """
-DRS(; maxdim=nothing, pratio=1.0) = 
-  ZScore() → EigenAnalysis(:VD, maxdim, pratio)
+DRS(; maxdim=nothing, pratio=1.0) = ZScore() → EigenAnalysis(:VD, maxdim, pratio)
 
 """
     SDS(; maxdim=nothing, pratio=1.0)
@@ -216,5 +213,4 @@ SDS(pratio=0.88)
 SDS(maxdim=4, pratio=0.88)
 ```
 """
-SDS(; maxdim=nothing, pratio=1.0) = 
-  ZScore() → EigenAnalysis(:VDV, maxdim, pratio)
+SDS(; maxdim=nothing, pratio=1.0) = ZScore() → EigenAnalysis(:VDV, maxdim, pratio)

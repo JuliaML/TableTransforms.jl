@@ -16,8 +16,7 @@ struct MetaTable{T,M<:Metadata}
   meta::M
 end
 
-Base.:(==)(a::MetaTable, b::MetaTable) =
-  a.table == b.table && a.meta == b.meta
+Base.:(==)(a::MetaTable, b::MetaTable) = a.table == b.table && a.meta == b.meta
 
 TT.divide(metatable::MetaTable) = metatable.table, metatable.meta
 TT.attach(feat, meta::Metadata) = MetaTable(feat, meta)

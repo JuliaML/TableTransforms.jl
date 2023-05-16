@@ -23,7 +23,7 @@
 
   T = Sample(30, replace=true, ordered=true)
   n, c = apply(T, t)
-  trows = Tables.rowtable(t) 
+  trows = Tables.rowtable(t)
   @test unique(Tables.rowtable(n)) == trows
 
   T = Sample(6, replace=false, ordered=true)
@@ -50,7 +50,7 @@
   @test isapprox(count(==(trows[5]), nrows) / 10_000, 0.10, atol=0.01)
   @test isapprox(count(==(trows[6]), nrows) / 10_000, 0.15, atol=0.01)
 
-  w = [1.,2.,3.,4.,5.,6.]
+  w = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
   T = Sample(10_000, w, replace=true, rng=MersenneTwister(2))
   n, c = apply(T, t)
   nrows = Tables.rowtable(n)

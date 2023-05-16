@@ -16,7 +16,7 @@
   # special characters
   name = "a&B"
   @test TableTransforms._clean(name) == "aB"
-  
+
   name = "apple#"
   @test TableTransforms._clean(name) == "apple"
 
@@ -41,7 +41,7 @@
 
   # uniqueness test
   names = (Symbol("AppleTree"), Symbol("apple tree"), Symbol("apple_tree"))
-  cols = ([1,2,3], [4,5,6], [7,8,9])
+  cols = ([1, 2, 3], [4, 5, 6], [7, 8, 9])
   t = Table(; zip(names, cols)...)
   rt = Tables.rowtable(t)
   T = StdNames(:upper)
@@ -49,10 +49,10 @@
   columns = Tables.columns(n)
   columnnames = Tables.columnnames(columns)
   @test columnnames == (:APPLETREE, :APPLETREE_, :APPLETREE__)
-  
+
   # row table test
   names = (:a, Symbol("apple tree"), Symbol("banana tree"))
-  cols = ([1,2,3], [4,5,6], [7,8,9])
+  cols = ([1, 2, 3], [4, 5, 6], [7, 8, 9])
   t = Table(; zip(names, cols)...)
   rt = Tables.rowtable(t)
   T = StdNames()

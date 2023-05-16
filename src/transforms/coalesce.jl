@@ -40,8 +40,7 @@ end
 
 Coalesce(; value) = Coalesce(AllSpec(), value)
 Coalesce(spec; value) = Coalesce(colspec(spec), value)
-Coalesce(cols::C...; value) where {C<:Col} = 
-  Coalesce(colspec(cols), value)
+Coalesce(cols::C...; value) where {C<:Col} = Coalesce(colspec(cols), value)
 
 isrevertible(::Type{<:Coalesce}) = true
 

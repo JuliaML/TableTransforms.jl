@@ -60,7 +60,7 @@
   @test t == n
   tₒ = revert(T, n, c)
   @test t == tₒ
-  
+
   # collumns with diferent types
   a = [3, 2, 1, 4, 5, 3]
   b = [2.5, 4.5, 4.7, 2.5, 2.5, 5.3]

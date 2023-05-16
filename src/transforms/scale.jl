@@ -46,13 +46,11 @@ struct Scale{S<:ColSpec,T} <: ColwiseFeatureTransform
   end
 end
 
-Scale(colspec::ColSpec, low, high) = 
-  Scale(colspec, promote(low, high)...)
+Scale(colspec::ColSpec, low, high) = Scale(colspec, promote(low, high)...)
 
 Scale(; low=0.25, high=0.75) = Scale(AllSpec(), low, high)
 Scale(spec; low=0.25, high=0.75) = Scale(colspec(spec), low, high)
-Scale(cols::C...; low=0.25, high=0.75) where {C<:Col} = 
-  Scale(colspec(cols), low, high)
+Scale(cols::C...; low=0.25, high=0.75) where {C<:Col} = Scale(colspec(cols), low, high)
 
 assertions(transform::Scale) = [SciTypeAssertion{Continuous}(transform.colspec)]
 
@@ -66,7 +64,7 @@ function colcache(transform::Scale, x)
   (; xl, xh)
 end
 
-colapply(::Scale, x, c)  = @. (x - c.xl) / (c.xh - c.xl)
+colapply(::Scale, x, c) = @. (x - c.xl) / (c.xh - c.xl)
 
 colrevert(::Scale, y, c) = @. (c.xh - c.xl) * y + c.xl
 

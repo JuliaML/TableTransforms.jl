@@ -34,8 +34,7 @@ end
 
 ZScore() = ZScore(AllSpec())
 ZScore(spec) = ZScore(colspec(spec))
-ZScore(cols::C...) where {C<:Col} = 
-  ZScore(colspec(cols))
+ZScore(cols::C...) where {C<:Col} = ZScore(colspec(cols))
 
 assertions(transform::ZScore) = [SciTypeAssertion{Continuous}(transform.colspec)]
 
@@ -47,6 +46,6 @@ function colcache(::ZScore, x)
   (μ=μ, σ=σ)
 end
 
-colapply(::ZScore, x, c)  = @. (x - c.μ) / c.σ
+colapply(::ZScore, x, c) = @. (x - c.μ) / c.σ
 
 colrevert(::ZScore, y, c) = @. c.σ * y + c.μ
