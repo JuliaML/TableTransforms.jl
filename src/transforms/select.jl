@@ -129,7 +129,7 @@ Reject(spec) = Reject(colspec(spec))
 
 Reject(cols::T...) where {T<:Col} = Reject(colspec(cols))
 
-# argumet erros
+# argument errors
 Reject() = throw(ArgumentError("Cannot create a Reject object without arguments."))
 Reject(::AllSpec) = throw(ArgumentError("Cannot reject all columns."))
 
