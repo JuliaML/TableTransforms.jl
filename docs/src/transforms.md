@@ -1,6 +1,6 @@
 # Transforms
 
-Below is the list of tranforms that are are available in this package.
+Below is the list of transforms that are are available in this package.
 
 ## Select
 

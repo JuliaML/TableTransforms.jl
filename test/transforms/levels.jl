@@ -101,7 +101,7 @@
   T = Levels("x" => ["n", "y", "m"], "y" => 1:4)
   @test_throws AssertionError apply(T, t)
 
-  # throws: non categorical collumn
+  # throws: non categorical column
   T = Levels(:a => [true, false], ordered=[:a])
   @test_throws AssertionError apply(T, t)
 
