@@ -21,10 +21,9 @@ using NelderMead: optimise
 import Distributions: ContinuousUnivariateDistribution
 import Distributions: quantile, cdf
 
-import TransformsBase: Transform
+import TransformsBase: Transform, Identity, →
 import TransformsBase: assertions, isrevertible, preprocess
 import TransformsBase: apply, revert, reapply
-import TransformsBase: Identity, →
 
 include("colspec.jl")
 include("assertions.jl")

@@ -1,7 +1,7 @@
 name = "TableTransforms"
 uuid = "0d432bfd-3ee1-4ac1-886a-39f05cc69a3e"
 authors = ["Júlio Hoffimann <julio.hoffimann@gmail.com> and contributors"]
-version = "1.9.2"
+version = "1.9.3"
 
 [deps]
 AbstractTrees = "1520ce14-60c1-5f80-bbc7-55ef81b5835c"
@@ -28,5 +28,5 @@ ScientificTypes = "3.0"
 StatsBase = "0.33, 0.34"
 Tables = "1.6"
 Transducers = "0.4"
-TransformsBase = "0.1"
+TransformsBase = "1.0"
 julia = "1.6"
