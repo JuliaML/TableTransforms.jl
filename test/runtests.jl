@@ -36,14 +36,6 @@ end
 Polynomial(args::T...) where {T<:Real} = Polynomial(collect(args))
 (p::Polynomial)(x) = sum(a * x^(i - 1) for (i, a) in enumerate(p.coeffs))
 
-function isequalmissing(a, b)
-  length(a) == length(b) || return false
-  for (x, y) in zip(a, b)
-    x === y || return false
-  end
-  return true
-end
-
 include("metatable.jl")
 
 # list of tests

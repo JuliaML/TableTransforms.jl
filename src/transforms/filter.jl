@@ -98,26 +98,25 @@ DropMissing(r"[bce]")
 ## Notes
 
 * The transform can alter the element type of columns from `Union{Missing,T}` to `T`.
+* If the transformed column has only missing values, it will be converted to an empty column of type `Any`.
 """
 struct DropMissing{S<:ColSpec} <: StatelessFeatureTransform
   colspec::S
 end
 
 DropMissing() = DropMissing(AllSpec())
-
 DropMissing(spec) = DropMissing(colspec(spec))
-
 DropMissing(cols::T...) where {T<:Col} = DropMissing(colspec(cols))
 
 isrevertible(::Type{<:DropMissing}) = true
 
-_ftrans(::DropMissing{AllSpec}, cols) = Filter(row -> all(!ismissing, row))
-
-_ftrans(::DropMissing, cols) = Filter(row -> all(!ismissing, getindex.(Ref(row), cols)))
+_ftrans(::DropMissing{AllSpec}, snames) = Filter(row -> all(!ismissing, row))
+_ftrans(::DropMissing, snames) = Filter(row -> all(!ismissing, row[nm] for nm in snames))
 
 # nonmissing 
 _nonmissing(::Type{T}, x) where {T} = x
 _nonmissing(::Type{Union{Missing,T}}, x) where {T} = collect(T, x)
+_nonmissing(::Type{Missing}, x) = []
 _nonmissing(x) = _nonmissing(eltype(x), x)
 
 function preprocess(transform::DropMissing, table)
@@ -137,11 +136,11 @@ function applyfeat(::DropMissing, feat, prep)
   # drop Missing type
   cols = Tables.columns(newfeat)
   names = Tables.columnnames(cols)
-  ncols = map(names) do n
-    x = Tables.getcolumn(cols, n)
-    n ∈ snames ? _nonmissing(x) : x
+  columns = map(names) do nm
+    x = Tables.getcolumn(cols, nm)
+    nm ∈ snames ? _nonmissing(x) : x
   end
-  𝒯 = (; zip(names, ncols)...)
+  𝒯 = (; zip(names, columns)...)
   newfeat = 𝒯 |> Tables.materializer(feat)
 
   # original column types
@@ -154,15 +153,15 @@ function revertfeat(::DropMissing, newfeat, fcache)
   ftrans, ffcache, types = fcache
 
   # reintroduce Missing type
-  ncols = Tables.columns(newfeat)
-  names = Tables.columnnames(ncols)
-  ocols = map(zip(types, names)) do (T, n)
-    x = Tables.getcolumn(ncols, n)
+  cols = Tables.columns(newfeat)
+  names = Tables.columnnames(cols)
+  columns = map(zip(types, names)) do (T, nm)
+    x = Tables.getcolumn(cols, nm)
     collect(T, x)
   end
-  𝒯 = (; zip(names, ocols)...)
-  otable = 𝒯 |> Tables.materializer(newfeat)
+  𝒯 = (; zip(names, columns)...)
+  ofeat = 𝒯 |> Tables.materializer(newfeat)
 
   # revert filter transform
-  revertfeat(ftrans, otable, ffcache)
+  revertfeat(ftrans, ofeat, ffcache)
 end
