@@ -98,6 +98,7 @@ DropMissing(r"[bce]")
 ## Notes
 
 * The transform can alter the element type of columns from `Union{Missing,T}` to `T`.
+* If the transformed column has only missing values, it will be converted to an empty column of type `Any`.
 """
 struct DropMissing{S<:ColSpec} <: StatelessFeatureTransform
   colspec::S
