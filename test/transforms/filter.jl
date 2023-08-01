@@ -267,6 +267,91 @@ end
     @test isequalmissing(row, rowₒ)
   end
 
+  # missing value columns
+  a = fill(missing, 6)
+  b = [missing, 4, 4, 5, 8, 5]
+  c = [1, 1, 6, 2, 4, missing]
+  d = [4, 3, 7, 5, 4, missing]
+  e = [missing, 5, 2, 6, 5, 2]
+  f = fill(missing, 6)
+  t = Table(; a, b, c, d, e, f)
+
+  T = DropMissing()
+  n, c = apply(T, t)
+  tₒ = revert(T, n, c)
+  ttypes = Tables.schema(t).types
+  ntypes = Tables.schema(n).types
+  @test isequal(n.a, [])
+  @test isequal(n.b, [])
+  @test isequal(n.c, [])
+  @test isequal(n.d, [])
+  @test isequal(n.e, [])
+  @test isequal(n.f, [])
+  @test ntypes[1] == Any
+  @test ntypes[2] == Int
+  @test ntypes[3] == Int
+  @test ntypes[4] == Int
+  @test ntypes[5] == Int
+  @test ntypes[6] == Any
+  @test ttypes == Tables.schema(tₒ).types
+
+  T = DropMissing(:a)
+  n, c = apply(T, t)
+  tₒ = revert(T, n, c)
+  ttypes = Tables.schema(t).types
+  ntypes = Tables.schema(n).types
+  @test isequal(n.a, [])
+  @test isequal(n.b, [])
+  @test isequal(n.c, [])
+  @test isequal(n.d, [])
+  @test isequal(n.e, [])
+  @test isequal(n.f, [])
+  @test ntypes[1] == Any
+  @test ntypes[2] == Union{Missing,Int}
+  @test ntypes[3] == Union{Missing,Int}
+  @test ntypes[4] == Union{Missing,Int}
+  @test ntypes[5] == Union{Missing,Int}
+  @test ntypes[6] == Missing
+  @test ttypes == Tables.schema(tₒ).types
+
+  T = DropMissing(:f)
+  n, c = apply(T, t)
+  tₒ = revert(T, n, c)
+  ttypes = Tables.schema(t).types
+  ntypes = Tables.schema(n).types
+  @test isequal(n.a, [])
+  @test isequal(n.b, [])
+  @test isequal(n.c, [])
+  @test isequal(n.d, [])
+  @test isequal(n.e, [])
+  @test isequal(n.f, [])
+  @test ntypes[1] == Missing
+  @test ntypes[2] == Union{Missing,Int}
+  @test ntypes[3] == Union{Missing,Int}
+  @test ntypes[4] == Union{Missing,Int}
+  @test ntypes[5] == Union{Missing,Int}
+  @test ntypes[6] == Any
+  @test ttypes == Tables.schema(tₒ).types
+
+  T = DropMissing(:b, :c, :d, :e)
+  n, c = apply(T, t)
+  tₒ = revert(T, n, c)
+  ttypes = Tables.schema(t).types
+  ntypes = Tables.schema(n).types
+  @test isequal(n.a, fill(missing, 4))
+  @test isequal(n.b, [4, 4, 5, 8])
+  @test isequal(n.c, [1, 6, 2, 4])
+  @test isequal(n.d, [3, 7, 5, 4])
+  @test isequal(n.e, [5, 2, 6, 5])
+  @test isequal(n.f, fill(missing, 4))
+  @test ntypes[1] == Missing
+  @test ntypes[2] == Int
+  @test ntypes[3] == Int
+  @test ntypes[4] == Int
+  @test ntypes[5] == Int
+  @test ntypes[6] == Missing
+  @test ttypes == Tables.schema(tₒ).types
+
   # throws: empty tuple
   @test_throws ArgumentError DropMissing(())
 
