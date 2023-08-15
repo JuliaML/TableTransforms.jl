@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    OneHot(col; categ=true)
+    OneHot(col; categ=false)
 
 Transforms categorical column `col` into one-hot columns of levels
 returned by the `levels` function of CategoricalArrays.jl.
@@ -16,7 +16,7 @@ columns to categorical arrays as opposed to boolean vectors.
 OneHot(1)
 OneHot(:a)
 OneHot("a")
-OneHot("a", categ=false)
+OneHot("a", categ=true)
 ```
 """
 struct OneHot{S<:ColSpec} <: StatelessFeatureTransform
@@ -28,7 +28,7 @@ struct OneHot{S<:ColSpec} <: StatelessFeatureTransform
   end
 end
 
-OneHot(col; categ=true) = OneHot(col, categ)
+OneHot(col; categ=false) = OneHot(col, categ)
 
 assertions(transform::OneHot) = [SciTypeAssertion{Finite}(transform.colspec)]
 
