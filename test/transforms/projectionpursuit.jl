@@ -1,5 +1,6 @@
 @testset "ProjectionPursuit" begin
-  N = 100_000
+  rng = MersenneTwister(42)
+  N = 10_000
   a = [2randn(rng, N ÷ 2) .+ 6; randn(rng, N ÷ 2)]
   b = [3randn(rng, N ÷ 2); 2randn(rng, N ÷ 2)]
   c = randn(rng, N)
@@ -12,28 +13,9 @@
   @test Tables.columnnames(n) == (:a, :b, :c, :d)
 
   μ = mean(Tables.matrix(n), dims=1)
-  @test isapprox(μ[1], 0; atol=1e-4)
-  @test isapprox(μ[2], 0; atol=1e-4)
-  @test isapprox(μ[3], 0; atol=1e-4)
-  @test isapprox(μ[4], 0; atol=1e-4)
-
   Σ = cov(Tables.matrix(n))
-  @test isapprox(Σ[1, 2], 0; atol=1e-3)
-  @test isapprox(Σ[1, 3], 0; atol=1e-3)
-  @test isapprox(Σ[1, 4], 0; atol=1e-3)
-  @test isapprox(Σ[2, 1], 0; atol=1e-3)
-  @test isapprox(Σ[2, 3], 0; atol=1e-3)
-  @test isapprox(Σ[2, 4], 0; atol=1e-3)
-  @test isapprox(Σ[3, 1], 0; atol=1e-3)
-  @test isapprox(Σ[3, 2], 0; atol=1e-3)
-  @test isapprox(Σ[3, 4], 0; atol=1e-3)
-  @test isapprox(Σ[4, 1], 0; atol=1e-3)
-  @test isapprox(Σ[4, 2], 0; atol=1e-3)
-  @test isapprox(Σ[4, 3], 0; atol=1e-3)
-  @test isapprox(Σ[1, 1], 1; atol=1e-2)
-  @test isapprox(Σ[2, 2], 1; atol=1e-2)
-  @test isapprox(Σ[3, 3], 1; atol=1e-2)
-  @test isapprox(Σ[4, 4], 1; atol=1e-2)
+  @test all(isapprox.(μ, 0, atol=1e-8))
+  @test all(isapprox.(Σ, I(4), atol=1e-8))
 
   tₒ = revert(T, n, c)
 
@@ -54,13 +36,9 @@
   n, c = apply(T, t)
 
   μ = mean(Tables.matrix(n), dims=1)
-  @test isapprox(μ[1], 0; atol=1e-6)
-  @test isapprox(μ[2], 0; atol=1e-6)
   Σ = cov(Tables.matrix(n))
-  @test isapprox(Σ[1, 1], 1; atol=1e-6)
-  @test isapprox(Σ[1, 2], 0; atol=1e-6)
-  @test isapprox(Σ[2, 1], 0; atol=1e-6)
-  @test isapprox(Σ[2, 2], 1; atol=1e-6)
+  @test all(isapprox.(μ, 0, atol=1e-8))
+  @test all(isapprox.(Σ, I(2), atol=1e-8))
 
   tₒ = revert(T, n, c)
 
