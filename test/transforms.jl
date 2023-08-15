@@ -26,6 +26,7 @@ transformfiles = [
 
 @testset "Transforms" begin
   for transformfile in transformfiles
+    println("Testing $transformfile...")
     include("transforms/$transformfile")
   end
 end

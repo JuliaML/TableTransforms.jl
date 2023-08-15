@@ -44,6 +44,7 @@ testfiles =
 
 @testset "TableTransforms.jl" begin
   for testfile in testfiles
+    println("Testing $testfile...")
     include(testfile)
   end
 end
