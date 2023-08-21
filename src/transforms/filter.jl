@@ -12,6 +12,10 @@ Filters the table returning only the rows where the `func` returns true.
 ```julia
 Filter(row -> sum(row) > 10)
 Filter(row -> row.a == true && row.b < 30)
+Filter(row -> row."a" == true && row."b" < 30)
+Filter(row -> row[1] == true && row[2] < 30)
+Filter(row -> row[:a] == true && row[:b] < 30)
+Filter(row -> row["a"] == true && row["b"] < 30)
 ```
 
 ## Notes
@@ -26,7 +30,7 @@ isrevertible(::Type{<:Filter}) = true
 
 function preprocess(transform::Filter, table)
   # lazy row iterator
-  rows = Tables.rows(table)
+  rows = tablerows(table)
 
   # selected indices
   sinds, nrows = Int[], 0
