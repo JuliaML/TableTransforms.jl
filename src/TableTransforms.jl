@@ -57,6 +57,7 @@ export
   Coalesce,
   Coerce,
   Levels,
+  Indicator,
   OneHot,
   Identity,
   Center,
