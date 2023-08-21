@@ -40,7 +40,7 @@ Base.getindex(row::TableRow, nm::AbstractString) = Tables.getcolumn(row, Symbol(
 
 # iterator interface
 Base.length(row::TableRow) = length(Tables.columnnames(row))
-Base.iterate(row::TableRow, state::Int=1) = state > length(row) ? nothing : (Tables.getcolumn(row, state), state + 1)
+Base.iterate(row::TableRow, state=1) = state > length(row) ? nothing : (Tables.getcolumn(row, state), state + 1)
 
 #--------------
 # COLUMN TABLE
@@ -59,7 +59,7 @@ end
 
 # iterator interface
 Base.length(rows::CTableRows) = rows.nrows
-Base.iterate(rows::CTableRows, state::Int=1) = state > length(rows) ? nothing : (CTableRow(rows.cols, state), state + 1)
+Base.iterate(rows::CTableRows, state=1) = state > length(rows) ? nothing : (CTableRow(rows.cols, state), state + 1)
 
 struct CTableRow{T} <: TableRow
   cols::T
