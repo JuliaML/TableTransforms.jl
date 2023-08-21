@@ -1,42 +1,42 @@
 @testset "StdNames" begin
   names = ["apple banana", "apple\tbanana", "apple_banana", "apple-banana", "apple_Banana"]
   for name in names
-    @test TableTransforms._camel(name) == "AppleBanana"
-    @test TableTransforms._snake(name) == "apple_banana"
-    @test TableTransforms._upper(name) == "APPLEBANANA"
+    @test TT._camel(name) == "AppleBanana"
+    @test TT._snake(name) == "apple_banana"
+    @test TT._upper(name) == "APPLEBANANA"
   end
 
   names = ["a", "A", "_a", "_A", "a ", "A "]
   for name in names
-    @test TableTransforms._camel(name) == "A"
-    @test TableTransforms._snake(name) == "a"
-    @test TableTransforms._upper(name) == "A"
+    @test TT._camel(name) == "A"
+    @test TT._snake(name) == "a"
+    @test TT._upper(name) == "A"
   end
 
   # special characters
   name = "a&B"
-  @test TableTransforms._clean(name) == "aB"
+  @test TT._clean(name) == "aB"
 
   name = "apple#"
-  @test TableTransforms._clean(name) == "apple"
+  @test TT._clean(name) == "apple"
 
   name = "apple-tree"
-  @test TableTransforms._clean(name) == "apple-tree"
+  @test TT._clean(name) == "apple-tree"
 
   # invariance test
   names = ["AppleTree", "BananaFruit", "PearSeed"]
   for name in names
-    @test TableTransforms._camel(name) == name
+    @test TT._camel(name) == name
   end
 
   names = ["apple_tree", "banana_fruit", "pear_seed"]
   for name in names
-    @test TableTransforms._snake(name) == name
+    @test TT._snake(name) == name
   end
 
   names = ["APPLETREE", "BANANAFRUIT", "PEARSEED"]
   for name in names
-    @test TableTransforms._upper(name) == name
+    @test TT._upper(name) == name
   end
 
   # uniqueness test

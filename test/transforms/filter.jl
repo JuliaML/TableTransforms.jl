@@ -65,6 +65,51 @@
   tₒ = revert(T, n, c)
   @test t == tₒ
 
+  # column access
+  T = Filter(row -> row."b" == 4 || row."f" == 4)
+  n, c = apply(T, t)
+  @test n.a == [3, 2, 1, 4]
+  @test n.b == [2, 4, 4, 5]
+  @test n.c == [1, 1, 6, 2]
+  @test n.d == [4, 3, 7, 5]
+  @test n.e == [5, 5, 2, 6]
+  @test n.f == [4, 4, 3, 4]
+  tₒ = revert(T, n, c)
+  @test t == tₒ
+
+  T = Filter(row -> row[2] == 4 || row[6] == 4)
+  n, c = apply(T, t)
+  @test n.a == [3, 2, 1, 4]
+  @test n.b == [2, 4, 4, 5]
+  @test n.c == [1, 1, 6, 2]
+  @test n.d == [4, 3, 7, 5]
+  @test n.e == [5, 5, 2, 6]
+  @test n.f == [4, 4, 3, 4]
+  tₒ = revert(T, n, c)
+  @test t == tₒ
+
+  T = Filter(row -> row[:b] == 4 || row[:f] == 4)
+  n, c = apply(T, t)
+  @test n.a == [3, 2, 1, 4]
+  @test n.b == [2, 4, 4, 5]
+  @test n.c == [1, 1, 6, 2]
+  @test n.d == [4, 3, 7, 5]
+  @test n.e == [5, 5, 2, 6]
+  @test n.f == [4, 4, 3, 4]
+  tₒ = revert(T, n, c)
+  @test t == tₒ
+
+  T = Filter(row -> row["b"] == 4 || row["f"] == 4)
+  n, c = apply(T, t)
+  @test n.a == [3, 2, 1, 4]
+  @test n.b == [2, 4, 4, 5]
+  @test n.c == [1, 1, 6, 2]
+  @test n.d == [4, 3, 7, 5]
+  @test n.e == [5, 5, 2, 6]
+  @test n.f == [4, 4, 3, 4]
+  tₒ = revert(T, n, c)
+  @test t == tₒ
+
   # reapply test
   T = Filter(row -> all(≤(5), row))
   n1, c1 = apply(T, t)

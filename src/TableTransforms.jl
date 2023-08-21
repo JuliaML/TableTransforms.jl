@@ -30,6 +30,7 @@ include("assertions.jl")
 include("tabletraits.jl")
 include("distributions.jl")
 include("tableselection.jl")
+include("tablerows.jl")
 include("transforms.jl")
 
 export
