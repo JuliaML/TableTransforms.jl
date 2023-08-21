@@ -40,7 +40,7 @@ Base.getindex(row::TableRow, nm::AbstractString) = Tables.getcolumn(row, Symbol(
 
 # iterator interface
 Base.length(row::TableRow) = length(Tables.columnnames(row))
-Base.iterate(row::TableRow, state=1) = state > length(row) ? nothing : (Tables.getcolumn(row, state), state + 1)
+Base.iterate(row::TableRow, state::Int=1) = state > length(row) ? nothing : (Tables.getcolumn(row, state), state + 1)
 
 #--------------
 # COLUMN TABLE
