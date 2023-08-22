@@ -1,14 +1,14 @@
-const DIVIDES = [:quantile, :linear]
+const SCALES = [:quantile, :linear]
 
 struct Indicator{S<:ColSpec} <: StatelessFeatureTransform
   colspec::S
-  divide::Symbol
+  scale::Symbol
   categ::Bool
   k::Int
 
-  function Indicator(col, divide, categ, k)
-    if divide ∉ DIVIDES
-      throw(ArgumentError("invalid `divide` option, use `:quantile` or `:linear`"))
+  function Indicator(col, scale, categ, k)
+    if scale ∉ SCALES
+      throw(ArgumentError("invalid `scale` option, use `:quantile` or `:linear`"))
     end
 
     if k < 1
@@ -16,11 +16,11 @@ struct Indicator{S<:ColSpec} <: StatelessFeatureTransform
     end
 
     cs = colspec([col])
-    new{typeof(cs)}(cs, divide, categ, k)
+    new{typeof(cs)}(cs, scale, categ, k)
   end
 end
 
-Indicator(col; divide=:quantile, categ=false, k=4) = Indicator(col, divide, categ, k)
+Indicator(col; scale=:quantile, categ=false, k=4) = Indicator(col, scale, categ, k)
 
 assertions(transform::Indicator) = [SciTypeAssertion{Continuous}(transform.colspec)]
 
@@ -28,7 +28,7 @@ isrevertible(::Type{<:Indicator}) = true
 
 function _intervals(transform::Indicator, x)
   k = transform.k
-  if transform.divide === :quantile
+  if transform.scale === :quantile
     p = range(0, 1, k + 1)
     quantile(x, p)
   else
