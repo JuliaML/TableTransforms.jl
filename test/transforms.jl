@@ -9,6 +9,7 @@ transformfiles = [
   "coalesce.jl",
   "coerce.jl",
   "levels.jl",
+  "indicator.jl",
   "onehot.jl",
   "identity.jl",
   "center.jl",
