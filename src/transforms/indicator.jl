@@ -9,37 +9,37 @@ option to return binary categorical values as opposed to raw 1s and 0s.
 
 Given a sequence of increasing threshold values `t1 < t2 < ... < tk`, the indicator
 transform converts a continuous variable `Z` into a sequence of `k` variables
-`I1 = Z <= t1`, `I2 = Z <= t2`, ..., `Ik = Z <= tk`.
+`Z_1 = Z <= t1`, `Z_2 = Z <= t2`, ..., `Z_k = Z <= tk`.
 
 # Examples
 
 ```julia
 Indicator(1, k=3)
-Indicator(:a, scale=:linear)
-Indicator("a", scale=:linear, categ=true, k=6)
+Indicator(:a, k=6, scale=:linear)
+Indicator("a", k=9, scale=:linear, categ=true)
 ```
 """
 struct Indicator{S<:ColSpec} <: StatelessFeatureTransform
   colspec::S
+  k::Int
   scale::Symbol
   categ::Bool
-  k::Int
 
-  function Indicator(col, scale, categ, k)
-    if scale ∉ SCALES
-      throw(ArgumentError("invalid `scale` option, use `:quantile` or `:linear`"))
-    end
-
+  function Indicator(col, k, scale, categ)
     if k < 1
       throw(ArgumentError("`k` must be greater than or equal to 1"))
     end
 
+    if scale ∉ SCALES
+      throw(ArgumentError("invalid `scale` option, use `:quantile` or `:linear`"))
+    end
+
     cs = colspec([col])
-    new{typeof(cs)}(cs, scale, categ, k)
+    new{typeof(cs)}(cs, k, scale, categ)
   end
 end
 
-Indicator(col; scale=:quantile, categ=false, k=4) = Indicator(col, scale, categ, k)
+Indicator(col; k=4, scale=:quantile, categ=false) = Indicator(col, k, scale, categ)
 
 assertions(transform::Indicator) = [SciTypeAssertion{Continuous}(transform.colspec)]
 
@@ -49,10 +49,11 @@ function _intervals(transform::Indicator, x)
   k = transform.k
   if transform.scale === :quantile
     p = range(0, 1, k + 1)
-    quantile(x, p)
+    quantile(x, p[2:end])
   else
     min, max = extrema(x)
-    range(min, max, k + 1)
+    ts = range(min, max, k + 1)
+    ts[2:end]
   end
 end
 
@@ -72,16 +73,7 @@ function applyfeat(transform::Indicator, feat, prep)
     while nm ∈ names
       nm = Symbol("$(nm)_")
     end
-  
-    y = if i == 1
-      x .≤ ts[i + 1]
-    elseif i == k
-      x .> ts[i]
-    else
-      ts[i] .< x .≤ ts[i + 1]
-    end
-
-    (nm, y)
+    (nm, x .≤ ts[i])
   end
 
   newnames = first.(tuples)
