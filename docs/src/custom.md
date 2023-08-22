@@ -68,7 +68,9 @@ Xt = X |> Standardize() |> Identity() |> Select([:A])
 It holds, however, that in case your transform can be reapplied, is revertible, or is invertible then you should continue implementing the interface to support such functionality.
 
 ### 3. Optionally implement `reapply`
+
 We need this in case of the `Standarize` transform because after computing the mean and std for some train table we may want to apply the transform directly given a test table. Hence, we implement `reapply` which has the same signature as apply but it takes an extra argument for the cache and doesn't return it.
+
 
 ```julia
 function TransformsBase.reapply(transform::Standardize, X, cache)
