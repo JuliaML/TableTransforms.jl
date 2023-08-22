@@ -1,5 +1,18 @@
 const SCALES = [:quantile, :linear]
 
+"""
+    Indicator(col; scale=:quantile, categ=false, k=4)
+
+to-do...
+
+# Examples
+
+```julia
+Indicator(1, k=3)
+Indicator(:a, scale=:linear)
+Indicator("a", scale=:linear, categ=true, k=6)
+```
+"""
 struct Indicator{S<:ColSpec} <: StatelessFeatureTransform
   colspec::S
   scale::Symbol
