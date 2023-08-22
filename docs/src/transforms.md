@@ -74,6 +74,12 @@ Coerce
 Levels
 ```
 
+## Indicator
+
+```@docs
+Indicator
+```
+
 ## OneHot
 
 ```@docs
