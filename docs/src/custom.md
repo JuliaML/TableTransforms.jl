@@ -9,12 +9,14 @@ use cases ranging from ordinary table operations to complex statistical transfor
 can be arbitrarily composed with one another through elegant syntax. It is easy to leverage all
 this functionality as a developer of new transforms, and this is the motivation of this guide.
 
-##  Custom Transform Basics
-All the transforms in this package implement the transforms interface defined in the `TransformsBase` package so this is really the only dependency you need. The interface assumes the following about your implementation:
+##  Basic assumptions
 
-- Your transform operates on a single table 
-- Your transform may be associated with some state that if computed while applying it for the first time and is then cached can help later reapply the transform on another table without recomputing the state
-- Your transform may be revertible, meaning that a transformed table can be brought back to its original form, and it may need to use the cache for that
+All the transforms in this package implement the transforms interface defined in the TransformsBase.jl
+package so this is really the only dependency needed. The interface assumes the following about new transforms:
+
+- The transform operates on a single table
+- The transform may be associated with some state that if computed while applying it for the first time and is then cached can help later reapply the transform on another table without recomputing the state
+- The transform may be revertible, meaning that a transformed table can be brought back to its original form, and it may need to use the cache for that
 - Your transform may be invertible in the mathematical sense
 
 !!! note "Revertible does not imply invertible"
