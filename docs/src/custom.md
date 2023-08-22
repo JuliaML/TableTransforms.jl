@@ -120,6 +120,7 @@ TransformsBase.isinvertible(::Type{Standardize}) = false
 ```
 
 If an arbitrary transform `T` is invertible we can rather specify that as true and follow up by implementing `Base.inv(::T)` which would be expected to return an instance of the inverse transform. For instance, for an identity transform we can do
+
 ```julia
 # interface struct
 struct Identity <: Transform end
