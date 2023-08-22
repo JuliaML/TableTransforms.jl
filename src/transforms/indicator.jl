@@ -69,10 +69,10 @@ function applyfeat(transform::Indicator, feat, prep)
   newcolumns = last.(tuples)
 
   # convert to categorical arrays if necessary
-  newcols = transform.categ ? categorical.(newcolumns, levels=[false, true]) : newcolumns
+  newcolumns = transform.categ ? categorical.(newcolumns, levels=[false, true]) : newcolumns
 
   splice!(names, ind, newnames)
-  splice!(columns, ind, newcols)
+  splice!(columns, ind, newcolumns)
 
   inds = ind:(ind + length(newnames) - 1)
 
