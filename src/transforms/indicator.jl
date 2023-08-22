@@ -39,7 +39,7 @@ struct Indicator{S<:ColSpec} <: StatelessFeatureTransform
   end
 end
 
-Indicator(col; k=4, scale=:quantile, categ=false) = Indicator(col, k, scale, categ)
+Indicator(col; k=10, scale=:quantile, categ=false) = Indicator(col, k, scale, categ)
 
 assertions(transform::Indicator) = [SciTypeAssertion{Continuous}(transform.colspec)]
 
