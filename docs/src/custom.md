@@ -113,6 +113,7 @@ end
 ```
 
 ### 5. Optionally specify that your transform is invertible and implement `Base.inv`
+
 Similar to reversibility, falls back to false by default. We can write that explicitly here since `Standardize` has no inverse if we are given nothing except for the table.
 
 ```julia
