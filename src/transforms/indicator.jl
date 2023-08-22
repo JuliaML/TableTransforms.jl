@@ -28,15 +28,13 @@ isrevertible(::Type{<:Indicator}) = true
 
 function _intervals(transform::Indicator, x)
   k = transform.k
-  ts = if transform.divide === :quantile
+  if transform.divide === :quantile
     p = range(0, 1, k + 1)
     quantile(x, p)
   else
     min, max = extrema(x)
-    collect(range(min, max, k + 1))
+    range(min, max, k + 1)
   end
-  ts[1] = typemin(eltype(x))
-  ts
 end
 
 function applyfeat(transform::Indicator, feat, prep)
@@ -55,7 +53,15 @@ function applyfeat(transform::Indicator, feat, prep)
     while nm ∈ names
       nm = Symbol("$(nm)_")
     end
-    y = ts[i] .< x .≤ ts[i + 1]
+  
+    y = if i == 1
+      x .≤ ts[i + 1]
+    elseif i == k
+      x .> ts[i]
+    else
+      ts[i] .< x .≤ ts[i + 1]
+    end
+
     (nm, y)
   end
 
