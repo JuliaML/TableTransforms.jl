@@ -1,5 +1,6 @@
-# Custom Transforms
-A short guide for extending the interface with your own custom transform.
+# Developer guide
+
+A short guide for extending the interface as a developer.
 
 ## Motivation
 
