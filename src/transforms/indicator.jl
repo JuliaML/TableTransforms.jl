@@ -53,14 +53,12 @@ isrevertible(::Type{<:Indicator}) = true
 
 function _intervals(transform::Indicator, x)
   k = transform.k
-  if transform.scale === :quantile
-    p = range(0, 1, k + 1)
-    quantile(x, p[2:end])
+  ts = if transform.scale === :quantile
+    quantile(x, range(0, 1, k + 1))
   else
-    min, max = extrema(x)
-    ts = range(min, max, k + 1)
-    ts[2:end]
+    range(extrema(x)..., k + 1)
   end
+  ts[(begin + 1):end]
 end
 
 function applyfeat(transform::Indicator, feat, prep)
