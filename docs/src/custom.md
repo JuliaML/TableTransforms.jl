@@ -4,7 +4,10 @@ A short guide for extending the interface as a developer.
 
 ## Motivation
 
-TableTransforms currently supports over 25 different transforms that cover a wide variety of use cases ranging from ordinary table operations to complex statistical transformations and that all can be arbitrarily composed with one another through elegant syntax. It is easy to leverage all of those benefits as a developer of a new transforms that operates on tables so that it perfectly integrates with the rest of the TableTransforms ecosystem.
+TableTransforms.jl currently supports over 25 different transforms that cover a wide variety of
+use cases ranging from ordinary table operations to complex statistical transformations, which
+can be arbitrarily composed with one another through elegant syntax. It is easy to leverage all
+this functionality as a developer of new transforms, and this is the motivation of this guide.
 
 ##  Custom Transform Basics
 All the transforms in this package implement the transforms interface defined in the `TransformsBase` package so this is really the only dependency you need. The interface assumes the following about your implementation:
