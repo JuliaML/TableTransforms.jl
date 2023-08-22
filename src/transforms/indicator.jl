@@ -11,11 +11,11 @@ Given a sequence of increasing threshold values `t1 < t2 < ... < tk`, the indica
 transform converts a continuous variable `Z` into a sequence of `k` variables
 `Z_1 = Z <= t1`, `Z_2 = Z <= t2`, ..., `Z_k = Z <= tk`.
 
-Scale options:
+## Scales:
+
 * `:quantile` - threshold values are calculated using the `quantile(Z, p)` function
-  with a linear range of probabilities of size `k`.
-* `:linear` - threshold values are calculated using a linear range of size `k`
-  with start and stop equal to min and max values of `Z`.
+  with a linear range of probabilities.
+* `:linear` - threshold values are calculated using a linear range.
 
 # Examples
 
