@@ -1,9 +1,15 @@
 const SCALES = [:quantile, :linear]
 
 """
-    Indicator(col; scale=:quantile, categ=false, k=4)
+    Indicator(col; k=10, scale=:quantile, categ=false)
 
-to-do...
+Transforms continuous variable into `k` indicator variables defined by
+half-intervals of `col` values in a given `scale`. Optionally, specify the `categ`
+option to return binary categorical values as opposed to raw 1s and 0s.
+
+Given a sequence of increasing threshold values `t1 < t2 < ... < tk`, the indicator
+transform converts a continuous variable `Z` into a sequence of `k` variables
+`I1 = Z <= t1`, `I2 = Z <= t2`, ..., `Ik = Z <= tk`.
 
 # Examples
 
