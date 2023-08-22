@@ -86,7 +86,6 @@ function TransformsBase.reapply(transform::Standardize, X, cache)
 end
 ```
 
-
 ### 4. Optionally specify that your transform is revertible and implement `revert`
 
 We can specify reversibility for an arbitrary transform `T` by setting `isrevertible(::Type{T})` to `true`. It's obvious that this should be supported by our transform so we do
