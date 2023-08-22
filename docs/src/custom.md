@@ -22,23 +22,19 @@ package so this is really the only dependency needed. The interface assumes the 
 !!! note "Revertible does not imply invertible"
     Reverting assumes that the transform has been applied already and reverts it. Meanwhile, invertible implies that there is a one-to-one mapping between the input and output tables so a table can be inverted to a corresponding input to the transform even if it was not transformed a priori.
 
-## Creating a custom transform
-In the following we shall demonstrate the steps to apply a custom transform. 
+## Defining a new transform
+
+In the following we shall demonstrate the steps to define a new transform.
 
 ### 1. Declare a new type for your transform
-The declaration struct should subtype `TransformsBase.Transforms` and it should have a named field for each input needed to apply the transform besides of the main table. For instance, if you want to call your transform `Standardize` and it takes two boolean inputs `center` and `scale`, then you should declare:
+
+The type should subtype `TransformsBase.Transform` and it should have a named field for each input needed to apply the transform besides the input table. For instance, if you want to call your transform `Standardize` and it takes two boolean inputs `center` and `scale`, then you should declare:
 
 ```julia
-struct Standardizer <: TransformsBase.Transform
+struct Standardize <: TransformsBase.Transform
     center::Bool
     scale::Bool
 end
-```
-You may implement keyword instructors as needed if some of the hyperparameters are optional. Thus, we follow up with:
-```julia
-Standardize(;center::Bool=true, scale::Bool=true) = Standardize(center, scale)
-```
-
 ### 2. Implement the `apply` method for your transform
 The `apply` method takes an object of your transform type and a table and returns a new table and cache. Suppose that the `Standardize` transform should zero-mean each column if `center` is true and scale each column to unit variance if `scale` is true, then the `apply` method should be implemented as follows:
 
