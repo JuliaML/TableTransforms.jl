@@ -58,17 +58,17 @@
   end
 
   @testset "StdNames" begin
-    T = StdNames(:upper)
+    T = StdNames(:upperflat)
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "StdNames(:upper)"
+    @test iostr == "StdNames(:upperflat)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     StdNames transform
-    └─ spec = :upper"""
+    └─ spec = :upperflat"""
   end
 
   @testset "Sort" begin
