@@ -22,7 +22,7 @@ Default to `:uppersnake` case specification.
 struct StdNames <: StatelessFeatureTransform
   spec::Symbol
 
-  function StdNames(spec = :uppersnake)
+  function StdNames(spec=:uppersnake)
     if spec ∉ SPECS
       throw(ArgumentError("invalid specification, use one of these: $SPECS"))
     end
