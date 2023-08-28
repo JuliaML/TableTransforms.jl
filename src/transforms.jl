@@ -99,7 +99,7 @@ these functions in parallel for all columns with multiple threads.
 
 ## Notes
 
-* All ColwiseFeatureTransform subtypes must have a `colspec` field.
+* `ColwiseFeatureTransform` subtypes must have a `colspec` field.
 """
 abstract type ColwiseFeatureTransform <: FeatureTransform end
 
