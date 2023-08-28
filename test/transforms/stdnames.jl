@@ -132,4 +132,7 @@
   n1, c1 = apply(T, rt)
   n2 = reapply(T, n1, c1)
   @test n1 == n2
+
+  # throws
+  @test_throws ArgumentError StdNames(:test)
 end
