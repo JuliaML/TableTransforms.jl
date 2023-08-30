@@ -81,9 +81,9 @@ colspec(nothing) # NoneSpec
 # if the argument is a ColSpec, return it
 colspec(NoneSpec()) # NoneSpec
 # single column selection
-colspec(1) # IndexSpec
 colspec(:a) # NameSpec
 colspec("a") # NameSpec
+colspec(1) # IndexSpec
 ```
 """
 colspec(spec::ColSpec) = spec
