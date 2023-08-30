@@ -139,7 +139,8 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Map(TableTransforms.ColSpec[[:a], [:a, :b]], Function[sin, $(typeof(fun))()], Union{Nothing, Symbol}[nothing, :c])"
+    @test iostr ==
+          "Map(TableTransforms.ColSpec[[:a], [:a, :b]], Function[sin, $(typeof(fun))()], Union{Nothing, Symbol}[nothing, :c])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
