@@ -274,12 +274,12 @@ end
 # IMPLEMENTATIONS
 # ----------------
 
-include("transforms/map.jl")
 include("transforms/select.jl")
 include("transforms/rename.jl")
 include("transforms/stdnames.jl")
 include("transforms/sort.jl")
 include("transforms/sample.jl")
+include("transforms/map.jl")
 include("transforms/filter.jl")
 include("transforms/replace.jl")
 include("transforms/coalesce.jl")

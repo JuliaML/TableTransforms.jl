@@ -45,13 +45,13 @@ export
   reapply,
 
   # built-in
-  Map,
   Select,
   Reject,
   Rename,
   StdNames,
   Sort,
   Sample,
+  Map,
   Filter,
   DropMissing,
   Replace,

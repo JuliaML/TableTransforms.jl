@@ -2,12 +2,6 @@
 
 Below is the list of transforms that are are available in this package.
 
-## Map
-
-```@docs
-Map
-```
-
 ## Select
 
 ```@docs
@@ -42,6 +36,12 @@ Sort
 
 ```@docs
 Sample
+```
+
+## Map
+
+```@docs
+Map
 ```
 
 ## Filter
