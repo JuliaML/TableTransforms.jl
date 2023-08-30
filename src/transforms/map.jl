@@ -10,7 +10,7 @@ the `map` function and saves the result in a new column named `targetₙ`.
 If the target column already exists in the table, the original
 column will be replaced. The column selection can be a single
 column identifier (index or name), a collection of identifiers
-or a regex expression.
+or a regular expression (regex).
 
 # Examples
 
