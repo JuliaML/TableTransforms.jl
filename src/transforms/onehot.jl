@@ -22,8 +22,8 @@ OneHot("a", categ=true)
 struct OneHot{S<:ColSpec} <: StatelessFeatureTransform
   colspec::S
   categ::Bool
-  function OneHot(col, categ)
-    cs = colspec([col])
+  function OneHot(col::Col, categ)
+    cs = colspec(col)
     new{typeof(cs)}(cs, categ)
   end
 end

@@ -43,16 +43,13 @@ const MapPair = Union{PairWithTarget,PairWithoutTarget}
 _extract(p::PairWithTarget) = first(p), first(last(p)), last(last(p))
 _extract(p::PairWithoutTarget) = first(p), last(p), nothing
 
-_colspec(spec) = colspec(spec)
-_colspec(col::Col) = colspec([col])
-
 _target(name) = name
 _target(name::AbstractString) = Symbol(name)
 
 function Map(pairs::MapPair...)
   tuples = map(pairs) do p
     spec, fun, name = _extract(p)
-    (_colspec(spec), fun, _target(name))
+    (colspec(spec), fun, _target(name))
   end
   colspecs = map(t -> t[1], tuples) |> collect
   funs = map(t -> t[2], tuples) |> collect

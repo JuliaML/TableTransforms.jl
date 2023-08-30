@@ -31,7 +31,7 @@ struct Indicator{S<:ColSpec} <: StatelessFeatureTransform
   scale::Symbol
   categ::Bool
 
-  function Indicator(col, k, scale, categ)
+  function Indicator(col::Col, k, scale, categ)
     if k < 1
       throw(ArgumentError("`k` must be greater than or equal to 1"))
     end
@@ -40,7 +40,7 @@ struct Indicator{S<:ColSpec} <: StatelessFeatureTransform
       throw(ArgumentError("invalid `scale` option, use `:quantile` or `:linear`"))
     end
 
-    cs = colspec([col])
+    cs = colspec(col)
     new{typeof(cs)}(cs, k, scale, categ)
   end
 end

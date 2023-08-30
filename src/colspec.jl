@@ -61,6 +61,11 @@ abstract type ColSpec end
 
 Converts the `spec` argument to a `ColSpec` object.
 
+    colspec(col::Col)
+
+Converts to a single column selection, this is equivalent
+to calling `colspec([col])`.
+
 # Examples
 
 ```julia
@@ -75,13 +80,18 @@ colspec(:) # AllSpec
 colspec(nothing) # NoneSpec
 # if the argument is a ColSpec, return it
 colspec(NoneSpec()) # NoneSpec
+# single column selection
+colspec(1) # IndexSpec
+colspec(:a) # NameSpec
+colspec("a") # NameSpec
 ```
 """
 colspec(spec::ColSpec) = spec
+colspec(col::Col) = colspec([col])
 
 # argument errors
-colspec(::Tuple{}) = throw(ArgumentError("Invalid column spec."))
-colspec(::Any) = throw(ArgumentError("Invalid column spec."))
+colspec(::Any) = throw(ArgumentError("invalid column selection"))
+colspec(::Tuple{}) = throw(ArgumentError("column selection cannot be empty"))
 
 """
     choose(colspec::ColSpec, names) -> Vector{Symbol}
@@ -130,7 +140,9 @@ function choose end
 struct NameSpec <: ColSpec
   names::Vector{Symbol}
   function NameSpec(names)
-    @assert !isempty(names) "Invalid column selection."
+    if isempty(names)
+      throw(ArgumentError("column selection cannot be empty"))
+    end
     new(names)
   end
 end
@@ -148,7 +160,9 @@ choose(colspec::NameSpec, names) = _choose(colspec.names, names)
 struct IndexSpec <: ColSpec
   inds::Vector{Int}
   function IndexSpec(inds)
-    @assert !isempty(inds) "Invalid column selection."
+    if isempty(inds)
+      throw(ArgumentError("column selection cannot be empty"))
+    end
     new(inds)
   end
 end
@@ -174,7 +188,7 @@ choose(colspec::RegexSpec, names::Tuple) = choose(colspec, collect(names))
 function choose(colspec::RegexSpec, names::Vector)
   regex = colspec.regex
   snames = filter(nm -> occursin(regex, String(nm)), names)
-  @assert !isempty(snames) "Invalid column selection."
+  @assert !isempty(snames) "regex doesn't match any names in input table"
   _choose(snames, names)
 end
 
@@ -200,6 +214,6 @@ choose(::NoneSpec, names) = Symbol[]
 # helper functions
 function _choose(snames::Vector{Symbol}, names)
   # validate columns
-  @assert snames ⊆ names "Invalid column selection."
+  @assert snames ⊆ names "names not present in input table"
   return snames
 end
