@@ -38,12 +38,6 @@ Sort
 Sample
 ```
 
-## Map
-
-```@docs
-Map
-```
-
 ## Filter
 
 ```@docs
@@ -54,6 +48,12 @@ Filter
 
 ```@docs
 DropMissing
+```
+
+## Map
+
+```@docs
+Map
 ```
 
 ## Replace
