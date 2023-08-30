@@ -3,10 +3,12 @@
 # ------------------------------------------------------------------
 
 """
-    Map(cols₁ => fun₁ => target₁, ..., colsₙ => funₙ => targetₙ)
+    Map(cols₁ => fun₁, cols₂ => fun₂ => target₂, ..., colsₙ => funₙ => targetₙ)
 
 Applies the `funₙ` function to the columns selected by `colsₙ` using 
 the `map` function and saves the result in a new column named `targetₙ`.
+The target column name is optional and when omitted a new name is generated
+by joining the selected column names with the function name.
 If the target column already exists in the table, the original
 column will be replaced. The column selection can be a single
 column identifier (index or name), a collection of identifiers
