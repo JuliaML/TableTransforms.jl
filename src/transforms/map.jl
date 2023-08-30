@@ -5,7 +5,12 @@
 """
     Map(cols₁ => fun₁ => target₁, ..., colsₙ => funₙ => targetₙ)
 
-to-do
+Applies the `funₙ` function to the columns selected by `colₙ` using 
+the `map` function and saves the result in a new column named `targetₙ`.
+If the target column already exists in the table, the original
+column will be replaced. The column selection can be a single
+column identifier (index or name), a collection of identifiers
+or a regex expression.
 
 # Examples
 
