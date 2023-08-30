@@ -274,6 +274,7 @@ end
 # IMPLEMENTATIONS
 # ----------------
 
+include("transforms/map.jl")
 include("transforms/select.jl")
 include("transforms/rename.jl")
 include("transforms/stdnames.jl")

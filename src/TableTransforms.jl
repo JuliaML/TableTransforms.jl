@@ -45,6 +45,7 @@ export
   reapply,
 
   # built-in
+  Map,
   Select,
   Reject,
   Rename,
