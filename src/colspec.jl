@@ -63,8 +63,8 @@ Converts the `spec` argument to a `ColSpec` object.
 
     colspec(col::Col)
 
-Converts to a single column selection, this is equivalent
-to calling `colspec([col])`.
+Converts the `col` to a single column selection,
+this is equivalent to calling `colspec([col])`.
 
 # Examples
 
