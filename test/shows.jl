@@ -133,6 +133,23 @@
     └─ colspec = [:a, :b, :c]"""
   end
 
+  @testset "Map" begin
+    fun = (a, b) -> 2a + b
+    T = Map(:a => sin, [:a, :b] => fun => :c)
+
+    # compact mode
+    iostr = sprint(show, T)
+    @test iostr == "Map(TableTransforms.ColSpec[[:a], [:a, :b]], Function[sin, $(typeof(fun))()], Union{Nothing, Symbol}[nothing, :c])"
+
+    # full mode
+    iostr = sprint(show, MIME("text/plain"), T)
+    @test iostr == """
+    Map transform
+    ├─ colspecs = TableTransforms.ColSpec[[:a], [:a, :b]]
+    ├─ funs = Function[sin, $(typeof(fun))()]
+    └─ targets = Union{Nothing, Symbol}[nothing, :c]"""
+  end
+
   @testset "Replace" begin
     pairs = IdDict(1 => -1, 5 => -5)
     T = Replace(pairs)

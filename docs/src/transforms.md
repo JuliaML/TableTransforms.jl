@@ -50,6 +50,12 @@ Filter
 DropMissing
 ```
 
+## Map
+
+```@docs
+Map
+```
+
 ## Replace
 
 ```@docs

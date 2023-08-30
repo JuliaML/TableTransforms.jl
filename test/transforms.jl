@@ -5,6 +5,7 @@ transformfiles = [
   "sort.jl",
   "sample.jl",
   "filter.jl",
+  "map.jl",
   "replace.jl",
   "coalesce.jl",
   "coerce.jl",
