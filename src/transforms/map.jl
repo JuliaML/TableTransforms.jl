@@ -5,7 +5,7 @@
 """
     Map(cols₁ => fun₁ => target₁, ..., colsₙ => funₙ => targetₙ)
 
-Applies the `funₙ` function to the columns selected by `colₙ` using 
+Applies the `funₙ` function to the columns selected by `colsₙ` using 
 the `map` function and saves the result in a new column named `targetₙ`.
 If the target column already exists in the table, the original
 column will be replaced. The column selection can be a single
