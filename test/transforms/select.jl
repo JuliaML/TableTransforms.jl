@@ -224,12 +224,12 @@
 
   # throws: Select without arguments
   @test_throws ArgumentError Select()
-  
+
   # throws: empty selection
   @test_throws ArgumentError Select(())
   @test_throws ArgumentError Select(Symbol[])
   @test_throws ArgumentError Select(String[])
-  
+
   # throws: regex doesn't match any names in input table
   @test_throws AssertionError apply(Select(r"a"), t)
 
@@ -374,7 +374,7 @@ end
 
   # throws: Reject without arguments
   @test_throws ArgumentError Reject()
-  
+
   # throws: empty rejection
   @test_throws ArgumentError Reject(())
   @test_throws ArgumentError Reject(Symbol[])
