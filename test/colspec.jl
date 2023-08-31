@@ -65,15 +65,43 @@
   snames = TT.choose(colspec, tupnames)
   @test snames == Symbol[]
 
+  # single symbol
+  colspec = TT.colspec(:a)
+  snames = TT.choose(colspec, vecnames)
+  @test snames == [:a]
+  snames = TT.choose(colspec, tupnames)
+  @test snames == [:a]
+
+  # single string
+  colspec = TT.colspec("b")
+  snames = TT.choose(colspec, vecnames)
+  @test snames == [:b]
+  snames = TT.choose(colspec, tupnames)
+  @test snames == [:b]
+
+  # single integer
+  colspec = TT.colspec(3)
+  snames = TT.choose(colspec, vecnames)
+  @test snames == [:c]
+  snames = TT.choose(colspec, tupnames)
+  @test snames == [:c]
+
   # throws
+  # invalid colspec
+  @test_throws ArgumentError TT.colspec(missing)
+  # empty selection
+  @test_throws ArgumentError TT.colspec(Symbol[])
+  @test_throws ArgumentError TT.colspec(String[])
+  @test_throws ArgumentError TT.colspec(Int[])
+  @test_throws ArgumentError TT.colspec(())
+  # regex doesn't match any names in input table
   colspec = TT.colspec(r"x")
   @test_throws AssertionError TT.choose(colspec, vecnames)
   @test_throws AssertionError TT.choose(colspec, tupnames)
-  @test_throws AssertionError TT.colspec(Symbol[])
-  @test_throws AssertionError TT.colspec(String[])
-  @test_throws AssertionError TT.colspec(Int[])
-  @test_throws ArgumentError TT.colspec(())
-  @test_throws ArgumentError TT.colspec(missing)
+  # names not present in input table
+  colspec = TT.colspec([:x, :a])
+  @test_throws AssertionError TT.choose(colspec, vecnames)
+  @test_throws AssertionError TT.choose(colspec, tupnames)
 
   # type stability
   colspec = TT.colspec([:a, :b])
@@ -101,6 +129,15 @@
   @inferred TT.choose(colspec, vecnames)
   @inferred TT.choose(colspec, tupnames)
   colspec = TT.colspec(nothing)
+  @inferred TT.choose(colspec, vecnames)
+  @inferred TT.choose(colspec, tupnames)
+  colspec = TT.colspec(:a)
+  @inferred TT.choose(colspec, vecnames)
+  @inferred TT.choose(colspec, tupnames)
+  colspec = TT.colspec("b")
+  @inferred TT.choose(colspec, vecnames)
+  @inferred TT.choose(colspec, tupnames)
+  colspec = TT.colspec(3)
   @inferred TT.choose(colspec, vecnames)
   @inferred TT.choose(colspec, tupnames)
 end

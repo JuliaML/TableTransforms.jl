@@ -224,12 +224,14 @@
 
   # throws: Select without arguments
   @test_throws ArgumentError Select()
-  @test_throws ArgumentError Select(())
-
+  
   # throws: empty selection
+  @test_throws ArgumentError Select(())
+  @test_throws ArgumentError Select(Symbol[])
+  @test_throws ArgumentError Select(String[])
+  
+  # throws: regex doesn't match any names in input table
   @test_throws AssertionError apply(Select(r"a"), t)
-  @test_throws AssertionError Select(Symbol[])
-  @test_throws AssertionError Select(String[])
 
   # throws: columns that do not exist in the original table
   @test_throws AssertionError apply(Select(:x3, :y3), t)
@@ -372,19 +374,21 @@ end
 
   # throws: Reject without arguments
   @test_throws ArgumentError Reject()
-  @test_throws ArgumentError Reject(())
-
+  
   # throws: empty rejection
+  @test_throws ArgumentError Reject(())
+  @test_throws ArgumentError Reject(Symbol[])
+  @test_throws ArgumentError Reject(String[])
+
+  # throws: regex doesn't match any names in input table
   @test_throws AssertionError apply(Reject(r"a"), t)
-  @test_throws AssertionError Reject(Symbol[])
-  @test_throws AssertionError Reject(String[])
 
   # throws: reject all columns
-  @test_throws AssertionError apply(Reject(r"[xy]"), t)
-  @test_throws AssertionError apply(Reject(:x1, :x2, :y1, :y2), t)
-  @test_throws AssertionError apply(Reject([:x1, :x2, :y1, :y2]), t)
-  @test_throws AssertionError apply(Reject((:x1, :x2, :y1, :y2)), t)
-  @test_throws AssertionError apply(Reject("x1", "x2", "y1", "y2"), t)
-  @test_throws AssertionError apply(Reject(["x1", "x2", "y1", "y2"]), t)
-  @test_throws AssertionError apply(Reject(["x1", "x2", "y1", "y2"]), t)
+  @test_throws ArgumentError apply(Reject(r"[xy]"), t)
+  @test_throws ArgumentError apply(Reject(:x1, :x2, :y1, :y2), t)
+  @test_throws ArgumentError apply(Reject([:x1, :x2, :y1, :y2]), t)
+  @test_throws ArgumentError apply(Reject((:x1, :x2, :y1, :y2)), t)
+  @test_throws ArgumentError apply(Reject("x1", "x2", "y1", "y2"), t)
+  @test_throws ArgumentError apply(Reject(["x1", "x2", "y1", "y2"]), t)
+  @test_throws ArgumentError apply(Reject(["x1", "x2", "y1", "y2"]), t)
 end
