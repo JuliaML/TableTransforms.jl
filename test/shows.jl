@@ -58,17 +58,17 @@
   end
 
   @testset "StdNames" begin
-    T = StdNames(:upper)
+    T = StdNames(:upperflat)
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "StdNames(:upper)"
+    @test iostr == "StdNames(:upperflat)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     StdNames transform
-    └─ spec = :upper"""
+    └─ spec = :upperflat"""
   end
 
   @testset "Sort" begin
@@ -131,6 +131,24 @@
     @test iostr == """
     DropMissing transform
     └─ colspec = [:a, :b, :c]"""
+  end
+
+  @testset "Map" begin
+    fun = (a, b) -> 2a + b
+    T = Map(:a => sin, [:a, :b] => fun => :c)
+
+    # compact mode
+    iostr = sprint(show, T)
+    @test iostr ==
+          "Map(TableTransforms.ColSpec[[:a], [:a, :b]], Function[sin, $(typeof(fun))()], Union{Nothing, Symbol}[nothing, :c])"
+
+    # full mode
+    iostr = sprint(show, MIME("text/plain"), T)
+    @test iostr == """
+    Map transform
+    ├─ colspecs = TableTransforms.ColSpec[[:a], [:a, :b]]
+    ├─ funs = Function[sin, $(typeof(fun))()]
+    └─ targets = Union{Nothing, Symbol}[nothing, :c]"""
   end
 
   @testset "Replace" begin

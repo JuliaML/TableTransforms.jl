@@ -5,7 +5,7 @@
 """
     Coalesce(; value)
 
-Replaces all missing values from the table with `value`.
+Replaces all `missing` values from the table with `value`.
 
     Coalesce(col₁, col₂, ..., colₙ; value)
     Coalesce([col₁, col₂, ..., colₙ]; value)

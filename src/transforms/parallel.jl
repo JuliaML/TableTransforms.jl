@@ -18,10 +18,9 @@ Scale(low=0.3, high=0.6) ⊔ EigenAnalysis(:VDV)
 ZScore() ⊔ EigenAnalysis(:V)
 ```
 
-### Notes
+## Notes
 
-- Metadata is transformed with the first revertible
-  transform in the list of `transforms`.
+* Metadata is transformed with the first revertible transform in the list of `transforms`.
 """
 struct ParallelTableTransform <: TableTransform
   transforms::Vector{Transform}

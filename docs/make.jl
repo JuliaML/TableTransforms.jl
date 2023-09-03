@@ -27,7 +27,13 @@ makedocs(;
       asset("https://fonts.googleapis.com/css?family=Montserrat|Source+Code+Pro&display=swap", class=:css)
     ]
   ),
-  pages=["Home" => "index.md", "Transforms" => "transforms.md", "Developer guide"=>"devguide.md" , "Related" => "related.md"]
+
+  pages=[
+    "Home" => "index.md",
+    "Transforms" => "transforms.md",
+    "Developer guide" => "devguide.md",
+    "Related" => "related.md"
+  ]
 )
 
 deploydocs(; repo="github.com/JuliaML/TableTransforms.jl", devbranch="master", push_preview=true)
