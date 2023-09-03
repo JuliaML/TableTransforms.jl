@@ -3,12 +3,11 @@
 # ------------------------------------------------------------------
 
 """
-    EigenAnalysis(proj; maxdim=nothing, pratio=1.0)
+    EigenAnalysis(proj; [maxdim], [pratio])
 
 The eigenanalysis of the covariance with a given projection `proj`.
-Optionally specify the maximum number of dimensions in the output `maxdim`
-and the percentage of variance to retain `pratio`. Default to all dimensions of
-the input.
+Optionally specify the maximum number of dimensions in the output
+`maxdim` and the percentage of variance to retain `pratio`.
 
 ## Projections
 
@@ -161,12 +160,12 @@ function eigenmatrices(transform, Y)
 end
 
 """
-    PCA(; maxdim=nothing, pratio=1.0)
+    PCA([options])
 
-The PCA transform is a shortcut for
-`ZScore() → EigenAnalysis(:V; maxdim, pratio)`.
+Principal component analysis.
 
-See also: [`ZScore`](@ref), [`EigenAnalysis`](@ref).
+See [`EigenAnalysis`](@ref) for detailed
+description of the available options.
 
 # Examples
 
@@ -175,16 +174,20 @@ PCA(maxdim=2)
 PCA(pratio=0.86)
 PCA(maxdim=2, pratio=0.86)
 ```
+
+## Notes
+
+* `PCA()` is shortcut for `ZScore() → EigenAnalysis(:V)`.
 """
 PCA(; maxdim=nothing, pratio=1.0) = ZScore() → EigenAnalysis(:V, maxdim, pratio)
 
 """
-    DRS(; maxdim=nothing, pratio=1.0)
+    DRS([options])
 
-The DRS transform is a shortcut for
-`ZScore() → EigenAnalysis(:VD; maxdim, pratio)`.
+Dimension reduction sphering.
 
-See also: [`ZScore`](@ref), [`EigenAnalysis`](@ref).
+See [`EigenAnalysis`](@ref) for detailed
+description of the available options.
 
 # Examples
 
@@ -193,16 +196,20 @@ DRS(maxdim=3)
 DRS(pratio=0.87)
 DRS(maxdim=3, pratio=0.87)
 ```
+
+## Notes
+
+* `DRS()` is shortcut for `ZScore() → EigenAnalysis(:VD)`.
 """
 DRS(; maxdim=nothing, pratio=1.0) = ZScore() → EigenAnalysis(:VD, maxdim, pratio)
 
 """
-    SDS(; maxdim=nothing, pratio=1.0)
+    SDS([options])
 
-The SDS transform is a shortcut for
-`ZScore() → EigenAnalysis(:VDV; maxdim, pratio)`.
+Standardized data sphering.
 
-See also: [`ZScore`](@ref), [`EigenAnalysis`](@ref).
+See [`EigenAnalysis`](@ref) for detailed
+description of the available options.
 
 # Examples
 
@@ -212,5 +219,9 @@ SDS(maxdim=4)
 SDS(pratio=0.88)
 SDS(maxdim=4, pratio=0.88)
 ```
+
+## Notes
+
+* `SDS()` is shortcut for `ZScore() → EigenAnalysis(:VDV)`.
 """
 SDS(; maxdim=nothing, pratio=1.0) = ZScore() → EigenAnalysis(:VDV, maxdim, pratio)

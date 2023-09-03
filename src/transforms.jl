@@ -99,7 +99,7 @@ these functions in parallel for all columns with multiple threads.
 
 ## Notes
 
-* All ColwiseFeatureTransform subtypes must have a `colspec` field.
+* `ColwiseFeatureTransform` subtypes must have a `colspec` field.
 """
 abstract type ColwiseFeatureTransform <: FeatureTransform end
 
@@ -280,10 +280,12 @@ include("transforms/stdnames.jl")
 include("transforms/sort.jl")
 include("transforms/sample.jl")
 include("transforms/filter.jl")
+include("transforms/map.jl")
 include("transforms/replace.jl")
 include("transforms/coalesce.jl")
 include("transforms/coerce.jl")
 include("transforms/levels.jl")
+include("transforms/indicator.jl")
 include("transforms/onehot.jl")
 include("transforms/center.jl")
 include("transforms/scale.jl")

@@ -397,13 +397,13 @@ end
   @test ntypes[6] == Missing
   @test ttypes == Tables.schema(tₒ).types
 
-  # throws: empty tuple
-  @test_throws ArgumentError DropMissing(())
-
   # throws: empty selection
+  @test_throws ArgumentError DropMissing(())
+  @test_throws ArgumentError DropMissing(Symbol[])
+  @test_throws ArgumentError DropMissing(String[])
+
+  # throws: regex doesn't match any names in input table
   @test_throws AssertionError apply(DropMissing(r"g"), t)
-  @test_throws AssertionError DropMissing(Symbol[])
-  @test_throws AssertionError DropMissing(String[])
 
   # throws: columns that do not exist in the original table
   @test_throws AssertionError apply(DropMissing(:g, :h), t)

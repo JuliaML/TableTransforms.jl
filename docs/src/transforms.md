@@ -50,6 +50,12 @@ Filter
 DropMissing
 ```
 
+## Map
+
+```@docs
+Map
+```
+
 ## Replace
 
 ```@docs
@@ -72,6 +78,12 @@ Coerce
 
 ```@docs
 Levels
+```
+
+## Indicator
+
+```@docs
+Indicator
 ```
 
 ## OneHot

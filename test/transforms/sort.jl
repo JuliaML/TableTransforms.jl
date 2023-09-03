@@ -75,12 +75,14 @@
 
   # throws: Sort without arguments
   @test_throws ArgumentError Sort()
-  @test_throws ArgumentError Sort(())
 
   # throws: empty selection
+  @test_throws ArgumentError Sort(())
+  @test_throws ArgumentError Sort(Symbol[])
+  @test_throws ArgumentError Sort(String[])
+
+  # throws: regex doesn't match any names in input table
   @test_throws AssertionError apply(Sort(r"x"), t)
-  @test_throws AssertionError Sort(Symbol[])
-  @test_throws AssertionError Sort(String[])
 
   # throws: columns that do not exist in the original table
   @test_throws AssertionError apply(Sort([:d, :e]), t)

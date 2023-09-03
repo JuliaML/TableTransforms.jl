@@ -2,23 +2,33 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+const SPECS = [:uppersnake, :uppercamel, :upperflat, :snake, :camel, :flat]
+
 """
-    StdNames(spec)
+    StdNames(spec = :uppersnake)
 
 Standardizes column names according to given `spec`.
-Default to `:upper` case specification.
+Default to `:uppersnake` case specification.
 
 # Specs
 
-* `:upper` - Uppercase, e.g. COLUMNNAME
-* `:camel` - Camelcase, e.g. ColumnName
-* `:snake` - Snakecase, e.g. column_name
+* `:uppersnake` - Upper Snake Case, e.g. COLUMN_NAME
+* `:uppercamel` - Upper Camel Case, e.g. ColumnName
+* `:upperflat` - Upper Flat Case, e.g. COLUMNNAME
+* `:snake` - Snake Case, e.g. column_name
+* `:camel` - Camel Case, e.g. columnName
+* `:flat` - Flat Case, e.g. columnname
 """
 struct StdNames <: StatelessFeatureTransform
   spec::Symbol
-end
 
-StdNames() = StdNames(:upper)
+  function StdNames(spec=:uppersnake)
+    if spec ∉ SPECS
+      throw(ArgumentError("invalid specification, use one of these: $SPECS"))
+    end
+    new(spec)
+  end
+end
 
 isrevertible(::Type{StdNames}) = true
 
@@ -28,18 +38,21 @@ function applyfeat(transform::StdNames, feat, prep)
 
   # retrieve column names
   cols = Tables.columns(feat)
-  oldnames = string.(Tables.columnnames(cols))
+  oldnames = Tables.columnnames(cols)
 
   # clean column names
-  cleaned = _clean.(oldnames)
+  names = map(nm -> _clean(string(nm)), oldnames)
 
   # apply spec
-  spec == :camel && (names = _camel.(cleaned))
-  spec == :snake && (names = _snake.(cleaned))
-  spec == :upper && (names = _upper.(cleaned))
+  spec === :uppersnake && (names = _uppersnake.(names))
+  spec === :uppercamel && (names = _uppercamel.(names))
+  spec === :upperflat && (names = _upperflat.(names))
+  spec === :snake && (names = _snake.(names))
+  spec === :camel && (names = _camel.(names))
+  spec === :flat && (names = _flat.(names))
 
   # make names unique
-  newnames = _unique(names)
+  newnames = _makeunique(names)
 
   # rename transform
   rtrans = Rename(colspec(oldnames), Symbol.(newnames))
@@ -53,25 +66,43 @@ function revertfeat(::StdNames, newfeat, fcache)
   revertfeat(rtrans, newfeat, rfcache)
 end
 
-const delim = [' ', '\t', '-', '_']
+const DELIMS = [' ', '\t', '-', '_']
 
-_clean(name) = filter(c -> isdigit(c) || isletter(c) || c ∈ delim, name)
+function _clean(name)
+  nm = strip(name, DELIMS)
+  filter(c -> isdigit(c) || isletter(c) || c ∈ DELIMS, nm)
+end
 
-function _unique(names)
+function _makeunique(names)
   newnames = String[]
   for name in names
-    n = name
-    while n ∈ newnames
-      n = string(n, "_")
+    while name ∈ newnames
+      name = name * "_"
     end
-    push!(newnames, n)
+    push!(newnames, name)
   end
-
   newnames
 end
 
-_camel(name) = join(uppercasefirst.(split(name, delim)))
+_uppersnake(name) = _isuppersnake(name) ? name : join(uppercase.(split(name, DELIMS)), '_')
 
-_snake(name) = join(lowercase.(split(strip(name, delim), delim)), '_')
+_uppercamel(name) = _isuppercamel(name) ? name : join(uppercasefirst.(split(name, DELIMS)))
 
-_upper(name) = replace(uppercase(name), delim => "")
+_upperflat(name) = _isupperflat(name) ? name : replace(uppercase(name), DELIMS => "")
+
+_snake(name) = _issnake(name) ? name : join(lowercase.(split(name, DELIMS)), '_')
+
+function _camel(name)
+  _iscamel(name) && return name
+  first, others... = split(name, DELIMS)
+  join([lowercase(first); uppercasefirst.(others)])
+end
+
+_flat(name) = _isflat(name) ? name : replace(lowercase(name), DELIMS => "")
+
+_isuppersnake(name) = occursin(r"^[A-Z0-9]+(_[A-Z0-9]+)+$", name)
+_isuppercamel(name) = occursin(r"^[A-Z][a-z0-9]*([A-Z][a-z0-9]*)+$", name)
+_isupperflat(name) = occursin(r"^[A-Z0-9]+$", name)
+_issnake(name) = occursin(r"^[a-z0-9]+(_[a-z0-9]+)+$", name)
+_iscamel(name) = occursin(r"^[a-z][a-z0-9]*([A-Z][a-z0-9]*)+$", name)
+_isflat(name) = occursin(r"^[a-z0-9]+$", name)

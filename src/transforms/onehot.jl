@@ -22,8 +22,8 @@ OneHot("a", categ=true)
 struct OneHot{S<:ColSpec} <: StatelessFeatureTransform
   colspec::S
   categ::Bool
-  function OneHot(col, categ)
-    cs = colspec([col])
+  function OneHot(col::Col, categ)
+    cs = colspec(col)
     new{typeof(cs)}(cs, categ)
   end
 end
@@ -39,7 +39,7 @@ function applyfeat(transform::OneHot, feat, prep)
   names = Tables.columnnames(cols) |> collect
   columns = Any[Tables.getcolumn(cols, nm) for nm in names]
 
-  name = choose(transform.colspec, names)[1]
+  name = choose(transform.colspec, names) |> first
   ind = findfirst(==(name), names)
   x = columns[ind]
 

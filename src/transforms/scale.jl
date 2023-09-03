@@ -30,10 +30,6 @@ Scale([:a, :c, :e], low=0.3, high=0.7)
 Scale(("a", "c", "e"), low=0.25, high=0.75)
 Scale(r"[ace]", low=0.3, high=0.7)
 ```
-
-## Notes
-
-* The `low` and `high` values are restricted to the interval [0, 1].
 """
 struct Scale{S<:ColSpec,T} <: ColwiseFeatureTransform
   colspec::S
