@@ -38,6 +38,21 @@
   tₒ = revert(T, n, c)
   @test t == tₒ
 
+  # titlecase
+  names = Symbol.(["_apPLe trEe_", " baNaNA-fRuIt ", "-peAR\tsEEd-"])
+  t = Table(; zip(names, columns)...)
+  T = StdNames(:uppercamel)
+  n, c = apply(T, t)
+  @test Tables.schema(n).names == (:AppleTree, :BananaFruit, :PearSeed)
+  tₒ = revert(T, n, c)
+  @test t == tₒ
+
+  T = StdNames(:camel)
+  n, c = apply(T, t)
+  @test Tables.schema(n).names == (:appleTree, :bananaFruit, :pearSeed)
+  tₒ = revert(T, n, c)
+  @test t == tₒ
+
   # internal functions
   names = ["apple banana", "apple\tbanana", "apple_banana", "apple-banana", "apple_Banana"]
   for name in names

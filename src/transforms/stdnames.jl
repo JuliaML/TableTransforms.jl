@@ -86,7 +86,7 @@ end
 
 _uppersnake(name) = _isuppersnake(name) ? name : join(uppercase.(split(name, DELIMS)), '_')
 
-_uppercamel(name) = _isuppercamel(name) ? name : join(uppercasefirst.(split(name, DELIMS)))
+_uppercamel(name) = _isuppercamel(name) ? name : join(titlecase.(split(name, DELIMS)))
 
 _upperflat(name) = _isupperflat(name) ? name : replace(uppercase(name), DELIMS => "")
 
@@ -95,7 +95,7 @@ _snake(name) = _issnake(name) ? name : join(lowercase.(split(name, DELIMS)), '_'
 function _camel(name)
   _iscamel(name) && return name
   first, others... = split(name, DELIMS)
-  join([lowercase(first); uppercasefirst.(others)])
+  join([lowercase(first); titlecase.(others)])
 end
 
 _flat(name) = _isflat(name) ? name : replace(lowercase(name), DELIMS => "")
