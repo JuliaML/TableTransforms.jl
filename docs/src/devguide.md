@@ -65,17 +65,20 @@ be implemented as follows:
 using Statistics
 
 function TransformsBase.apply(transform::Standardize, X)
-    # convert the table to a matrix
+    # convert the table to a matrix and get col names
     Xm = Tables.matrix(X)
+    names = Tables.columnnames(X)
     # compute the means and stds
     μ = transform.center ? mean(Xm, dims=1) : zeros(1, size(Xm, 2))
     σ = transform.scale ? std(Xm, dims=1) : ones(1, size(Xm, 2))
     # standardize the data
     Xm = (Xm .- μ) ./ σ
-    # convert back to table
-    Xm = X |> Tables.materializer(Xm)
+    # convert matrix to column table
+    Xc =  (; zip(names, eachcol(Xm))...)
+    # convert back to original table type
+    X = Xc |> Tables.materializer(X)
     # return the table and cache that may help reapply or revert later
-    return Xm, (μ, σ)
+    return X, (μ, σ)
 end
 ```
 
@@ -100,15 +103,18 @@ the cache and doesn't return it.
 
 ```julia
 function TransformsBase.reapply(transform::Standardize, X, cache)
-    # convert the table to a matrix
+    # convert the table to a matrix and get col names
     Xm = Tables.matrix(X)
+    names = Tables.columnnames(X)
     # no need to recompute means and stds
     μ, σ = cache
     # standardize the data
     Xm = (Xm .- μ) ./ σ
-    # convert back to table
-    Xm = X |> Tables.materializer(Xm)
-    return Xm
+    # convert matrix to column table
+    Xc =  (; zip(names, eachcol(Xm))...)
+    # convert back to original table type
+    X = Xc |> Tables.materializer(X)
+    return X
 end
 ```
 
@@ -129,15 +135,18 @@ implemented in that case. Now we follow up by implementing the `revert` method:
 
 ```julia
 function TransformsBase.revert(transform::Standardize, X, cache)
-    # convert the table to a matrix
+     # convert the table to a matrix and get col names
     Xm = Tables.matrix(X)
+    names = Tables.columnnames(X)
     # extract the mean and std
     μ, σ = cache
     # revert the transform
     Xm = Xm .* σ .+ μ
-    # convert back to table
-    Xm = X |> Tables.materializer(Xm)
-    return Xm
+    # convert matrix to column table
+    Xc =  (; zip(names, eachcol(Xm))...)
+    # convert back to original table type
+    X = Xc |> Tables.materializer(X)
+    return X
 end
 ```
 
