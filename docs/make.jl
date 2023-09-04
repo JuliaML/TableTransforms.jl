@@ -27,7 +27,6 @@ makedocs(;
       asset("https://fonts.googleapis.com/css?family=Montserrat|Source+Code+Pro&display=swap", class=:css)
     ]
   ),
-
   pages=[
     "Home" => "index.md",
     "Transforms" => "transforms.md",
