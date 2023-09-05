@@ -23,6 +23,7 @@ struct Coerce{P} <: FeatureTransform
 end
 
 Coerce(pair::Pair{Symbol,<:Type}...; tight=false, verbosity=1) = Coerce(pair, tight, verbosity)
+Coerce(pair::Pair{String,<:Type}...; tight=false, verbosity=1) = Coerce(Symbol(pair)..., tight, verbosity)
 
 isrevertible(::Type{<:Coerce}) = true
 
