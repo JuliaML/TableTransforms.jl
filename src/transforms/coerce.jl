@@ -22,8 +22,8 @@ struct Coerce{P} <: FeatureTransform
   verbosity::Int
 end
 
-Coerce(pair::Pair{Symbol,<:Type}...; tight=false, verbosity=1) = Coerce(pair, tight, verbosity)
-Coerce(pair::Pair{<:AbstractString,<:Type}...; kwargs...) = Coerce((Symbol(k) => v for (k, v) in pairs)...; kwargs...)
+Coerce(pairs::Pair{Symbol,<:Type}...; tight=false, verbosity=1) = Coerce(pairs, tight, verbosity)
+Coerce(pairs::Pair{<:AbstractString,<:Type}...; kwargs...) = Coerce((Symbol(k) => v for (k, v) in pairs)...; kwargs...)
 
 isrevertible(::Type{<:Coerce}) = true
 
