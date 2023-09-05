@@ -13,7 +13,18 @@
   @test eltype(tₒ.x1) == eltype(t.x1)
   @test eltype(tₒ.x2) == eltype(t.x2)
 
+  # Test for :a => Multiclass
   T = Coerce(:x1 => Multiclass, :x2 => Multiclass)
+  n, c = apply(T, t)
+  @test eltype(n.x1) <: CategoricalValue
+  @test eltype(n.x2) <: CategoricalValue
+  n, c = apply(T, t)
+  tₒ = revert(T, n, c)
+  @test eltype(tₒ.x1) == eltype(t.x1)
+  @test eltype(tₒ.x2) == eltype(t.x2)
+
+  # Test for "a" => Multiclass
+  T = Coerce("x1" => Multiclass, "x2" => Multiclass)
   n, c = apply(T, t)
   @test eltype(n.x1) <: CategoricalValue
   @test eltype(n.x2) <: CategoricalValue
