@@ -24,6 +24,7 @@ transformfiles = [
   "coltable.jl",
   "sequential.jl",
   "parallel.jl"
+  "dropExtrema.jl"
 ]
 
 @testset "Transforms" begin

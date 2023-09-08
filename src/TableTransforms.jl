@@ -57,6 +57,7 @@ export
   Replace,
   Coalesce,
   Coerce,
+  dropExtrema,
   Levels,
   Indicator,
   OneHot,
