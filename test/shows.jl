@@ -152,18 +152,18 @@
   end
 
   @testset "Replace" begin
-    pairs = IdDict(1 => -1, 5 => -5)
-    T = Replace(pairs)
+    T = Replace(1 => -1, 5 => -5)
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Replace($pairs)"
+    @test iostr == "Replace(Base.Fix2{typeof(===), Int64}[Base.Fix2{typeof(===), Int64}(===, 1), Base.Fix2{typeof(===), Int64}(===, 5)], [-1, -5])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Replace transform
-    └─ pairs = $pairs"""
+    ├─ funs = Base.Fix2{typeof(===), Int64}[Base.Fix2{typeof(===), Int64}(===, 1), Base.Fix2{typeof(===), Int64}(===, 5)]
+    └─ values = [-1, -5]"""
   end
 
   @testset "Coalesce" begin

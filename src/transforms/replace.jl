@@ -3,42 +3,69 @@
 # ------------------------------------------------------------------
 
 """
-    Replace(old₁ => new₁, old₂ => new₂, ..., oldₙ => newₙ)
+    Replace(pred₁ => new₁, pred₂ => new₂, ..., predₙ => newₙ)
 
-Replaces `oldᵢ` value with `newᵢ` value in the table.
+Replaces all values where `predᵢ` predicate returns `true` with `newᵢ` value in the table.
+
+The predicate can be a function that accepts a single argument and returns a boolean, or a value. 
+If the predicate is a value, it will be transformed into the following function:
+`x -> x === value`.
 
 # Examples
 
 ```julia
 Replace(1 => -1, 5 => -5)
 Replace(1 => 1.5, 5 => 5.5, 4 => true)
+Replace(>(3) => 10, isequal(2) => true)
+Replace(1 => 1.6, <(3) => 11, (x -> 4 < x < 6) => true)
 ```
+
+## Notes
+
+* If it is not possible to apply the predicate to the value (e.g. `5 > "str"`),
+  the comparison will return `false`.
 """
-struct Replace{K,V} <: StatelessFeatureTransform
-  pairs::IdDict{K,V}
+struct Replace{F,V} <: StatelessFeatureTransform
+  funs::Vector{F}
+  values::Vector{V}
 end
 
-Replace() = throw(ArgumentError("Cannot create a Replace object without arguments."))
+Replace() = throw(ArgumentError("cannot create a Replace transform without arguments"))
 
-Replace(pairs::Pair...) = Replace(IdDict(values(pairs)))
+function Replace(pairs::Pair...)
+  funs = map(first.(pairs)) do f
+    f isa Function ? f : Base.Fix2(===, f)
+  end
+  Replace(collect(funs), collect(last.(pairs)))
+end
 
 isrevertible(::Type{<:Replace}) = true
+
+trycompare(f, v) = try f(v) catch; false end
 
 function applyfeat(transform::Replace, feat, prep)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
 
-  olds = keys(transform.pairs)
-  values = map(names) do nm
+  funs = transform.funs
+  news = transform.values
+  tuples = map(names) do nm
+    olds = []
     x = Tables.getcolumn(cols, nm)
-    y = [get(transform.pairs, xᵢ, xᵢ) for xᵢ in x]
-    inds = [findall(xᵢ -> xᵢ === old, x) .=> old for old in olds]
-    rev = Dict(reduce(vcat, inds))
-    y, rev
+    y = map(enumerate(x)) do (i, v)
+      for (f, n) in zip(funs, news)
+        if trycompare(f, v)
+          push!(olds, i => v)
+          return n
+        end
+      end
+      v
+    end
+    y, Dict(olds)
   end
 
-  columns = first.(values)
-  fcache = last.(values)
+  columns = first.(tuples)
+  fcache = last.(tuples)
 
   𝒯 = (; zip(names, columns)...)
   newfeat = 𝒯 |> Tables.materializer(feat)
