@@ -20,10 +20,10 @@ it will be transformed into the following function: `x -> x === value`.
 
 ```julia
 Replace(1 => -1, 5 => -5)
-Replace(2 => 0 => 1.5, 5 => 5.5)
-Replace(:b => 0 => 1.5, 5 => 5.5)
-Replace("b" => 0 => 1.5, 5 => 5.5)
-Replace([1, 3] => 0 => 0.1)
+Replace(2 => 0.0 => 1.5, 5.0 => 5.5)
+Replace(:b => 0.0 => 1.5, 5.0 => 5.5)
+Replace("b" => 0.0 => 1.5, 5.0 => 5.5)
+Replace([1, 3] => 0.0 => 0.1)
 Replace([:a, :c] => >(5) => 5)
 Replace(["a", "c"] => isequal(2) => -2)
 Replace(r"[abc]" => (x -> 4 < x < 6) => 0)
