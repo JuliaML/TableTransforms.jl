@@ -22,7 +22,7 @@ it will be transformed into the following function: `x -> x === value`.
 Replace(1 => -1, :a => 5 => -5)
 Replace("b" => 1 => 1.5, 5 => 5.5)
 Replace([1, 3] => 0 => 0.1)
-Replace([:a, :c] => 1 => 1.6)
+Replace([:a, :c] => >(5) => 5)
 Replace(["a", "c"] => isequal(2) => -2)
 Replace(r"[abc]" => (x -> 4 < x < 6) => 0)
 ```
