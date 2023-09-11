@@ -83,6 +83,7 @@ function applyfeat(::Replace, feat, prep)
     if isnothing(reps)
       x, nothing
     else
+      # reversal dict
       rev = Dict{Int,eltype(x)}()
       y = map(enumerate(x)) do (i, v)
         for (pred, new) in reps
