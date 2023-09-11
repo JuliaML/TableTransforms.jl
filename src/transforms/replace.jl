@@ -19,8 +19,10 @@ it will be transformed into the following function: `x -> x === value`.
 # Examples
 
 ```julia
-Replace(1 => -1, :a => 5 => -5)
-Replace("b" => 1 => 1.5, 5 => 5.5)
+Replace(1 => -1, 5 => -5)
+Replace(2 => 0 => 1.5, 5 => 5.5)
+Replace(:b => 0 => 1.5, 5 => 5.5)
+Replace("b" => 0 => 1.5, 5 => 5.5)
 Replace([1, 3] => 0 => 0.1)
 Replace([:a, :c] => >(5) => 5)
 Replace(["a", "c"] => isequal(2) => -2)
