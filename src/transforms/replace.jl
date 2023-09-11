@@ -78,14 +78,14 @@ function applyfeat(::Replace, feat, prep)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
 
-  tuples = map(prep) do (name, rep)
+  tuples = map(prep) do (name, reps)
     x = Tables.getcolumn(cols, name)
-    if isnothing(rep)
+    if isnothing(reps)
       x, nothing
     else
       rev = Dict{Int,eltype(x)}()
       y = map(enumerate(x)) do (i, v)
-        for (pred, new) in rep
+        for (pred, new) in reps
           if pred(v)
             rev[i] = v
             return new
