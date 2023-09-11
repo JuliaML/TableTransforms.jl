@@ -33,7 +33,7 @@ Replace(r"[abc]" => (x -> isodd(x) && x > 10) => 2)
 
 * Anonymous functions must be passed with parentheses as in the examples above.
 * Replacements are applied in the sequence in which they are defined, therefore,
-  if there is more than one replacement for the same column, the first one that is valid will be applied.
+  if there is more than one replacement for the same column, the first valid one will be applied.
 """
 struct Replace <: StatelessFeatureTransform
   colspecs::Vector{ColSpec}
