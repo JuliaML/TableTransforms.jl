@@ -20,6 +20,92 @@
   tₒ = revert(T, n, c)
   @test t == tₒ
 
+  # with colspec
+  T = Replace(2 => 4 => -4, :c => 1 => -1, "e" => 5 => -5)
+  n, c = apply(T, t)
+  @test n.a == [3, 2, 1, 4, 5, 3]
+  @test n.b == [2, -4, -4, 5, 8, 5]
+  @test n.c == [-1, -1, 6, 2, 4, -1]
+  @test n.d == [4, 3, 7, 5, 4, 1]
+  @test n.e == [-5, -5, 2, 6, -5, 2]
+  @test n.f == [4, 4, 3, 4, 5, 2]
+  @test isrevertible(T)
+  tₒ = revert(T, n, c)
+  @test t == tₒ
+
+  T = Replace([2, 5] => 5 => -5)
+  n, c = apply(T, t)
+  @test n.a == [3, 2, 1, 4, 5, 3]
+  @test n.b == [2, 4, 4, -5, 8, -5]
+  @test n.c == [1, 1, 6, 2, 4, 1]
+  @test n.d == [4, 3, 7, 5, 4, 1]
+  @test n.e == [-5, -5, 2, 6, -5, 2]
+  @test n.f == [4, 4, 3, 4, 5, 2]
+  @test isrevertible(T)
+  tₒ = revert(T, n, c)
+  @test t == tₒ
+
+  T = Replace([:b, :e] => 5 => -5)
+  n, c = apply(T, t)
+  @test n.a == [3, 2, 1, 4, 5, 3]
+  @test n.b == [2, 4, 4, -5, 8, -5]
+  @test n.c == [1, 1, 6, 2, 4, 1]
+  @test n.d == [4, 3, 7, 5, 4, 1]
+  @test n.e == [-5, -5, 2, 6, -5, 2]
+  @test n.f == [4, 4, 3, 4, 5, 2]
+  @test isrevertible(T)
+  tₒ = revert(T, n, c)
+  @test t == tₒ
+
+  T = Replace(["b", "e"] => 5 => -5)
+  n, c = apply(T, t)
+  @test n.a == [3, 2, 1, 4, 5, 3]
+  @test n.b == [2, 4, 4, -5, 8, -5]
+  @test n.c == [1, 1, 6, 2, 4, 1]
+  @test n.d == [4, 3, 7, 5, 4, 1]
+  @test n.e == [-5, -5, 2, 6, -5, 2]
+  @test n.f == [4, 4, 3, 4, 5, 2]
+  @test isrevertible(T)
+  tₒ = revert(T, n, c)
+  @test t == tₒ
+
+  T = Replace(r"[be]" => 5 => -5)
+  n, c = apply(T, t)
+  @test n.a == [3, 2, 1, 4, 5, 3]
+  @test n.b == [2, 4, 4, -5, 8, -5]
+  @test n.c == [1, 1, 6, 2, 4, 1]
+  @test n.d == [4, 3, 7, 5, 4, 1]
+  @test n.e == [-5, -5, 2, 6, -5, 2]
+  @test n.f == [4, 4, 3, 4, 5, 2]
+  @test isrevertible(T)
+  tₒ = revert(T, n, c)
+  @test t == tₒ
+
+  # with predicates
+  T = Replace([:b, :d] => >(4) => 0)
+  n, c = apply(T, t)
+  @test n.a == [3, 2, 1, 4, 5, 3]
+  @test n.b == [2, 4, 4, 0, 0, 0]
+  @test n.c == [1, 1, 6, 2, 4, 1]
+  @test n.d == [4, 3, 0, 0, 4, 1]
+  @test n.e == [5, 5, 2, 6, 5, 2]
+  @test n.f == [4, 4, 3, 4, 5, 2]
+  @test isrevertible(T)
+  tₒ = revert(T, n, c)
+  @test t == tₒ
+
+  T = Replace([:a, :f] => (x -> 1 < x < 5) => 0)
+  n, c = apply(T, t)
+  @test n.a == [0, 0, 1, 0, 5, 0]
+  @test n.b == [2, 4, 4, 5, 8, 5]
+  @test n.c == [1, 1, 6, 2, 4, 1]
+  @test n.d == [4, 3, 7, 5, 4, 1]
+  @test n.e == [5, 5, 2, 6, 5, 2]
+  @test n.f == [0, 0, 0, 0, 5, 0]
+  @test isrevertible(T)
+  tₒ = revert(T, n, c)
+  @test t == tₒ
+
   # table schema after apply and revert
   T = Replace(1 => -1, 5 => -5)
   n, c = apply(T, t)

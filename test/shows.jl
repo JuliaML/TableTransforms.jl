@@ -152,18 +152,19 @@
   end
 
   @testset "Replace" begin
-    pairs = IdDict(1 => -1, 5 => -5)
-    T = Replace(pairs)
+    T = Replace(1 => -1, 5 => -5)
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Replace($pairs)"
+    @test iostr == "Replace(TableTransforms.ColSpec[all, all], Function[Base.Fix2{typeof(===), Int64}(===, 1), Base.Fix2{typeof(===), Int64}(===, 5)], Any[-1, -5])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Replace transform
-    └─ pairs = $pairs"""
+    ├─ colspecs = TableTransforms.ColSpec[all, all]
+    ├─ preds = Function[Base.Fix2{typeof(===), Int64}(===, 1), Base.Fix2{typeof(===), Int64}(===, 5)]
+    └─ news = Any[-1, -5]"""
   end
 
   @testset "Coalesce" begin
