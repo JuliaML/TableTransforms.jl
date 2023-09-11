@@ -61,14 +61,14 @@ function preprocess(transform::Replace, table)
   news = transform.news
 
   # column replacements
-  colreps = mapreduce(vcat, colspecs, preds, news) do colspec, pred, new
+  colreps = map(colspecs, preds, news) do colspec, pred, new
     snames = choose(colspec, names)
-    snames .=> (pred => new)
+    snames => pred => new
   end
 
   # join replacements of each column
   map(names) do name
-    pairs = filter(p -> first(p) == name, colreps)
+    pairs = filter(p -> name ∈ first(p), colreps)
     reps = isempty(pairs) ? nothing : map(last, pairs)
     name => reps
   end
