@@ -156,7 +156,8 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Replace(TableTransforms.ColSpec[all, all], Function[Base.Fix2{typeof(===), Int64}(===, 1), Base.Fix2{typeof(===), Int64}(===, 5)], Any[-1, -5])"
+    @test iostr ==
+          "Replace(TableTransforms.ColSpec[all, all], Function[Base.Fix2{typeof(===), Int64}(===, 1), Base.Fix2{typeof(===), Int64}(===, 5)], Any[-1, -5])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
