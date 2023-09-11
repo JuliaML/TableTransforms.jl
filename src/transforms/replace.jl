@@ -23,11 +23,17 @@ Replace(1 => -1, 5 => -5)
 Replace(2 => 0.0 => 1.5, 5.0 => 5.5)
 Replace(:b => 0.0 => 1.5, 5.0 => 5.5)
 Replace("b" => 0.0 => 1.5, 5.0 => 5.5)
-Replace([1, 3] => 0.0 => 0.1)
-Replace([:a, :c] => >(5) => 5)
-Replace(["a", "c"] => isequal(2) => -2)
-Replace(r"[abc]" => (x -> 4 < x < 6) => 0)
+Replace([1, 3] => >(5) => 5)
+Replace([:a, :c] => isequal(2) => -2)
+Replace(["a", "c"] => (x -> 4 < x < 6) => 0)
+Replace(r"[abc]" => (x -> isodd(x) && x > 10) => 2)
 ```
+
+## Notes
+
+* Anonymous functions must be passed with parentheses as in the examples above.
+* Replacements are applied in the sequence in which they are defined, therefore,
+  if there is more than one replacement for the same column, the first one that is valid will be applied.
 """
 struct Replace <: StatelessFeatureTransform
   colspecs::Vector{ColSpec}

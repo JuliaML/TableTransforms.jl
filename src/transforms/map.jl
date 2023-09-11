@@ -26,6 +26,10 @@ Map([:a, :c] => ((a, c) -> 2a * 3c) => :col1)
 Map(["c", "a"] => ((c, a) -> 3c / a) => :col1, "c" => tan)
 Map(r"[abc]" => ((a, b, c) -> a^2 - 2b + c) => "col1")
 ```
+
+## Notes
+
+* Anonymous functions must be passed with parentheses as in the examples above.
 """
 struct Map <: StatelessFeatureTransform
   colspecs::Vector{ColSpec}
