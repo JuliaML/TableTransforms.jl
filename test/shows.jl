@@ -156,14 +156,15 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Replace(Base.Fix2{typeof(===), Int64}[Base.Fix2{typeof(===), Int64}(===, 1), Base.Fix2{typeof(===), Int64}(===, 5)], [-1, -5])"
+    @test iostr == "Replace(TableTransforms.ColSpec[all, all], Function[Base.Fix2{typeof(===), Int64}(===, 1), Base.Fix2{typeof(===), Int64}(===, 5)], Any[-1, -5])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Replace transform
-    ├─ funs = Base.Fix2{typeof(===), Int64}[Base.Fix2{typeof(===), Int64}(===, 1), Base.Fix2{typeof(===), Int64}(===, 5)]
-    └─ values = [-1, -5]"""
+    ├─ colspecs = TableTransforms.ColSpec[all, all]
+    ├─ preds = Function[Base.Fix2{typeof(===), Int64}(===, 1), Base.Fix2{typeof(===), Int64}(===, 5)]
+    └─ news = Any[-1, -5]"""
   end
 
   @testset "Coalesce" begin

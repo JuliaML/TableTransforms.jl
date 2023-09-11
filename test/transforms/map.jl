@@ -68,4 +68,7 @@
   @test n.op1 == @. t.a^2 - 2 * t.b + t.c
   tₒ = revert(T, n, c)
   @test t == tₒ
+
+  # throws
+  @test_throws ArgumentError Map()
 end

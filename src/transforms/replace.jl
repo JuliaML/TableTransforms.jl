@@ -3,65 +3,98 @@
 # ------------------------------------------------------------------
 
 """
-    Replace(pred₁ => new₁, pred₂ => new₂, ..., predₙ => newₙ)
+    Replace(cols₁ => pred₁ => new₁, pred₂ => new₂, ..., colsₙ => predₙ => newₙ)
 
-Replaces all values where `predᵢ` predicate returns `true` with `newᵢ` value in the table.
+Replaces all values where `predᵢ` predicate returns `true` with `newᵢ` value 
+in the the columns selected by `colsᵢ`.
 
-The predicate can be a function that accepts a single argument and returns a boolean, or a value. 
-If the predicate is a value, it will be transformed into the following function:
-`x -> x === value`.
+Passing a column selection is optional and when omitted all columns in the table 
+will be selected. The column selection can be a single column identifier (index or name), 
+a collection of identifiers, or a regular expression (regex).
+
+The predicate can be a function that accepts a single argument
+and returns a boolean, or a value. If the predicate is a value,
+it will be transformed into the following function: `x -> x === value`.
 
 # Examples
 
 ```julia
-Replace(1 => -1, 5 => -5)
-Replace(1 => 1.5, 5 => 5.5, 4 => true)
-Replace(>(3) => 10, isequal(2) => true)
-Replace(1 => 1.6, <(3) => 11, (x -> 4 < x < 6) => true)
+Replace(1 => -1, :a => 5 => -5)
+Replace("b" => 1 => 1.5, 5 => 5.5)
+Replace([1, 3] => 0 => 0.1)
+Replace([:a, :c] => 1 => 1.6)
+Replace(["a", "c"] => isequal(2) => -2)
+Replace(r"[abc]" => (x -> 4 < x < 6) => 0)
 ```
-
-## Notes
-
-* If it is not possible to apply the predicate to the value (e.g. `5 > "str"`),
-  the comparison will return `false`.
 """
-struct Replace{F,V} <: StatelessFeatureTransform
-  funs::Vector{F}
-  values::Vector{V}
+struct Replace <: StatelessFeatureTransform
+  colspecs::Vector{ColSpec}
+  preds::Vector{Function}
+  news::Vector{Any}
 end
 
 Replace() = throw(ArgumentError("cannot create a Replace transform without arguments"))
 
+# utility functions
+_extract(p::Pair) = AllSpec(), _pred(first(p)), last(p)
+_extract(p::Pair{<:Any,<:Pair}) = colspec(first(p)), _pred(first(last(p))), last(last(p))
+
+_pred(f::Function) = f
+_pred(v) = Base.Fix2(===, v)
+
 function Replace(pairs::Pair...)
-  funs = map(first.(pairs)) do f
-    f isa Function ? f : Base.Fix2(===, f)
-  end
-  Replace(collect(funs), collect(last.(pairs)))
+  tuples = map(_extract, pairs)
+  colspecs = [t[1] for t in tuples]
+  preds = [t[2] for t in tuples]
+  news = Any[t[3] for t in tuples]
+  Replace(colspecs, preds, news)
 end
 
 isrevertible(::Type{<:Replace}) = true
 
-trycompare(f, v) = try f(v) catch; false end
+function preprocess(transform::Replace, table)
+  cols = Tables.columns(table)
+  names = Tables.columnnames(cols)
 
-function applyfeat(transform::Replace, feat, prep)
+  colspecs = transform.colspecs
+  preds = transform.preds
+  news = transform.news
+
+  # column replacements
+  colreps = mapreduce(vcat, colspecs, preds, news) do colspec, pred, new
+    snames = choose(colspec, names)
+    snames .=> (pred => new)
+  end
+
+  # join replacements of each column
+  map(names) do name
+    pairs = filter(p -> first(p) == name, colreps)
+    reps = isempty(pairs) ? nothing : map(last, pairs)
+    name => reps
+  end
+end
+
+function applyfeat(::Replace, feat, prep)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
 
-  funs = transform.funs
-  news = transform.values
-  tuples = map(names) do nm
-    olds = []
-    x = Tables.getcolumn(cols, nm)
-    y = map(enumerate(x)) do (i, v)
-      for (f, n) in zip(funs, news)
-        if trycompare(f, v)
-          push!(olds, i => v)
-          return n
+  tuples = map(prep) do (name, rep)
+    x = Tables.getcolumn(cols, name)
+    if isnothing(rep)
+      x, nothing
+    else
+      rev = Dict{Int,eltype(x)}()
+      y = map(enumerate(x)) do (i, v)
+        for (pred, new) in rep
+          if pred(v)
+            rev[i] = v
+            return new
+          end
         end
+        v
       end
-      v
+      y, rev
     end
-    y, Dict(olds)
   end
 
   columns = first.(tuples)
@@ -76,9 +109,9 @@ function revertfeat(::Replace, newfeat, fcache)
   cols = Tables.columns(newfeat)
   names = Tables.columnnames(cols)
 
-  columns = map(names, fcache) do nm, rev
-    y = Tables.getcolumn(cols, nm)
-    [get(rev, i, y[i]) for i in eachindex(y)]
+  columns = map(names, fcache) do name, rev
+    y = Tables.getcolumn(cols, name)
+    isnothing(rev) ? y : [get(rev, i, y[i]) for i in 1:length(y)]
   end
 
   𝒯 = (; zip(names, columns)...)
