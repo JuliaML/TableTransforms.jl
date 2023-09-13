@@ -81,8 +81,8 @@ function applyfeat(transform::Map, feat, prep)
   mapped = map(colspecs, funs, targets) do colspec, fun, target
     snames = choose(colspec, names)
     newname = isnothing(target) ? _makename(snames, fun) : target
-    columns = (Tables.getcolumn(cols, nm) for nm in snames)
-    newcolumn = map(fun, columns...)
+    scolumns = (Tables.getcolumn(cols, nm) for nm in snames)
+    newcolumn = map(fun, scolumns...)
     newname => newcolumn
   end
 
