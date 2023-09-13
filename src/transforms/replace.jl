@@ -60,33 +60,28 @@ end
 
 isrevertible(::Type{<:Replace}) = true
 
-function preprocess(transform::Replace, table)
-  cols = Tables.columns(table)
+function applyfeat(transform::Replace, feat, prep)
+  cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
 
   colspecs = transform.colspecs
   preds = transform.preds
   news = transform.news
 
-  # column replacements
-  colreps = map(colspecs, preds, news) do colspec, pred, new
+  # preprocess all replacements
+  prepreps = map(colspecs, preds, news) do colspec, pred, new
     snames = choose(colspec, names)
     snames => pred => new
   end
 
   # join replacements of each column
-  map(names) do name
-    pairs = filter(p -> name ∈ first(p), colreps)
+  colreps = map(names) do name
+    pairs = filter(p -> name ∈ first(p), prepreps)
     reps = isempty(pairs) ? nothing : map(last, pairs)
     name => reps
   end
-end
 
-function applyfeat(::Replace, feat, prep)
-  cols = Tables.columns(feat)
-  names = Tables.columnnames(cols)
-
-  tuples = map(prep) do (name, reps)
+  tuples = map(colreps) do (name, reps)
     x = Tables.getcolumn(cols, name)
     if isnothing(reps)
       x, nothing
