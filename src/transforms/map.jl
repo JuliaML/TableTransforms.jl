@@ -61,26 +61,13 @@ isrevertible(::Type{Map}) = true
 
 _makename(snames, fun) = Symbol(join([snames; nameof(fun)], "_"))
 
-function preprocess(transform::Map, table)
-  cols = Tables.columns(table)
-  names = Tables.columnnames(cols)
+function applyfeat(transform::Map, feat, prep)
+  cols = Tables.columns(feat)
+  onames = Tables.columnnames(cols)
 
   colspecs = transform.colspecs
   funs = transform.funs
   targets = transform.targets
-
-  map(colspecs, funs, targets) do colspec, fun, target
-    snames = choose(colspec, names)
-    newname = isnothing(target) ? _makename(snames, fun) : target
-    columns = (Tables.getcolumn(cols, nm) for nm in snames)
-    newcolumn = map(fun, columns...)
-    newname => newcolumn
-  end
-end
-
-function applyfeat(::Map, feat, prep)
-  cols = Tables.columns(feat)
-  onames = Tables.columnnames(cols)
 
   # new names and columns
   names = collect(onames)
@@ -90,7 +77,16 @@ function applyfeat(::Map, feat, prep)
   rnames = empty(names)
   rcolumns = empty(columns)
 
-  for (name, column) in prep
+  # mapped columns
+  mapped = map(colspecs, funs, targets) do colspec, fun, target
+    snames = choose(colspec, names)
+    newname = isnothing(target) ? _makename(snames, fun) : target
+    scolumns = (Tables.getcolumn(cols, nm) for nm in snames)
+    newcolumn = map(fun, scolumns...)
+    newname => newcolumn
+  end
+
+  for (name, column) in mapped
     if name ∈ onames
       push!(rnames, name)
       i = findfirst(==(name), onames)
