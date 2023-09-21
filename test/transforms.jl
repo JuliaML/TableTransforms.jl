@@ -5,6 +5,7 @@ transformfiles = [
   "sort.jl",
   "sample.jl",
   "filter.jl",
+  "dropmissing.jl",
   "dropextrema.jl",
   "map.jl",
   "replace.jl",
