@@ -50,6 +50,12 @@ Filter
 DropMissing
 ```
 
+## DropExtrema
+
+```@docs
+DropExtrema
+```
+
 ## Map
 
 ```@docs
