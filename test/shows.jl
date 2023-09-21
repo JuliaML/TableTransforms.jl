@@ -105,18 +105,18 @@
   end
 
   @testset "Filter" begin
-    func = row -> row.c ≥ 2 && row.e > 4
-    T = Filter(func)
+    pred = row -> row.c ≥ 2 && row.e > 4
+    T = Filter(pred)
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Filter($(typeof(func))())"
+    @test iostr == "Filter($(typeof(pred))())"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Filter transform
-    └─ func = $(typeof(func))()"""
+    └─ pred = $(typeof(pred))()"""
   end
 
   @testset "DropMissing" begin
