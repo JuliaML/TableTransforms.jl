@@ -133,6 +133,22 @@
     └─ colspec = [:a, :b, :c]"""
   end
 
+  @testset "DropExtrema" begin
+    T = DropExtrema("a", low=0.25, high=0.75)
+
+    # compact mode
+    iostr = sprint(show, T)
+    @test iostr == "DropExtrema([:a], 0.25, 0.75)"
+
+    # full mode
+    iostr = sprint(show, MIME("text/plain"), T)
+    @test iostr == """
+    DropExtrema transform
+    ├─ colspec = [:a]
+    ├─ low = 0.25
+    └─ high = 0.75"""
+  end
+
   @testset "Map" begin
     fun = (a, b) -> 2a + b
     T = Map(:a => sin, [:a, :b] => fun => :c)
