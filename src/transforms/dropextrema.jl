@@ -12,7 +12,7 @@ Drops the rows where the values in the column `col` are outside the interval
 
 ```julia
 DropExtrema(1)
-DropExtrema(:a, low=0, high=1)
+DropExtrema(:a, low=0.2, high=0.8)
 DropExtrema("a", low=0.3, high=0.7)
 ```
 """
