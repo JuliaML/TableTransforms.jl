@@ -31,6 +31,8 @@ end
 DropExtrema(col::Col, low, high) = DropExtrema(col, promote(low, high)...)
 DropExtrema(col::Col; low=0.25, high=0.75) = DropExtrema(col, low, high)
 
+isrevertible(::Type{<:DropExtrema}) = true
+
 function preprocess(transform::DropExtrema, table)
   cols = Tables.columns(table)
   names = Tables.columnnames(cols)
@@ -48,7 +50,8 @@ end
 
 function applyfeat(::DropExtrema, feat, prep)
   ftrans, fprep = prep
-  applyfeat(ftrans, feat, fprep)
+  newfeat, ffcache = applyfeat(ftrans, feat, fprep)
+  newfeat, (ftrans, ffcache)
 end
 
 function revertfeat(::DropExtrema, newfeat, fcache)
