@@ -53,6 +53,7 @@ export
   Sample,
   Filter,
   DropMissing,
+  DropExtrema,
   Map,
   Replace,
   Coalesce,
