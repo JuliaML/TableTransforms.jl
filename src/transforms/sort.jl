@@ -24,23 +24,22 @@ Sort(("a", "c", "e"))
 Sort(r"[ace]")
 ```
 """
-struct Sort{S<:ColSpec,T} <: StatelessFeatureTransform
-  colspec::S
+struct Sort{S<:ColumnSelector,T} <: StatelessFeatureTransform
+  selector::S
   kwargs::T
 end
 
-Sort(spec; kwargs...) = Sort(colspec(spec), values(kwargs))
+Sort(cols; kwargs...) = Sort(selector(cols), values(kwargs))
+Sort(cols::C...; kwargs...) where {C<:Column} = Sort(selector(cols), values(kwargs))
 
-Sort(cols::T...; kwargs...) where {T<:Col} = Sort(colspec(cols), values(kwargs))
-
-Sort(; kwargs...) = throw(ArgumentError("Cannot create a Sort object without arguments."))
+Sort(; kwargs...) = throw(ArgumentError("cannot create a Sort transform without arguments"))
 
 isrevertible(::Type{<:Sort}) = true
 
 function preprocess(transform::Sort, table)
   cols = Tables.columns(table)
   names = Tables.columnnames(cols)
-  snames = choose(transform.colspec, names)
+  snames = transform.selector(names)
 
   # use selected columns to calculate new indices
   scols = Tables.getcolumn.(Ref(cols), snames)

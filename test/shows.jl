@@ -10,7 +10,7 @@
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Select transform
-    ├─ colspec = [:a, :b, :c]
+    ├─ selector = [:a, :b, :c]
     └─ newnames = nothing"""
 
     # selection with renaming
@@ -24,7 +24,7 @@
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Select transform
-    ├─ colspec = [:a, :b]
+    ├─ selector = [:a, :b]
     └─ newnames = [:x, :y]"""
   end
 
@@ -39,7 +39,7 @@
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Reject transform
-    └─ colspec = [:a, :b, :c]"""
+    └─ selector = [:a, :b, :c]"""
   end
 
   @testset "Rename" begin
@@ -53,7 +53,7 @@
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Rename transform
-    ├─ colspec = [:a, :c]
+    ├─ selector = [:a, :c]
     └─ newnames = [:x, :y]"""
   end
 
@@ -82,7 +82,7 @@
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Sort transform
-    ├─ colspec = [:a, :c]
+    ├─ selector = [:a, :c]
     └─ kwargs = (rev = true,)"""
   end
 
@@ -130,7 +130,7 @@
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     DropMissing transform
-    └─ colspec = [:a, :b, :c]"""
+    └─ selector = [:a, :b, :c]"""
   end
 
   @testset "DropExtrema" begin
@@ -138,13 +138,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "DropExtrema([:a], 0.25, 0.75)"
+    @test iostr == "DropExtrema(:a, 0.25, 0.75)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     DropExtrema transform
-    ├─ colspec = [:a]
+    ├─ selector = :a
     ├─ low = 0.25
     └─ high = 0.75"""
   end
@@ -156,13 +156,13 @@
     # compact mode
     iostr = sprint(show, T)
     @test iostr ==
-          "Map(TableTransforms.ColSpec[[:a], [:a, :b]], Function[sin, $(typeof(fun))()], Union{Nothing, Symbol}[nothing, :c])"
+          "Map(ColumnSelectors.ColumnSelector[:a, [:a, :b]], Function[sin, $(typeof(fun))()], Union{Nothing, Symbol}[nothing, :c])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Map transform
-    ├─ colspecs = TableTransforms.ColSpec[[:a], [:a, :b]]
+    ├─ selectors = ColumnSelectors.ColumnSelector[:a, [:a, :b]]
     ├─ funs = Function[sin, $(typeof(fun))()]
     └─ targets = Union{Nothing, Symbol}[nothing, :c]"""
   end
@@ -173,13 +173,13 @@
     # compact mode
     iostr = sprint(show, T)
     @test iostr ==
-          "Replace(TableTransforms.ColSpec[all, all], Function[Base.Fix2{typeof(===), Int64}(===, 1), Base.Fix2{typeof(===), Int64}(===, 5)], Any[-1, -5])"
+          "Replace(ColumnSelectors.ColumnSelector[all, all], Function[Base.Fix2{typeof(===), Int64}(===, 1), Base.Fix2{typeof(===), Int64}(===, 5)], Any[-1, -5])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Replace transform
-    ├─ colspecs = TableTransforms.ColSpec[all, all]
+    ├─ selectors = ColumnSelectors.ColumnSelector[all, all]
     ├─ preds = Function[Base.Fix2{typeof(===), Int64}(===, 1), Base.Fix2{typeof(===), Int64}(===, 5)]
     └─ news = Any[-1, -5]"""
   end
@@ -195,7 +195,7 @@
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Coalesce transform
-    ├─ colspec = all
+    ├─ selector = all
     └─ value = 0"""
   end
 
@@ -226,7 +226,7 @@
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Levels transform
-    ├─ colspec = [:a, :b]
+    ├─ selector = [:a, :b]
     ├─ ordered = r"[ab]"
     └─ levels = (["n", "y"], 1:3)"""
   end
@@ -236,13 +236,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "OneHot([:a], false)"
+    @test iostr == "OneHot(:a, false)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     OneHot transform
-    ├─ colspec = [:a]
+    ├─ selector = :a
     └─ categ = false"""
   end
 
@@ -269,7 +269,7 @@
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Center transform
-    └─ colspec = all"""
+    └─ selector = all"""
   end
 
   @testset "Scale" begin
@@ -283,7 +283,7 @@
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Scale transform
-    ├─ colspec = all
+    ├─ selector = all
     ├─ low = 0.25
     └─ high = 0.75"""
   end
@@ -299,7 +299,7 @@
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     ZScore transform
-    └─ colspec = all"""
+    └─ selector = all"""
   end
 
   @testset "Quantile" begin
@@ -313,7 +313,7 @@
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Quantile transform
-    ├─ colspec = all
+    ├─ selector = all
     └─ dist = Normal{Float64}(μ=0.0, σ=1.0)"""
   end
 
@@ -328,7 +328,7 @@
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Functional transform
-    ├─ colspec = all
+    ├─ selector = all
     └─ func = sin"""
   end
 

@@ -91,7 +91,7 @@ these functions in parallel for all columns with multiple threads.
 
 ## Notes
 
-* `ColwiseFeatureTransform` subtypes must have a `colspec` field.
+* `ColwiseFeatureTransform` subtypes must have a `selector` field.
 """
 abstract type ColwiseFeatureTransform <: FeatureTransform end
 
@@ -182,7 +182,7 @@ function applyfeat(transform::ColwiseFeatureTransform, feat, prep)
   # retrieve column names and values
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
-  snames = choose(transform.colspec, names)
+  snames = transform.selector(names)
 
   # function to transform a single column
   function colfunc(n)

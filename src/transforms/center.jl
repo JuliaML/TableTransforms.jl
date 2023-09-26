@@ -27,15 +27,15 @@ Center(("a", "c", "e"))
 Center(r"[ace]")
 ```
 """
-struct Center{S<:ColSpec} <: ColwiseFeatureTransform
-  colspec::S
+struct Center{S<:ColumnSelector} <: ColwiseFeatureTransform
+  selector::S
 end
 
-Center() = Center(AllSpec())
-Center(spec) = Center(colspec(spec))
-Center(cols::C...) where {C<:Col} = Center(colspec(cols))
+Center() = Center(AllSelector())
+Center(cols) = Center(selector(cols))
+Center(cols::C...) where {C<:Column} = Center(selector(cols))
 
-assertions(transform::Center) = [SciTypeAssertion{Continuous}(transform.colspec)]
+assertions(transform::Center) = [SciTypeAssertion{Continuous}(transform.selector)]
 
 isrevertible(::Type{<:Center}) = true
 

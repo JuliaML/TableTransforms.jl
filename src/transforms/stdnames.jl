@@ -55,7 +55,7 @@ function applyfeat(transform::StdNames, feat, prep)
   newnames = _makeunique(names)
 
   # rename transform
-  rtrans = Rename(colspec(oldnames), Symbol.(newnames))
+  rtrans = Rename(selector(oldnames), Symbol.(newnames))
   newfeat, rfcache = applyfeat(rtrans, feat, prep)
 
   newfeat, (rtrans, rfcache)

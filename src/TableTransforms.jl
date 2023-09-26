@@ -18,6 +18,9 @@ using CategoricalArrays
 using Random
 using NelderMead: optimise
 
+using ColumnSelectors: ColumnSelector, SingleColumnSelector
+using ColumnSelectors: AllSelector, Column, selector, selectsingle
+
 import Distributions: ContinuousUnivariateDistribution
 import Distributions: quantile, cdf
 
@@ -25,7 +28,6 @@ import TransformsBase: Transform, Identity, →
 import TransformsBase: assertions, isrevertible, preprocess
 import TransformsBase: apply, revert, reapply
 
-include("colspec.jl")
 include("assertions.jl")
 include("tabletraits.jl")
 include("distributions.jl")

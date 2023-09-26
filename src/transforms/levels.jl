@@ -16,26 +16,26 @@ Levels(:a => 1:3, :b => ["a", "b"], ordered=[:a])
 Levels("a" => 1:3, "b" => ["a", "b"], ordered=["b"])
 ```
 """
-struct Levels{S<:ColSpec,O<:ColSpec,L} <: StatelessFeatureTransform
-  colspec::S
+struct Levels{S<:ColumnSelector,O<:ColumnSelector,L} <: StatelessFeatureTransform
+  selector::S
   ordered::O
   levels::L
 end
 
-Levels(pairs::Pair{T}...; ordered=nothing) where {T<:Col} =
-  Levels(colspec(first.(pairs)), colspec(ordered), last.(pairs))
+Levels(pairs::Pair{C}...; ordered=nothing) where {C<:Column} =
+  Levels(selector(first.(pairs)), selector(ordered), last.(pairs))
 
-Levels(; kwargs...) = throw(ArgumentError("Cannot create a Levels object without arguments."))
+Levels(; kwargs...) = throw(ArgumentError("cannot create a Levels transform without arguments"))
 
-assertions(transform::Levels) = [SciTypeAssertion{Finite}(transform.colspec)]
+assertions(transform::Levels) = [SciTypeAssertion{Finite}(transform.selector)]
 
 isrevertible(::Type{<:Levels}) = true
 
 function applyfeat(transform::Levels, feat, prep)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
-  snames = choose(transform.colspec, names)
-  ordered = choose(transform.ordered, snames)
+  snames = transform.selector(names)
+  ordered = transform.ordered(snames)
   tlevels = transform.levels
 
   results = map(names) do nm

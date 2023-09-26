@@ -30,16 +30,16 @@ Quantile(("a", "c", "e"), dist=Beta())
 Quantile(r"[ace]", dist=Normal())
 ```
 """
-struct Quantile{S<:ColSpec,D} <: ColwiseFeatureTransform
-  colspec::S
+struct Quantile{S<:ColumnSelector,D} <: ColwiseFeatureTransform
+  selector::S
   dist::D
 end
 
-Quantile(; dist=Normal()) = Quantile(AllSpec(), dist)
-Quantile(spec; dist=Normal()) = Quantile(colspec(spec), dist)
-Quantile(cols::C...; dist=Normal()) where {C<:Col} = Quantile(colspec(cols), dist)
+Quantile(; dist=Normal()) = Quantile(AllSelector(), dist)
+Quantile(cols; dist=Normal()) = Quantile(selector(cols), dist)
+Quantile(cols::C...; dist=Normal()) where {C<:Column} = Quantile(selector(cols), dist)
 
-assertions(transform::Quantile) = [SciTypeAssertion{Continuous}(transform.colspec)]
+assertions(transform::Quantile) = [SciTypeAssertion{Continuous}(transform.selector)]
 
 isrevertible(::Type{<:Quantile}) = true
 

@@ -31,24 +31,24 @@ Scale(("a", "c", "e"), low=0.25, high=0.75)
 Scale(r"[ace]", low=0.3, high=0.7)
 ```
 """
-struct Scale{S<:ColSpec,T} <: ColwiseFeatureTransform
-  colspec::S
+struct Scale{S<:ColumnSelector,T} <: ColwiseFeatureTransform
+  selector::S
   low::T
   high::T
 
-  function Scale(colspec::S, low::T, high::T) where {S<:ColSpec,T}
+  function Scale(selector::S, low::T, high::T) where {S<:ColumnSelector,T}
     @assert 0 ≤ low ≤ high ≤ 1 "invalid quantiles"
-    new{S,T}(colspec, low, high)
+    new{S,T}(selector, low, high)
   end
 end
 
-Scale(colspec::ColSpec, low, high) = Scale(colspec, promote(low, high)...)
+Scale(selector::ColumnSelector, low, high) = Scale(selector, promote(low, high)...)
 
-Scale(; low=0.25, high=0.75) = Scale(AllSpec(), low, high)
-Scale(spec; low=0.25, high=0.75) = Scale(colspec(spec), low, high)
-Scale(cols::C...; low=0.25, high=0.75) where {C<:Col} = Scale(colspec(cols), low, high)
+Scale(; low=0.25, high=0.75) = Scale(AllSelector(), low, high)
+Scale(cols; low=0.25, high=0.75) = Scale(selector(cols), low, high)
+Scale(cols::C...; low=0.25, high=0.75) where {C<:Column} = Scale(selector(cols), low, high)
 
-assertions(transform::Scale) = [SciTypeAssertion{Continuous}(transform.colspec)]
+assertions(transform::Scale) = [SciTypeAssertion{Continuous}(transform.selector)]
 
 isrevertible(::Type{<:Scale}) = true
 
