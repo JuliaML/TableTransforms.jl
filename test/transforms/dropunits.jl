@@ -1,6 +1,6 @@
 @testset "DropUnits" begin
   @test isrevertible(DropUnits())
-  
+
   a = [7, 4, 4, 7, 4, 1, 1, 6, 4, 7] * u"m/s"
   b = [4, 5, 4, missing, 6, 6, missing, 4, 4, 1] * u"m^2"
   c = [3.9, 3.8, 3.5, 6.5, 7.7, 1.5, 0.6, 5.7, 4.7, 4.8] * u"km/hr"
