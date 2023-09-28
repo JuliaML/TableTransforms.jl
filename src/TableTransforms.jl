@@ -19,7 +19,7 @@ using CategoricalArrays
 using Random
 using NelderMead: optimise
 
-using Unitful: AbstractQuantity, AffineQuantity, Units, AffineUnits
+using Unitful: AbstractQuantity, AffineQuantity, AffineUnits, Units
 
 import Distributions: ContinuousUnivariateDistribution
 import Distributions: quantile, cdf
