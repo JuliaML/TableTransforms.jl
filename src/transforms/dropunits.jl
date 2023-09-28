@@ -6,7 +6,7 @@
     DropUnits()
     DropUnits(:)
 
-Drop units from all column in the table.
+Drop units from all columns in the table.
 
     DropUnits(col₁, col₂, ..., colₙ)
     DropUnits([col₁, col₂, ..., colₙ])
@@ -61,7 +61,7 @@ function applyfeat(transform::DropUnits, feat, prep)
 end
 
 _addunit(x, ::typeof(NoUnits)) = x
-_addunit(x, unit) = [v * unit for v in x]
+_addunit(x, u::Units) = map(v -> v * u, x)
 
 function revertfeat(::DropUnits, newfeat, fcache)
   cols = Tables.columns(newfeat)
