@@ -42,8 +42,9 @@ _absunit(x) = _absunit(x, nonmissingtype(eltype(x)))
 _absunit(x, ::Type) = (x, NoUnits)
 _absunit(x, ::Type{Q}) where {Q<:AbstractQuantity} = (x, unit(Q)) 
 function _absunit(x, ::Type{Q}) where {Q<:AffineQuantity}
-  u = absoluteunit(unit(Q))
-  y = map(v -> uconvert(u, v), x)
+  u = unit(Q)
+  a = absoluteunit(u)
+  y = map(v -> uconvert(a, v), x)
   (y, u)
 end
 
@@ -66,7 +67,7 @@ function applyfeat(transform::AbsoluteUnits, feat, prep)
 end
 
 _revunit(x, ::Units) = x
-_revunit(x, u::AbsoluteUnits) = map(v -> uconvert(u, v), x)
+_revunit(x, u::AffineUnits) = map(v -> uconvert(u, v), x)
 
 function revertfeat(::AbsoluteUnits, newfeat, fcache)
   cols = Tables.columns(newfeat)
