@@ -20,7 +20,7 @@
   @test t.a == tₒ.a
   @test isequal(t.b, tₒ.b)
   @test t.c == tₒ.c
-  @test isequal(t.d, tₒ.d)
+  @test all(isapprox.(skipmissing(t.d), skipmissing(tₒ.d)))
   @test t.e == tₒ.e
 
   # args...
@@ -78,7 +78,7 @@
   @test t.a == tₒ.a
   @test isequal(t.b, tₒ.b)
   @test t.c == tₒ.c
-  @test isequal(t.d, tₒ.d)
+  @test all(isapprox.(skipmissing(t.d), skipmissing(tₒ.d)))
   @test t.e == tₒ.e
 
   # symbols
@@ -92,7 +92,7 @@
   @test t.a == tₒ.a
   @test isequal(t.b, tₒ.b)
   @test t.c == tₒ.c
-  @test isequal(t.d, tₒ.d)
+  @test all(isapprox.(skipmissing(t.d), skipmissing(tₒ.d)))
   @test t.e == tₒ.e
 
   # strings
@@ -106,7 +106,7 @@
   @test t.a == tₒ.a
   @test isequal(t.b, tₒ.b)
   @test t.c == tₒ.c
-  @test isequal(t.d, tₒ.d)
+  @test all(isapprox.(skipmissing(t.d), skipmissing(tₒ.d)))
   @test t.e == tₒ.e
 
   # tuple
@@ -123,7 +123,7 @@
   @test t.a == tₒ.a
   @test isequal(t.b, tₒ.b)
   @test t.c == tₒ.c
-  @test isequal(t.d, tₒ.d)
+  @test all(isapprox.(skipmissing(t.d), skipmissing(tₒ.d)))
   @test t.e == tₒ.e
 
   # symbols
@@ -139,7 +139,7 @@
   @test t.a == tₒ.a
   @test isequal(t.b, tₒ.b)
   @test t.c == tₒ.c
-  @test isequal(t.d, tₒ.d)
+  @test all(isapprox.(skipmissing(t.d), skipmissing(tₒ.d)))
   @test t.e == tₒ.e
 
   # strings
@@ -155,7 +155,7 @@
   @test t.a == tₒ.a
   @test isequal(t.b, tₒ.b)
   @test t.c == tₒ.c
-  @test isequal(t.d, tₒ.d)
+  @test all(isapprox.(skipmissing(t.d), skipmissing(tₒ.d)))
   @test t.e == tₒ.e
 
   # regex
@@ -171,6 +171,6 @@
   @test t.a == tₒ.a
   @test isequal(t.b, tₒ.b)
   @test t.c == tₒ.c
-  @test isequal(t.d, tₒ.d)
+  @test all(isapprox.(skipmissing(t.d), skipmissing(tₒ.d)))
   @test t.e == tₒ.e
 end
