@@ -17,6 +17,7 @@ StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 Tables = "bd369af6-aec1-5ad0-b16a-f7cc5008161c"
 Transducers = "28d57a85-8fef-5791-bfe6-a80928e7c999"
 TransformsBase = "28dd2a49-a57a-4bfb-84ca-1a49db9b96b8"
+Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
 AbstractTrees = "0.4"
@@ -29,4 +30,5 @@ StatsBase = "0.33, 0.34"
 Tables = "1.6"
 Transducers = "0.4"
 TransformsBase = "1.2"
+Unitful = "1.17"
 julia = "1.9"

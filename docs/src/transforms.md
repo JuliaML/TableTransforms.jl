@@ -56,6 +56,12 @@ DropMissing
 DropExtrema
 ```
 
+## DropUnits
+
+```@docs
+DropUnits
+```
+
 ## Map
 
 ```@docs

@@ -7,6 +7,7 @@ transformfiles = [
   "filter.jl",
   "dropmissing.jl",
   "dropextrema.jl",
+  "dropunits.jl",
   "map.jl",
   "replace.jl",
   "coalesce.jl",
