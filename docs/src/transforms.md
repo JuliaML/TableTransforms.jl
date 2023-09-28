@@ -62,6 +62,12 @@ DropExtrema
 DropUnits
 ```
 
+## AbsoluteUnits
+
+```@docs
+AbsoluteUnits
+```
+
 ## Map
 
 ```@docs
