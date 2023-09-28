@@ -40,7 +40,7 @@ isrevertible(::Type{<:AbsoluteUnits}) = true
 
 _absunit(x) = _absunit(x, nonmissingtype(eltype(x)))
 _absunit(x, ::Type) = (x, NoUnits)
-_absunit(x, ::Type{Q}) where {Q<:AbstractQuantity} = (x, unit(Q)) 
+_absunit(x, ::Type{Q}) where {Q<:AbstractQuantity} = (x, unit(Q))
 function _absunit(x, ::Type{Q}) where {Q<:AffineQuantity}
   u = unit(Q)
   a = absoluteunit(u)
