@@ -49,11 +49,7 @@ function applyfeat(transform::DropUnits, feat, prep)
 
   tuples = map(names) do name
     x = Tables.getcolumn(cols, name)
-    if name ∈ snames
-      _dropunit(x)
-    else
-      x, NoUnits
-    end
+    name ∈ snames ? _dropunit(x) : x, NoUnits
   end
 
   columns = first.(tuples)
