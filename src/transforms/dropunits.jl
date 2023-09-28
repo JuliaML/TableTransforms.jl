@@ -39,8 +39,8 @@ DropUnits(cols::T...) where {T<:Col} = DropUnits(colspec(cols))
 isrevertible(::Type{<:DropUnits}) = true
 
 _dropunit(x) = _dropunit(x, nonmissingtype(eltype(x)))
-_dropunit(x, ::Type{Q}) where {Q<:AbstractQuantity} = map(ustrip, x), unit(Q)
-_dropunit(x, ::Type) = x, NoUnits
+_dropunit(x, ::Type{Q}) where {Q<:AbstractQuantity} = (map(ustrip, x), unit(Q))
+_dropunit(x, ::Type) = (x, NoUnits)
 
 function applyfeat(transform::DropUnits, feat, prep)
   cols = Tables.columns(feat)
@@ -49,7 +49,7 @@ function applyfeat(transform::DropUnits, feat, prep)
 
   tuples = map(names) do name
     x = Tables.getcolumn(cols, name)
-    name ∈ snames ? _dropunit(x) : x, NoUnits
+    name ∈ snames ? _dropunit(x) : (x, NoUnits)
   end
 
   columns = first.(tuples)

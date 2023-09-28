@@ -10,10 +10,15 @@
 
   T = DropUnits()
   n, c = apply(T, t)
+  @test eltype(n.a) === Int
   @test unit(eltype(n.a)) == NoUnits
+  @test nonmissingtype(eltype(n.b)) === Int
   @test unit(nonmissingtype(eltype(n.b))) == NoUnits
+  @test eltype(n.c) === Float64
   @test unit(eltype(n.c)) == NoUnits
+  @test nonmissingtype(eltype(n.d)) === Float64
   @test unit(nonmissingtype(eltype(n.d))) == NoUnits
+  @test eltype(n.e) === String
   @test n.e == t.e
   tₒ = revert(T, n, c)
   @test t.a == tₒ.a
@@ -26,7 +31,9 @@
   # integers
   T = DropUnits(1, 2)
   n, c = apply(T, t)
+  @test eltype(n.a) === Int
   @test unit(eltype(n.a)) == NoUnits
+  @test nonmissingtype(eltype(n.b)) === Int
   @test unit(nonmissingtype(eltype(n.b))) == NoUnits
   @test unit(eltype(n.c)) == u"km/hr"
   @test unit(nonmissingtype(eltype(n.d))) == u"km^2"
@@ -40,7 +47,9 @@
   # symbols
   T = DropUnits(:a, :b)
   n, c = apply(T, t)
+  @test eltype(n.a) === Int
   @test unit(eltype(n.a)) == NoUnits
+  @test nonmissingtype(eltype(n.b)) === Int
   @test unit(nonmissingtype(eltype(n.b))) == NoUnits
   @test unit(eltype(n.c)) == u"km/hr"
   @test unit(nonmissingtype(eltype(n.d))) == u"km^2"
@@ -54,7 +63,9 @@
   # strings
   T = DropUnits("a", "b")
   n, c = apply(T, t)
+  @test eltype(n.a) === Int
   @test unit(eltype(n.a)) == NoUnits
+  @test nonmissingtype(eltype(n.b)) === Int
   @test unit(nonmissingtype(eltype(n.b))) == NoUnits
   @test unit(eltype(n.c)) == u"km/hr"
   @test unit(nonmissingtype(eltype(n.d))) == u"km^2"
@@ -71,7 +82,9 @@
   n, c = apply(T, t)
   @test unit(eltype(n.a)) == u"m/s"
   @test unit(nonmissingtype(eltype(n.b))) == u"m^2"
+  @test eltype(n.c) === Float64
   @test unit(eltype(n.c)) == NoUnits
+  @test nonmissingtype(eltype(n.d)) === Float64
   @test unit(nonmissingtype(eltype(n.d))) == NoUnits
   tₒ = revert(T, n, c)
   @test t.a == tₒ.a
@@ -85,7 +98,9 @@
   n, c = apply(T, t)
   @test unit(eltype(n.a)) == u"m/s"
   @test unit(nonmissingtype(eltype(n.b))) == u"m^2"
+  @test eltype(n.c) === Float64
   @test unit(eltype(n.c)) == NoUnits
+  @test nonmissingtype(eltype(n.d)) === Float64
   @test unit(nonmissingtype(eltype(n.d))) == NoUnits
   tₒ = revert(T, n, c)
   @test t.a == tₒ.a
@@ -99,7 +114,9 @@
   n, c = apply(T, t)
   @test unit(eltype(n.a)) == u"m/s"
   @test unit(nonmissingtype(eltype(n.b))) == u"m^2"
+  @test eltype(n.c) === Float64
   @test unit(eltype(n.c)) == NoUnits
+  @test nonmissingtype(eltype(n.d)) === Float64
   @test unit(nonmissingtype(eltype(n.d))) == NoUnits
   tₒ = revert(T, n, c)
   @test t.a == tₒ.a
@@ -113,9 +130,12 @@
   T = DropUnits((2, 4, 5))
   n, c = apply(T, t)
   @test unit(eltype(n.a)) == u"m/s"
+  @test nonmissingtype(eltype(n.b)) === Int
   @test unit(nonmissingtype(eltype(n.b))) == NoUnits
   @test unit(eltype(n.c)) == u"km/hr"
+  @test nonmissingtype(eltype(n.d)) === Float64
   @test unit(nonmissingtype(eltype(n.d))) == NoUnits
+  @test eltype(n.e) === String
   @test n.e == t.e
   tₒ = revert(T, n, c)
   @test t.a == tₒ.a
@@ -128,9 +148,12 @@
   T = DropUnits((:b, :d, :e))
   n, c = apply(T, t)
   @test unit(eltype(n.a)) == u"m/s"
+  @test nonmissingtype(eltype(n.b)) === Int
   @test unit(nonmissingtype(eltype(n.b))) == NoUnits
   @test unit(eltype(n.c)) == u"km/hr"
+  @test nonmissingtype(eltype(n.d)) === Float64
   @test unit(nonmissingtype(eltype(n.d))) == NoUnits
+  @test eltype(n.e) === String
   @test n.e == t.e
   tₒ = revert(T, n, c)
   @test t.a == tₒ.a
@@ -143,9 +166,12 @@
   T = DropUnits(("b", "d", "e"))
   n, c = apply(T, t)
   @test unit(eltype(n.a)) == u"m/s"
+  @test nonmissingtype(eltype(n.b)) === Int
   @test unit(nonmissingtype(eltype(n.b))) == NoUnits
   @test unit(eltype(n.c)) == u"km/hr"
+  @test nonmissingtype(eltype(n.d)) === Float64
   @test unit(nonmissingtype(eltype(n.d))) == NoUnits
+  @test eltype(n.e) === String
   @test n.e == t.e
   tₒ = revert(T, n, c)
   @test t.a == tₒ.a
@@ -157,11 +183,14 @@
   # regex
   T = DropUnits(r"[ace]")
   n, c = apply(T, t)
+  @test eltype(n.a) === Int
   @test unit(eltype(n.a)) == NoUnits
   @test unit(nonmissingtype(eltype(n.b))) == u"m^2"
+  @test eltype(n.c) === Float64
   @test unit(eltype(n.c)) == NoUnits
   @test unit(nonmissingtype(eltype(n.d))) == u"km^2"
   @test n.e == t.e
+  @test eltype(n.e) === String
   tₒ = revert(T, n, c)
   @test t.a == tₒ.a
   @test isequal(t.b, tₒ.b)
