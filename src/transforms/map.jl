@@ -37,7 +37,7 @@ struct Map <: StatelessFeatureTransform
   targets::Vector{Union{Nothing,Symbol}}
 end
 
-Map() = throw(ArgumentError("cannot create a Map transform without arguments"))
+Map() = throw(ArgumentError("cannot create Map transform without arguments"))
 
 # utility types
 const TargetName = Union{Symbol,AbstractString}

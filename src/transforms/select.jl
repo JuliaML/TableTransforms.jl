@@ -43,7 +43,7 @@ Select(pairs::Pair{C,Symbol}...) where {C<:Column} = Select(selector(first.(pair
 Select(pairs::Pair{C,S}...) where {C<:Column,S<:AbstractString} =
   Select(selector(first.(pairs)), collect(Symbol.(last.(pairs))))
 
-Select() = throw(ArgumentError("Cannot create a Select object without arguments."))
+Select() = throw(ArgumentError("cannot create Select transform without arguments"))
 
 isrevertible(::Type{<:Select}) = true
 
@@ -129,7 +129,7 @@ Reject(cols) = Reject(selector(cols))
 Reject(cols::C...) where {C<:Column} = Reject(selector(cols))
 
 # argument errors
-Reject() = throw(ArgumentError("cannot create a Reject transform without arguments"))
+Reject() = throw(ArgumentError("cannot create Reject transform without arguments"))
 Reject(::AllSelector) = throw(ArgumentError("cannot reject all columns"))
 
 isrevertible(::Type{<:Reject}) = true

@@ -30,7 +30,7 @@ Functional(func) = Functional(AllSelector(), func)
 
 Functional(pairs::Pair{C}...) where {C<:Column} = Functional(selector(first.(pairs)), last.(pairs))
 
-Functional() = throw(ArgumentError("cannot create a Functional transform without arguments"))
+Functional() = throw(ArgumentError("cannot create Functional transform without arguments"))
 
 # known invertible functions
 inverse(::typeof(log)) = exp

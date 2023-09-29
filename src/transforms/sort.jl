@@ -32,7 +32,7 @@ end
 Sort(cols; kwargs...) = Sort(selector(cols), values(kwargs))
 Sort(cols::C...; kwargs...) where {C<:Column} = Sort(selector(cols), values(kwargs))
 
-Sort(; kwargs...) = throw(ArgumentError("cannot create a Sort transform without arguments"))
+Sort(; kwargs...) = throw(ArgumentError("cannot create Sort transform without arguments"))
 
 isrevertible(::Type{<:Sort}) = true
 

@@ -25,7 +25,7 @@ end
 Levels(pairs::Pair{C}...; ordered=nothing) where {C<:Column} =
   Levels(selector(first.(pairs)), selector(ordered), last.(pairs))
 
-Levels(; kwargs...) = throw(ArgumentError("cannot create a Levels transform without arguments"))
+Levels(; kwargs...) = throw(ArgumentError("cannot create Levels transform without arguments"))
 
 assertions(transform::Levels) = [SciTypeAssertion{Finite}(transform.selector)]
 

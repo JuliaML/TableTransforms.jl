@@ -41,7 +41,7 @@ struct Replace <: StatelessFeatureTransform
   news::Vector{Any}
 end
 
-Replace() = throw(ArgumentError("cannot create a Replace transform without arguments"))
+Replace() = throw(ArgumentError("cannot create Replace transform without arguments"))
 
 # utility functions
 _extract(p::Pair) = AllSelector(), _pred(first(p)), last(p)
