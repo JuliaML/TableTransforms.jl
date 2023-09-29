@@ -19,18 +19,14 @@ OneHot("a")
 OneHot("a", categ=true)
 ```
 """
-struct OneHot{S<:ColSpec} <: StatelessFeatureTransform
-  colspec::S
+struct OneHot{S<:SingleColumnSelector} <: StatelessFeatureTransform
+  selector::S
   categ::Bool
-  function OneHot(col::Col, categ)
-    cs = colspec(col)
-    new{typeof(cs)}(cs, categ)
-  end
 end
 
-OneHot(col; categ=false) = OneHot(col, categ)
+OneHot(col::Column; categ=false) = OneHot(selector(col), categ)
 
-assertions(transform::OneHot) = [SciTypeAssertion{Finite}(transform.colspec)]
+assertions(transform::OneHot) = [SciTypeAssertion{Finite}(transform.selector)]
 
 isrevertible(::Type{<:OneHot}) = true
 
@@ -39,7 +35,7 @@ function applyfeat(transform::OneHot, feat, prep)
   names = Tables.columnnames(cols) |> collect
   columns = Any[Tables.getcolumn(cols, nm) for nm in names]
 
-  name = choose(transform.colspec, names) |> first
+  name = selectsingle(transform.selector, names)
   ind = findfirst(==(name), names)
   x = columns[ind]
 

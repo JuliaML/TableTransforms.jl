@@ -3,22 +3,22 @@
 # ------------------------------------------------------------------
 
 """
-    SciTypeAssertion{T}(colspec = AllSpec())
+    SciTypeAssertion{T}(selector = AllSelector())
 
-Asserts that the columns in the `colspec` have a scientific type `T`.
+Asserts that the columns in the `selector` have a scientific type `T`.
 """
-struct SciTypeAssertion{T,S<:ColSpec}
-  colspec::S
+struct SciTypeAssertion{T,S<:ColumnSelector}
+  selector::S
 end
 
-SciTypeAssertion{T}(colspec::S) where {T,S<:ColSpec} = SciTypeAssertion{T,S}(colspec)
+SciTypeAssertion{T}(selector::S) where {T,S<:ColumnSelector} = SciTypeAssertion{T,S}(selector)
 
-SciTypeAssertion{T}() where {T} = SciTypeAssertion{T}(AllSpec())
+SciTypeAssertion{T}() where {T} = SciTypeAssertion{T}(AllSelector())
 
 function (assertion::SciTypeAssertion{T})(table) where {T}
   cols = Tables.columns(table)
   names = Tables.columnnames(cols)
-  snames = choose(assertion.colspec, names)
+  snames = assertion.selector(names)
 
   for nm in snames
     x = Tables.getcolumn(cols, nm)

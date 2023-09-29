@@ -25,13 +25,13 @@ Indicator(:a, k=6, scale=:linear)
 Indicator("a", k=9, scale=:linear, categ=true)
 ```
 """
-struct Indicator{S<:ColSpec} <: StatelessFeatureTransform
-  colspec::S
+struct Indicator{S<:SingleColumnSelector} <: StatelessFeatureTransform
+  selector::S
   k::Int
   scale::Symbol
   categ::Bool
 
-  function Indicator(col::Col, k, scale, categ)
+  function Indicator(selector::S, k, scale, categ) where {S<:SingleColumnSelector}
     if k < 1
       throw(ArgumentError("`k` must be greater than or equal to 1"))
     end
@@ -40,14 +40,13 @@ struct Indicator{S<:ColSpec} <: StatelessFeatureTransform
       throw(ArgumentError("invalid `scale` option, use `:quantile` or `:linear`"))
     end
 
-    cs = colspec(col)
-    new{typeof(cs)}(cs, k, scale, categ)
+    new{S}(selector, k, scale, categ)
   end
 end
 
-Indicator(col; k=10, scale=:quantile, categ=false) = Indicator(col, k, scale, categ)
+Indicator(col::Column; k=10, scale=:quantile, categ=false) = Indicator(selector(col), k, scale, categ)
 
-assertions(transform::Indicator) = [SciTypeAssertion{Continuous}(transform.colspec)]
+assertions(transform::Indicator) = [SciTypeAssertion{Continuous}(transform.selector)]
 
 isrevertible(::Type{<:Indicator}) = true
 
@@ -66,7 +65,7 @@ function applyfeat(transform::Indicator, feat, prep)
   names = Tables.columnnames(cols) |> collect
   columns = Any[Tables.getcolumn(cols, nm) for nm in names]
 
-  name = choose(transform.colspec, names) |> first
+  name = selectsingle(transform.selector, names)
   ind = findfirst(==(name), names)
   x = columns[ind]
 

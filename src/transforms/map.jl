@@ -32,12 +32,12 @@ Map(r"[abc]" => ((a, b, c) -> a^2 - 2b + c) => "col1")
 * Anonymous functions must be passed with parentheses as in the examples above.
 """
 struct Map <: StatelessFeatureTransform
-  colspecs::Vector{ColSpec}
+  selectors::Vector{ColumnSelector}
   funs::Vector{Function}
   targets::Vector{Union{Nothing,Symbol}}
 end
 
-Map() = throw(ArgumentError("cannot create a Map transform without arguments"))
+Map() = throw(ArgumentError("cannot create Map transform without arguments"))
 
 # utility types
 const TargetName = Union{Symbol,AbstractString}
@@ -46,15 +46,15 @@ const PairWithoutTarget = Pair{<:Any,<:Function}
 const MapPair = Union{PairWithTarget,PairWithoutTarget}
 
 # utility functions
-_extract(p::PairWithTarget) = colspec(first(p)), first(last(p)), Symbol(last(last(p)))
-_extract(p::PairWithoutTarget) = colspec(first(p)), last(p), nothing
+_extract(p::PairWithTarget) = selector(first(p)), first(last(p)), Symbol(last(last(p)))
+_extract(p::PairWithoutTarget) = selector(first(p)), last(p), nothing
 
 function Map(pairs::MapPair...)
   tuples = map(_extract, pairs)
-  colspecs = [t[1] for t in tuples]
+  selectors = [t[1] for t in tuples]
   funs = [t[2] for t in tuples]
   targets = [t[3] for t in tuples]
-  Map(colspecs, funs, targets)
+  Map(selectors, funs, targets)
 end
 
 isrevertible(::Type{Map}) = true
@@ -65,7 +65,7 @@ function applyfeat(transform::Map, feat, prep)
   cols = Tables.columns(feat)
   onames = Tables.columnnames(cols)
 
-  colspecs = transform.colspecs
+  selectors = transform.selectors
   funs = transform.funs
   targets = transform.targets
 
@@ -78,8 +78,8 @@ function applyfeat(transform::Map, feat, prep)
   rcolumns = empty(columns)
 
   # mapped columns
-  mapped = map(colspecs, funs, targets) do colspec, fun, target
-    snames = choose(colspec, names)
+  mapped = map(selectors, funs, targets) do selector, fun, target
+    snames = selector(names)
     newname = isnothing(target) ? _makename(snames, fun) : target
     scolumns = (Tables.getcolumn(cols, nm) for nm in snames)
     newcolumn = map(fun, scolumns...)

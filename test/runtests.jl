@@ -11,6 +11,7 @@ using Test, Random, Plots
 using ReferenceTests, ImageIO
 using StatsBase
 using PairPlots
+import ColumnSelectors as CS
 
 const TT = TableTransforms
 
@@ -42,7 +43,6 @@ include("metatable.jl")
 # list of tests
 testfiles = [
   "distributions.jl",
-  "colspec.jl",
   "assertions.jl",
   "transforms.jl",
   "metadata.jl",

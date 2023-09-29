@@ -28,15 +28,15 @@ ZScore(("a", "c", "e"))
 ZScore(r"[ace]")
 ```
 """
-struct ZScore{S<:ColSpec} <: ColwiseFeatureTransform
-  colspec::S
+struct ZScore{S<:ColumnSelector} <: ColwiseFeatureTransform
+  selector::S
 end
 
-ZScore() = ZScore(AllSpec())
-ZScore(spec) = ZScore(colspec(spec))
-ZScore(cols::C...) where {C<:Col} = ZScore(colspec(cols))
+ZScore() = ZScore(AllSelector())
+ZScore(cols) = ZScore(selector(cols))
+ZScore(cols::C...) where {C<:Column} = ZScore(selector(cols))
 
-assertions(transform::ZScore) = [SciTypeAssertion{Continuous}(transform.colspec)]
+assertions(transform::ZScore) = [SciTypeAssertion{Continuous}(transform.selector)]
 
 isrevertible(::Type{<:ZScore}) = true
 

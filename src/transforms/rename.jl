@@ -16,26 +16,26 @@ Rename(:a => :x, :c => :y)
 Rename("a" => "x", "c" => "y")
 ```
 """
-struct Rename{S<:ColSpec} <: StatelessFeatureTransform
-  colspec::S
+struct Rename{S<:ColumnSelector} <: StatelessFeatureTransform
+  selector::S
   newnames::Vector{Symbol}
-  function Rename(colspec::S, newnames) where {S<:ColSpec}
+  function Rename(selector::S, newnames) where {S<:ColumnSelector}
     @assert allunique(newnames) "new names must be unique"
-    new{S}(colspec, newnames)
+    new{S}(selector, newnames)
   end
 end
 
-Rename(pairs::Pair{T,Symbol}...) where {T<:Col} = Rename(colspec(first.(pairs)), collect(last.(pairs)))
+Rename(pairs::Pair{C,Symbol}...) where {C<:Column} = Rename(selector(first.(pairs)), collect(last.(pairs)))
 
-Rename(pairs::Pair{T,S}...) where {T<:Col,S<:AbstractString} =
-  Rename(colspec(first.(pairs)), collect(Symbol.(last.(pairs))))
+Rename(pairs::Pair{C,S}...) where {C<:Column,S<:AbstractString} =
+  Rename(selector(first.(pairs)), collect(Symbol.(last.(pairs))))
 
 isrevertible(::Type{<:Rename}) = true
 
 function applyfeat(transform::Rename, feat, prep)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
-  snames = choose(transform.colspec, names)
+  snames = transform.selector(names)
   @assert transform.newnames ⊈ setdiff(names, snames) "duplicate names"
 
   mapnames = Dict(zip(snames, transform.newnames))

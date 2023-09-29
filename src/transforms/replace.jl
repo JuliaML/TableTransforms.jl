@@ -36,26 +36,26 @@ Replace(r"[abc]" => (x -> isodd(x) && x > 10) => 2)
   if there is more than one replacement for the same column, the first valid one will be applied.
 """
 struct Replace <: StatelessFeatureTransform
-  colspecs::Vector{ColSpec}
+  selectors::Vector{ColumnSelector}
   preds::Vector{Function}
   news::Vector{Any}
 end
 
-Replace() = throw(ArgumentError("cannot create a Replace transform without arguments"))
+Replace() = throw(ArgumentError("cannot create Replace transform without arguments"))
 
 # utility functions
-_extract(p::Pair) = AllSpec(), _pred(first(p)), last(p)
-_extract(p::Pair{<:Any,<:Pair}) = colspec(first(p)), _pred(first(last(p))), last(last(p))
+_extract(p::Pair) = AllSelector(), _pred(first(p)), last(p)
+_extract(p::Pair{<:Any,<:Pair}) = selector(first(p)), _pred(first(last(p))), last(last(p))
 
 _pred(f::Function) = f
 _pred(v) = Base.Fix2(===, v)
 
 function Replace(pairs::Pair...)
   tuples = map(_extract, pairs)
-  colspecs = [t[1] for t in tuples]
+  selectors = [t[1] for t in tuples]
   preds = [t[2] for t in tuples]
   news = Any[t[3] for t in tuples]
-  Replace(colspecs, preds, news)
+  Replace(selectors, preds, news)
 end
 
 isrevertible(::Type{<:Replace}) = true
@@ -64,13 +64,13 @@ function applyfeat(transform::Replace, feat, prep)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
 
-  colspecs = transform.colspecs
+  selectors = transform.selectors
   preds = transform.preds
   news = transform.news
 
   # preprocess all replacements
-  prepreps = map(colspecs, preds, news) do colspec, pred, new
-    snames = choose(colspec, names)
+  prepreps = map(selectors, preds, news) do selector, pred, new
+    snames = selector(names)
     snames => pred => new
   end
 

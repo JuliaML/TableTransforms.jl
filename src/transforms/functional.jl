@@ -21,16 +21,16 @@ Functional(:a => cos, :b => sin)
 Functional("a" => cos, "b" => sin)
 ```
 """
-struct Functional{S<:ColSpec,F} <: StatelessFeatureTransform
-  colspec::S
+struct Functional{S<:ColumnSelector,F} <: StatelessFeatureTransform
+  selector::S
   func::F
 end
 
-Functional(func) = Functional(AllSpec(), func)
+Functional(func) = Functional(AllSelector(), func)
 
-Functional(pairs::Pair{T}...) where {T<:Col} = Functional(colspec(first.(pairs)), last.(pairs))
+Functional(pairs::Pair{C}...) where {C<:Column} = Functional(selector(first.(pairs)), last.(pairs))
 
-Functional() = throw(ArgumentError("Cannot create a Functional object without arguments."))
+Functional() = throw(ArgumentError("cannot create Functional transform without arguments"))
 
 # known invertible functions
 inverse(::typeof(log)) = exp
@@ -48,7 +48,7 @@ inverse(::typeof(identity)) = identity
 # fallback to nothing
 inverse(::Any) = nothing
 
-isrevertible(transform::Functional{AllSpec}) = !isnothing(inverse(transform.func))
+isrevertible(transform::Functional{AllSelector}) = !isnothing(inverse(transform.func))
 
 isrevertible(transform::Functional) = all(!isnothing, inverse.(transform.func))
 
@@ -58,7 +58,7 @@ _funcdict(func::Tuple, names) = Dict(names .=> func)
 function applyfeat(transform::Functional, feat, prep)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
-  snames = choose(transform.colspec, names)
+  snames = transform.selector(names)
   funcs = _funcdict(transform.func, snames)
 
   columns = map(names) do nm

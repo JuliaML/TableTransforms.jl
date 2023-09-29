@@ -33,14 +33,14 @@ Coalesce(r"[ace]", value=4)
 
 * The transform can alter the element type of columns from `Union{Missing,T}` to `T`.
 """
-struct Coalesce{S<:ColSpec,T} <: ColwiseFeatureTransform
-  colspec::S
+struct Coalesce{S<:ColumnSelector,T} <: ColwiseFeatureTransform
+  selector::S
   value::T
 end
 
-Coalesce(; value) = Coalesce(AllSpec(), value)
-Coalesce(spec; value) = Coalesce(colspec(spec), value)
-Coalesce(cols::C...; value) where {C<:Col} = Coalesce(colspec(cols), value)
+Coalesce(; value) = Coalesce(AllSelector(), value)
+Coalesce(cols; value) = Coalesce(selector(cols), value)
+Coalesce(cols::C...; value) where {C<:Column} = Coalesce(selector(cols), value)
 
 isrevertible(::Type{<:Coalesce}) = true
 

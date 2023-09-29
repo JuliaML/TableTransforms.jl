@@ -33,19 +33,19 @@ DropMissing(r"[bce]")
 * The transform can alter the element type of columns from `Union{Missing,T}` to `T`.
 * If the transformed column has only `missing` values, it will be converted to an empty column of type `Any`.
 """
-struct DropMissing{S<:ColSpec} <: StatelessFeatureTransform
-  colspec::S
+struct DropMissing{S<:ColumnSelector} <: StatelessFeatureTransform
+  selector::S
 end
 
-DropMissing() = DropMissing(AllSpec())
-DropMissing(spec) = DropMissing(colspec(spec))
-DropMissing(cols::T...) where {T<:Col} = DropMissing(colspec(cols))
+DropMissing() = DropMissing(AllSelector())
+DropMissing(cols) = DropMissing(selector(cols))
+DropMissing(cols::C...) where {C<:Column} = DropMissing(selector(cols))
 
 isrevertible(::Type{<:DropMissing}) = true
 
 function preprocess(transform::DropMissing, table)
   names = Tables.schema(table).names
-  snames = choose(transform.colspec, names)
+  snames = transform.selector(names)
   ftrans = Filter(row -> all(!ismissing(row[nm]) for nm in snames))
   fprep = preprocess(ftrans, table)
   ftrans, fprep, snames

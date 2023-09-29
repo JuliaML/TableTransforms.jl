@@ -28,13 +28,13 @@ AbsoluteUnits(("b", "c", "e"))
 AbsoluteUnits(r"[bce]")
 ```
 """
-struct AbsoluteUnits{S<:ColSpec} <: StatelessFeatureTransform
-  colspec::S
+struct AbsoluteUnits{S<:ColumnSelector} <: StatelessFeatureTransform
+  selector::S
 end
 
-AbsoluteUnits() = AbsoluteUnits(AllSpec())
-AbsoluteUnits(spec) = AbsoluteUnits(colspec(spec))
-AbsoluteUnits(cols::T...) where {T<:Col} = AbsoluteUnits(colspec(cols))
+AbsoluteUnits() = AbsoluteUnits(AllSelector())
+AbsoluteUnits(cols) = AbsoluteUnits(selector(cols))
+AbsoluteUnits(cols::C...) where {C<:Column} = AbsoluteUnits(selector(cols))
 
 isrevertible(::Type{<:AbsoluteUnits}) = true
 
@@ -51,7 +51,7 @@ end
 function applyfeat(transform::AbsoluteUnits, feat, prep)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
-  snames = choose(transform.colspec, names)
+  snames = transform.selector(names)
 
   tuples = map(names) do name
     x = Tables.getcolumn(cols, name)

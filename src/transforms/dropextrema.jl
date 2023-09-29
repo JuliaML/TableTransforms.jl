@@ -16,27 +16,26 @@ DropExtrema(:a, low=0.2, high=0.8)
 DropExtrema("a", low=0.3, high=0.7)
 ```
 """
-struct DropExtrema{S<:ColSpec,T} <: StatelessFeatureTransform
-  colspec::S
+struct DropExtrema{S<:SingleColumnSelector,T} <: StatelessFeatureTransform
+  selector::S
   low::T
   high::T
 
-  function DropExtrema(col::Col, low::T, high::T) where {T}
+  function DropExtrema(selector::S, low::T, high::T) where {S<:SingleColumnSelector,T}
     @assert 0 ≤ low ≤ high ≤ 1 "invalid quantiles"
-    cs = colspec(col)
-    new{typeof(cs),T}(cs, low, high)
+    new{S,T}(selector, low, high)
   end
 end
 
-DropExtrema(col::Col, low, high) = DropExtrema(col, promote(low, high)...)
-DropExtrema(col::Col; low=0.25, high=0.75) = DropExtrema(col, low, high)
+DropExtrema(selector::SingleColumnSelector, low, high) = DropExtrema(selector, promote(low, high)...)
+DropExtrema(col::Column; low=0.25, high=0.75) = DropExtrema(selector(col), low, high)
 
 isrevertible(::Type{<:DropExtrema}) = true
 
 function preprocess(transform::DropExtrema, table)
   cols = Tables.columns(table)
   names = Tables.columnnames(cols)
-  sname = choose(transform.colspec, names) |> first
+  sname = selectsingle(transform.selector, names)
 
   x = Tables.getcolumn(cols, sname)
   low = convert(eltype(x), transform.low)
