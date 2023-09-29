@@ -28,13 +28,13 @@ DropUnits(("b", "c", "e"))
 DropUnits(r"[bce]")
 ```
 """
-struct DropUnits{S<:ColSpec} <: StatelessFeatureTransform
-  colspec::S
+struct DropUnits{S<:ColumnSelector} <: StatelessFeatureTransform
+  selector::S
 end
 
-DropUnits() = DropUnits(AllSpec())
-DropUnits(spec) = DropUnits(colspec(spec))
-DropUnits(cols::T...) where {T<:Col} = DropUnits(colspec(cols))
+DropUnits() = DropUnits(AllSelector())
+DropUnits(cols) = DropUnits(selector(cols))
+DropUnits(cols::C...) where {C<:Column} = DropUnits(selector(cols))
 
 isrevertible(::Type{<:DropUnits}) = true
 
@@ -45,7 +45,7 @@ _dropunit(x, ::Type) = (x, NoUnits)
 function applyfeat(transform::DropUnits, feat, prep)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
-  snames = choose(transform.colspec, names)
+  snames = transform.selector(names)
 
   tuples = map(names) do name
     x = Tables.getcolumn(cols, name)
