@@ -5,6 +5,7 @@
 module TableTransforms
 
 using Tables
+using Unitful
 using ScientificTypes
 using Distributions: Normal
 using Transducers: tcollect
@@ -20,6 +21,7 @@ using NelderMead: optimise
 
 using ColumnSelectors: ColumnSelector, SingleColumnSelector
 using ColumnSelectors: AllSelector, Column, selector, selectsingle
+using Unitful: AbstractQuantity, AffineQuantity, AffineUnits, Units
 
 import Distributions: ContinuousUnivariateDistribution
 import Distributions: quantile, cdf
@@ -56,6 +58,8 @@ export
   Filter,
   DropMissing,
   DropExtrema,
+  DropUnits,
+  AbsoluteUnits,
   Map,
   Replace,
   Coalesce,

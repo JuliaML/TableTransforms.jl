@@ -1,6 +1,7 @@
 using TableTransforms
 using Distributions
 using Tables
+using Unitful
 using TypedTables
 using CategoricalArrays
 using ScientificTypes: Continuous, Count, Finite, Multiclass
