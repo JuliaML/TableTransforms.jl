@@ -200,19 +200,18 @@
   end
 
   @testset "Coerce" begin
-    T = Coerce(:a => Continuous, :b => Count)
+    T = Coerce(:a => SciTypes.Continuous, :b => SciTypes.Categorical)
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Coerce((:a => Continuous, :b => Count), false, 1)"
+    @test iostr == "Coerce([:a, :b], DataType[SciTypes.Continuous, SciTypes.Categorical])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Coerce transform
-    ├─ pairs = (:a => Continuous, :b => Count)
-    ├─ tight = false
-    └─ verbosity = 1"""
+    ├─ selector = [:a, :b]
+    └─ scitypes = DataType[SciTypes.Continuous, SciTypes.Categorical]"""
   end
 
   @testset "Levels" begin

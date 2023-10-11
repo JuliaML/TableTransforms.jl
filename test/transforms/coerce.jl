@@ -1,39 +1,38 @@
 @testset "Coerce" begin
-  x1 = [1.0, 2.0, 3.0, 4.0, 5.0]
-  x2 = [1.0, 2.0, 3.0, 4.0, 5.0]
-  x3 = [5.0, 5.0, 5.0, 5.0, 5.0]
-  t = Table(; x1, x2, x3)
+  a = [1, 2, 3, 4, 5]
+  b = [1.0, 2.0, 3.0, 4.0, 5.0]
+  t = Table(; a, b)
 
-  T = Coerce(:x1 => Count, :x2 => Count)
+  T = Coerce(1 => SciTypes.Continuous)
   n, c = apply(T, t)
-  @test eltype(n.x1) == Int
-  @test eltype(n.x2) == Int
+  @test eltype(n.a) <: Float64
+  @test eltype(n.b) <: Float64
   n, c = apply(T, t)
   tₒ = revert(T, n, c)
-  @test eltype(tₒ.x1) == eltype(t.x1)
-  @test eltype(tₒ.x2) == eltype(t.x2)
+  @test eltype(tₒ.a) == eltype(t.a)
+  @test eltype(tₒ.b) == eltype(t.b)
 
-  T = Coerce(:x1 => Multiclass, :x2 => Multiclass)
+  T = Coerce(:a => SciTypes.Continuous)
   n, c = apply(T, t)
-  @test eltype(n.x1) <: CategoricalValue
-  @test eltype(n.x2) <: CategoricalValue
+  @test eltype(n.a) <: Float64
+  @test eltype(n.b) <: Float64
   n, c = apply(T, t)
   tₒ = revert(T, n, c)
-  @test eltype(tₒ.x1) == eltype(t.x1)
-  @test eltype(tₒ.x2) == eltype(t.x2)
+  @test eltype(tₒ.a) == eltype(t.a)
+  @test eltype(tₒ.b) == eltype(t.b)
 
-  T = Coerce("x1" => Multiclass, "x2" => Multiclass)
+  T = Coerce("a" => SciTypes.Continuous)
   n, c = apply(T, t)
-  @test eltype(n.x1) <: CategoricalValue
-  @test eltype(n.x2) <: CategoricalValue
+  @test eltype(n.a) <: Float64
+  @test eltype(n.b) <: Float64
   n, c = apply(T, t)
   tₒ = revert(T, n, c)
-  @test eltype(tₒ.x1) == eltype(t.x1)
-  @test eltype(tₒ.x2) == eltype(t.x2)
+  @test eltype(tₒ.a) == eltype(t.a)
+  @test eltype(tₒ.b) == eltype(t.b)
 
   # row table
   rt = Tables.rowtable(t)
-  T = Coerce(:x1 => Count, :x2 => Count)
+  T = Coerce(:a => SciTypes.Continuous)
   n, c = apply(T, rt)
   @test Tables.isrowtable(n)
   rtₒ = revert(T, n, c)

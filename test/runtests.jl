@@ -2,9 +2,9 @@ using TableTransforms
 using Distributions
 using Tables
 using Unitful
+using SciTypes
 using TypedTables
 using CategoricalArrays
-using ScientificTypes: Continuous, Count, Finite, Multiclass
 using LinearAlgebra
 using Statistics
 using Test, Random, Plots
