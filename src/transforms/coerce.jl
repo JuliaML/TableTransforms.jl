@@ -12,7 +12,7 @@ This transform uses the `DataScienceTraits.coerce` function. Please see their do
 # Examples
 
 ```julia
-using DataScienceTraits as DST
+import DataScienceTraits as DST
 Coerce(1 => DST.Continuous, 2 => DST.Continuous)
 Coerce(:a => DST.Continuous, :b => DST.Continuous)
 Coerce("a" => DST.Continuous, "b" => DST.Continuous)
