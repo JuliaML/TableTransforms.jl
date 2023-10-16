@@ -4,14 +4,15 @@ using Tables
 using Unitful
 using TypedTables
 using CategoricalArrays
-using ScientificTypes: Continuous, Count, Finite, Multiclass
 using LinearAlgebra
 using Statistics
 using Test, Random, Plots
 using ReferenceTests, ImageIO
 using StatsBase
 using PairPlots
+
 import ColumnSelectors as CS
+import DataScienceTraits as DST
 
 const TT = TableTransforms
 
