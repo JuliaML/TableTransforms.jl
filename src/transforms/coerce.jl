@@ -18,7 +18,7 @@ Coerce(:a => DST.Continuous, :b => DST.Continuous)
 Coerce("a" => DST.Continuous, "b" => DST.Continuous)
 ```
 """
-struct Coerce{S<:ColumnSelector} <: FeatureTransform
+struct Coerce{S<:ColumnSelector} <: StatelessFeatureTransform
   selector::S
   scitypes::Vector{DataType}
 end
