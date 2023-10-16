@@ -7,15 +7,15 @@
 
 Return a copy of the table, ensuring that the scientific types of the columns match the new specification.
 
-This transform uses the `ScTypes.coerce` function. Please see their docstring for more details.
+This transform uses the `DataScienceTraits.coerce` function. Please see their docstring for more details.
 
 # Examples
 
 ```julia
-using ScientificTypes
-Coerce(1 => Continuous, 2 => Continuous)
-Coerce(:a => Continuous, :b => Continuous)
-Coerce("a" => Continuous, "b" => Continuous)
+using DataScienceTraits as DST
+Coerce(1 => DST.Continuous, 2 => DST.Continuous)
+Coerce(:a => DST.Continuous, :b => DST.Continuous)
+Coerce("a" => DST.Continuous, "b" => DST.Continuous)
 ```
 """
 struct Coerce{S<:ColumnSelector} <: FeatureTransform
