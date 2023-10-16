@@ -2,7 +2,6 @@ using TableTransforms
 using Distributions
 using Tables
 using Unitful
-using SciTypes
 using TypedTables
 using CategoricalArrays
 using LinearAlgebra
@@ -11,7 +10,9 @@ using Test, Random, Plots
 using ReferenceTests, ImageIO
 using StatsBase
 using PairPlots
+
 import ColumnSelectors as CS
+import DataScienceTraits as DST
 
 const TT = TableTransforms
 

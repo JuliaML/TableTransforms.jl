@@ -3,7 +3,7 @@
   b = [1.0, 2.0, 3.0, 4.0, 5.0]
   t = Table(; a, b)
 
-  T = Coerce(1 => SciTypes.Continuous)
+  T = Coerce(1 => DST.Continuous)
   n, c = apply(T, t)
   @test eltype(n.a) <: Float64
   @test eltype(n.b) <: Float64
@@ -12,7 +12,7 @@
   @test eltype(tₒ.a) == eltype(t.a)
   @test eltype(tₒ.b) == eltype(t.b)
 
-  T = Coerce(:a => SciTypes.Continuous)
+  T = Coerce(:a => DST.Continuous)
   n, c = apply(T, t)
   @test eltype(n.a) <: Float64
   @test eltype(n.b) <: Float64
@@ -21,7 +21,7 @@
   @test eltype(tₒ.a) == eltype(t.a)
   @test eltype(tₒ.b) == eltype(t.b)
 
-  T = Coerce("a" => SciTypes.Continuous)
+  T = Coerce("a" => DST.Continuous)
   n, c = apply(T, t)
   @test eltype(n.a) <: Float64
   @test eltype(n.b) <: Float64
@@ -32,7 +32,7 @@
 
   # row table
   rt = Tables.rowtable(t)
-  T = Coerce(:a => SciTypes.Continuous)
+  T = Coerce(:a => DST.Continuous)
   n, c = apply(T, rt)
   @test Tables.isrowtable(n)
   rtₒ = revert(T, n, c)

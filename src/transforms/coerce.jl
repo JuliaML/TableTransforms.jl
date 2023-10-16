@@ -38,7 +38,7 @@ function applyfeat(transform::Coerce, feat, prep)
 
   columns = map(names) do name
     x = Tables.getcolumn(cols, name)
-    name ∈ snames ? SciTypes.coerce(typedict[name], x) : x
+    name ∈ snames ? coerce(typedict[name], x) : x
   end
 
   𝒯 = (; zip(names, columns)...)

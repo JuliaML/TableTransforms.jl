@@ -6,7 +6,7 @@ module TableTransforms
 
 using Tables
 using Unitful
-using SciTypes
+using DataScienceTraits
 using Distributions: Normal
 using Transducers: tcollect
 using StatsBase: AbstractWeights
@@ -19,7 +19,7 @@ using CategoricalArrays
 using Random
 using NelderMead: optimise
 
-using SciTypes: SciType, Continuous
+using DataScienceTraits: SciType, Continuous, coerce
 using ColumnSelectors: ColumnSelector, SingleColumnSelector
 using ColumnSelectors: AllSelector, Column, selector, selectsingle
 using Unitful: AbstractQuantity, AffineQuantity, AffineUnits, Units
