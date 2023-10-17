@@ -47,7 +47,7 @@ end
 ProjectionPursuit(; tol=1e-6, maxiter=100, deg=5, perc=0.9, n=100, rng=Random.GLOBAL_RNG) =
   ProjectionPursuit{typeof(tol),typeof(rng)}(tol, maxiter, deg, perc, n, rng)
 
-assertions(::Type{<:ProjectionPursuit}) = [SciTypeAssertion{Continuous}()]
+assertions(::ProjectionPursuit) = [SciTypeAssertion{Continuous}()]
 
 isrevertible(::Type{<:ProjectionPursuit}) = true
 
