@@ -200,6 +200,24 @@ Closure
 Remainder
 ```
 
+## ALR
+
+```@docs
+ALR
+```
+
+## CLR
+
+```@docs
+CLR
+```
+
+## ILR
+
+```@docs
+ILR
+```
+
 ## RowTable
 
 ```@docs

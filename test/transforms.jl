@@ -26,6 +26,7 @@ transformfiles = [
   "projectionpursuit.jl",
   "closure.jl",
   "remainder.jl",
+  "logratio.jl",
   "rowtable.jl",
   "coltable.jl",
   "sequential.jl",
