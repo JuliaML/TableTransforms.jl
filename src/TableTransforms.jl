@@ -6,28 +6,25 @@ module TableTransforms
 
 using Tables
 using Unitful
-using DataScienceTraits
-using Distributions: Normal
-using Transducers: tcollect
-using StatsBase: AbstractWeights
-using StatsBase: Weights, sample
-using LinearAlgebra
 using Statistics
 using PrettyTables
 using AbstractTrees
+using LinearAlgebra
+using DataScienceTraits
 using CategoricalArrays
 using Random
-using NelderMead: optimise
 
+using TransformsBase: Transform, Identity, →
 using DataScienceTraits: SciType, Continuous, coerce
 using ColumnSelectors: ColumnSelector, SingleColumnSelector
 using ColumnSelectors: AllSelector, Column, selector, selectsingle
 using Unitful: AbstractQuantity, AffineQuantity, AffineUnits, Units
+using Distributions: ContinuousUnivariateDistribution, Normal
+using StatsBase: AbstractWeights, Weights, sample
+using Transducers: tcollect
+using NelderMead: optimise
 
-import Distributions: ContinuousUnivariateDistribution
 import Distributions: quantile, cdf
-
-import TransformsBase: Transform, Identity, →
 import TransformsBase: assertions, isrevertible, preprocess
 import TransformsBase: apply, revert, reapply
 
@@ -81,6 +78,8 @@ export
   DRS,
   SDS,
   ProjectionPursuit,
+  Closure,
+  Remainder,
   RowTable,
   ColTable,
   →,
