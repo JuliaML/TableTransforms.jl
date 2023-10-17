@@ -188,6 +188,18 @@ SDS
 ProjectionPursuit
 ```
 
+## Closure
+
+```@docs
+Closure
+```
+
+## Remainder
+
+```@docs
+Remainder
+```
+
 ## RowTable
 
 ```@docs

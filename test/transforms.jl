@@ -24,6 +24,8 @@ transformfiles = [
   "functional.jl",
   "eigenanalysis.jl",
   "projectionpursuit.jl",
+  "closure.jl",
+  "remainder.jl",
   "rowtable.jl",
   "coltable.jl",
   "sequential.jl",

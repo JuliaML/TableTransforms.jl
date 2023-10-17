@@ -347,6 +347,32 @@
     └─ pratio = 1.0"""
   end
 
+  @testset "Closure" begin
+    T = Closure()
+
+    # compact mode
+    iostr = sprint(show, T)
+    @test iostr == "Closure()"
+
+    # full mode
+    iostr = sprint(show, MIME("text/plain"), T)
+    @test iostr == "Closure transform"
+  end
+
+  @testset "Remainder" begin
+    T = Remainder()
+
+    # compact mode
+    iostr = sprint(show, T)
+    @test iostr == "Remainder(nothing)"
+
+    # full mode
+    iostr = sprint(show, MIME("text/plain"), T)
+    @test iostr == """
+    Remainder transform
+    └─ total = nothing"""
+  end
+
   @testset "RowTable" begin
     T = RowTable()
 
