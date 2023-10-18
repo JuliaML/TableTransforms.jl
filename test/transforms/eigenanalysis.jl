@@ -53,18 +53,21 @@
 
   # visual tests    
   if visualtests
-    p₁ = scatter(t₁.x, t₁.y, label="Original", aspectratio=:equal)
-    p₂ = scatter(t₂.PC1, t₂.PC2, label="V", aspectratio=:equal)
-    p₃ = scatter(t₃.PC1, t₃.PC2, label="VD", aspectratio=:equal)
-    p₄ = scatter(t₄.PC1, t₄.PC2, label="VDV", aspectratio=:equal)
-    p₅ = scatter(t₅.PC1, t₅.PC2, label="PCA", aspectratio=:equal)
-    p₆ = scatter(t₆.PC1, t₆.PC2, label="DRS", aspectratio=:equal)
-    p₇ = scatter(t₇.PC1, t₇.PC2, label="SDS", aspectratio=:equal)
-    p = plot(p₁, p₂, p₃, p₄, layout=(2, 2))
-    q = plot(p₂, p₃, p₄, p₅, p₆, p₇, layout=(2, 3))
-
-    @test_reference joinpath(datadir, "eigenanalysis-1.png") p
-    @test_reference joinpath(datadir, "eigenanalysis-2.png") q
+    kwargs = (; bodyaxis=(; aspect=Mke.DataAspect()))
+    fig = Mke.Figure(resolution=(1000, 1000))
+    pairplot(fig[1, 1], t₁; kwargs...)
+    pairplot(fig[1, 2], t₂; kwargs...)
+    pairplot(fig[2, 1], t₃; kwargs...)
+    pairplot(fig[2, 2], t₄; kwargs...)
+    @test_reference joinpath(datadir, "eigenanalysis-1.png") fig
+    fig = Mke.Figure(resolution=(1500, 1000))
+    pairplot(fig[1, 1], t₂; kwargs...)
+    pairplot(fig[1, 2], t₃; kwargs...)
+    pairplot(fig[1, 3], t₄; kwargs...)
+    pairplot(fig[2, 1], t₅; kwargs...)
+    pairplot(fig[2, 2], t₆; kwargs...)
+    pairplot(fig[2, 3], t₇; kwargs...)
+    @test_reference joinpath(datadir, "eigenanalysis-2.png") fig
   end
 
   # row table

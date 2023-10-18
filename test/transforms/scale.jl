@@ -22,15 +22,6 @@
   tₒ = revert(T, n, c)
   @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
-  # visual tests   
-  if visualtests
-    p₁ = scatter(t.x, t.y, label="Original", aspectratio=:equal)
-    p₂ = scatter(n.x, n.y, label="Scale", aspectratio=:equal)
-    p = plot(p₁, p₂, layout=(1, 2))
-
-    @test_reference joinpath(datadir, "scale.png") p
-  end
-
   # row table
   rt = Tables.rowtable(t)
   T = Scale()

@@ -62,7 +62,7 @@ end
 function revertfeat(::Remainder, newfeat, fcache)
   cols = Tables.columns(newfeat)
   names = Tables.columnnames(cols)
-  
+
   _, rname = fcache
   onames = setdiff(names, [rname])
   𝒯 = (; (nm => Tables.getcolumn(cols, nm) for nm in onames)...)
