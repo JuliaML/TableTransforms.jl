@@ -7,6 +7,7 @@
   b = [2.0, 2.0, 2.0]
   c = [3.0, 3.0, 0.0]
   t = Table(; a, b, c)
+
   T = ALR()
   n, c = apply(T, t)
   @test n == t |> ALR(:c)
