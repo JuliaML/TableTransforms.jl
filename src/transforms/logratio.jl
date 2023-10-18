@@ -69,10 +69,13 @@ function revertfeat(transform::LogRatio, newfeat, fcache)
   # original variable names
   onames = oldvars(transform, names, rvar)
 
-  # permute reference variable if necessary
+  # tevert the permutation if necessary
   if perm
-    X[:, [rind, end]] .= X[:, [end, rind]]
-    onames[[rind, end]] .= onames[[end, rind]]
+    n = length(onames)
+    inds = collect(1:(n - 1))
+    insert!(inds, rind, n)
+    onames = onames[inds]
+    X = X[:, inds]
   end
 
   # return same table type
