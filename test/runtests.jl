@@ -20,7 +20,7 @@ import DataScienceTraits as DST
 const TT = TableTransforms
 
 # set default configurations for plots
-Mke.activate!(type = "png")
+Mke.activate!(type="png")
 
 # environment settings
 isCI = "CI" ∈ keys(ENV)
