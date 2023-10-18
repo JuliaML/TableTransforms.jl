@@ -1,26 +1,26 @@
 using TableTransforms
-using Distributions
 using Tables
 using Unitful
 using TypedTables
 using CategoricalArrays
 using LinearAlgebra
-using Statistics
-using Test, Random, Plots
-using ReferenceTests, ImageIO
+using Distributions
 using StatsBase
+using Statistics
+using ReferenceTests
 using PairPlots
+using ImageIO
+using Random
+using Test
 
+import CairoMakie as Mke
 import ColumnSelectors as CS
 import DataScienceTraits as DST
 
 const TT = TableTransforms
 
 # set default configurations for plots
-gr(ms=1, mc=:black, label=false, size=(600, 400))
-
-# workaround GR warnings
-ENV["GKSwstype"] = "100"
+Mke.activate!(type = "png")
 
 # environment settings
 isCI = "CI" ∈ keys(ENV)
