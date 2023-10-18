@@ -83,7 +83,6 @@ function revertfeat(transform::LogRatio, newfeat, fcache)
   𝒯 |> Tables.materializer(newfeat)
 end
 
-
 # ----------------
 # IMPLEMENTATIONS
 # ----------------
