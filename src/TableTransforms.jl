@@ -13,6 +13,7 @@ using LinearAlgebra
 using DataScienceTraits
 using CategoricalArrays
 using Random
+using CoDa
 
 using TransformsBase: Transform, Identity, →
 using DataScienceTraits: SciType, Continuous, coerce
@@ -80,6 +81,9 @@ export
   ProjectionPursuit,
   Closure,
   Remainder,
+  ALR,
+  CLR,
+  ILR,
   RowTable,
   ColTable,
   →,
