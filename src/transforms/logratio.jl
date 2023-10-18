@@ -69,7 +69,7 @@ function revertfeat(transform::LogRatio, newfeat, fcache)
   # original variable names
   onames = oldvars(transform, names, rvar)
 
-  # tevert the permutation if necessary
+  # revert the permutation if necessary
   if perm
     n = length(onames)
     inds = collect(1:(n - 1))
