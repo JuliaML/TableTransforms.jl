@@ -20,12 +20,13 @@
   tₒ = revert(T, n, c)
 
   if visualtests
-    p₁ = corner(t, title="Original")
-    p₂ = corner(n, title="Transformed")
-    p₃ = corner(tₒ, title="Reverted")
-    p = plot(p₁, p₃, layout=(1, 2), size=(1600, 800))
-    @test_reference joinpath(datadir, "projectionpursuit-1.png") p₂
-    @test_reference joinpath(datadir, "projectionpursuit-2.png") p
+    fig = Mke.Figure(resolution=(800, 800))
+    pairplot(fig[1, 1], n)
+    @test_reference joinpath(datadir, "projectionpursuit-1.png") fig
+    fig = Mke.Figure(resolution=(1600, 800))
+    pairplot(fig[1, 1], t)
+    pairplot(fig[1, 2], tₒ)
+    @test_reference joinpath(datadir, "projectionpursuit-2.png") fig
   end
 
   a = rand(rng, Arcsine(3), 4000)
@@ -43,10 +44,10 @@
   tₒ = revert(T, n, c)
 
   if visualtests
-    p₁ = corner(t, title="Original")
-    p₂ = corner(n, title="Transformed")
-    p₃ = corner(tₒ, title="Reverted")
-    p = plot(p₁, p₂, p₃, layout=(1, 3), size=(1350, 500))
-    @test_reference joinpath(datadir, "projectionpursuit-3.png") p
+    fig = Mke.Figure(resolution=(1500, 500))
+    pairplot(fig[1, 1], t)
+    pairplot(fig[1, 2], n)
+    pairplot(fig[1, 3], tₒ)
+    @test_reference joinpath(datadir, "projectionpursuit-3.png") fig
   end
 end
