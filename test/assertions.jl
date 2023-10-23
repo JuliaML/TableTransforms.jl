@@ -27,11 +27,4 @@
   selector = CS.selector([:b, :e, :f])
   assertion = TT.SciTypeAssertion{DST.Categorical}(selector)
   @test_throws AssertionError assertion(table)
-
-  selector = CS.selector([:e, :f])
-  assertion = TT.ColumnTypeAssertion{CategoricalArray}(selector)
-  @test isnothing(assertion(table))
-  selector = CS.selector([:b, :e, :f])
-  assertion = TT.ColumnTypeAssertion{CategoricalArray}(selector)
-  @test_throws AssertionError assertion(table)
 end

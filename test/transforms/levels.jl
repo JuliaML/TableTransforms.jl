@@ -1,7 +1,7 @@
 @testset "Levels" begin
-  a = categorical(rand([true, false], 50))
-  b = categorical(rand(["y", "n"], 50))
-  c = categorical(rand(1:3, 50))
+  a = Bool[1, 0, 1, 0, 1, 1]
+  b = ["n", "y", "n", "y", "y", "y"]
+  c = [2, 3, 1, 2, 1, 3]
   t = Table(; a, b, c)
 
   T = Levels(2 => ["n", "y", "m"])
@@ -9,6 +9,7 @@
   @test levels(n.b) == ["n", "y", "m"]
   @test isordered(n.b) == false
   tₒ = revert(T, n, c)
+  @test Tables.schema(tₒ) == Tables.schema(t)
   @test tₒ == t
 
   T = Levels(:b => ["n", "y", "m"], :c => 1:4, ordered=[:c])
@@ -18,6 +19,7 @@
   @test levels(n.c) == [1, 2, 3, 4]
   @test isordered(n.c) == true
   tₒ = revert(T, n, c)
+  @test Tables.schema(tₒ) == Tables.schema(t)
   @test tₒ == t
 
   T = Levels("b" => ["n", "y", "m"], "c" => 1:4, ordered=["b"])
@@ -27,6 +29,7 @@
   @test levels(n.c) == [1, 2, 3, 4]
   @test isordered(n.c) == false
   tₒ = revert(T, n, c)
+  @test Tables.schema(tₒ) == Tables.schema(t)
   @test tₒ == t
 
   a = categorical(["yes", "no", "no", "no", "yes"])
@@ -87,9 +90,9 @@
   tₒ = revert(T, n, c)
   @test isordered(tₒ.a) == false
 
-  a = rand([true, false], 50)
-  b = categorical(rand(["y", "n"], 50))
-  c = categorical(rand(1:3, 50))
+  a = [0.1, 0.1, 0.2, 0.2, 0.1, 0.2]
+  b = ["n", "y", "n", "y", "y", "y"]
+  c = [2, 3, 1, 2, 1, 3]
   t = Table(; a, b, c)
 
   # throws: Levels without arguments
@@ -102,7 +105,7 @@
   @test_throws AssertionError apply(T, t)
 
   # throws: non categorical column
-  T = Levels(:a => [true, false], ordered=[:a])
+  T = Levels(:a => [0.1, 0.2, 0.3], ordered=[:a])
   @test_throws AssertionError apply(T, t)
 
   # throws: invalid ordered column selection

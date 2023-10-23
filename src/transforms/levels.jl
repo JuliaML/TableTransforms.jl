@@ -27,32 +27,35 @@ Levels(pairs::Pair{C}...; ordered=nothing) where {C<:Column} =
 
 Levels(; kwargs...) = throw(ArgumentError("cannot create Levels transform without arguments"))
 
-assertions(transform::Levels) = [ColumnTypeAssertion{CategoricalArray}(transform.selector)]
+assertions(transform::Levels) = [SciTypeAssertion{Categorical}(transform.selector)]
 
 isrevertible(::Type{<:Levels}) = true
+
+_revfun(x) = y -> Array(y)
+function _revfun(x::CategoricalArray)
+  l, o = levels(x), isordered(x)
+  y -> categorical(y, levels=l, ordered=o)
+end
 
 function applyfeat(transform::Levels, feat, prep)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
   snames = transform.selector(names)
   ordered = transform.ordered(snames)
-  tlevels = transform.levels
+  leveldict = Dict(zip(snames, transform.levels))
 
-  results = map(names) do nm
-    x = Tables.getcolumn(cols, nm)
+  results = map(names) do name
+    x = Tables.getcolumn(cols, name)
 
-    if nm ∈ snames
-      o = nm ∈ ordered
-      l = tlevels[findfirst(==(nm), snames)]
+    if name ∈ snames
+      o = name ∈ ordered
+      l = leveldict[name]
       y = categorical(x, levels=l, ordered=o)
-
-      xl, xo = levels(x), isordered(x)
-      revfunc = y -> categorical(y, levels=xl, ordered=xo)
+      revfun = _revfun(x)
+      y, revfun
     else
-      y, revfunc = x, identity
+      x, identity
     end
-
-    y, revfunc
   end
 
   columns, fcache = first.(results), last.(results)
@@ -67,9 +70,9 @@ function revertfeat(::Levels, newfeat, fcache)
   cols = Tables.columns(newfeat)
   names = Tables.columnnames(cols)
 
-  columns = map(names, fcache) do nm, revfunc
-    x = Tables.getcolumn(cols, nm)
-    revfunc(x)
+  columns = map(names, fcache) do name, revfun
+    y = Tables.getcolumn(cols, name)
+    revfun(y)
   end
 
   𝒯 = (; zip(names, columns)...)
