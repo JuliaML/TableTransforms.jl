@@ -16,9 +16,9 @@ using Random
 using CoDa
 
 using TransformsBase: Transform, Identity, →
-using DataScienceTraits: SciType, Continuous, coerce
 using ColumnSelectors: ColumnSelector, SingleColumnSelector
 using ColumnSelectors: AllSelector, Column, selector, selectsingle
+using DataScienceTraits: SciType, Continuous, Categorical, coerce
 using Unitful: AbstractQuantity, AffineQuantity, AffineUnits, Units
 using Distributions: ContinuousUnivariateDistribution, Normal
 using StatsBase: AbstractWeights, Weights, sample

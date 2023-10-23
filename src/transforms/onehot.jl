@@ -26,9 +26,16 @@ end
 
 OneHot(col::Column; categ=false) = OneHot(selector(col), categ)
 
-assertions(transform::OneHot) = [ColumnTypeAssertion{CategoricalArray}(transform.selector)]
+assertions(transform::OneHot) = [SciTypeAssertion{Categorical}(transform.selector)]
 
 isrevertible(::Type{<:OneHot}) = true
+
+_categ(x) = categorical(x), identity
+function _categ(x::CategoricalArray)
+  l, o = levels(x), isordered(x)
+  revfun = y -> categorical(y, levels=l, ordered=o)
+  x, revfun
+end
 
 function applyfeat(transform::OneHot, feat, prep)
   cols = Tables.columns(feat)
@@ -37,10 +44,10 @@ function applyfeat(transform::OneHot, feat, prep)
 
   name = selectsingle(transform.selector, names)
   ind = findfirst(==(name), names)
-  x = columns[ind]
+  x, revfun = _categ(columns[ind])
 
-  xl = levels(x)
-  onehot = map(xl) do l
+  xlevels = levels(x)
+  onehot = map(xlevels) do l
     nm = Symbol("$(name)_$l")
     while nm ∈ names
       nm = Symbol("$(nm)_")
@@ -48,19 +55,20 @@ function applyfeat(transform::OneHot, feat, prep)
     nm, x .== l
   end
 
-  newnms, newcols = first.(onehot), last.(onehot)
+  newnames = first.(onehot)
+  newcolumns = last.(onehot)
 
   # convert to categorical arrays if necessary
-  newcols = transform.categ ? categorical.(newcols, levels=[false, true]) : newcols
+  newcolumns = transform.categ ? categorical.(newcolumns, levels=[false, true]) : newcolumns
 
-  splice!(names, ind, newnms)
-  splice!(columns, ind, newcols)
+  splice!(names, ind, newnames)
+  splice!(columns, ind, newcolumns)
 
-  inds = ind:(ind + length(newnms) - 1)
+  inds = ind:(ind + length(newnames) - 1)
 
   𝒯 = (; zip(names, columns)...)
   newfeat = 𝒯 |> Tables.materializer(feat)
-  newfeat, (name, inds, xl, isordered(x))
+  newfeat, (name, inds, xlevels, revfun)
 end
 
 function revertfeat(::OneHot, newfeat, fcache)
@@ -68,12 +76,12 @@ function revertfeat(::OneHot, newfeat, fcache)
   names = Tables.columnnames(cols) |> collect
   columns = Any[Tables.getcolumn(cols, nm) for nm in names]
 
-  oname, inds, levels, ordered = fcache
-  x = map(zip(columns[inds]...)) do row
+  oname, inds, levels, revfun = fcache
+  y = map(zip(columns[inds]...)) do row
     levels[findfirst(==(true), row)]
   end
 
-  ocolumn = categorical(x; levels, ordered)
+  ocolumn = revfun(y)
 
   splice!(names, inds, [oname])
   splice!(columns, inds, [ocolumn])
