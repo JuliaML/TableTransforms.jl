@@ -48,13 +48,12 @@ of column names, imputation of missing data, and more.*
 
 ## Usage
 
-Consider the following table and its corner plot:
+Consider the following table and its pairplot:
 
 ```@example usage
 using TableTransforms
-using Plots, PairPlots
+using CairoMakie, PairPlots
 using Random; Random.seed!(2) # hide
-gr(format=:png) # hide
 
 # example table from PairPlots.jl
 N = 100_000
@@ -64,15 +63,15 @@ c = randn(N)
 d = c .+ 0.6randn(N)
 table = (; a, b, c, d)
 
-# corner plot of original table
-table |> corner
+# pairplot of original table
+table |> pairplot
 ```
 
 We can convert the columns to PCA scores:
 
 ```@example usage
 # convert to PCA scores
-table |> PCA() |> corner
+table |> PCA() |> pairplot
 ```
 
 or to any marginal distribution:
@@ -81,7 +80,7 @@ or to any marginal distribution:
 using Distributions
 
 # convert to any Distributions.jl
-table |> Quantile(dist=Normal()) |> corner
+table |> Quantile(dist=Normal()) |> pairplot
 ```
 
 Below is a more sophisticated example with a pipeline that has
@@ -98,7 +97,7 @@ f5 = Interquartile()
 pipeline = (f1 → f2 → f3) ⊔ (f4 → f5)
 
 # feed data into the pipeline
-table |> pipeline |> corner
+table |> pipeline |> pairplot
 ```
 
 Each branch is a sequence of transforms constructed with the `→` (`\to<tab>`) operator.
