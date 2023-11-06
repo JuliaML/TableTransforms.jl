@@ -52,7 +52,7 @@ struct CTableRows{T}
 
   function CTableRows(table)
     cols = Tables.columns(table)
-    nrows = _nrows(cols)
+    nrows = _nrows(table)
     new{typeof(cols)}(cols, nrows)
   end
 end
@@ -81,15 +81,17 @@ Tables.getcolumn(row::CTableRow, nm::Symbol) = Tables.getcolumn(getcols(row), nm
 
 struct RTableRows{T}
   rows::T
+  nrows::Int
 
   function RTableRows(table)
     rows = Tables.rows(table)
-    new{typeof(rows)}(rows)
+    nrows = _nrows(table)
+    new{typeof(rows)}(rows, nrows)
   end
 end
 
 # iterator interface
-Base.length(rows::RTableRows) = length(rows.rows)
+Base.length(rows::RTableRows) = rows.nrows
 function Base.iterate(rows::RTableRows, args...)
   next = iterate(rows.rows, args...)
   if isnothing(next)
@@ -116,9 +118,15 @@ Tables.getcolumn(row::RTableRow, nm::Symbol) = Tables.getcolumn(getrow(row), nm)
 # UTILS
 #-------
 
-function _nrows(cols)
-  names = Tables.columnnames(cols)
-  isempty(names) && return 0
-  column = Tables.getcolumn(cols, first(names))
-  length(column)
+function _nrows(table)
+  if Tables.rowaccess(table)
+    rows = Tables.rows(table)
+    length(rows)
+  else
+    cols = Tables.columns(table)
+    names = Tables.columnnames(cols)
+    isempty(names) && return 0
+    column = Tables.getcolumn(cols, first(names))
+    length(column)
+  end
 end

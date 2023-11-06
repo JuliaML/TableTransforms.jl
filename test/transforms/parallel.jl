@@ -46,4 +46,15 @@
   @test t == n
   tₒ = revert(T, n, c)
   @test tₒ == t
+
+  # https://github.com/JuliaML/TableTransforms.jl/issues/223
+  t = (a=1:4, b=5:8)
+  left = Select(:a) → Filter(row -> row.a < 4)
+  right = Select(:b) → Filter(row -> row.b < 7)
+  T = left ⊔ right
+  @test_throws AssertionError apply(T, t)
+  t1 = (a=1:4, b=4:7)
+  t2 = (a=1:4, b=5:8)
+  n, c = apply(T, t1)
+  @test_throws AssertionError reapply(T, t2, c)
 end

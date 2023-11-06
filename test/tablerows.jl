@@ -33,6 +33,7 @@
   @test row[:a] == 1
   @test row["a"] == 1
   # iterator interface
+  @test length(row) == 2
   item, state = iterate(row)
   @test item == 1
   item, state = iterate(row, state)
@@ -73,6 +74,7 @@
   @test row[:b] == 4
   @test row["b"] == 4
   # iterator interface
+  @test length(row) == 2
   item, state = iterate(row)
   @test item == 1
   item, state = iterate(row, state)
