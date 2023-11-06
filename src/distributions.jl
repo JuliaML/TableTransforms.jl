@@ -11,7 +11,9 @@ struct EmpiricalDistribution{T<:Real} <: ContinuousUnivariateDistribution
   values::Vector{T}
 
   function EmpiricalDistribution{T}(values) where {T<:Real}
-    @assert !isempty(values) "values must be provided"
+    if isempty(values) 
+      throw(AssertionError("values must be provided"))
+    end
     new(sort(values))
   end
 end

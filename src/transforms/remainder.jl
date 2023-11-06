@@ -38,7 +38,9 @@ function applyfeat(transform::Remainder, feat, prep)
   else
     t = convert(eltype(X), transform.total)
     # make sure that the total is valid
-    @assert all(≤(t), S) "the sum for each row must be less than total"
+    if any(>(t), S)
+      throw(AssertionError("the sum for each row must be less than total"))
+    end
     t
   end
 

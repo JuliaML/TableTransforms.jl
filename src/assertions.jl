@@ -22,6 +22,8 @@ function (assertion::SciTypeAssertion{T})(table) where {T}
 
   for nm in snames
     x = Tables.getcolumn(cols, nm)
-    @assert elscitype(x) <: T "the elements of the column '$nm' are not of scientific type $T"
+    if !(elscitype(x) <: T)
+      throw(AssertionError("the elements of the column '$nm' are not of scientific type $T"))
+    end
   end
 end

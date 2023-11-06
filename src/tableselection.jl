@@ -12,7 +12,9 @@ struct TableSelection{T,C}
 
   function TableSelection(table::T, names, onames) where {T}
     cols = Tables.columns(table)
-    @assert onames ⊆ Tables.columnnames(cols)
+    if onames ⊈ Tables.columnnames(cols)
+      throw(AssertionError("all selected columns must exist in the table"))
+    end
     ncols = length(names)
     mapnames = Dict(zip(names, onames))
     new{T,typeof(cols)}(table, cols, ncols, names, onames, mapnames)

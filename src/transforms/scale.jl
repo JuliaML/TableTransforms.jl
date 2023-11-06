@@ -37,7 +37,7 @@ struct Scale{S<:ColumnSelector,T} <: ColwiseFeatureTransform
   high::T
 
   function Scale(selector::S, low::T, high::T) where {S<:ColumnSelector,T}
-    @assert 0 ≤ low ≤ high ≤ 1 "invalid quantiles"
+    0 ≤ low ≤ high ≤ 1 || throw(AssertionError("invalid quantiles"))
     new{S,T}(selector, low, high)
   end
 end

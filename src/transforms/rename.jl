@@ -20,7 +20,9 @@ struct Rename{S<:ColumnSelector} <: StatelessFeatureTransform
   selector::S
   newnames::Vector{Symbol}
   function Rename(selector::S, newnames) where {S<:ColumnSelector}
-    @assert allunique(newnames) "new names must be unique"
+    if !allunique(newnames) 
+      throw(AssertionError("new names must be unique"))
+    end
     new{S}(selector, newnames)
   end
 end
@@ -36,7 +38,9 @@ function applyfeat(transform::Rename, feat, prep)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
   snames = transform.selector(names)
-  @assert transform.newnames ⊈ setdiff(names, snames) "duplicate names"
+  if transform.newnames ⊆ setdiff(names, snames)
+    throw(AssertionError("duplicate names"))
+  end
 
   mapnames = Dict(zip(snames, transform.newnames))
   newnames = [get(mapnames, nm, nm) for nm in names]

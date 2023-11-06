@@ -44,8 +44,8 @@ struct EigenAnalysis <: FeatureTransform
   pratio::Float64
 
   function EigenAnalysis(proj, maxdim, pratio)
-    @assert proj ∈ (:V, :VD, :VDV) "Invalid projection."
-    @assert 0 ≤ pratio ≤ 1 "Invalid pratio."
+    proj ∈ (:V, :VD, :VDV) || throw(AssertionError("invalid projection"))
+    0 ≤ pratio ≤ 1 || throw(AssertionError("invalid pratio"))
     new(proj, maxdim, pratio)
   end
 end

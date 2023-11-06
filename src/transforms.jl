@@ -139,7 +139,9 @@ function apply(transform::FeatureTransform, table)
 end
 
 function revert(transform::FeatureTransform, newtable, cache)
-  @assert isrevertible(transform) "Transform is not revertible"
+  if !isrevertible(transform) 
+    throw(AssertionError("transform is not revertible"))
+  end
 
   newfeat, newmeta = divide(newtable)
   fcache, mcache = cache
@@ -242,7 +244,9 @@ function reapplyfeat(transform::ColwiseFeatureTransform, feat, fcache)
   caches, snames = fcache
 
   # check that cache is valid
-  @assert length(names) == length(caches) "invalid caches for feat"
+  if length(names) ≠ length(caches)
+    throw(AssertionError("invalid caches for feat"))
+  end
 
   # function to transform a single column
   function colfunc(i)
