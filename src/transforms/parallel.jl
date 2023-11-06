@@ -54,7 +54,7 @@ function apply(p::ParallelTableTransform, table)
   metas = last.(splits)
 
   # check the number of rows of generated tables
-  @assert allequal(_nrows(f) for f in feats) "parallel branches must produce the same number of rows"
+  _assert(allequal(_nrows(f) for f in feats), "parallel branches must produce the same number of rows")
 
   # table with concatenated features
   newfeat = tablehcat(feats)
@@ -90,7 +90,7 @@ function revert(p::ParallelTableTransform, newtable, cache)
   caches = cache[1]
   rinfo = cache[2]
 
-  @assert !isnothing(rinfo) "transform is not revertible"
+  _assert(!isnothing(rinfo), "transform is not revertible")
 
   # features and metadata
   newfeat, newmeta = divide(newtable)
@@ -132,7 +132,7 @@ function reapply(p::ParallelTableTransform, table, cache)
   metas = last.(splits)
 
   # check the number of rows of generated tables
-  @assert allequal(_nrows(f) for f in feats) "parallel branches must produce the same number of rows"
+  _assert(allequal(_nrows(f) for f in feats), "parallel branches must produce the same number of rows")
 
   # table with concatenated features
   newfeat = tablehcat(feats)

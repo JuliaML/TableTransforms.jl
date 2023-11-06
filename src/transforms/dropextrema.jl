@@ -22,7 +22,7 @@ struct DropExtrema{S<:SingleColumnSelector,T} <: StatelessFeatureTransform
   high::T
 
   function DropExtrema(selector::S, low::T, high::T) where {S<:SingleColumnSelector,T}
-    @assert 0 ≤ low ≤ high ≤ 1 "invalid quantiles"
+    _assert(0 ≤ low ≤ high ≤ 1, "invalid quantiles")
     new{S,T}(selector, low, high)
   end
 end
