@@ -53,6 +53,9 @@ function apply(p::ParallelTableTransform, table)
   feats = first.(splits)
   metas = last.(splits)
 
+  # check the number of rows of generated tables
+  @assert allequal(_nrows(f) for f in feats) "parallel branches must produce the same number of rows"
+
   # table with concatenated features
   newfeat = tablehcat(feats)
 
@@ -128,6 +131,9 @@ function reapply(p::ParallelTableTransform, table, cache)
   feats = first.(splits)
   metas = last.(splits)
 
+  # check the number of rows of generated tables
+  @assert allequal(_nrows(f) for f in feats) "parallel branches must produce the same number of rows"
+
   # table with concatenated features
   newfeat = tablehcat(feats)
 
@@ -140,24 +146,23 @@ end
 
 function tablehcat(tables)
   # concatenate columns
-  allvars, allvals = [], []
-  varsdict = Set{Symbol}()
-  for 𝒯 in tables
-    cols = Tables.columns(𝒯)
-    vars = Tables.columnnames(cols)
-    vals = [Tables.getcolumn(cols, var) for var in vars]
-    for (var, val) in zip(vars, vals)
-      while var ∈ varsdict
-        var = Symbol(var, :_)
+  allnames = Symbol[]
+  allcolumns = []
+  for table in tables
+    cols = Tables.columns(table)
+    names = Tables.columnnames(cols)
+    for name in names
+      column = Tables.getcolumn(cols, name)
+      while name ∈ allnames
+        name = Symbol(name, :_)
       end
-      push!(varsdict, var)
-      push!(allvars, var)
-      push!(allvals, val)
+      push!(allnames, name)
+      push!(allcolumns, column)
     end
   end
 
   # table with concatenated columns
-  𝒯 = (; zip(allvars, allvals)...)
+  𝒯 = (; zip(allnames, allcolumns)...)
   𝒯 |> Tables.materializer(first(tables))
 end
 
