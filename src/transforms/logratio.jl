@@ -28,7 +28,7 @@ function applyfeat(transform::LogRatio, feat, prep)
 
   # reference variable
   rvar = refvar(transform, names)
-  @assert rvar ∈ names "invalid reference variable"
+  _assert(rvar ∈ names, "invalid reference variable")
   rind = findfirst(==(rvar), names)
 
   # permute columns if necessary
