@@ -328,7 +328,7 @@
     @test iostr == """
     Functional transform
     ├─ selector = all
-    └─ func = sin"""
+    └─ fun = sin"""
   end
 
   @testset "EigenAnalysis" begin
