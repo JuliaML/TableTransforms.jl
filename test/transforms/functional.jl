@@ -7,7 +7,7 @@
   @test all(x -> 1 ≤ x ≤ ℯ, n.x)
   @test all(y -> 1 ≤ y ≤ ℯ, n.y)
   tₒ = revert(T, n, c)
-  @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+  @test Tables.matrix(tₒ) ≈ Tables.matrix(t)
 
   x = rand(1:0.001:ℯ, 100)
   y = rand(1:0.001:ℯ, 100)
@@ -17,21 +17,19 @@
   @test all(x -> 0 ≤ x ≤ 1, n.x)
   @test all(y -> 0 ≤ y ≤ 1, n.y)
   tₒ = revert(T, n, c)
-  @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+  @test Tables.matrix(tₒ) ≈ Tables.matrix(t)
 
-  x = rand(Normal(0, 25), 100)
-  y = x + rand(Normal(10, 2), 100)
+  # identity
+  x = rand(100)
+  y = x + rand(100)
   t = Table(; x, y)
-  T = Functional(exp)
+
+  T = Functional(identity)
   n, c = apply(T, t)
-  @test all(>(0), n.x)
-  @test all(>(0), n.y)
+  @test t == n
   tₒ = revert(T, n, c)
-  @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+  @test tₒ == t
 
-  x = rand(Normal(0, 25), 100)
-  y = x + rand(Normal(10, 2), 100)
-  t = Table(; x, y)
   T = Functional(x -> x)
   n, c = apply(T, t)
   @test t == n
@@ -62,7 +60,7 @@
   @test all(y -> 0 ≤ y ≤ 1, n.y)
   @test t.z == n.z
   tₒ = revert(T, n, c)
-  @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+  @test Tables.matrix(tₒ) ≈ Tables.matrix(t)
 
   T = Functional(:x => exp, :y => log)
   n, c = apply(T, t)
@@ -70,7 +68,7 @@
   @test all(y -> 0 ≤ y ≤ 1, n.y)
   @test t.z == n.z
   tₒ = revert(T, n, c)
-  @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+  @test Tables.matrix(tₒ) ≈ Tables.matrix(t)
 
   T = Functional("x" => exp, "y" => log)
   n, c = apply(T, t)
@@ -78,7 +76,7 @@
   @test all(y -> 0 ≤ y ≤ 1, n.y)
   @test t.z == n.z
   tₒ = revert(T, n, c)
-  @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+  @test Tables.matrix(tₒ) ≈ Tables.matrix(t)
 
   T = Functional(1 => log, 2 => exp)
   @test isrevertible(T)
@@ -102,7 +100,7 @@
   n, c = apply(T, rt)
   @test Tables.isrowtable(n)
   rtₒ = revert(T, n, c)
-  @test Tables.matrix(rt) ≈ Tables.matrix(rtₒ)
+  @test Tables.matrix(rtₒ) ≈ Tables.matrix(rt)
 
   # throws
   @test_throws ArgumentError Functional()
