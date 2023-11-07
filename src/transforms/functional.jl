@@ -3,98 +3,71 @@
 # ------------------------------------------------------------------
 
 """
-    Functional(func)
+    Functional(fun)
 
-The transform that applies a `func` elementwise.
+The transform that applies a `fun` elementwise.
 
-    Functional(col₁ => func₁, col₂ => func₂, ..., colₙ => funcₙ)
+    Functional(col₁ => fun₁, col₂ => fun₂, ..., colₙ => funₙ)
 
-Apply the corresponding `funcᵢ` function to each `colᵢ` column.
+Apply the corresponding `funᵢ` function to each `colᵢ` column.
 
 # Examples
 
 ```julia
-Functional(cos)
-Functional(sin)
-Functional(1 => cos, 2 => sin)
-Functional(:a => cos, :b => sin)
-Functional("a" => cos, "b" => sin)
+Functional(exp)
+Functional(log)
+Functional(1 => exp, 2 => log)
+Functional(:a => exp, :b => log)
+Functional("a" => exp, "b" => log)
 ```
 """
 struct Functional{S<:ColumnSelector,F} <: StatelessFeatureTransform
   selector::S
-  func::F
+  fun::F
 end
 
-Functional(func) = Functional(AllSelector(), func)
+Functional(fun) = Functional(AllSelector(), fun)
 
 Functional(pairs::Pair{C}...) where {C<:Column} = Functional(selector(first.(pairs)), last.(pairs))
 
 Functional() = throw(ArgumentError("cannot create Functional transform without arguments"))
 
-# known invertible functions
-inverse(::typeof(log)) = exp
-inverse(::typeof(exp)) = log
-inverse(::typeof(cos)) = acos
-inverse(::typeof(acos)) = cos
-inverse(::typeof(sin)) = asin
-inverse(::typeof(asin)) = sin
-inverse(::typeof(cosd)) = acosd
-inverse(::typeof(acosd)) = cosd
-inverse(::typeof(sind)) = asind
-inverse(::typeof(asind)) = sind
-inverse(::typeof(identity)) = identity
+isrevertible(transform::Functional) = isinvertible(transform)
 
-# fallback to nothing
-inverse(::Any) = nothing
+_hasinverse(f) = !(invfun(f) isa NoInverse)
 
-isrevertible(transform::Functional{AllSelector}) = !isnothing(inverse(transform.func))
+isinvertible(transform::Functional{AllSelector}) = _hasinverse(transform.fun)
+isinvertible(transform::Functional) = all(_hasinverse, transform.fun)
 
-isrevertible(transform::Functional) = all(!isnothing, inverse.(transform.func))
+inverse(transform::Functional{AllSelector}) = Functional(transform.selector, invfun(transform.fun))
+inverse(transform::Functional) = Functional(transform.selector, invfun.(transform.fun))
 
-_funcdict(func, names) = Dict(nm => func for nm in names)
-_funcdict(func::Tuple, names) = Dict(names .=> func)
+_fundict(transform::Functional{AllSelector}, names) = Dict(nm => transform.fun for nm in names)
+_fundict(transform::Functional, names) = Dict(zip(names, transform.fun))
 
 function applyfeat(transform::Functional, feat, prep)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
   snames = transform.selector(names)
-  funcs = _funcdict(transform.func, snames)
+  fundict = _fundict(transform, snames)
 
-  columns = map(names) do nm
-    x = Tables.getcolumn(cols, nm)
-    if nm ∈ snames
-      func = funcs[nm]
-      y = func.(x)
+  columns = map(names) do name
+    x = Tables.getcolumn(cols, name)
+    if name ∈ snames
+      fun = fundict[name]
+      map(fun, x)
     else
-      y = x
+      x
     end
-    y
   end
 
   𝒯 = (; zip(names, columns)...)
   newfeat = 𝒯 |> Tables.materializer(feat)
-  return newfeat, (snames, funcs)
+
+  newfeat, nothing
 end
 
 function revertfeat(transform::Functional, newfeat, fcache)
-  cols = Tables.columns(newfeat)
-  names = Tables.columnnames(cols)
-
-  snames, funcs = fcache
-
-  columns = map(names) do nm
-    y = Tables.getcolumn(cols, nm)
-    if nm ∈ snames
-      func = funcs[nm]
-      invfunc = inverse(func)
-      x = invfunc.(y)
-    else
-      x = y
-    end
-    x
-  end
-
-  𝒯 = (; zip(names, columns)...)
-  𝒯 |> Tables.materializer(newfeat)
+  ofeat, _ = applyfeat(inverse(transform), newfeat, nothing)
+  ofeat
 end

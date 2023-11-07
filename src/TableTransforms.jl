@@ -21,13 +21,14 @@ using ColumnSelectors: AllSelector, Column, selector, selectsingle
 using DataScienceTraits: SciType, Continuous, Categorical, coerce
 using Unitful: AbstractQuantity, AffineQuantity, AffineUnits, Units
 using Distributions: ContinuousUnivariateDistribution, Normal
+using InverseFunctions: NoInverse, inverse as invfun
 using StatsBase: AbstractWeights, Weights, sample
 using Transducers: tcollect
 using NelderMead: optimise
 
 import Distributions: quantile, cdf
-import TransformsBase: assertions, isrevertible, preprocess
-import TransformsBase: apply, revert, reapply
+import TransformsBase: assertions, isrevertible, isinvertible
+import TransformsBase: apply, revert, reapply, preprocess, inverse
 
 include("assertions.jl")
 include("tabletraits.jl")

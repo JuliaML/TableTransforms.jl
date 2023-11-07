@@ -24,7 +24,7 @@
     mtₒ = revert(T, mn, mc)
     @test mtₒ == mt
 
-    T = Functional(sin)
+    T = Functional(exp)
     mn, mc = apply(T, mt)
     tn, tc = apply(T, t)
     @test mn.meta == m
@@ -33,7 +33,7 @@
     @test mtₒ.meta == mt.meta
     @test Tables.matrix(mtₒ.table) ≈ Tables.matrix(mt.table)
 
-    T = (Functional(sin) → MinMax()) ⊔ Center()
+    T = (Functional(exp) → MinMax()) ⊔ Center()
     mn, mc = apply(T, mt)
     tn, tc = apply(T, t)
     @test mn.meta == m
@@ -68,7 +68,7 @@
     mtₒ = revert(T, mn, mc)
     @test mtₒ == mt
 
-    T = Functional(cos)
+    T = Functional(exp)
     mn, mc = apply(T, mt)
     tn, tc = apply(T, t)
     @test mn.meta == VarMeta(m.data .+ 2)
@@ -79,7 +79,7 @@
 
     # first revertible branch has two transforms,
     # so metadata is increased by 2 + 2 = 4
-    T = (Functional(sin) → MinMax()) ⊔ Center()
+    T = (Functional(exp) → MinMax()) ⊔ Center()
     mn, mc = apply(T, mt)
     tn, tc = apply(T, t)
     @test mn.meta == VarMeta(m.data .+ 4)
@@ -90,7 +90,7 @@
 
     # first revertible branch has one transform,
     # so metadata is increased by 2
-    T = Center() ⊔ (Functional(sin) → MinMax())
+    T = Center() ⊔ (Functional(exp) → MinMax())
     mn, mc = apply(T, mt)
     tn, tc = apply(T, t)
     @test mn.meta == VarMeta(m.data .+ 2)
