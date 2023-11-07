@@ -14,11 +14,11 @@ Apply the corresponding `funᵢ` function to each `colᵢ` column.
 # Examples
 
 ```julia
-Functional(cos)
-Functional(sin)
-Functional(1 => cos, 2 => sin)
-Functional(:a => cos, :b => sin)
-Functional("a" => cos, "b" => sin)
+Functional(exp)
+Functional(log)
+Functional(1 => exp, 2 => log)
+Functional(:a => exp, :b => log)
+Functional("a" => exp, "b" => log)
 ```
 """
 struct Functional{S<:ColumnSelector,F} <: StatelessFeatureTransform
