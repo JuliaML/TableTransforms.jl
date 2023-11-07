@@ -42,14 +42,14 @@ isinvertible(transform::Functional) = all(_hasinverse, transform.fun)
 inverse(transform::Functional{AllSelector}) = Functional(transform.selector, invfun(transform.fun))
 inverse(transform::Functional) = Functional(transform.selector, invfun.(transform.fun))
 
-_fundict(fun, names) = Dict(nm => fun for nm in names)
-_fundict(funs::Tuple, names) = Dict(names .=> funs)
+_fundict(transform::Functional{AllSelector}, names) = Dict(nm => transform.fun for nm in names)
+_fundict(transform::Functional, names) = Dict(zip(names, transform.fun))
 
 function applyfeat(transform::Functional, feat, prep)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
   snames = transform.selector(names)
-  fundict = _fundict(transform.fun, snames)
+  fundict = _fundict(transform, snames)
 
   columns = map(names) do name
     x = Tables.getcolumn(cols, name)
