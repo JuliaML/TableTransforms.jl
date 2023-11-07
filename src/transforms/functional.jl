@@ -55,11 +55,10 @@ function applyfeat(transform::Functional, feat, prep)
     x = Tables.getcolumn(cols, name)
     if name ∈ snames
       fun = fundict[name]
-      y = map(fun, x)
+      map(fun, x)
     else
-      y = x
+      x
     end
-    y
   end
 
   𝒯 = (; zip(names, columns)...)
