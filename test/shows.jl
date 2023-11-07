@@ -317,18 +317,18 @@
   end
 
   @testset "Functional" begin
-    T = Functional(sin)
+    T = Functional(log)
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Functional(all, sin)"
+    @test iostr == "Functional(all, log)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Functional transform
     ├─ selector = all
-    └─ fun = sin"""
+    └─ fun = log"""
   end
 
   @testset "EigenAnalysis" begin
@@ -419,12 +419,12 @@
   @testset "ParallelTableTransform" begin
     t1 = Scale(low=0.3, high=0.6)
     t2 = EigenAnalysis(:VDV)
-    t3 = Functional(cos)
+    t3 = Functional(exp)
     pipeline = t1 ⊔ t2 ⊔ t3
 
     # compact mode
     iostr = sprint(show, pipeline)
-    @test iostr == "Scale(all, 0.3, 0.6) ⊔ EigenAnalysis(:VDV, nothing, 1.0) ⊔ Functional(all, cos)"
+    @test iostr == "Scale(all, 0.3, 0.6) ⊔ EigenAnalysis(:VDV, nothing, 1.0) ⊔ Functional(all, exp)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
@@ -432,18 +432,18 @@
     ParallelTableTransform
     ├─ Scale(all, 0.3, 0.6)
     ├─ EigenAnalysis(:VDV, nothing, 1.0)
-    └─ Functional(all, cos)"""
+    └─ Functional(all, exp)"""
 
     # parallel and sequential
     f1 = ZScore()
     f2 = Scale()
-    f3 = Functional(cos)
+    f3 = Functional(exp)
     f4 = Interquartile()
     pipeline = (f1 → f2) ⊔ (f3 → f4)
 
     # compact mode
     iostr = sprint(show, pipeline)
-    @test iostr == "ZScore(all) → Scale(all, 0.25, 0.75) ⊔ Functional(all, cos) → Scale(all, 0.25, 0.75)"
+    @test iostr == "ZScore(all) → Scale(all, 0.25, 0.75) ⊔ Functional(all, exp) → Scale(all, 0.25, 0.75)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
@@ -453,7 +453,7 @@
     │  ├─ ZScore(all)
     │  └─ Scale(all, 0.25, 0.75)
     └─ SequentialTransform
-       ├─ Functional(all, cos)
+       ├─ Functional(all, exp)
        └─ Scale(all, 0.25, 0.75)"""
   end
 end
