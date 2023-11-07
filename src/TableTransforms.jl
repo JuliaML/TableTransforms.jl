@@ -21,7 +21,7 @@ using ColumnSelectors: AllSelector, Column, selector, selectsingle
 using DataScienceTraits: SciType, Continuous, Categorical, coerce
 using Unitful: AbstractQuantity, AffineQuantity, AffineUnits, Units
 using Distributions: ContinuousUnivariateDistribution, Normal
-using InverseFunctions: inverse as invfun, NoInverse
+using InverseFunctions: NoInverse, inverse as invfun
 using StatsBase: AbstractWeights, Weights, sample
 using Transducers: tcollect
 using NelderMead: optimise
