@@ -44,7 +44,8 @@ DropMissing(cols::C...) where {C<:Column} = DropMissing(selector(cols))
 isrevertible(::Type{<:DropMissing}) = true
 
 function preprocess(transform::DropMissing, feat)
-  names = Tables.schema(feat).names
+  cols = Tables.columns(feat)
+  names = Tables.columnnames(cols)
   snames = transform.selector(names)
   ftrans = Filter(row -> all(!ismissing(row[nm]) for nm in snames))
   fprep = preprocess(ftrans, feat)
