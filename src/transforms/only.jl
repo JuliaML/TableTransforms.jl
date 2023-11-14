@@ -14,19 +14,15 @@ import DataScienceTraits as DST
 Only(DST.Continuous)
 ```
 """
-struct Only{T<:SciType} <: StatelessFeatureTransform end
-
-Only(::Type{T}) where {T<:SciType} = Only{T}()
-
-Base.show(io::IO, ::Only{T}) where {T<:SciType} = print(io, "Only($T)")
-function Base.show(io::IO, ::MIME"text/plain", ::Only{T}) where {T<:SciType}
-  println(io, "Only transform")
-  print(io, "└─ scitype = $T")
+struct Only <: StatelessFeatureTransform
+  scitype::DataType
+  Only(T::Type{<:SciType}) = new(T)
 end
 
-isrevertible(::Type{<:Only}) = true
+isrevertible(::Type{Only}) = true
 
-function applyfeat(::Only{T}, feat, prep) where {T<:SciType}
+function applyfeat(transform::Only, feat, prep)
+  T = transform.scitype
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
   snames = filter(names) do name
