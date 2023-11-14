@@ -36,8 +36,8 @@ Sort(; kwargs...) = throw(ArgumentError("cannot create Sort transform without ar
 
 isrevertible(::Type{<:Sort}) = true
 
-function preprocess(transform::Sort, table)
-  cols = Tables.columns(table)
+function preprocess(transform::Sort, feat)
+  cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
   snames = transform.selector(names)
 

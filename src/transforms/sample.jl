@@ -42,9 +42,9 @@ Sample(size::Int, weights; kwargs...) = Sample(size, Weights(collect(weights)); 
 
 isrevertible(::Type{<:Sample}) = true
 
-function preprocess(transform::Sample, table)
+function preprocess(transform::Sample, feat)
   # retrieve valid indices
-  rows = Tables.rowtable(table)
+  rows = Tables.rowtable(feat)
   inds = 1:length(rows)
 
   size = transform.size

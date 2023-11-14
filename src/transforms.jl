@@ -130,7 +130,7 @@ function apply(transform::FeatureTransform, table)
     assertion(feat)
   end
 
-  prep = preprocess(transform, table)
+  prep = preprocess(transform, feat)
 
   newfeat, fcache = applyfeat(transform, feat, prep)
   newmeta, mcache = applymeta(transform, meta, prep)

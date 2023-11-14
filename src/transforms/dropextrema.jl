@@ -32,8 +32,8 @@ DropExtrema(col::Column; low=0.25, high=0.75) = DropExtrema(selector(col), low, 
 
 isrevertible(::Type{<:DropExtrema}) = true
 
-function preprocess(transform::DropExtrema, table)
-  cols = Tables.columns(table)
+function preprocess(transform::DropExtrema, feat)
+  cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
   sname = selectsingle(transform.selector, names)
 
@@ -43,7 +43,7 @@ function preprocess(transform::DropExtrema, table)
   xl, xh = quantile(x, (low, high))
 
   ftrans = Filter(row -> xl ≤ row[sname] ≤ xh)
-  fprep = preprocess(ftrans, table)
+  fprep = preprocess(ftrans, feat)
   ftrans, fprep
 end
 
