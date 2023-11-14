@@ -29,9 +29,9 @@ end
 
 isrevertible(::Type{<:Filter}) = true
 
-function preprocess(transform::Filter, table)
+function preprocess(transform::Filter, feat)
   # lazy row iterator
-  rows = tablerows(table)
+  rows = tablerows(feat)
 
   # selected indices
   sinds, nrows = Int[], 0
