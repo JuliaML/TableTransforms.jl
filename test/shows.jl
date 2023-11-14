@@ -42,6 +42,20 @@
     └─ selector = [:a, :b, :c]"""
   end
 
+  @testset "Only" begin
+    T = Only(DST.Continuous)
+
+    # compact mode
+    iostr = sprint(show, T)
+    @test iostr == "Only(DataScienceTraits.Continuous)"
+
+    # full mode
+    iostr = sprint(show, MIME("text/plain"), T)
+    @test iostr == """
+    Only transform
+    └─ scitype = DataScienceTraits.Continuous"""
+  end
+
   @testset "Rename" begin
     T = Rename(:a => :x, :c => :y)
 
