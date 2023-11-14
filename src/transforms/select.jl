@@ -52,18 +52,17 @@ _newnames(::Nothing, select) = select
 _newnames(names::Vector{Symbol}, select) = names
 
 function applyfeat(transform::Select, feat, prep)
-  # original columns
   cols = Tables.columns(feat)
+  names = collect(Tables.columnnames(cols))
 
   # retrieve relevant column names
-  allcols = collect(Tables.columnnames(cols))
-  select = transform.selector(allcols)
-  names = _newnames(transform.newnames, select)
-  reject = setdiff(allcols, select)
+  select = transform.selector(names)
+  reject = setdiff(names, select)
+  newnames = _newnames(transform.newnames, select)
 
   # keep track of indices to revert later
-  sinds = indexin(select, allcols)
-  rinds = indexin(reject, allcols)
+  sinds = indexin(select, names)
+  rinds = indexin(reject, names)
 
   # sort indices to facilitate reinsertion
   sperm = sortperm(sinds)
@@ -72,18 +71,16 @@ function applyfeat(transform::Select, feat, prep)
   rcolumns = [Tables.getcolumn(cols, name) for name in reject]
 
   fcache = (select, sperm, reject, rcolumns, rinds)
-  newfeat = TableSelection(feat, names, select)
+  newfeat = TableSelection(feat, newnames, select)
   newfeat, fcache
 end
 
 function revertfeat(::Select, newfeat, fcache)
-  # selected columns
   cols = Tables.columns(newfeat)
   names = Tables.columnnames(cols)
   # https://github.com/JuliaML/TableTransforms.jl/issues/76
   columns = Any[Tables.getcolumn(cols, name) for name in names]
 
-  # rejected columns
   select, sperm, reject, rcolumns, rinds = fcache
 
   # restore rejected columns
@@ -136,9 +133,9 @@ isrevertible(::Type{<:Reject}) = true
 
 function applyfeat(transform::Reject, feat, prep)
   cols = Tables.columns(feat)
-  allcols = Tables.columnnames(cols)
-  reject = transform.selector(allcols)
-  select = setdiff(allcols, reject)
+  names = Tables.columnnames(cols)
+  reject = transform.selector(names)
+  select = setdiff(names, reject)
   strans = Select(select)
   newfeat, sfcache = applyfeat(strans, feat, prep)
   newfeat, (strans, sfcache)
