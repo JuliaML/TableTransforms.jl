@@ -14,6 +14,12 @@ Select
 Reject
 ```
 
+## Only
+
+```@docs
+Only
+```
+
 ## Rename
 
 ```@docs
