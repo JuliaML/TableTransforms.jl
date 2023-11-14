@@ -16,18 +16,18 @@ Only(DST.Continuous)
 """
 struct Only <: StatelessFeatureTransform
   scitype::DataType
-  Only(T::Type{<:SciType}) = new(T)
+  Only(S::Type{<:SciType}) = new(S)
 end
 
 isrevertible(::Type{Only}) = true
 
 function applyfeat(transform::Only, feat, prep)
-  T = transform.scitype
+  S = transform.scitype
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
   snames = filter(names) do name
     column = Tables.getcolumn(cols, name)
-    elscitype(column) <: T
+    elscitype(column) <: S
   end
   strans = Select(snames)
   newfeat, sfcache = applyfeat(strans, feat, prep)
