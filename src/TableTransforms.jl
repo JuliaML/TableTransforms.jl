@@ -51,7 +51,9 @@ export
   # built-in
   Select,
   Reject,
+  Satisfies,
   Only,
+  Except,
   Rename,
   StdNames,
   Sort,

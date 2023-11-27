@@ -14,10 +14,22 @@ Select
 Reject
 ```
 
+## Satisfies
+
+```@docs
+Satisfies
+```
+
 ## Only
 
 ```@docs
 Only
+```
+
+## Except
+
+```@docs
+Except
 ```
 
 ## Rename
