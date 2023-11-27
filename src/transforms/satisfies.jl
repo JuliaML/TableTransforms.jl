@@ -5,7 +5,7 @@
 """
     Satisfies(pred)
 
-Selects only columns where `pred(column)` returns `true`.
+Selects the columns where `pred(column)` returns `true`.
 
 # Examples
 
@@ -42,7 +42,7 @@ end
 """
     Only(S)
 
-Selects only columns that have scientific type `S`.
+Selects the columns that have scientific type `S`.
 
 # Examples
 
@@ -56,7 +56,7 @@ Only(S::Type{<:SciType}) = Satisfies(x -> elscitype(x) <: S)
 """
     Except(S)
 
-Selects only columns that does not have scientific type `S`.
+Selects the columns that don't have scientific type `S`.
 
 # Examples
 
