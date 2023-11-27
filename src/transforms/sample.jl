@@ -44,8 +44,7 @@ isrevertible(::Type{<:Sample}) = true
 
 function preprocess(transform::Sample, feat)
   # retrieve valid indices
-  rows = Tables.rowtable(feat)
-  inds = 1:length(rows)
+  inds = 1:_nrows(feat)
 
   size = transform.size
   weights = transform.weights
@@ -65,36 +64,38 @@ function preprocess(transform::Sample, feat)
 end
 
 function applyfeat(::Sample, feat, prep)
-  # collect all rows
-  rows = Tables.rowtable(feat)
-
   # preprocessed indices
   sinds, rinds = prep
 
-  # select rows
-  srows = view(rows, sinds)
-  rrows = view(rows, rinds)
+  # selected and removed rows
+  srows = Tables.subset(feat, sinds)
+  rrows = Tables.subset(feat, rinds)
 
   newfeat = srows |> Tables.materializer(feat)
-
   newfeat, (sinds, rinds, rrows)
 end
 
 function revertfeat(::Sample, newfeat, fcache)
-  # collect all rows
-  rows = Tables.rowtable(newfeat)
-
+  cols = Tables.columns(newfeat)
+  names = Tables.columnnames(cols)
   sinds, rinds, rrows = fcache
 
-  uinds = sort(unique(sinds))
-  urows = map(uinds) do i
-    j = findfirst(==(i), sinds)
-    rows[j]
+  # columns with selected rows in original order
+  uinds = indexin(sort(unique(sinds)), sinds)
+  columns = map(names) do name
+    y = Tables.getcolumn(cols, name)
+    [y[i] for i in uinds]
   end
 
-  for (i, row) in zip(rinds, rrows)
-    insert!(urows, i, row)
+  # insert removed rows into columns
+  rrcols = Tables.columns(rrows)
+  for (name, x) in zip(names, columns)
+    r = Tables.getcolumn(rrcols, name)
+    for (i, v) in zip(rinds, r)
+      insert!(x, i, v)
+    end
   end
 
-  urows |> Tables.materializer(newfeat)
+  𝒯 = (; zip(names, columns)...)
+  𝒯 |> Tables.materializer(newfeat)
 end
