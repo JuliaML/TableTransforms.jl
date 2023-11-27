@@ -43,17 +43,17 @@
   end
 
   @testset "Only" begin
-    T = Only(DST.Continuous)
+    T = Satisfies(allunique)
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Only(DataScienceTraits.Continuous)"
+    @test iostr == "Satisfies(allunique)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
-    Only transform
-    └─ scitype = DataScienceTraits.Continuous"""
+    Satisfies transform
+    └─ pred = allunique"""
   end
 
   @testset "Rename" begin

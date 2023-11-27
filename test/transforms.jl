@@ -1,7 +1,7 @@
 transformfiles = [
   "select.jl",
   "rename.jl",
-  "only.jl",
+  "satisfies.jl",
   "stdnames.jl",
   "sort.jl",
   "sample.jl",
