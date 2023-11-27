@@ -42,7 +42,7 @@
     └─ selector = [:a, :b, :c]"""
   end
 
-  @testset "Only" begin
+  @testset "Satisfies" begin
     T = Satisfies(allunique)
 
     # compact mode
