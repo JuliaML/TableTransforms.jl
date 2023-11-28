@@ -62,7 +62,7 @@ Selects the columns that don't have scientific type `S`.
 
 ```julia
 import DataScienceTraits as DST
-Except(DST.Continuous)
+Except(DST.Categorical)
 ```
 """
 Except(S::Type{<:SciType}) = Satisfies(x -> !(elscitype(x) <: S))

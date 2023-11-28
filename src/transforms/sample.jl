@@ -12,14 +12,14 @@ the same order of the original table.
 # Examples
 
 ```julia
-Sample(1_000)
-Sample(1_000, replace=false)
-Sample(1_000, replace=false, ordered=true)
+Sample(1000)
+Sample(1000, replace=false)
+Sample(1000, replace=false, ordered=true)
 
 # with rng
 using Random
 rng = MersenneTwister(2)
-Sample(1_000, rng=rng)
+Sample(1000, rng=rng)
 
 # with weights
 Sample(10, rand(100))
@@ -68,8 +68,8 @@ function applyfeat(::Sample, feat, prep)
   sinds, rinds = prep
 
   # selected and removed rows
-  srows = Tables.subset(feat, sinds)
-  rrows = Tables.subset(feat, rinds)
+  srows = Tables.subset(feat, sinds, viewhint=true)
+  rrows = Tables.subset(feat, rinds, viewhint=true)
 
   newfeat = srows |> Tables.materializer(feat)
   newfeat, (sinds, rinds, rrows)
