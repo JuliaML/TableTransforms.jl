@@ -85,6 +85,18 @@
     └─ spec = :upperflat"""
   end
 
+  @testset "StdFeats" begin
+    T = StdFeats()
+
+    # compact mode
+    iostr = sprint(show, T)
+    @test iostr == "StdFeats()"
+
+    # full mode
+    iostr = sprint(show, MIME("text/plain"), T)
+    @test iostr == "StdFeats transform"
+  end
+
   @testset "Sort" begin
     T = Sort([:a, :c], rev=true)
 

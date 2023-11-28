@@ -264,10 +264,12 @@ end
 # IMPLEMENTATIONS
 # ----------------
 
+include("transforms/utils.jl")
 include("transforms/select.jl")
 include("transforms/satisfies.jl")
 include("transforms/rename.jl")
 include("transforms/stdnames.jl")
+include("transforms/stdfeats.jl")
 include("transforms/sort.jl")
 include("transforms/sample.jl")
 include("transforms/filter.jl")

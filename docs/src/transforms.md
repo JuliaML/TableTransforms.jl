@@ -44,6 +44,12 @@ Rename
 StdNames
 ```
 
+## StdFeats
+
+```@docs
+StdFeats
+```
+
 ## Sort
 
 ```@docs

@@ -46,6 +46,6 @@ function colcache(::ZScore, x)
   (μ=μ, σ=σ)
 end
 
-colapply(::ZScore, x, c) = @. (x - c.μ) / c.σ
+colapply(::ZScore, x, c) = zscore(x, c.μ, c.σ)
 
-colrevert(::ZScore, y, c) = @. c.σ * y + c.μ
+colrevert(::ZScore, y, c) = revzscore(y, c.μ, c.σ)
