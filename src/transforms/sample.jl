@@ -58,6 +58,8 @@ function preprocess(transform::Sample, feat)
   else
     sample(rng, inds, weights, size; replace, ordered)
   end
+
+  # rejected indices
   rinds = setdiff(inds, sinds)
 
   sinds, rinds
@@ -67,7 +69,7 @@ function applyfeat(::Sample, feat, prep)
   # preprocessed indices
   sinds, rinds = prep
 
-  # selected and removed rows
+  # selected/rejected rows
   srows = Tables.subset(feat, sinds, viewhint=true)
   rrows = Tables.subset(feat, rinds, viewhint=true)
 
@@ -78,6 +80,7 @@ end
 function revertfeat(::Sample, newfeat, fcache)
   cols = Tables.columns(newfeat)
   names = Tables.columnnames(cols)
+
   sinds, rinds, rrows = fcache
 
   # columns with selected rows in original order
@@ -87,7 +90,7 @@ function revertfeat(::Sample, newfeat, fcache)
     [y[i] for i in uinds]
   end
 
-  # insert removed rows into columns
+  # insert rejected rows into columns
   rrcols = Tables.columns(rrows)
   for (name, x) in zip(names, columns)
     r = Tables.getcolumn(rrcols, name)

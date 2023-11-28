@@ -47,15 +47,12 @@ function preprocess(transform::Filter, feat)
 end
 
 function applyfeat(::Filter, feat, prep)
-  # collect all rows
-  rows = Tables.rowtable(feat)
-
   # preprocessed indices
   sinds, rinds = prep
 
-  # select/reject rows
-  srows = view(rows, sinds)
-  rrows = view(rows, rinds)
+  # selected/rejected rows
+  srows = Tables.subset(feat, sinds, viewhint=true)
+  rrows = Tables.subset(feat, rinds, viewhint=true)
 
   newfeat = srows |> Tables.materializer(feat)
 
@@ -63,13 +60,25 @@ function applyfeat(::Filter, feat, prep)
 end
 
 function revertfeat(::Filter, newfeat, fcache)
-  # collect all rows
-  rows = Tables.rowtable(newfeat)
+  cols = Tables.columns(newfeat)
+  names = Tables.columnnames(cols)
 
   rinds, rrows = fcache
-  for (i, row) in zip(rinds, rrows)
-    insert!(rows, i, row)
+
+  # columns with selected rows
+  columns = map(names) do name
+    collect(Tables.getcolumn(cols, name))
   end
 
-  rows |> Tables.materializer(newfeat)
+  # insert rejected rows into columns
+  rrcols = Tables.columns(rrows)
+  for (name, x) in zip(names, columns)
+    r = Tables.getcolumn(rrcols, name)
+    for (i, v) in zip(rinds, r)
+      insert!(x, i, v)
+    end
+  end
+
+  𝒯 = (; zip(names, columns)...)
+  𝒯 |> Tables.materializer(newfeat)
 end
