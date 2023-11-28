@@ -3,6 +3,7 @@ transformfiles = [
   "rename.jl",
   "satisfies.jl",
   "stdnames.jl",
+  "stdfeats.jl",
   "sort.jl",
   "sample.jl",
   "filter.jl",

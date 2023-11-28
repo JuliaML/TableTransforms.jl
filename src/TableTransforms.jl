@@ -56,6 +56,7 @@ export
   Except,
   Rename,
   StdNames,
+  StdFeats,
   Sort,
   Sample,
   Filter,
