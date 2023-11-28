@@ -62,10 +62,11 @@
   @test isapprox(count(==(trows[6]), nrows) / 10_000, 6 / 21, atol=0.01)
 
   # performance tests
-  x = rand(100_000)
-  y = rand(100_000)
-  c = CoDaArray((a=rand(100_000), b=rand(100_000), c=rand(100_000)))
-  t = Table(; x, y, c)
+  trng = MersenneTwister(2) # test rng
+  x = rand(trng, 100_000)
+  y = rand(trng, 100_000)
+  c = CoDaArray((a=rand(trng, 100_000), b=rand(trng, 100_000), c=rand(trng, 100_000)))
+  t = (; x, y, c)
 
   T = Sample(10_000)
   @test @elapsed(apply(T, t)) < 0.5
