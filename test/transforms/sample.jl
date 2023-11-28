@@ -60,4 +60,13 @@
   @test isapprox(count(==(trows[4]), nrows) / 10_000, 4 / 21, atol=0.01)
   @test isapprox(count(==(trows[5]), nrows) / 10_000, 5 / 21, atol=0.01)
   @test isapprox(count(==(trows[6]), nrows) / 10_000, 6 / 21, atol=0.01)
+
+  # performance tests
+  x = rand(100_000)
+  y = rand(100_000)
+  c = CoDaArray((a = rand(100_000), b = rand(100_000), c = rand(100_000)))
+  t = Table(; x, y, c)
+
+  T = Sample(10_000)
+  @test @elapsed(apply(T, t)) < 0.5
 end
