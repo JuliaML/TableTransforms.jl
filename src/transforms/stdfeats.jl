@@ -5,7 +5,7 @@
 """
     StdFeats()
 
-Standardizes the columns of the table based on data science traits:
+Standardizes the columns of the table based on scientific types:
 
 * `Continuous`: `ZScore`
 * `Categorical`: `Identity`
