@@ -129,7 +129,7 @@
   x = rand(trng, 100_000)
   y = rand(trng, 100_000)
   c = CoDaArray((a=rand(trng, 100_000), b=rand(trng, 100_000), c=rand(trng, 100_000)))
-  t = Table(; x, y, c)
+  t = (; x, y, c)
 
   T = Filter(row -> row.x > 0.5)
   @test @elapsed(apply(T, t)) < 0.5
