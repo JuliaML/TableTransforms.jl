@@ -5,12 +5,11 @@
 """
     StdFeats()
 
-Standardizes the columns by applying the standardization function 
-corresponding to the scientific type of each one.
+Standardizes the columns of the table based on data science traits:
 
-## Standardization Functions
-* `Continuous` columns: z-score (`(x .- μ) ./ σ`) 
-* Other else: `identity`
+* `Continuous`: `ZScore`
+* `Categorical`: `Identity`
+* `Unknown`: `Identity`
 """
 struct StdFeats <: StatelessFeatureTransform end
 
