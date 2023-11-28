@@ -64,7 +64,7 @@
   # performance tests
   x = rand(100_000)
   y = rand(100_000)
-  c = CoDaArray((a = rand(100_000), b = rand(100_000), c = rand(100_000)))
+  c = CoDaArray((a=rand(100_000), b=rand(100_000), c=rand(100_000)))
   t = Table(; x, y, c)
 
   T = Sample(10_000)
