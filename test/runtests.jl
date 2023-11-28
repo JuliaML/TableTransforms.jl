@@ -1,4 +1,5 @@
 using TableTransforms
+using CoDa
 using Tables
 using Unitful
 using TypedTables
