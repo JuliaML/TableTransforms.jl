@@ -54,13 +54,13 @@
   # visual tests    
   if visualtests
     kwargs = (; bodyaxis=(; aspect=Mke.DataAspect()))
-    fig = Mke.Figure(resolution=(1000, 1000))
+    fig = Mke.Figure(size=(1000, 1000))
     pairplot(fig[1, 1], t₁; kwargs...)
     pairplot(fig[1, 2], t₂; kwargs...)
     pairplot(fig[2, 1], t₃; kwargs...)
     pairplot(fig[2, 2], t₄; kwargs...)
     @test_reference joinpath(datadir, "eigenanalysis-1.png") fig
-    fig = Mke.Figure(resolution=(1500, 1000))
+    fig = Mke.Figure(size=(1500, 1000))
     pairplot(fig[1, 1], t₂; kwargs...)
     pairplot(fig[1, 2], t₃; kwargs...)
     pairplot(fig[1, 3], t₄; kwargs...)
