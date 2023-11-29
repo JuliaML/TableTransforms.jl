@@ -224,6 +224,12 @@ Closure
 Remainder
 ```
 
+## Compose
+
+```@docs
+Compose
+```
+
 ## ALR
 
 ```@docs

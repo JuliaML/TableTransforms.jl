@@ -399,6 +399,21 @@
     └─ total = nothing"""
   end
 
+  @testset "Compose" begin
+    T = Compose(:a, :b, :c)
+
+    # compact mode
+    iostr = sprint(show, T)
+    @test iostr == "Compose([:a, :b, :c], :CODA)"
+
+    # full mode
+    iostr = sprint(show, MIME("text/plain"), T)
+    @test iostr == """
+    Compose transform
+    ├─ selector = [:a, :b, :c]
+    └─ as = :CODA"""
+  end
+
   @testset "RowTable" begin
     T = RowTable()
 

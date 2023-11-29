@@ -86,6 +86,7 @@ export
   ProjectionPursuit,
   Closure,
   Remainder,
+  Compose,
   ALR,
   CLR,
   ILR,
