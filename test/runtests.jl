@@ -47,12 +47,12 @@ include("metatable.jl")
 testfiles = [
   "distributions.jl",
   "assertions.jl",
-  "transforms.jl",
-  "geotables.jl",
-  "metadata.jl",
   "tableselection.jl",
   "tablerows.jl",
-  "shows.jl"
+  "transforms.jl",
+  "metadata.jl",
+  "shows.jl",
+  "geotables.jl"
 ]
 
 @testset "TableTransforms.jl" begin
