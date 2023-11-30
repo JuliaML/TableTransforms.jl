@@ -22,6 +22,13 @@ Transducers = "28d57a85-8fef-5791-bfe6-a80928e7c999"
 TransformsBase = "28dd2a49-a57a-4bfb-84ca-1a49db9b96b8"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
+[weakdeps]
+GeoTables = "e502b557-6362-48c1-8219-d30d308dcdb0"
+Meshes = "eacbb407-ea5a-433e-ab97-5258b1ca43fa"
+
+[extensions]
+TableTransformsGeoTablesExt = ["GeoTables", "Meshes"]
+
 [compat]
 AbstractTrees = "0.4"
 CategoricalArrays = "0.10"
@@ -29,8 +36,10 @@ CoDa = "1.2"
 ColumnSelectors = "0.1"
 DataScienceTraits = "0.2"
 Distributions = "0.25"
+GeoTables = "1.9"
 InverseFunctions = "0.1"
 LinearAlgebra = "1.9"
+Meshes = "0.36"
 NelderMead = "0.4"
 PrettyTables = "2"
 Random = "1.9"
