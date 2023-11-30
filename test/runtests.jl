@@ -2,6 +2,7 @@ using TableTransforms
 using CoDa
 using Tables
 using Unitful
+using GeoTables
 using TypedTables
 using CategoricalArrays
 using LinearAlgebra
@@ -43,8 +44,16 @@ Polynomial(args::T...) where {T<:Real} = Polynomial(collect(args))
 include("metatable.jl")
 
 # list of tests
-testfiles =
-  ["distributions.jl", "assertions.jl", "transforms.jl", "metadata.jl", "tableselection.jl", "tablerows.jl", "shows.jl"]
+testfiles = [
+  "distributions.jl",
+  "assertions.jl",
+  "transforms.jl",
+  "extensions.jl",
+  "metadata.jl",
+  "tableselection.jl",
+  "tablerows.jl",
+  "shows.jl"
+]
 
 @testset "TableTransforms.jl" begin
   for testfile in testfiles
