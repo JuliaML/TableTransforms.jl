@@ -48,7 +48,7 @@ testfiles = [
   "distributions.jl",
   "assertions.jl",
   "transforms.jl",
-  "extensions.jl",
+  "geotables.jl",
   "metadata.jl",
   "tableselection.jl",
   "tablerows.jl",
