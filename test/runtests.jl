@@ -43,8 +43,7 @@ Polynomial(args::T...) where {T<:Real} = Polynomial(collect(args))
 include("metatable.jl")
 
 # list of tests
-testfiles =
-  ["distributions.jl", "assertions.jl", "tableselection.jl", "tablerows.jl", "transforms.jl", "metadata.jl", "shows.jl"]
+testfiles = ["distributions.jl", "tableselection.jl", "tablerows.jl", "transforms.jl", "metadata.jl", "shows.jl"]
 
 @testset "TableTransforms.jl" begin
   for testfile in testfiles

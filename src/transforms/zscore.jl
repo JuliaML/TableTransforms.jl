@@ -36,7 +36,7 @@ ZScore() = ZScore(AllSelector())
 ZScore(cols) = ZScore(selector(cols))
 ZScore(cols::C...) where {C<:Column} = ZScore(selector(cols))
 
-assertions(transform::ZScore) = [SciTypeAssertion{Continuous}(transform.selector)]
+assertions(transform::ZScore) = [scitypeassert(Continuous, transform.selector)]
 
 isrevertible(::Type{<:ZScore}) = true
 

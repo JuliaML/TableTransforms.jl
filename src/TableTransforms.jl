@@ -30,7 +30,6 @@ import Distributions: quantile, cdf
 import TransformsBase: assertions, isrevertible, isinvertible
 import TransformsBase: apply, revert, reapply, preprocess, inverse
 
-include("assertions.jl")
 include("tabletraits.jl")
 include("distributions.jl")
 include("tableselection.jl")
@@ -49,6 +48,7 @@ export
   reapply,
 
   # built-in
+  Assert,
   Select,
   Reject,
   Satisfies,

@@ -1,4 +1,5 @@
 transformfiles = [
+  "assert.jl",
   "select.jl",
   "rename.jl",
   "satisfies.jl",

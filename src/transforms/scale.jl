@@ -48,7 +48,7 @@ Scale(; low=0.25, high=0.75) = Scale(AllSelector(), low, high)
 Scale(cols; low=0.25, high=0.75) = Scale(selector(cols), low, high)
 Scale(cols::C...; low=0.25, high=0.75) where {C<:Column} = Scale(selector(cols), low, high)
 
-assertions(transform::Scale) = [SciTypeAssertion{Continuous}(transform.selector)]
+assertions(transform::Scale) = [scitypeassert(Continuous, transform.selector)]
 
 isrevertible(::Type{<:Scale}) = true
 

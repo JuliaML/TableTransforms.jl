@@ -1,4 +1,20 @@
 @testset "Shows" begin
+  @testset "Assert" begin
+    T = Assert(:a, :b, :c, cond=allunique)
+
+    # compact mode
+    iostr = sprint(show, T)
+    @test iostr == "Assert([:a, :b, :c], allunique, \"\")"
+
+    # full mode
+    iostr = sprint(show, MIME("text/plain"), T)
+    @test iostr == """
+    Assert transform
+    ├─ selector = [:a, :b, :c]
+    ├─ cond = allunique
+    └─ msg = \"\""""
+  end
+
   @testset "Select" begin
     T = Select(:a, :b, :c)
 
