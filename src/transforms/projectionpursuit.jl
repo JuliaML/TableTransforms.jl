@@ -153,13 +153,13 @@ end
 
 sphering() = Quantile() → EigenAnalysis(:VDV)
 
-function applyfeat(transform::ProjectionPursuit, table, prep)
-  # retrieve column names
-  cols = Tables.columns(table)
-  names = Tables.columnnames(cols)
+function applyfeat(transform::ProjectionPursuit, feat, prep)
+  # original columns names
+  cols = Tables.columns(feat)
+  onames = Tables.columnnames(cols)
 
   # preprocess the data to approximately spherical shape
-  ptable, pcache = apply(sphering(), table)
+  ptable, pcache = apply(sphering(), feat)
 
   # initialize scores and Gaussian quantiles
   Z = Tables.matrix(ptable)
@@ -183,20 +183,19 @@ function applyfeat(transform::ProjectionPursuit, table, prep)
     iter += 1
   end
 
+  # new column names
+  names = Symbol.(:PP, 1:size(Z, 2))
+
   𝒯 = (; zip(names, eachcol(Z))...)
-  newtable = 𝒯 |> Tables.materializer(table)
-  newtable, (pcache, caches)
+  newtable = 𝒯 |> Tables.materializer(feat)
+  newtable, (pcache, caches, onames)
 end
 
-function revertfeat(::ProjectionPursuit, newtable, fcache)
-  # retrieve column names
-  cols = Tables.columns(newtable)
-  names = Tables.columnnames(cols)
-
+function revertfeat(::ProjectionPursuit, newfeat, fcache)
   # caches to retrieve transform steps
-  pcache, caches = fcache
+  pcache, caches, onames = fcache
 
-  Z = Tables.matrix(newtable)
+  Z = Tables.matrix(newfeat)
   for (Q, qcache) in reverse(caches)
     table = revert(Quantile(1), Tables.table(Z * Q), qcache)
     Z = Tables.matrix(table) * Q'
@@ -205,6 +204,6 @@ function revertfeat(::ProjectionPursuit, newtable, fcache)
   table = revert(sphering(), Tables.table(Z), pcache)
   Z = Tables.matrix(table)
 
-  𝒯 = (; zip(names, eachcol(Z))...)
-  newtable = 𝒯 |> Tables.materializer(newtable)
+  𝒯 = (; zip(onames, eachcol(Z))...)
+  𝒯 |> Tables.materializer(newfeat)
 end

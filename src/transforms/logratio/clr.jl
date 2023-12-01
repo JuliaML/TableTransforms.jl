@@ -11,9 +11,7 @@ struct CLR <: LogRatio end
 
 refvar(::CLR, names) = last(names)
 
-newvars(::CLR, names) = collect(names)
-
-oldvars(::CLR, names, rvar) = collect(names)
+newvars(::CLR, names) = Symbol.(:CLR, 1:length(names))
 
 applymatrix(::CLR, X) = mapslices(clr ∘ Composition, X, dims=2)
 

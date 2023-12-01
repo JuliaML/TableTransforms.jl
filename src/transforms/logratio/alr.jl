@@ -18,9 +18,7 @@ ALR() = ALR(nothing)
 
 refvar(transform::ALR, names) = isnothing(transform.refvar) ? last(names) : transform.refvar
 
-newvars(::ALR, names) = collect(names)[begin:(end - 1)]
-
-oldvars(::ALR, names, rvar) = [collect(names); rvar]
+newvars(::ALR, names) = Symbol.(:ARL, 1:(length(names) - 1))
 
 applymatrix(::ALR, X) = mapslices(alr ∘ Composition, X, dims=2)
 
