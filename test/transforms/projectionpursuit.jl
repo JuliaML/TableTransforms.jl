@@ -10,7 +10,7 @@
   T = ProjectionPursuit(rng=MersenneTwister(2))
   n, c = apply(T, t)
 
-  @test Tables.columnnames(n) == (:a, :b, :c, :d)
+  @test Tables.columnnames(n) == (:PP1, :PP2, :PP3, :PP4)
 
   μ = mean(Tables.matrix(n), dims=1)
   Σ = cov(Tables.matrix(n))

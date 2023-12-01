@@ -18,9 +18,7 @@ ILR() = ILR(nothing)
 
 refvar(transform::ILR, names) = isnothing(transform.refvar) ? last(names) : transform.refvar
 
-newvars(::ILR, names) = collect(names)[begin:(end - 1)]
-
-oldvars(::ILR, names, rvar) = [collect(names); rvar]
+newvars(::ILR, names) = Symbol.(:ILR, 1:(length(names) - 1))
 
 applymatrix(::ILR, X) = mapslices(ilr ∘ Composition, X, dims=2)
 
