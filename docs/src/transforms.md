@@ -2,10 +2,10 @@
 
 Below is the list of transforms that are are available in this package.
 
-# SciTypeAssertion
+# Assert
 
 ```@docs
-SciTypeAssertion
+Assert
 ```
 
 ## Select

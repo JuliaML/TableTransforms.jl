@@ -1,17 +1,18 @@
 @testset "Shows" begin
-  @testset "SciTypeAssertion" begin
-    T = SciTypeAssertion(:a, :b, :c, scitype=DST.Continuous)
+  @testset "Assert" begin
+    T = Assert(:a, :b, :c, cond=allunique)
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "SciTypeAssertion([:a, :b, :c], DataScienceTraits.Continuous)"
+    @test iostr == "Assert([:a, :b, :c], allunique, \"\")"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
-    SciTypeAssertion transform
+    Assert transform
     ├─ selector = [:a, :b, :c]
-    └─ scitype = DataScienceTraits.Continuous"""
+    ├─ cond = allunique
+    └─ msg = \"\""""
   end
 
   @testset "Select" begin

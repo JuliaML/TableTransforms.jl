@@ -20,7 +20,7 @@ Remainder() = Remainder(nothing)
 
 isrevertible(::Type{<:Remainder}) = true
 
-assertions(::Remainder) = [SciTypeAssertion(scitype=Continuous)]
+assertions(::Remainder) = [scitypeassert(Continuous)]
 
 function applyfeat(transform::Remainder, feat, prep)
   cols = Tables.columns(feat)

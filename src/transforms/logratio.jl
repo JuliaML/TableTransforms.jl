@@ -19,7 +19,7 @@ function revertmatrix end
 
 isrevertible(::Type{<:LogRatio}) = true
 
-assertions(::LogRatio) = [SciTypeAssertion(scitype=Continuous)]
+assertions(::LogRatio) = [scitypeassert(Continuous)]
 
 function applyfeat(transform::LogRatio, feat, prep)
   cols = Tables.columns(feat)

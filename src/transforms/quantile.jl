@@ -39,7 +39,7 @@ Quantile(; dist=Normal()) = Quantile(AllSelector(), dist)
 Quantile(cols; dist=Normal()) = Quantile(selector(cols), dist)
 Quantile(cols::C...; dist=Normal()) where {C<:Column} = Quantile(selector(cols), dist)
 
-assertions(transform::Quantile) = [SciTypeAssertion(transform.selector, scitype=Continuous)]
+assertions(transform::Quantile) = [scitypeassert(Continuous, transform.selector)]
 
 isrevertible(::Type{<:Quantile}) = true
 

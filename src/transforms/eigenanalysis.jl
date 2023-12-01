@@ -52,7 +52,7 @@ end
 
 EigenAnalysis(proj; maxdim=nothing, pratio=1.0) = EigenAnalysis(proj, maxdim, pratio)
 
-assertions(::EigenAnalysis) = [SciTypeAssertion(scitype=Continuous)]
+assertions(::EigenAnalysis) = [scitypeassert(Continuous)]
 
 isrevertible(::Type{EigenAnalysis}) = true
 

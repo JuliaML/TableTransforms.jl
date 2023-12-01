@@ -35,7 +35,7 @@ Center() = Center(AllSelector())
 Center(cols) = Center(selector(cols))
 Center(cols::C...) where {C<:Column} = Center(selector(cols))
 
-assertions(transform::Center) = [SciTypeAssertion(transform.selector, scitype=Continuous)]
+assertions(transform::Center) = [scitypeassert(Continuous, transform.selector)]
 
 isrevertible(::Type{<:Center}) = true
 

@@ -46,7 +46,7 @@ end
 
 Indicator(col::Column; k=10, scale=:quantile, categ=false) = Indicator(selector(col), k, scale, categ)
 
-assertions(transform::Indicator) = [SciTypeAssertion(transform.selector, scitype=Continuous)]
+assertions(transform::Indicator) = [scitypeassert(Continuous, transform.selector)]
 
 isrevertible(::Type{<:Indicator}) = true
 

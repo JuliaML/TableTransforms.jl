@@ -48,7 +48,7 @@ export
   reapply,
 
   # built-in
-  SciTypeAssertion,
+  Assert,
   Select,
   Reject,
   Satisfies,
