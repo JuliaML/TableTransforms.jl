@@ -1,4 +1,4 @@
-@testset "SciTypeAssertion" begin
+@testset "Assert" begin
   @test isrevertible(Assert(cond=allunique))
 
   a = [1, 2, 3, 4, 5, 6]
