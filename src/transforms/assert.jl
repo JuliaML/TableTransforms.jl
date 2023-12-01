@@ -53,9 +53,9 @@ function applyfeat(transform::Assert, feat, prep)
   msg = transform.msg
 
   msgfun = msg isa AbstractString ? _ -> msg : msg
-  for nm in snames
-    x = Tables.getcolumn(cols, nm)
-    _assert(cond(x), msgfun(nm))
+  for name in snames
+    x = Tables.getcolumn(cols, name)
+    _assert(cond(x), msgfun(name))
   end
 
   feat, nothing
