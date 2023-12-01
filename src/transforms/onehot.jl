@@ -26,7 +26,7 @@ end
 
 OneHot(col::Column; categ=false) = OneHot(selector(col), categ)
 
-assertions(transform::OneHot) = [SciTypeAssertion{Categorical}(transform.selector)]
+assertions(transform::OneHot) = [SciTypeAssertion(transform.selector, scitype=Categorical)]
 
 isrevertible(::Type{<:OneHot}) = true
 

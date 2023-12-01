@@ -27,7 +27,7 @@ Levels(pairs::Pair{C}...; ordered=nothing) where {C<:Column} =
 
 Levels(; kwargs...) = throw(ArgumentError("cannot create Levels transform without arguments"))
 
-assertions(transform::Levels) = [SciTypeAssertion{Categorical}(transform.selector)]
+assertions(transform::Levels) = [SciTypeAssertion(transform.selector, scitype=Categorical)]
 
 isrevertible(::Type{<:Levels}) = true
 

@@ -15,7 +15,7 @@ struct Closure <: StatelessFeatureTransform end
 
 isrevertible(::Type{Closure}) = true
 
-assertions(::Closure) = [SciTypeAssertion{Continuous}()]
+assertions(::Closure) = [SciTypeAssertion(scitype=Continuous)]
 
 function applyfeat(::Closure, feat, prep)
   cols = Tables.columns(feat)

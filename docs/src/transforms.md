@@ -2,6 +2,12 @@
 
 Below is the list of transforms that are are available in this package.
 
+# SciTypeAssertion
+
+```@docs
+SciTypeAssertion
+```
+
 ## Select
 
 ```@docs

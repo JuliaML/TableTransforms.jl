@@ -1,4 +1,5 @@
 transformfiles = [
+  "scitypeassertion.jl",
   "select.jl",
   "rename.jl",
   "satisfies.jl",

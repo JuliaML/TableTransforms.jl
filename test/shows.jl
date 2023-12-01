@@ -1,4 +1,19 @@
 @testset "Shows" begin
+  @testset "SciTypeAssertion" begin
+    T = SciTypeAssertion(:a, :b, :c, scitype=DST.Continuous)
+
+    # compact mode
+    iostr = sprint(show, T)
+    @test iostr == "SciTypeAssertion([:a, :b, :c], DataScienceTraits.Continuous)"
+
+    # full mode
+    iostr = sprint(show, MIME("text/plain"), T)
+    @test iostr == """
+    SciTypeAssertion transform
+    ├─ selector = [:a, :b, :c]
+    └─ scitype = DataScienceTraits.Continuous"""
+  end
+
   @testset "Select" begin
     T = Select(:a, :b, :c)
 
