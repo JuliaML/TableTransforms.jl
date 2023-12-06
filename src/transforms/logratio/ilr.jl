@@ -22,4 +22,4 @@ newvars(::ILR, names) = Symbol.(:ILR, 1:(length(names) - 1))
 
 applymatrix(::ILR, X) = mapslices(ilr ∘ Composition, X, dims=2)
 
-revertmatrix(::ILR, Y) = mapslices(components ∘ ilrinv, Y, dims=2)
+revertmatrix(::ILR, Y) = mapslices(CoDa.components ∘ ilrinv, Y, dims=2)

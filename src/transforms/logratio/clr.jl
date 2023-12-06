@@ -15,4 +15,4 @@ newvars(::CLR, names) = Symbol.(:CLR, 1:length(names))
 
 applymatrix(::CLR, X) = mapslices(clr ∘ Composition, X, dims=2)
 
-revertmatrix(::CLR, Y) = mapslices(components ∘ clrinv, Y, dims=2)
+revertmatrix(::CLR, Y) = mapslices(CoDa.components ∘ clrinv, Y, dims=2)
