@@ -38,6 +38,12 @@ Only
 Except
 ```
 
+## DropConstant
+
+```@docs
+DropConstant
+```
+
 ## Rename
 
 ```@docs

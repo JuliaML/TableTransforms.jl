@@ -54,6 +54,7 @@ export
   Satisfies,
   Only,
   Except,
+  DropConstant,
   Rename,
   StdNames,
   StdFeats,
