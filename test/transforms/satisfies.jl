@@ -71,3 +71,19 @@ end
   tₒ = revert(T, n, c)
   @test t == tₒ
 end
+
+@testset "DropConstant" begin
+  a = [4, 6, 7, 8, 1, 2]
+  b = fill(5, 6)
+  c = [1.9, 7.4, 8.6, 8.9, 2.4, 7.7]
+  d = fill(5.5, 6)
+  t = Table(; a, b, c, d)
+
+  T = DropConstant()
+  n, c = apply(T, t)
+  @test Tables.schema(n).names == (:a, :c)
+  @test Tables.getcolumn(n, :a) == t.a
+  @test Tables.getcolumn(n, :c) == t.c
+  tₒ = revert(T, n, c)
+  @test t == tₒ
+end

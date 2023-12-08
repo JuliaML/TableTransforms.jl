@@ -92,6 +92,12 @@ DropExtrema
 DropUnits
 ```
 
+## DropConstant
+
+```@docs
+DropConstant
+```
+
 ## AbsoluteUnits
 
 ```@docs
