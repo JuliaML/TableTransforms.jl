@@ -38,12 +38,6 @@ Only
 Except
 ```
 
-## DropConstant
-
-```@docs
-DropConstant
-```
-
 ## Rename
 
 ```@docs
@@ -96,6 +90,12 @@ DropExtrema
 
 ```@docs
 DropUnits
+```
+
+## DropConstant
+
+```@docs
+DropConstant
 ```
 
 ## AbsoluteUnits
