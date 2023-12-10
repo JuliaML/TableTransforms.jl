@@ -20,10 +20,10 @@
   tₒ = revert(T, n, c)
 
   if visualtests
-    fig = Mke.Figure(resolution=(800, 800))
+    fig = Mke.Figure(size=(800, 800))
     pairplot(fig[1, 1], n)
     @test_reference joinpath(datadir, "projectionpursuit-1.png") fig
-    fig = Mke.Figure(resolution=(1600, 800))
+    fig = Mke.Figure(size=(1600, 800))
     pairplot(fig[1, 1], t)
     pairplot(fig[1, 2], tₒ)
     @test_reference joinpath(datadir, "projectionpursuit-2.png") fig
@@ -44,7 +44,7 @@
   tₒ = revert(T, n, c)
 
   if visualtests
-    fig = Mke.Figure(resolution=(1500, 500))
+    fig = Mke.Figure(size=(1500, 500))
     pairplot(fig[1, 1], t)
     pairplot(fig[1, 2], n)
     pairplot(fig[1, 3], tₒ)
