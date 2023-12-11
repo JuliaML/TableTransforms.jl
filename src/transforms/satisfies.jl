@@ -66,10 +66,3 @@ Except(DST.Categorical)
 ```
 """
 Except(S::Type{<:SciType}) = Satisfies(x -> !(elscitype(x) <: S))
-
-"""
-    DropConstant()
-
-Drops the constant columns using the `allequal` function.
-"""
-DropConstant() = Satisfies(!allequal)

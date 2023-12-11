@@ -11,6 +11,7 @@ transformfiles = [
   "dropmissing.jl",
   "dropextrema.jl",
   "dropunits.jl",
+  "dropconstant.jl",
   "absoluteunits.jl",
   "map.jl",
   "replace.jl",

@@ -191,6 +191,32 @@
     └─ high = 0.75"""
   end
 
+  @testset "DropUnits" begin
+    T = DropUnits(:a, :b, :c)
+
+    # compact mode
+    iostr = sprint(show, T)
+    @test iostr == "DropUnits([:a, :b, :c])"
+
+    # full mode
+    iostr = sprint(show, MIME("text/plain"), T)
+    @test iostr == """
+    DropUnits transform
+    └─ selector = [:a, :b, :c]"""
+  end
+
+  @testset "DropConstant" begin
+    T = DropConstant()
+
+    # compact mode
+    iostr = sprint(show, T)
+    @test iostr == "DropConstant()"
+
+    # full mode
+    iostr = sprint(show, MIME("text/plain"), T)
+    @test iostr == "DropConstant transform"
+  end
+
   @testset "Map" begin
     fun = (a, b) -> 2a + b
     T = Map(:a => sin, [:a, :b] => fun => :c)
