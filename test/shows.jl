@@ -180,13 +180,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "DropExtrema(:a, 0.25, 0.75)"
+    @test iostr == "DropExtrema([:a], 0.25, 0.75)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     DropExtrema transform
-    ├─ selector = :a
+    ├─ selector = [:a]
     ├─ low = 0.25
     └─ high = 0.75"""
   end
