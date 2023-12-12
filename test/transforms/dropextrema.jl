@@ -20,6 +20,17 @@
   tₒ = revert(T, n, c)
   @test t == tₒ
 
+  T = DropExtrema(1, 2)
+  n, c = apply(T, t)
+  @test n.a == [5.1, 5.4]
+  @test n.b == [4.4, 1.9]
+  @test n.c == [2.8, 8.9]
+  @test n.d == [8.1, 4.1]
+  @test n.e == [5.9, 2.4]
+  @test n.f == [1.3, 5.1]
+  tₒ = revert(T, n, c)
+  @test t == tₒ
+
   T = DropExtrema(:c, low=0.3, high=0.7)
   n, c = apply(T, t)
   @test n.a == [6.9, 7.8, 4.8, 8.0]
@@ -28,6 +39,17 @@
   @test n.d == [1.0, 6.2, 6.2, 6.9]
   @test n.e == [1.5, 4.1, 1.3, 3.5]
   @test n.f == [1.9, 9.0, 8.9, 3.8]
+  tₒ = revert(T, n, c)
+  @test t == tₒ
+
+  T = DropExtrema([:c, :d], low=0.3, high=0.7)
+  n, c = apply(T, t)
+  @test n.a == [7.8, 4.8]
+  @test n.b == [6.3, 0.5]
+  @test n.c == [5.7, 6.7]
+  @test n.d == [6.2, 6.2]
+  @test n.e == [4.1, 1.3]
+  @test n.f == [9.0, 8.9]
   tₒ = revert(T, n, c)
   @test t == tₒ
 
@@ -42,6 +64,17 @@
   tₒ = revert(T, n, c)
   @test t == tₒ
 
-  # throws
+  T = DropExtrema(("e", "f"), low=0.2, high=0.8)
+  n, c = apply(T, t)
+  @test n.a == [0.0, 1.1, 8.0, 5.4]
+  @test n.b == [1.4, 3.0, 6.1, 1.9]
+  @test n.c == [2.8, 8.4, 5.0, 8.9]
+  @test n.d == [1.9, 4.0, 6.9, 4.1]
+  @test n.e == [1.6, 4.9, 3.5, 2.4]
+  @test n.f == [6.2, 6.2, 3.8, 5.1]
+  tₒ = revert(T, n, c)
+  @test t == tₒ
+
+  # error: invalid quantiles
   @test_throws AssertionError DropExtrema(:a, low=0, high=1.4)
 end
