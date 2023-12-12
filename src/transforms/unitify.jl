@@ -8,6 +8,10 @@
 Add units to columns of the table using bracket syntax.
 A column named `col [unit]` will be renamed to a unitful
 column `col` with a valid `unit` from Unitful.jl.
+
+In the case that the `unit` is not recognized by Unitful.jl, 
+no units are added. Empty brackets are also allowed to represent
+columns without units, e.g. `col []`.
 """
 struct Unitify <: StatelessFeatureTransform end
 
@@ -18,10 +22,14 @@ function _unitify(name)
   if !isnothing(m)
     namestr, unitstr = m.captures
     newname = Symbol(strip(namestr))
-    unit = try
-      uparse(unitstr)
-    catch
-      @warn "the unit \"$unitstr\" is not valid"
+    unit = if !isempty(unitstr)
+      try
+        uparse(unitstr)
+      catch
+        @warn "the unit \"$unitstr\" is not valid"
+        NoUnits
+      end
+    else
       NoUnits
     end
     newname, unit

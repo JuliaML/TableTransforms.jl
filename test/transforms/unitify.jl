@@ -24,6 +24,16 @@
   tₒ = revert(T, n, c)
   @test tₒ == t
 
+  # no units
+  t = Table(; Symbol("a []") => rand(10), Symbol("b [NoUnits]") => rand(10))
+  T = Unitify()
+  n, c = apply(T, t)
+  @test Tables.schema(n).names == (:a, :b)
+  @test unit(eltype(n.a)) === NoUnits
+  @test unit(eltype(n.b)) === NoUnits
+  tₒ = revert(T, n, c)
+  @test tₒ == t
+
   # invalid unit name
   t = Table(; Symbol("a [test]") => rand(10))
   T = Unitify()
