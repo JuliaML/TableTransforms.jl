@@ -217,6 +217,32 @@
     @test iostr == "DropConstant transform"
   end
 
+  @testset "AbsoluteUnits" begin
+    T = AbsoluteUnits(:a, :b, :c)
+
+    # compact mode
+    iostr = sprint(show, T)
+    @test iostr == "AbsoluteUnits([:a, :b, :c])"
+
+    # full mode
+    iostr = sprint(show, MIME("text/plain"), T)
+    @test iostr == """
+    AbsoluteUnits transform
+    └─ selector = [:a, :b, :c]"""
+  end
+
+  @testset "Unitify" begin
+    T = Unitify()
+
+    # compact mode
+    iostr = sprint(show, T)
+    @test iostr == "Unitify()"
+
+    # full mode
+    iostr = sprint(show, MIME("text/plain"), T)
+    @test iostr == "Unitify transform"
+  end
+
   @testset "Map" begin
     fun = (a, b) -> 2a + b
     T = Map(:a => sin, [:a, :b] => fun => :c)
