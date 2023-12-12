@@ -15,7 +15,7 @@
 
   T = Unitify()
   n, c = apply(T, t)
-  @test Tables.schema(n).names == (:a, :b, :c, :d)
+  @test Tables.schema(n).names == (:a, :b, :c, :d, :e)
   @test unit(eltype(n.a)) === u"m"
   @test unit(eltype(n.b)) === NoUnits
   @test unit(eltype(n.c)) === u"km/hr"
