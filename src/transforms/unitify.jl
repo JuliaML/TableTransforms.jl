@@ -5,9 +5,9 @@
 """
     Unitify()
 
-Unitify the table by parsing the unit in the columns names
-and applying them. The unit name must be enclosed in square
-brackets in the column name, e.g. "colname [m/s]".
+Add units to columns of the table using bracket syntax.
+A column named `col [unit]` will be renamed to a unitful
+column `col` with a valid `unit` from Unitful.jl.
 """
 struct Unitify <: StatelessFeatureTransform end
 
