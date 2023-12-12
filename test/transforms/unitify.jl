@@ -20,7 +20,7 @@
   @test unit(eltype(n.b)) === NoUnits
   @test unit(eltype(n.c)) === u"km/hr"
   @test unit(eltype(n.d)) === NoUnits
-  @test unit(eltype(n.d)) === u"°C"
+  @test unit(eltype(n.e)) === u"°C"
   tₒ = revert(T, n, c)
   @test tₒ == t
 
