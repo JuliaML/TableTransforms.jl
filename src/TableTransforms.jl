@@ -65,6 +65,7 @@ export
   DropExtrema,
   DropUnits,
   AbsoluteUnits,
+  Unitify,
   Map,
   Replace,
   Coalesce,

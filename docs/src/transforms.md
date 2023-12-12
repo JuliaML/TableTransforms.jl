@@ -104,6 +104,12 @@ DropConstant
 AbsoluteUnits
 ```
 
+## Unitify
+
+```@docs
+Unitify
+```
+
 ## Map
 
 ```@docs
