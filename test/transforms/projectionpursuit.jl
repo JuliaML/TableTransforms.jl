@@ -1,4 +1,6 @@
 @testset "ProjectionPursuit" begin
+  @test TT.parameters(ProjectionPursuit()) == (tol=1.0e-6, deg=5, perc=0.9, n=100)
+
   rng = MersenneTwister(42)
   N = 10_000
   a = [2randn(rng, N ÷ 2) .+ 6; randn(rng, N ÷ 2)]

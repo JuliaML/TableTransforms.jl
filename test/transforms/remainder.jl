@@ -1,6 +1,8 @@
 @testset "Remainder" begin
   @test isrevertible(Remainder())
 
+  @test TT.parameters(Remainder()) == (; total=nothing)
+
   a = [2.0, 66.0, 0.0]
   b = [4.0, 22.0, 2.0]
   c = [4.0, 12.0, 98.0]

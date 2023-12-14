@@ -49,6 +49,8 @@ ProjectionPursuit(; tol=1e-6, maxiter=100, deg=5, perc=0.9, n=100, rng=Random.GL
 
 assertions(::ProjectionPursuit) = [scitypeassert(Continuous)]
 
+parameters(transform::ProjectionPursuit) = (tol=transform.tol, deg=transform.deg, perc=transform.perc, n=transform.n)
+
 isrevertible(::Type{<:ProjectionPursuit}) = true
 
 # transforms a row of random variables into a convex combination 

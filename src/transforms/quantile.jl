@@ -41,6 +41,8 @@ Quantile(cols::C...; dist=Normal()) where {C<:Column} = Quantile(selector(cols),
 
 assertions(transform::Quantile) = [scitypeassert(Continuous, transform.selector)]
 
+parameters(transform::Quantile) = (; dist=transform.dist)
+
 isrevertible(::Type{<:Quantile}) = true
 
 colcache(::Quantile, x) = EmpiricalDistribution(x)

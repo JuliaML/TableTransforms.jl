@@ -1,4 +1,6 @@
 @testset "Scale" begin
+  @test TT.parameters(Scale(:a)) == (low=0.25, high=0.75)
+
   # constant column
   x = fill(3.0, 10)
   y = rand(10)

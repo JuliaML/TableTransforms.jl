@@ -1,6 +1,8 @@
 @testset "DropExtrema" begin
   @test !isrevertible(DropExtrema(:a))
 
+  @test TT.parameters(DropExtrema(:a)) == (low=0.25, high=0.75)
+
   a = [6.9, 9.0, 7.8, 0.0, 5.1, 4.8, 1.1, 8.0, 5.4, 7.9]
   b = [7.7, 4.2, 6.3, 1.4, 4.4, 0.5, 3.0, 6.1, 1.9, 1.5]
   c = [6.1, 7.7, 5.7, 2.8, 2.8, 6.7, 8.4, 5.0, 8.9, 1.0]
