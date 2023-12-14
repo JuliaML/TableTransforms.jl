@@ -58,7 +58,7 @@ function Replace(pairs::Pair...)
   Replace(selectors, preds, news)
 end
 
-isrevertible(::Type{<:Replace}) = true
+isrevertible(::Type{<:Replace}) = false
 
 function applyfeat(transform::Replace, feat, prep)
   cols = Tables.columns(feat)
@@ -81,43 +81,23 @@ function applyfeat(transform::Replace, feat, prep)
     name => reps
   end
 
-  tuples = map(colreps) do (name, reps)
+  columns = map(colreps) do (name, reps)
     x = Tables.getcolumn(cols, name)
     if isnothing(reps)
-      x, nothing
+      x
     else
-      # reversal dict
-      rev = Dict{Int,eltype(x)}()
-      y = map(enumerate(x)) do (i, v)
+      map(x) do v
         for (pred, new) in reps
           if pred(v)
-            rev[i] = v
             return new
           end
         end
         v
       end
-      y, rev
     end
   end
 
-  columns = first.(tuples)
-  fcache = last.(tuples)
-
   𝒯 = (; zip(names, columns)...)
   newfeat = 𝒯 |> Tables.materializer(feat)
-  newfeat, fcache
-end
-
-function revertfeat(::Replace, newfeat, fcache)
-  cols = Tables.columns(newfeat)
-  names = Tables.columnnames(cols)
-
-  columns = map(names, fcache) do name, rev
-    y = Tables.getcolumn(cols, name)
-    isnothing(rev) ? y : [get(rev, i, y[i]) for i in 1:length(y)]
-  end
-
-  𝒯 = (; zip(names, columns)...)
-  𝒯 |> Tables.materializer(newfeat)
+  newfeat, nothing
 end

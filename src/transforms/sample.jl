@@ -40,7 +40,7 @@ Sample(size::Int, weights::AbstractWeights; replace=false, ordered=false, rng=Ra
 
 Sample(size::Int, weights; kwargs...) = Sample(size, Weights(collect(weights)); kwargs...)
 
-isrevertible(::Type{<:Sample}) = true
+isrevertible(::Type{<:Sample}) = false
 
 function preprocess(transform::Sample, feat)
   # retrieve valid indices
@@ -59,46 +59,16 @@ function preprocess(transform::Sample, feat)
     sample(rng, inds, weights, size; replace, ordered)
   end
 
-  # rejected indices
-  rinds = setdiff(inds, sinds)
-
-  sinds, rinds
+  sinds
 end
 
 function applyfeat(::Sample, feat, prep)
   # preprocessed indices
-  sinds, rinds = prep
+  sinds = prep
 
-  # selected/rejected rows
+  # selected rows
   srows = Tables.subset(feat, sinds, viewhint=true)
-  rrows = Tables.subset(feat, rinds, viewhint=true)
 
   newfeat = srows |> Tables.materializer(feat)
-  newfeat, (sinds, rinds, rrows)
-end
-
-function revertfeat(::Sample, newfeat, fcache)
-  cols = Tables.columns(newfeat)
-  names = Tables.columnnames(cols)
-
-  sinds, rinds, rrows = fcache
-
-  # columns with selected rows in original order
-  uinds = indexin(sort(unique(sinds)), sinds)
-  columns = map(names) do name
-    y = Tables.getcolumn(cols, name)
-    [y[i] for i in uinds]
-  end
-
-  # insert rejected rows into columns
-  rrcols = Tables.columns(rrows)
-  for (name, x) in zip(names, columns)
-    r = Tables.getcolumn(rrcols, name)
-    for (i, v) in zip(rinds, r)
-      insert!(x, i, v)
-    end
-  end
-
-  𝒯 = (; zip(names, columns)...)
-  𝒯 |> Tables.materializer(newfeat)
+  newfeat, nothing
 end
