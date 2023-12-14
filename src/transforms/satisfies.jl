@@ -19,7 +19,7 @@ struct Satisfies{F} <: StatelessFeatureTransform
   pred::F
 end
 
-isrevertible(::Type{<:Satisfies}) = true
+isrevertible(::Type{<:Satisfies}) = false
 
 function applyfeat(transform::Satisfies, feat, prep)
   pred = transform.pred
@@ -30,13 +30,8 @@ function applyfeat(transform::Satisfies, feat, prep)
     pred(x)
   end
   strans = Select(snames)
-  newfeat, sfcache = applyfeat(strans, feat, prep)
-  newfeat, (strans, sfcache)
-end
-
-function revertfeat(::Satisfies, newfeat, fcache)
-  strans, sfcache = fcache
-  revertfeat(strans, newfeat, sfcache)
+  newfeat, _ = applyfeat(strans, feat, prep)
+  newfeat, nothing
 end
 
 """

@@ -13,8 +13,6 @@
     tn, tc = apply(T, t)
     @test mn.meta == m
     @test mn.table == tn
-    mtₒ = revert(T, mn, mc)
-    @test mtₒ == mt
 
     T = Rename(:a => :x, :c => :y)
     mn, mc = apply(T, mt)
@@ -57,8 +55,6 @@
     tn, tc = apply(T, t)
     @test mn.meta == VarMeta(m.data .+ 2)
     @test mn.table == tn
-    mtₒ = revert(T, mn, mc)
-    @test mtₒ == mt
 
     T = Rename(:b => :x, :d => :y)
     mn, mc = apply(T, mt)

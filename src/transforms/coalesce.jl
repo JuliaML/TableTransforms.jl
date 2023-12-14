@@ -42,10 +42,8 @@ Coalesce(; value) = Coalesce(AllSelector(), value)
 Coalesce(cols; value) = Coalesce(selector(cols), value)
 Coalesce(cols::C...; value) where {C<:Column} = Coalesce(selector(cols), value)
 
-isrevertible(::Type{<:Coalesce}) = true
+isrevertible(::Type{<:Coalesce}) = false
 
-colcache(::Coalesce, x) = findall(ismissing, x)
+colcache(::Coalesce, x) = nothing
 
 colapply(transform::Coalesce, x, c) = coalesce.(x, transform.value)
-
-colrevert(::Coalesce, y, c) = [i ∈ c ? missing : y[i] for i in 1:length(y)]

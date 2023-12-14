@@ -9,11 +9,6 @@
   tₒ = revert(T, n, c)
   @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
-  T = Select(:x, :z) → ZScore() → EigenAnalysis(:V) → Scale(low=0, high=1)
-  n, c = apply(T, t)
-  tₒ = revert(T, n, c)
-  @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
-
   # reapply with Sequential transform
   t = Table(x=rand(100))
   T = ZScore() → Quantile()

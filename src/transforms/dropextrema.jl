@@ -50,7 +50,7 @@ DropExtrema(; low=0.25, high=0.75) = DropExtrema(AllSelector(), low, high)
 DropExtrema(cols; low=0.25, high=0.75) = DropExtrema(selector(cols), low, high)
 DropExtrema(cols::C...; low=0.25, high=0.75) where {C<:Column} = DropExtrema(selector(cols), low, high)
 
-isrevertible(::Type{<:DropExtrema}) = true
+isrevertible(::Type{<:DropExtrema}) = false
 
 function preprocess(transform::DropExtrema, feat)
   cols = Tables.columns(feat)
@@ -71,11 +71,6 @@ end
 
 function applyfeat(::DropExtrema, feat, prep)
   ftrans, fprep = prep
-  newfeat, ffcache = applyfeat(ftrans, feat, fprep)
-  newfeat, (ftrans, ffcache)
-end
-
-function revertfeat(::DropExtrema, newfeat, fcache)
-  ftrans, ffcache = fcache
-  revertfeat(ftrans, newfeat, ffcache)
+  newfeat, _ = applyfeat(ftrans, feat, fprep)
+  newfeat, nothing
 end

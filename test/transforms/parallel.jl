@@ -44,8 +44,6 @@
   T = Select(:a) ⊔ Select(:b)
   n, c = apply(T, t)
   @test t == n
-  tₒ = revert(T, n, c)
-  @test tₒ == t
 
   # https://github.com/JuliaML/TableTransforms.jl/issues/223
   t = (a=1:4, b=5:8)
