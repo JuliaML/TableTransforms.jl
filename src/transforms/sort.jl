@@ -34,7 +34,7 @@ Sort(cols::C...; kwargs...) where {C<:Column} = Sort(selector(cols), values(kwar
 
 Sort(; kwargs...) = throw(ArgumentError("cannot create Sort transform without arguments"))
 
-isrevertible(::Type{<:Sort}) = true
+isrevertible(::Type{<:Sort}) = false
 
 function preprocess(transform::Sort, feat)
   cols = Tables.columns(feat)
@@ -59,18 +59,5 @@ function applyfeat(::Sort, feat, prep)
 
   newfeat = srows |> Tables.materializer(feat)
 
-  newfeat, sinds
-end
-
-function revertfeat(::Sort, newfeat, fcache)
-  # collect all rows
-  rows = Tables.rowtable(newfeat)
-
-  # reverting indices
-  sinds = fcache
-  rinds = sortperm(sinds)
-
-  rrows = view(rows, rinds)
-
-  rrows |> Tables.materializer(newfeat)
+  newfeat, nothing
 end

@@ -57,7 +57,7 @@ function Map(pairs::MapPair...)
   Map(selectors, funs, targets)
 end
 
-isrevertible(::Type{Map}) = true
+isrevertible(::Type{Map}) = false
 
 _makename(snames, fun) = Symbol(join([snames; nameof(fun)], "_"))
 
@@ -73,10 +73,6 @@ function applyfeat(transform::Map, feat, prep)
   names = collect(onames)
   columns = Any[Tables.getcolumn(cols, nm) for nm in onames]
 
-  # replaced names and columns
-  rnames = empty(names)
-  rcolumns = empty(columns)
-
   # mapped columns
   mapped = map(selectors, funs, targets) do selector, fun, target
     snames = selector(names)
@@ -88,9 +84,7 @@ function applyfeat(transform::Map, feat, prep)
 
   for (name, column) in mapped
     if name ∈ onames
-      push!(rnames, name)
       i = findfirst(==(name), onames)
-      push!(rcolumns, columns[i])
       columns[i] = column
     else
       push!(names, name)
@@ -100,22 +94,5 @@ function applyfeat(transform::Map, feat, prep)
 
   𝒯 = (; zip(names, columns)...)
   newfeat = 𝒯 |> Tables.materializer(feat)
-  newfeat, (onames, rnames, rcolumns)
-end
-
-function revertfeat(::Map, newfeat, fcache)
-  cols = Tables.columns(newfeat)
-
-  onames, rnames, rcolumns = fcache
-  ocolumns = map(onames) do name
-    if name ∈ rnames
-      i = findfirst(==(name), rnames)
-      rcolumns[i]
-    else
-      Tables.getcolumn(cols, name)
-    end
-  end
-
-  𝒯 = (; zip(onames, ocolumns)...)
-  𝒯 |> Tables.materializer(newfeat)
+  newfeat, nothing
 end

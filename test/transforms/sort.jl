@@ -1,4 +1,6 @@
 @testset "Sort" begin
+  @test !isrevertible(Sort(:a))
+
   a = [5, 3, 1, 2]
   b = [2, 4, 8, 5]
   c = [3, 2, 1, 4]
@@ -12,9 +14,6 @@
   @test n.b == [8, 5, 4, 2]
   @test n.c == [1, 4, 2, 3]
   @test n.d == [7, 5, 3, 4]
-  @test isrevertible(T)
-  tₒ = revert(T, n, c)
-  @test t == tₒ
 
   # descending order test
   T = Sort(:b, rev=true)
@@ -24,8 +23,6 @@
   @test n.b == [8, 5, 4, 2]
   @test n.c == [1, 4, 2, 3]
   @test n.d == [7, 5, 3, 4]
-  tₒ = revert(T, n, c)
-  @test t == tₒ
 
   # random test
   a = rand(10)
@@ -40,8 +37,6 @@
   @test Tables.schema(t) == Tables.schema(n)
   @test issetequal(Tables.rowtable(t), Tables.rowtable(n))
   @test issorted(Tables.getcolumn(n, :c))
-  tₒ = revert(T, n, c)
-  @test t == tₒ
 
   # sort by multiple columns
   a = [-2, -1, -2, 2, 1, -1, 1, 2]
@@ -54,24 +49,18 @@
   @test n.a == [-2, -2, -1, -1, 1, 1, 2, 2]
   @test n.b == [-8, 6, -4, 2, 2, 8, -8, 9]
   @test n.c == [-3, 5, 6, -7, -1, -8, -10, 4]
-  tₒ = revert(T, n, c)
-  @test t == tₒ
 
   T = Sort([:a, :c], rev=true)
   n, c = apply(T, t)
   @test n.a == [2, 2, 1, 1, -1, -1, -2, -2]
   @test n.b == [9, -8, 2, 8, -4, 2, 6, -8]
   @test n.c == [4, -10, -1, -8, 6, -7, 5, -3]
-  tₒ = revert(T, n, c)
-  @test t == tₒ
 
   T = Sort(("b", "c"), by=row -> abs.(row))
   n, c = apply(T, t)
   @test n.a == [1, -1, -1, -2, -2, 1, 2, 2]
   @test n.b == [2, 2, -4, 6, -8, 8, -8, 9]
   @test n.c == [-1, -7, 6, 5, -3, -8, -10, 4]
-  tₒ = revert(T, n, c)
-  @test t == tₒ
 
   # throws: Sort without arguments
   @test_throws ArgumentError Sort()
