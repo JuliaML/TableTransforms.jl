@@ -60,7 +60,7 @@ _nonmissing(::Type{Union{Missing,T}}, x) where {T} = collect(T, x)
 function applyfeat(::DropMissing, feat, prep)
   # apply filter transform
   ftrans, fprep, snames = prep
-  newfeat, ffcache = applyfeat(ftrans, feat, fprep)
+  newfeat, _ = applyfeat(ftrans, feat, fprep)
 
   # drop Missing type
   cols = Tables.columns(newfeat)
@@ -72,25 +72,5 @@ function applyfeat(::DropMissing, feat, prep)
   𝒯 = (; zip(names, columns)...)
   newfeat = 𝒯 |> Tables.materializer(feat)
 
-  # original column types
-  types = Tables.schema(feat).types
-
-  newfeat, (ftrans, ffcache, snames, types)
-end
-
-function revertfeat(::DropMissing, newfeat, fcache)
-  ftrans, ffcache, snames, types = fcache
-
-  # reintroduce Missing type
-  cols = Tables.columns(newfeat)
-  names = Tables.columnnames(cols)
-  columns = map(types, names) do T, name
-    x = Tables.getcolumn(cols, name)
-    name ∈ snames ? collect(T, x) : x
-  end
-  𝒯 = (; zip(names, columns)...)
-  ofeat = 𝒯 |> Tables.materializer(newfeat)
-
-  # revert filter transform
-  revertfeat(ftrans, ofeat, ffcache)
+  newfeat, nothing
 end

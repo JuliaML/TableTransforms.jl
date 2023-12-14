@@ -27,58 +27,28 @@ struct Filter{F} <: StatelessFeatureTransform
   pred::F
 end
 
-isrevertible(::Type{<:Filter}) = true
+isrevertible(::Type{<:Filter}) = false
 
 function preprocess(transform::Filter, feat)
   # lazy row iterator
   rows = tablerows(feat)
 
   # selected indices
-  sinds, nrows = Int[], 0
+  sinds = Int[]
   for (i, row) in enumerate(rows)
     transform.pred(row) && push!(sinds, i)
-    nrows += 1
   end
 
-  # rejected indices
-  rinds = setdiff(1:nrows, sinds)
-
-  sinds, rinds
+  sinds
 end
 
 function applyfeat(::Filter, feat, prep)
   # preprocessed indices
-  sinds, rinds = prep
+  sinds = prep
 
-  # selected/rejected rows
+  # selected rows
   srows = Tables.subset(feat, sinds, viewhint=true)
-  rrows = Tables.subset(feat, rinds, viewhint=true)
 
   newfeat = srows |> Tables.materializer(feat)
-
-  newfeat, (rinds, rrows)
-end
-
-function revertfeat(::Filter, newfeat, fcache)
-  cols = Tables.columns(newfeat)
-  names = Tables.columnnames(cols)
-
-  rinds, rrows = fcache
-
-  # columns with selected rows
-  columns = map(names) do name
-    collect(Tables.getcolumn(cols, name))
-  end
-
-  # insert rejected rows into columns
-  rrcols = Tables.columns(rrows)
-  for (name, x) in zip(names, columns)
-    r = Tables.getcolumn(rrcols, name)
-    for (i, v) in zip(rinds, r)
-      insert!(x, i, v)
-    end
-  end
-
-  𝒯 = (; zip(names, columns)...)
-  𝒯 |> Tables.materializer(newfeat)
+  newfeat, nothing
 end

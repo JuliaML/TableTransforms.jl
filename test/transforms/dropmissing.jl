@@ -1,4 +1,6 @@
 @testset "DropMissing" begin
+  @test !isrevertible(DropMissing())
+
   a = [3, 2, missing, 4, 5, 3]
   b = [missing, 4, 4, 5, 8, 5]
   c = [1, 1, 6, 2, 4, missing]
@@ -15,18 +17,6 @@
   @test n.d == [5, 4]
   @test n.e == [6, 5]
   @test n.f == [4, 5]
-
-  # revert test
-  @test isrevertible(T)
-  tₒ = revert(T, n, c)
-  cols = Tables.columns(t)
-  colsₒ = Tables.columns(tₒ)
-  colnames = Tables.columnnames(t)
-  for n in colnames
-    col = Tables.getcolumn(cols, n)
-    colₒ = Tables.getcolumn(colsₒ, n)
-    @test isequal(col, colₒ)
-  end
 
   # args...
   # integers
@@ -134,8 +124,6 @@
   # table schema after apply and revert
   T = DropMissing()
   n, c = apply(T, t)
-  tₒ = revert(T, n, c)
-  ttypes = Tables.schema(t).types
   ntypes = Tables.schema(n).types
   @test ntypes[1] == Int
   @test ntypes[2] == Int
@@ -143,11 +131,9 @@
   @test ntypes[4] == Int
   @test ntypes[5] == Int
   @test ntypes[6] == Int
-  @test ttypes == Tables.schema(tₒ).types
 
   T = DropMissing([:a, :c, :d])
   n, c = apply(T, t)
-  tₒ = revert(T, n, c)
   ntypes = Tables.schema(n).types
   @test ntypes[1] == Int
   @test ntypes[2] == Union{Missing,Int}
@@ -155,11 +141,9 @@
   @test ntypes[4] == Int
   @test ntypes[5] == Union{Missing,Int}
   @test ntypes[6] == Union{Missing,Int}
-  @test ttypes == Tables.schema(tₒ).types
 
   T = DropMissing([:b, :e, :f])
   n, c = apply(T, t)
-  tₒ = revert(T, n, c)
   ntypes = Tables.schema(n).types
   @test ntypes[1] == Union{Missing,Int}
   @test ntypes[2] == Int
@@ -167,7 +151,6 @@
   @test ntypes[4] == Union{Missing,Int}
   @test ntypes[5] == Int
   @test ntypes[6] == Int
-  @test ttypes == Tables.schema(tₒ).types
 
   # reapply test
   T = DropMissing()
@@ -180,10 +163,6 @@
   T = DropMissing()
   n, c = apply(T, rt)
   @test Tables.isrowtable(n)
-  rtₒ = revert(T, n, c)
-  for (row, rowₒ) in zip(rt, rtₒ)
-    @test isequal(row, rowₒ)
-  end
 
   # missing value columns
   a = fill(missing, 6)
@@ -196,8 +175,6 @@
 
   T = DropMissing()
   n, c = apply(T, t)
-  tₒ = revert(T, n, c)
-  ttypes = Tables.schema(t).types
   ntypes = Tables.schema(n).types
   @test isequal(n.a, [])
   @test isequal(n.b, [])
@@ -211,12 +188,9 @@
   @test ntypes[4] == Int
   @test ntypes[5] == Int
   @test ntypes[6] == Any
-  @test ttypes == Tables.schema(tₒ).types
 
   T = DropMissing(:a)
   n, c = apply(T, t)
-  tₒ = revert(T, n, c)
-  ttypes = Tables.schema(t).types
   ntypes = Tables.schema(n).types
   @test isequal(n.a, [])
   @test isequal(n.b, [])
@@ -230,12 +204,9 @@
   @test ntypes[4] == Union{Missing,Int}
   @test ntypes[5] == Union{Missing,Int}
   @test ntypes[6] == Missing
-  @test ttypes == Tables.schema(tₒ).types
 
   T = DropMissing(:f)
   n, c = apply(T, t)
-  tₒ = revert(T, n, c)
-  ttypes = Tables.schema(t).types
   ntypes = Tables.schema(n).types
   @test isequal(n.a, [])
   @test isequal(n.b, [])
@@ -249,12 +220,9 @@
   @test ntypes[4] == Union{Missing,Int}
   @test ntypes[5] == Union{Missing,Int}
   @test ntypes[6] == Any
-  @test ttypes == Tables.schema(tₒ).types
 
   T = DropMissing(:b, :c, :d, :e)
   n, c = apply(T, t)
-  tₒ = revert(T, n, c)
-  ttypes = Tables.schema(t).types
   ntypes = Tables.schema(n).types
   @test isequal(n.a, fill(missing, 4))
   @test isequal(n.b, [4, 4, 5, 8])
@@ -268,7 +236,6 @@
   @test ntypes[4] == Int
   @test ntypes[5] == Int
   @test ntypes[6] == Missing
-  @test ttypes == Tables.schema(tₒ).types
 
   # throws: empty selection
   @test_throws ArgumentError DropMissing(())
