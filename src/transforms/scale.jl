@@ -50,6 +50,8 @@ Scale(cols::C...; low=0.25, high=0.75) where {C<:Column} = Scale(selector(cols),
 
 assertions(transform::Scale) = [scitypeassert(Continuous, transform.selector)]
 
+parameters(transform::Scale) = (low=transform.low, high=transform.high)
+
 isrevertible(::Type{<:Scale}) = true
 
 function colcache(transform::Scale, x)

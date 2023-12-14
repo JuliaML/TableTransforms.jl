@@ -1,6 +1,8 @@
 @testset "Coalesce" begin
   @test !isrevertible(Coalesce(value=0))
 
+  @test TT.parameters(Coalesce(value=0)) == (; value=0)
+
   a = [3, 2, missing, 4, 5, 3]
   b = [missing, 4, 4, 5, 8, 5]
   c = [1, 1, 6, 2, 4, missing]

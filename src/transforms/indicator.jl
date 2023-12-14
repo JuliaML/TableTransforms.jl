@@ -48,6 +48,8 @@ Indicator(col::Column; k=10, scale=:quantile, categ=false) = Indicator(selector(
 
 assertions(transform::Indicator) = [scitypeassert(Continuous, transform.selector)]
 
+parameters(transform::Indicator) = (k=transform.k, scale=transform.scale)
+
 isrevertible(::Type{<:Indicator}) = true
 
 function _intervals(transform::Indicator, x)

@@ -1,4 +1,6 @@
 @testset "Quantile" begin
+  @test TT.parameters(Quantile()) == (; dist=Normal())
+
   t = Table(z=rand(100))
   T = Quantile()
   n, c = apply(T, t)

@@ -54,6 +54,8 @@ EigenAnalysis(proj; maxdim=nothing, pratio=1.0) = EigenAnalysis(proj, maxdim, pr
 
 assertions(::EigenAnalysis) = [scitypeassert(Continuous)]
 
+parameters(transform::EigenAnalysis) = (proj=transform.proj, maxdim=transform.maxdim, pratio=transform.pratio)
+
 isrevertible(::Type{EigenAnalysis}) = true
 
 function applyfeat(transform::EigenAnalysis, feat, prep)

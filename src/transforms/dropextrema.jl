@@ -50,6 +50,8 @@ DropExtrema(; low=0.25, high=0.75) = DropExtrema(AllSelector(), low, high)
 DropExtrema(cols; low=0.25, high=0.75) = DropExtrema(selector(cols), low, high)
 DropExtrema(cols::C...; low=0.25, high=0.75) where {C<:Column} = DropExtrema(selector(cols), low, high)
 
+parameters(transform::DropExtrema) = (low=transform.low, high=transform.high)
+
 isrevertible(::Type{<:DropExtrema}) = false
 
 function preprocess(transform::DropExtrema, feat)

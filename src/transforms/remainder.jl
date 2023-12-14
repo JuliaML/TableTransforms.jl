@@ -22,6 +22,8 @@ isrevertible(::Type{<:Remainder}) = true
 
 assertions(::Remainder) = [scitypeassert(Continuous)]
 
+parameters(transform::Remainder) = (; total=transform.total)
+
 function applyfeat(transform::Remainder, feat, prep)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols) |> collect

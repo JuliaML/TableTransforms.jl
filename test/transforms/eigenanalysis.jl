@@ -1,4 +1,6 @@
 @testset "EigenAnalysis" begin
+  @test TT.parameters(EigenAnalysis(:V)) == (proj=:V, maxdim=nothing, pratio=1.0)
+
   # PCA test
   x = rand(Normal(0, 10), 1500)
   y = x + rand(Normal(0, 2), 1500)

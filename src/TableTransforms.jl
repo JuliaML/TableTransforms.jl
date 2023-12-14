@@ -27,7 +27,7 @@ using Transducers: tcollect
 using NelderMead: optimise
 
 import Distributions: quantile, cdf
-import TransformsBase: assertions, isrevertible, isinvertible
+import TransformsBase: assertions, parameters, isrevertible, isinvertible
 import TransformsBase: apply, revert, reapply, preprocess, inverse
 
 include("tabletraits.jl")
