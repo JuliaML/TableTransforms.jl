@@ -4,6 +4,7 @@
 
 """
     Rename(:col₁ => :newcol₁, :col₂ => :newcol₂, ..., :colₙ => :newcolₙ)
+    Rename([:col₁ => :newcol₁, :col₂ => :newcol₂, ..., :colₙ => :newcolₙ])
 
 The transform that renames `col₁`, `col₂`, ..., `colₙ`
 to `newcol₁`, `newcol₂`, ..., `newcolₙ`.
@@ -14,6 +15,9 @@ to `newcol₁`, `newcol₂`, ..., `newcolₙ`.
 Rename(1 => :x, 3 => :y)
 Rename(:a => :x, :c => :y)
 Rename("a" => "x", "c" => "y")
+Rename([1 => "x", 3 => "y"])
+Rename([:a => "x", :c => "y"])
+Rename(["a", "c"] .=> [:x, :y])
 ```
 """
 struct Rename{S<:ColumnSelector} <: StatelessFeatureTransform
@@ -29,6 +33,11 @@ Rename(pairs::Pair{C,Symbol}...) where {C<:Column} = Rename(selector(first.(pair
 
 Rename(pairs::Pair{C,S}...) where {C<:Column,S<:AbstractString} =
   Rename(selector(first.(pairs)), collect(Symbol.(last.(pairs))))
+
+Rename(pairs::AbstractVector{Pair{C,Symbol}}) where {C<:Column} = Rename(selector(first.(pairs)), last.(pairs))
+
+Rename(pairs::AbstractVector{Pair{C,S}}) where {C<:Column,S<:AbstractString} =
+  Rename(selector(first.(pairs)), Symbol.(last.(pairs)))
 
 isrevertible(::Type{<:Rename}) = true
 
