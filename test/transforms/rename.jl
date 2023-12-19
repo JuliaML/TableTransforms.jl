@@ -112,37 +112,37 @@
   # vector of pairs
   T = Rename([1 => :x, 3 => :y])
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == (:x, :b, :y, :d)
+  @test Tables.schema(n).names == (:x, :b, :y, :d)
   tₒ = revert(T, n, c)
   @test t == tₒ
 
   T = Rename([2, 4] .=> ["x", "y"])
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == (:a, :x, :c, :y)
+  @test Tables.schema(n).names == (:a, :x, :c, :y)
   tₒ = revert(T, n, c)
   @test t == tₒ
 
   T = Rename([:a => :x, :c => :y])
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == (:x, :b, :y, :d)
+  @test Tables.schema(n).names == (:x, :b, :y, :d)
   tₒ = revert(T, n, c)
   @test t == tₒ
 
   T = Rename([:b, :d] .=> ["x", "y"])
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == (:a, :x, :c, :y)
+  @test Tables.schema(n).names == (:a, :x, :c, :y)
   tₒ = revert(T, n, c)
   @test t == tₒ
 
   T = Rename(["a" => :x, "c" => :y])
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == (:x, :b, :y, :d)
+  @test Tables.schema(n).names == (:x, :b, :y, :d)
   tₒ = revert(T, n, c)
   @test t == tₒ
 
   T = Rename(["b", "d"] .=> ["x", "y"])
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == (:a, :x, :c, :y)
+  @test Tables.schema(n).names == (:a, :x, :c, :y)
   tₒ = revert(T, n, c)
   @test t == tₒ
 
