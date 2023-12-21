@@ -7,10 +7,10 @@
 
 An empirical distribution holding continuous values.
 """
-struct EmpiricalDistribution{T<:Real} <: ContinuousUnivariateDistribution
+struct EmpiricalDistribution{T} <: ContinuousUnivariateDistribution
   values::Vector{T}
 
-  function EmpiricalDistribution{T}(values) where {T<:Real}
+  function EmpiricalDistribution{T}(values) where {T}
     _assert(!isempty(values), "values must be provided")
     new(sort(values))
   end
@@ -20,7 +20,7 @@ EmpiricalDistribution(values) = EmpiricalDistribution{eltype(values)}(values)
 
 quantile(d::EmpiricalDistribution, p::Real) = quantile(d.values, p, sorted=true)
 
-function cdf(d::EmpiricalDistribution{T}, x::T) where {T<:Real}
+function cdf(d::EmpiricalDistribution{T}, x::T) where {T}
   v = d.values
   n = length(v)
 
@@ -37,9 +37,9 @@ function cdf(d::EmpiricalDistribution{T}, x::T) where {T<:Real}
   l, u = v[head], v[tail]
 
   if x < l
-    return zero(T)
+    return T(0)
   elseif x > u
-    return one(T)
+    return T(1)
   else
     if l == u
       return tail / n

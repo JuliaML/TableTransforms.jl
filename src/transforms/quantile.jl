@@ -61,8 +61,8 @@ end
 function qqtransform(samples, origin, target)
   # avoid evaluating the quantile at 0 or 1
   T = eltype(samples)
-  low = zero(T) + T(0.001)
-  high = one(T) - T(0.001)
+  low = T(0) + T(0.001)
+  high = T(1) - T(0.001)
   map(samples) do sample
     prob = cdf(origin, sample)
     quantile(target, clamp(prob, low, high))
