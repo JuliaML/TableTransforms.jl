@@ -60,4 +60,17 @@
   tₒ = revert(T, n, c)
   @test all(-4 .< extrema(n.z) .< 4)
   @test all(0 .≤ extrema(tₒ.z) .≤ 1)
+
+  # smooth repeated values
+  x = readdlm(joinpath(datadir, "quantile.dat"))
+  t = (; x=vec(x))
+  n = t |> Quantile()
+
+  if visualtests
+    # visualize histogram and theoretical pdf
+    fig = Mke.Figure(size=(800, 800))
+    Mke.hist(fig[1, 1], n.x, normalization=:pdf)
+    Mke.plot!(fig[1, 1], Normal())
+    @test_reference joinpath(datadir, "quantile.png") fig
+  end
 end
