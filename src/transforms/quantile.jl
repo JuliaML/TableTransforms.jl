@@ -86,7 +86,7 @@ function qsmooth(values)
     i = 1
     j = first(bounds)
     qlinear!(sorted, i, j, sorted[j], sorted[j + 1])
-    for k in 1:length(bounds)-1
+    for k in 1:(length(bounds) - 1)
       i = bounds[k] + 1
       j = bounds[k + 1]
       qlinear!(sorted, i, j, sorted[i - 1], sorted[j])
