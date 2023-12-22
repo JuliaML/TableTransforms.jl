@@ -45,20 +45,26 @@ parameters(transform::Quantile) = (; dist=transform.dist)
 
 isrevertible(::Type{<:Quantile}) = true
 
-colcache(::Quantile, x) = EmpiricalDistribution(x)
+function colcache(::Quantile, x)
+  s = qsmooth(x)
+  d = EmpiricalDistribution(s)
+  d, s
+end
 
 function colapply(transform::Quantile, x, c)
-  origin, target = c, transform.dist
-  qqtransform(x, origin, target)
+  d, s = c
+  origin, target = d, transform.dist
+  qtransform(s, origin, target)
 end
 
 function colrevert(transform::Quantile, y, c)
-  origin, target = transform.dist, c
-  qqtransform(y, origin, target)
+  d, _ = c
+  origin, target = transform.dist, d
+  qtransform(y, origin, target)
 end
 
 # transform samples from original to target distribution
-function qqtransform(samples, origin, target)
+function qtransform(samples, origin, target)
   # avoid evaluating the quantile at 0 or 1
   T = eltype(samples)
   pmin = T(0) + T(1e-3)
@@ -66,5 +72,36 @@ function qqtransform(samples, origin, target)
   map(samples) do sample
     prob = cdf(origin, sample)
     quantile(target, clamp(prob, pmin, pmax))
+  end
+end
+
+# helper function that replaces repated values
+# by an increasing sequence of values between
+# the previous and the next non-repated value
+function qsmooth(values)
+  permut = sortperm(values)
+  sorted = float.(values[permut])
+  bounds = findall(>(0), diff(sorted))
+  if !isempty(bounds)
+    i = 1
+    j = first(bounds)
+    qlinear!(sorted, i, j, sorted[j], sorted[j + 1])
+    for k in 1:length(bounds)-1
+      i = bounds[k] + 1
+      j = bounds[k + 1]
+      qlinear!(sorted, i, j, sorted[i - 1], sorted[j])
+    end
+    i = last(bounds) + 1
+    j = length(sorted)
+    qlinear!(sorted, i, j, sorted[i - 1], sorted[j])
+  end
+  sorted[sortperm(permut)]
+end
+
+function qlinear!(x, i, j, l, u)
+  if i < j
+    for k in i:j
+      x[k] = (u - l) * (k - i) / (j - i) + l
+    end
   end
 end
