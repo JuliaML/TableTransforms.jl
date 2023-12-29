@@ -26,7 +26,7 @@ function _unitify(name)
       try
         uparse(unitstr)
       catch
-        @warn "the unit \"$unitstr\" is not valid"
+        @warn "The unit \"$unitstr\" is not valid"
         NoUnits
       end
     else
