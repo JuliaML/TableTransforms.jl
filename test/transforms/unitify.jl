@@ -37,7 +37,7 @@
   # invalid unit name
   t = Table(; Symbol("a [test]") => rand(10))
   T = Unitify()
-  n, c = apply(T, t)
+  n, c = @test_logs (:warn, "The unit \"test\" is not valid") apply(T, t)
   @test Tables.schema(n).names == (:a,)
   @test unit(eltype(n.a)) === NoUnits
   tₒ = revert(T, n, c)
