@@ -4,7 +4,7 @@
   z = y + rand(Normal(0, 5), 1500)
   t = Table(; x, y, z)
 
-  T = Scale(low=0.3, high=0.6) ⊔ EigenAnalysis(:VDV)
+  T = LowHigh(low=0.3, high=0.6) ⊔ EigenAnalysis(:VDV)
   n, c = apply(T, t)
   tₒ = revert(T, n, c)
   @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
@@ -16,7 +16,7 @@
 
   # distributivity with respect to sequential transform
   T₁ = Center()
-  T₂ = Scale(low=0.2, high=0.8)
+  T₂ = LowHigh(low=0.2, high=0.8)
   T₃ = EigenAnalysis(:VD)
   P₁ = T₁ → (T₂ ⊔ T₃)
   P₂ = (T₁ → T₂) ⊔ (T₁ → T₃)
@@ -26,7 +26,7 @@
 
   # row table
   rt = Tables.rowtable(t)
-  T = Scale(low=0.3, high=0.6) ⊔ EigenAnalysis(:VDV)
+  T = LowHigh(low=0.3, high=0.6) ⊔ EigenAnalysis(:VDV)
   n, c = apply(T, rt)
   @test Tables.isrowtable(n)
   rtₒ = revert(T, n, c)

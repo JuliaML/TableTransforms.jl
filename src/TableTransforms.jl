@@ -75,7 +75,7 @@ export
   OneHot,
   Identity,
   Center,
-  Scale,
+  LowHigh,
   MinMax,
   Interquartile,
   ZScore,

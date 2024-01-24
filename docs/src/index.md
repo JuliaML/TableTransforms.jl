@@ -90,7 +90,7 @@ are concatenated horizontally in the final table:
 ```@example usage
 # create a transform pipeline
 f1 = ZScore()
-f2 = Scale()
+f2 = LowHigh()
 f3 = Quantile()
 f4 = Functional(cos)
 f5 = Interquartile()

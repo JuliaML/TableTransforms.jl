@@ -3,58 +3,58 @@
 # ------------------------------------------------------------------
 
 """
-    Scale(; low=0.25, high=0.75)
+    LowHigh(; low=0.25, high=0.75)
 
-Applies the Scale transform to all columns of the table.
-The scale transform of the column `x` is defined by `(x .- xl) ./ (xh - xl)`,
+Applies the LowHigh transform to all columns of the table.
+The LowHigh transform of the column `x` is defined by `(x .- xl) ./ (xh - xl)`,
 where `xl = quantile(x, low)` and `xh = quantile(x, high)`.
 
-    Scale(col₁, col₂, ..., colₙ; low=0.25, high=0.75)
-    Scale([col₁, col₂, ..., colₙ]; low=0.25, high=0.75)
-    Scale((col₁, col₂, ..., colₙ); low=0.25, high=0.75)
+    LowHigh(col₁, col₂, ..., colₙ; low=0.25, high=0.75)
+    LowHigh([col₁, col₂, ..., colₙ]; low=0.25, high=0.75)
+    LowHigh((col₁, col₂, ..., colₙ); low=0.25, high=0.75)
 
-Applies the Scale transform on columns `col₁`, `col₂`, ..., `colₙ`.
+Applies the LowHigh transform on columns `col₁`, `col₂`, ..., `colₙ`.
 
-    Scale(regex; low=0.25, high=0.75)
+    LowHigh(regex; low=0.25, high=0.75)
 
-Applies the Scale transform on columns that match with `regex`.
+Applies the LowHigh transform on columns that match with `regex`.
 
 # Examples
 
 ```julia
-Scale()
-Scale(low=0, high=1)
-Scale(low=0.3, high=0.7)
-Scale(1, 3, 5, low=0, high=1)
-Scale([:a, :c, :e], low=0.3, high=0.7)
-Scale(("a", "c", "e"), low=0.25, high=0.75)
-Scale(r"[ace]", low=0.3, high=0.7)
+LowHigh()
+LowHigh(low=0, high=1)
+LowHigh(low=0.3, high=0.7)
+LowHigh(1, 3, 5, low=0, high=1)
+LowHigh([:a, :c, :e], low=0.3, high=0.7)
+LowHigh(("a", "c", "e"), low=0.25, high=0.75)
+LowHigh(r"[ace]", low=0.3, high=0.7)
 ```
 """
-struct Scale{S<:ColumnSelector,T} <: ColwiseFeatureTransform
+struct LowHigh{S<:ColumnSelector,T} <: ColwiseFeatureTransform
   selector::S
   low::T
   high::T
 
-  function Scale(selector::S, low::T, high::T) where {S<:ColumnSelector,T}
+  function LowHigh(selector::S, low::T, high::T) where {S<:ColumnSelector,T}
     _assert(0 ≤ low ≤ high ≤ 1, "invalid quantiles")
     new{S,T}(selector, low, high)
   end
 end
 
-Scale(selector::ColumnSelector, low, high) = Scale(selector, promote(low, high)...)
+LowHigh(selector::ColumnSelector, low, high) = LowHigh(selector, promote(low, high)...)
 
-Scale(; low=0.25, high=0.75) = Scale(AllSelector(), low, high)
-Scale(cols; low=0.25, high=0.75) = Scale(selector(cols), low, high)
-Scale(cols::C...; low=0.25, high=0.75) where {C<:Column} = Scale(selector(cols), low, high)
+LowHigh(; low=0.25, high=0.75) = LowHigh(AllSelector(), low, high)
+LowHigh(cols; low=0.25, high=0.75) = LowHigh(selector(cols), low, high)
+LowHigh(cols::C...; low=0.25, high=0.75) where {C<:Column} = LowHigh(selector(cols), low, high)
 
-assertions(transform::Scale) = [scitypeassert(Continuous, transform.selector)]
+assertions(transform::LowHigh) = [scitypeassert(Continuous, transform.selector)]
 
-parameters(transform::Scale) = (low=transform.low, high=transform.high)
+parameters(transform::LowHigh) = (low=transform.low, high=transform.high)
 
-isrevertible(::Type{<:Scale}) = true
+isrevertible(::Type{<:LowHigh}) = true
 
-function colcache(transform::Scale, x)
+function colcache(transform::LowHigh, x)
   low = convert(eltype(x), transform.low)
   high = convert(eltype(x), transform.high)
   xl, xh = quantile(x, (low, high))
@@ -62,15 +62,15 @@ function colcache(transform::Scale, x)
   (; xl, xh)
 end
 
-colapply(::Scale, x, c) = @. (x - c.xl) / (c.xh - c.xl)
+colapply(::LowHigh, x, c) = @. (x - c.xl) / (c.xh - c.xl)
 
-colrevert(::Scale, y, c) = @. (c.xh - c.xl) * y + c.xl
+colrevert(::LowHigh, y, c) = @. (c.xh - c.xl) * y + c.xl
 
 """
     MinMax()
 
 Applies the MinMax transform to all columns of the table.
-The MinMax transform is equivalent to `Scale(low=0, high=1)`.
+The MinMax transform is equivalent to `LowHigh(low=0, high=1)`.
 
     MinMax(col₁, col₂, ..., colₙ)
     MinMax([col₁, col₂, ..., colₙ])
@@ -91,15 +91,15 @@ MinMax(("a", "c", "e"))
 MinMax(r"[ace]")
 ```
 
-See also [`Scale`](@ref).
+See also [`LowHigh`](@ref).
 """
-MinMax(args...) = Scale(args...; low=0, high=1)
+MinMax(args...) = LowHigh(args...; low=0, high=1)
 
 """
     Interquartile()
 
 Applies the Interquartile transform to all columns of the table.
-The Interquartile transform is equivalent to `Scale(low=0.25, high=0.75)`.
+The Interquartile transform is equivalent to `LowHigh(low=0.25, high=0.75)`.
 
     Interquartile(col₁, col₂, ..., colₙ)
     Interquartile([col₁, col₂, ..., colₙ])
@@ -120,6 +120,6 @@ Interquartile(("a", "c", "e"))
 Interquartile(r"[ace]")
 ```
 
-See also [`Scale`](@ref).
+See also [`LowHigh`](@ref).
 """
-Interquartile(args...) = Scale(args...; low=0.25, high=0.75)
+Interquartile(args...) = LowHigh(args...; low=0.25, high=0.75)

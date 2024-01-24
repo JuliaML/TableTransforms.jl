@@ -365,17 +365,17 @@
     └─ selector = all"""
   end
 
-  @testset "Scale" begin
-    T = Scale()
+  @testset "LowHigh" begin
+    T = LowHigh()
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Scale(all, 0.25, 0.75)"
+    @test iostr == "LowHigh(all, 0.25, 0.75)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
-    Scale transform
+    LowHigh transform
     ├─ selector = all
     ├─ low = 0.25
     └─ high = 0.75"""
@@ -509,12 +509,12 @@
   @testset "SequentialTransform" begin
     t1 = Select(:x, :z)
     t2 = ZScore()
-    t3 = Scale(low=0, high=1)
+    t3 = LowHigh(low=0, high=1)
     pipeline = t1 → t2 → t3
 
     # compact mode
     iostr = sprint(show, pipeline)
-    @test iostr == "Select([:x, :z], nothing) → ZScore(all) → Scale(all, 0, 1)"
+    @test iostr == "Select([:x, :z], nothing) → ZScore(all) → LowHigh(all, 0, 1)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
@@ -522,37 +522,37 @@
     SequentialTransform
     ├─ Select([:x, :z], nothing)
     ├─ ZScore(all)
-    └─ Scale(all, 0, 1)"""
+    └─ LowHigh(all, 0, 1)"""
   end
 
   @testset "ParallelTableTransform" begin
-    t1 = Scale(low=0.3, high=0.6)
+    t1 = LowHigh(low=0.3, high=0.6)
     t2 = EigenAnalysis(:VDV)
     t3 = Functional(exp)
     pipeline = t1 ⊔ t2 ⊔ t3
 
     # compact mode
     iostr = sprint(show, pipeline)
-    @test iostr == "Scale(all, 0.3, 0.6) ⊔ EigenAnalysis(:VDV, nothing, 1.0) ⊔ Functional(all, exp)"
+    @test iostr == "LowHigh(all, 0.3, 0.6) ⊔ EigenAnalysis(:VDV, nothing, 1.0) ⊔ Functional(all, exp)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
     @test iostr == """
     ParallelTableTransform
-    ├─ Scale(all, 0.3, 0.6)
+    ├─ LowHigh(all, 0.3, 0.6)
     ├─ EigenAnalysis(:VDV, nothing, 1.0)
     └─ Functional(all, exp)"""
 
     # parallel and sequential
     f1 = ZScore()
-    f2 = Scale()
+    f2 = LowHigh()
     f3 = Functional(exp)
     f4 = Interquartile()
     pipeline = (f1 → f2) ⊔ (f3 → f4)
 
     # compact mode
     iostr = sprint(show, pipeline)
-    @test iostr == "ZScore(all) → Scale(all, 0.25, 0.75) ⊔ Functional(all, exp) → Scale(all, 0.25, 0.75)"
+    @test iostr == "ZScore(all) → LowHigh(all, 0.25, 0.75) ⊔ Functional(all, exp) → LowHigh(all, 0.25, 0.75)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
@@ -560,9 +560,9 @@
     ParallelTableTransform
     ├─ SequentialTransform
     │  ├─ ZScore(all)
-    │  └─ Scale(all, 0.25, 0.75)
+    │  └─ LowHigh(all, 0.25, 0.75)
     └─ SequentialTransform
        ├─ Functional(all, exp)
-       └─ Scale(all, 0.25, 0.75)"""
+       └─ LowHigh(all, 0.25, 0.75)"""
   end
 end

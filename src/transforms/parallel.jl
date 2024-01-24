@@ -14,7 +14,7 @@ revertible transform in the list.
 # Examples
 
 ```julia
-Scale(low=0.3, high=0.6) ⊔ EigenAnalysis(:VDV)
+LowHigh(low=0.3, high=0.6) ⊔ EigenAnalysis(:VDV)
 ZScore() ⊔ EigenAnalysis(:V)
 ```
 

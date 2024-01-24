@@ -164,10 +164,10 @@ Identity
 Center
 ```
 
-## Scale
+## LowHigh
 
 ```@docs
-Scale
+LowHigh
 ```
 
 ## MinMax
