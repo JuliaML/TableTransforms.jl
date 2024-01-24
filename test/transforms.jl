@@ -23,7 +23,7 @@ transformfiles = [
   "onehot.jl",
   "identity.jl",
   "center.jl",
-  "scale.jl",
+  "lowhigh.jl",
   "zscore.jl",
   "quantile.jl",
   "functional.jl",
