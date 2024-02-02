@@ -6,8 +6,12 @@
     Rename(:col₁ => :newcol₁, :col₂ => :newcol₂, ..., :colₙ => :newcolₙ)
     Rename([:col₁ => :newcol₁, :col₂ => :newcol₂, ..., :colₙ => :newcolₙ])
 
-The transform that renames `col₁`, `col₂`, ..., `colₙ`
-to `newcol₁`, `newcol₂`, ..., `newcolₙ`.
+Renames the columns `col₁`, `col₂`, ..., `colₙ` to `newcol₁`, `newcol₂`, ..., `newcolₙ`.
+
+    Rename(fun)
+
+Renames the table columns using the modification function `fun` that takes a 
+string as input and returns another string with the new name.
 
 # Examples
 
@@ -18,16 +22,21 @@ Rename("a" => "x", "c" => "y")
 Rename([1 => "x", 3 => "y"])
 Rename([:a => "x", :c => "y"])
 Rename(["a", "c"] .=> [:x, :y])
+Rename(nm -> nm * "_suffix")
 ```
 """
-struct Rename{S<:ColumnSelector} <: StatelessFeatureTransform
+struct Rename{S<:ColumnSelector,N} <: StatelessFeatureTransform
   selector::S
-  newnames::Vector{Symbol}
-  function Rename(selector::S, newnames) where {S<:ColumnSelector}
-    _assert(allunique(newnames), "new names must be unique")
-    new{S}(selector, newnames)
+  newnames::N
+  function Rename(selector::S, newnames::N) where {S<:ColumnSelector,N}
+    if newnames isa AbstractVector
+      _assert(allunique(newnames), "new names must be unique")
+    end
+    new{S,N}(selector, newnames)
   end
 end
+
+Rename(fun) = Rename(AllSelector(), fun)
 
 Rename(pairs::Pair{C,Symbol}...) where {C<:Column} = Rename(selector(first.(pairs)), collect(last.(pairs)))
 
@@ -41,13 +50,17 @@ Rename(pairs::AbstractVector{Pair{C,S}}) where {C<:Column,S<:AbstractString} =
 
 isrevertible(::Type{<:Rename}) = true
 
+_newnames(newnames::AbstractVector{Symbol}, snames) = newnames
+_newnames(fun, snames) = [Symbol(fun(string(name))) for name in snames]
+
 function applyfeat(transform::Rename, feat, prep)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
   snames = transform.selector(names)
-  _assert(transform.newnames ⊈ setdiff(names, snames), "duplicate names")
+  tnames = _newnames(transform.newnames, snames)
+  _assert(tnames ⊈ setdiff(names, snames), "duplicate names")
 
-  mapnames = Dict(zip(snames, transform.newnames))
+  mapnames = Dict(zip(snames, tnames))
   newnames = [get(mapnames, nm, nm) for nm in names]
   columns = [Tables.getcolumn(cols, nm) for nm in names]
 
