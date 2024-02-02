@@ -19,4 +19,5 @@ TypedTables = "9d95f2ec-7b3d-5a63-8d20-e2491e220bb9"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
-PairPlots = "2.1"
+CairoMakie = "=0.11.6"
+PairPlots = "=2.3.1"
