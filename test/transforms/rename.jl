@@ -146,6 +146,12 @@
   tₒ = revert(T, n, c)
   @test t == tₒ
 
+  T = Rename(nm -> nm * "_test")
+  n, c = apply(T, t)
+  @test Tables.schema(n).names == (:a_test, :b_test, :c_test, :d_test)
+  tₒ = revert(T, n, c)
+  @test t == tₒ
+
   # throws
   @test_throws AssertionError Rename(:a => :x, :b => :x)
   @test_throws AssertionError apply(Rename(:a => :c, :b => :d), t)
