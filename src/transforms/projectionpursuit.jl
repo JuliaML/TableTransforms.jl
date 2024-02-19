@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    ProjectionPursuit(; tol=1e-6, maxiter=100, deg=5, perc=0.9, n=100, rng=Random.GLOBAL_RNG)
+    ProjectionPursuit(; tol=1e-6, maxiter=100, deg=5, perc=0.9, n=100, rng=Random.default_rng())
 
 The projection pursuit multivariate transform converts any multivariate distribution into
 the standard multivariate Gaussian distribution.
@@ -44,7 +44,7 @@ struct ProjectionPursuit{T,RNG} <: StatelessFeatureTransform
   rng::RNG
 end
 
-ProjectionPursuit(; tol=1e-6, maxiter=100, deg=5, perc=0.9, n=100, rng=Random.GLOBAL_RNG) =
+ProjectionPursuit(; tol=1e-6, maxiter=100, deg=5, perc=0.9, n=100, rng=Random.default_rng()) =
   ProjectionPursuit{typeof(tol),typeof(rng)}(tol, maxiter, deg, perc, n, rng)
 
 assertions(::ProjectionPursuit) = [scitypeassert(Continuous)]

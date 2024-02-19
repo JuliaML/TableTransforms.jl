@@ -133,7 +133,7 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Sample(30, nothing, false, true, Random._GLOBAL_RNG())"
+    @test iostr == "Sample(30, nothing, false, true, TaskLocalRNG())"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
@@ -143,7 +143,7 @@
     ├─ weights = nothing
     ├─ replace = false
     ├─ ordered = true
-    └─ rng = Random._GLOBAL_RNG()"""
+    └─ rng = TaskLocalRNG()"""
   end
 
   @testset "Filter" begin

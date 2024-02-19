@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    Sample(size, [weights]; replace=true, ordered=false, rng=GLOBAL_RNG)
+    Sample(size, [weights]; replace=true, ordered=false, rng=default_rng())
 
 Sample `size` rows of table using `weights` with or without replacement depending
 on the option `replace`. The option `ordered` can be used to return samples in
@@ -33,9 +33,9 @@ struct Sample{W,RNG} <: StatelessFeatureTransform
   rng::RNG
 end
 
-Sample(size::Int; replace=false, ordered=false, rng=Random.GLOBAL_RNG) = Sample(size, nothing, replace, ordered, rng)
+Sample(size::Int; replace=false, ordered=false, rng=Random.default_rng()) = Sample(size, nothing, replace, ordered, rng)
 
-Sample(size::Int, weights::AbstractWeights; replace=false, ordered=false, rng=Random.GLOBAL_RNG) =
+Sample(size::Int, weights::AbstractWeights; replace=false, ordered=false, rng=Random.default_rng()) =
   Sample(size, weights, replace, ordered, rng)
 
 Sample(size::Int, weights; kwargs...) = Sample(size, Weights(collect(weights)); kwargs...)
