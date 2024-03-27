@@ -36,6 +36,8 @@ struct Rename{S<:ColumnSelector,N} <: StatelessFeatureTransform
   end
 end
 
+Rename() = throw(ArgumentError("cannot create Rename transform without arguments"))
+
 Rename(fun) = Rename(AllSelector(), fun)
 
 Rename(pairs::Pair{C,Symbol}...) where {C<:Column} = Rename(selector(first.(pairs)), collect(last.(pairs)))
