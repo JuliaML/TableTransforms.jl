@@ -7,6 +7,10 @@
 
 Return a copy of the table, ensuring that the scientific types of the columns match the new specification.
 
+    Coerce(S)
+
+Coerce all columns of the table with scientific type `S`.
+
 This transform uses the `DataScienceTraits.coerce` function. Please see their docstring for more details.
 
 # Examples
@@ -18,23 +22,28 @@ Coerce(:a => DST.Continuous, :b => DST.Continuous)
 Coerce("a" => DST.Continuous, "b" => DST.Continuous)
 ```
 """
-struct Coerce{S<:ColumnSelector} <: StatelessFeatureTransform
+struct Coerce{S<:ColumnSelector,T} <: StatelessFeatureTransform
   selector::S
-  scitypes::Vector{DataType}
+  scitypes::T
 end
 
 Coerce() = throw(ArgumentError("cannot create Coerce transform without arguments"))
 
+Coerce(scitype::Type{<:SciType}) = Coerce(AllSelector(), scitype)
+
 Coerce(pairs::Pair{C,DataType}...) where {C<:Column} = Coerce(selector(first.(pairs)), collect(last.(pairs)))
 
 isrevertible(::Type{<:Coerce}) = true
+
+_typedict(scitype::Type{<:SciType}, snames) = Dict(nm => scitype for nm in snames)
+_typedict(scitypes::AbstractVector, snames) = Dict(zip(snames, scitypes))
 
 function applyfeat(transform::Coerce, feat, prep)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
   types = Tables.schema(feat).types
   snames = transform.selector(names)
-  typedict = Dict(zip(snames, transform.scitypes))
+  typedict = _typedict(transform.scitypes, snames)
 
   columns = map(names) do name
     x = Tables.getcolumn(cols, name)

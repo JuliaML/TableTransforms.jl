@@ -152,7 +152,9 @@
   tₒ = revert(T, n, c)
   @test t == tₒ
 
-  # throws
+  # error: cannot create Rename transform without arguments
+  @test_throws ArgumentError Rename()
+  # error: new names must be unique
   @test_throws AssertionError Rename(:a => :x, :b => :x)
   @test_throws AssertionError apply(Rename(:a => :c, :b => :d), t)
 end

@@ -30,6 +30,24 @@
   @test eltype(tₒ.a) == eltype(t.a)
   @test eltype(tₒ.b) == eltype(t.b)
 
+  T = Coerce(DST.Continuous)
+  n, c = apply(T, t)
+  @test eltype(n.a) <: Float64
+  @test eltype(n.b) <: Float64
+  n, c = apply(T, t)
+  tₒ = revert(T, n, c)
+  @test eltype(tₒ.a) == eltype(t.a)
+  @test eltype(tₒ.b) == eltype(t.b)
+
+  T = Coerce(DST.Categorical)
+  n, c = apply(T, t)
+  @test eltype(n.a) <: Int
+  @test eltype(n.b) <: Int
+  n, c = apply(T, t)
+  tₒ = revert(T, n, c)
+  @test eltype(tₒ.a) == eltype(t.a)
+  @test eltype(tₒ.b) == eltype(t.b)
+
   # row table
   rt = Tables.rowtable(t)
   T = Coerce(:a => DST.Continuous, :b => DST.Categorical)
@@ -37,4 +55,7 @@
   @test Tables.isrowtable(n)
   rtₒ = revert(T, n, c)
   @test rt == rtₒ
+
+  # error: cannot create Coerce transform without arguments
+  @test_throws ArgumentError Coerce()
 end
