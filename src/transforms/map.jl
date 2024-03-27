@@ -31,10 +31,10 @@ Map(r"[abc]" => ((a, b, c) -> a^2 - 2b + c) => "col1")
 
 * Anonymous functions must be passed with parentheses as in the examples above;
 * Some function names are treated in a special way, they are:
-  * Anonymous functions: `#[functionid]` -> `"f[functionid]"`;
-  * Composed functions: `outer ∘ inner` -> `"outer_inner"`;
-  * `Base.Fix1` functions: `Base.Fix1(f, x)` -> `"fix1_f"`;
-  * `Base.Fix2` functions: `Base.Fix2(f, x)` -> `"fix2_f"`;
+  * Anonymous functions: `#1` -> `f1`;
+  * Composed functions: `outer ∘ inner` -> `outer_inner`;
+  * `Base.Fix1` functions: `Base.Fix1(f, x)` -> `fix1_f`;
+  * `Base.Fix2` functions: `Base.Fix2(f, x)` -> `fix2_f`;
 """
 struct Map <: StatelessFeatureTransform
   selectors::Vector{ColumnSelector}
