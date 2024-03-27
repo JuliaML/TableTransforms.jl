@@ -9,18 +9,18 @@
 
   T = Map(1 => sin)
   n, c = apply(T, t)
-  @test Tables.schema(n).names == (:a, :b, :c, :d, :a_sin)
-  @test n.a_sin == sin.(t.a)
+  @test Tables.schema(n).names == (:a, :b, :c, :d, :sin_a)
+  @test n.sin_a == sin.(t.a)
 
   T = Map(:b => cos)
   n, c = apply(T, t)
-  @test Tables.schema(n).names == (:a, :b, :c, :d, :b_cos)
-  @test n.b_cos == cos.(t.b)
+  @test Tables.schema(n).names == (:a, :b, :c, :d, :cos_b)
+  @test n.cos_b == cos.(t.b)
 
   T = Map("c" => tan)
   n, c = apply(T, t)
-  @test Tables.schema(n).names == (:a, :b, :c, :d, :c_tan)
-  @test n.c_tan == tan.(t.c)
+  @test Tables.schema(n).names == (:a, :b, :c, :d, :tan_c)
+  @test n.tan_c == tan.(t.c)
 
   T = Map(:a => sin => :a)
   n, c = apply(T, t)
@@ -44,15 +44,58 @@
 
   T = Map(["c", "a"] => ((c, a) -> 3c / a) => :op1, "c" => tan)
   n, c = apply(T, t)
-  @test Tables.schema(n).names == (:a, :b, :c, :d, :op1, :c_tan)
+  @test Tables.schema(n).names == (:a, :b, :c, :d, :op1, :tan_c)
   @test n.op1 == @. 3 * t.c / t.a
-  @test n.c_tan == tan.(t.c)
+  @test n.tan_c == tan.(t.c)
 
   T = Map(r"[abc]" => ((a, b, c) -> a^2 - 2b + c) => "op1")
   n, c = apply(T, t)
   @test Tables.schema(n).names == (:a, :b, :c, :d, :op1)
   @test n.op1 == @. t.a^2 - 2 * t.b + t.c
 
-  # throws
+  # generated names
+  # normal function
+  T = Map([:c, :d] => hypot)
+  n, c = apply(T, t)
+  @test Tables.schema(n).names == (:a, :b, :c, :d, :hypot_c_d)
+  @test n.hypot_c_d == hypot.(t.c, t.d)
+
+  # anonymous function
+  f = a -> a^2 + 3
+  fname = replace(string(f), "#" => "f")
+  colname = Symbol(fname, :_a)
+  T = Map(:a => f)
+  n, c = apply(T, t)
+  @test Tables.schema(n).names == (:a, :b, :c, :d, colname)
+  @test Tables.getcolumn(n, colname) == f.(t.a)
+
+  # composed function
+  f = sin ∘ cos
+  T = Map(:b => f)
+  n, c = apply(T, t)
+  @test Tables.schema(n).names == (:a, :b, :c, :d, :sin_cos_b)
+  @test n.sin_cos_b == f.(t.b)
+
+  f = sin ∘ cos ∘ tan
+  T = Map(:c => sin ∘ cos ∘ tan)
+  n, c = apply(T, t)
+  @test Tables.schema(n).names == (:a, :b, :c, :d, :sin_cos_tan_c)
+  @test n.sin_cos_tan_c == f.(t.c)
+
+  # Base.Fix1
+  f = Base.Fix1(hypot, 2)
+  T = Map(:d => f)
+  n, c = apply(T, t)
+  @test Tables.schema(n).names == (:a, :b, :c, :d, :fix1_hypot_d)
+  @test n.fix1_hypot_d == f.(t.d)
+
+  # Base.Fix2
+  f = Base.Fix2(hypot, 2)
+  T = Map(:a => f)
+  n, c = apply(T, t)
+  @test Tables.schema(n).names == (:a, :b, :c, :d, :fix2_hypot_a)
+  @test n.fix2_hypot_a == f.(t.a)
+
+  # error: cannot create Map transform without arguments
   @test_throws ArgumentError Map()
 end
