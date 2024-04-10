@@ -9,6 +9,7 @@ transformfiles = [
   "sample.jl",
   "filter.jl",
   "dropmissing.jl",
+  "dropnan.jl",
   "dropextrema.jl",
   "dropunits.jl",
   "dropconstant.jl",
