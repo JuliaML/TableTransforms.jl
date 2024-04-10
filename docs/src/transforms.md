@@ -80,6 +80,12 @@ Filter
 DropMissing
 ```
 
+## DropNaN
+
+```@docs
+DropNaN
+```
+
 ## DropExtrema
 
 ```@docs

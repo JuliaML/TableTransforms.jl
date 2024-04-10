@@ -62,6 +62,7 @@ export
   Sample,
   Filter,
   DropMissing,
+  DropNaN,
   DropExtrema,
   DropUnits,
   AbsoluteUnits,

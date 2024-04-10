@@ -175,6 +175,20 @@
     └─ selector = [:a, :b, :c]"""
   end
 
+  @testset "DropNaN" begin
+    T = DropNaN(:a, :b, :c)
+
+    # compact mode
+    iostr = sprint(show, T)
+    @test iostr == "DropNaN([:a, :b, :c])"
+
+    # full mode
+    iostr = sprint(show, MIME("text/plain"), T)
+    @test iostr == """
+    DropNaN transform
+    └─ selector = [:a, :b, :c]"""
+  end
+
   @testset "DropExtrema" begin
     T = DropExtrema("a", low=0.25, high=0.75)
 
