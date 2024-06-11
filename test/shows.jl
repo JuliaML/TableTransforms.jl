@@ -4,15 +4,15 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Assert([:a, :b, :c], allunique, \"\")"
+    @test iostr == "Assert(selector: [:a, :b, :c], cond: allunique, msg: \"\")"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Assert transform
-    ├─ selector = [:a, :b, :c]
-    ├─ cond = allunique
-    └─ msg = \"\""""
+    ├─ selector: [:a, :b, :c]
+    ├─ cond: allunique
+    └─ msg: \"\""""
   end
 
   @testset "Select" begin
@@ -20,28 +20,28 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Select([:a, :b, :c], nothing)"
+    @test iostr == "Select(selector: [:a, :b, :c], newnames: nothing)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Select transform
-    ├─ selector = [:a, :b, :c]
-    └─ newnames = nothing"""
+    ├─ selector: [:a, :b, :c]
+    └─ newnames: nothing"""
 
     # selection with renaming
     T = Select(:a => :x, :b => :y)
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Select([:a, :b], [:x, :y])"
+    @test iostr == "Select(selector: [:a, :b], newnames: [:x, :y])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Select transform
-    ├─ selector = [:a, :b]
-    └─ newnames = [:x, :y]"""
+    ├─ selector: [:a, :b]
+    └─ newnames: [:x, :y]"""
   end
 
   @testset "Reject" begin
@@ -49,13 +49,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Reject([:a, :b, :c])"
+    @test iostr == "Reject(selector: [:a, :b, :c])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Reject transform
-    └─ selector = [:a, :b, :c]"""
+    └─ selector: [:a, :b, :c]"""
   end
 
   @testset "Satisfies" begin
@@ -63,13 +63,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Satisfies(allunique)"
+    @test iostr == "Satisfies(pred: allunique)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Satisfies transform
-    └─ pred = allunique"""
+    └─ pred: allunique"""
   end
 
   @testset "Rename" begin
@@ -77,14 +77,14 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Rename([:a, :c], [:x, :y])"
+    @test iostr == "Rename(selector: [:a, :c], newnames: [:x, :y])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Rename transform
-    ├─ selector = [:a, :c]
-    └─ newnames = [:x, :y]"""
+    ├─ selector: [:a, :c]
+    └─ newnames: [:x, :y]"""
   end
 
   @testset "StdNames" begin
@@ -92,13 +92,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "StdNames(:upperflat)"
+    @test iostr == "StdNames(spec: :upperflat)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     StdNames transform
-    └─ spec = :upperflat"""
+    └─ spec: :upperflat"""
   end
 
   @testset "StdFeats" begin
@@ -118,14 +118,14 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Sort([:a, :c], (rev = true,))"
+    @test iostr == "Sort(selector: [:a, :c], kwargs: (rev = true,))"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Sort transform
-    ├─ selector = [:a, :c]
-    └─ kwargs = (rev = true,)"""
+    ├─ selector: [:a, :c]
+    └─ kwargs: (rev = true,)"""
   end
 
   @testset "Sample" begin
@@ -133,17 +133,17 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Sample(30, nothing, false, true, TaskLocalRNG())"
+    @test iostr == "Sample(size: 30, weights: nothing, replace: false, ordered: true, rng: TaskLocalRNG())"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Sample transform
-    ├─ size = 30
-    ├─ weights = nothing
-    ├─ replace = false
-    ├─ ordered = true
-    └─ rng = TaskLocalRNG()"""
+    ├─ size: 30
+    ├─ weights: nothing
+    ├─ replace: false
+    ├─ ordered: true
+    └─ rng: TaskLocalRNG()"""
   end
 
   @testset "Filter" begin
@@ -152,13 +152,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Filter($(typeof(pred))())"
+    @test iostr == "Filter(pred: $(nameof(pred)))"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Filter transform
-    └─ pred = $(typeof(pred))()"""
+    └─ pred: $(typeof(pred))()"""
   end
 
   @testset "DropMissing" begin
@@ -166,13 +166,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "DropMissing([:a, :b, :c])"
+    @test iostr == "DropMissing(selector: [:a, :b, :c])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     DropMissing transform
-    └─ selector = [:a, :b, :c]"""
+    └─ selector: [:a, :b, :c]"""
   end
 
   @testset "DropNaN" begin
@@ -180,13 +180,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "DropNaN([:a, :b, :c])"
+    @test iostr == "DropNaN(selector: [:a, :b, :c])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     DropNaN transform
-    └─ selector = [:a, :b, :c]"""
+    └─ selector: [:a, :b, :c]"""
   end
 
   @testset "DropExtrema" begin
@@ -194,15 +194,15 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "DropExtrema([:a], 0.25, 0.75)"
+    @test iostr == "DropExtrema(selector: [:a], low: 0.25, high: 0.75)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     DropExtrema transform
-    ├─ selector = [:a]
-    ├─ low = 0.25
-    └─ high = 0.75"""
+    ├─ selector: [:a]
+    ├─ low: 0.25
+    └─ high: 0.75"""
   end
 
   @testset "DropUnits" begin
@@ -210,13 +210,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "DropUnits([:a, :b, :c])"
+    @test iostr == "DropUnits(selector: [:a, :b, :c])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     DropUnits transform
-    └─ selector = [:a, :b, :c]"""
+    └─ selector: [:a, :b, :c]"""
   end
 
   @testset "DropConstant" begin
@@ -236,13 +236,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "AbsoluteUnits([:a, :b, :c])"
+    @test iostr == "AbsoluteUnits(selector: [:a, :b, :c])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     AbsoluteUnits transform
-    └─ selector = [:a, :b, :c]"""
+    └─ selector: [:a, :b, :c]"""
   end
 
   @testset "Unitify" begin
@@ -264,15 +264,15 @@
     # compact mode
     iostr = sprint(show, T)
     @test iostr ==
-          "Map(ColumnSelectors.ColumnSelector[:a, [:a, :b]], Function[sin, $(typeof(fun))()], Union{Nothing, Symbol}[nothing, :c])"
+          "Map(selectors: ColumnSelector[:a, [:a, :b]], funs: Function[sin, $(nameof(fun))], targets: Union{Nothing, Symbol}[nothing, :c])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Map transform
-    ├─ selectors = ColumnSelectors.ColumnSelector[:a, [:a, :b]]
-    ├─ funs = Function[sin, $(typeof(fun))()]
-    └─ targets = Union{Nothing, Symbol}[nothing, :c]"""
+    ├─ selectors: ColumnSelectors.ColumnSelector[:a, [:a, :b]]
+    ├─ funs: Function[sin, $(typeof(fun))()]
+    └─ targets: Union{Nothing, Symbol}[nothing, :c]"""
   end
 
   @testset "Replace" begin
@@ -281,15 +281,15 @@
     # compact mode
     iostr = sprint(show, T)
     @test iostr ==
-          "Replace(ColumnSelectors.ColumnSelector[all, all], Function[Base.Fix2{typeof(===), Int64}(===, 1), Base.Fix2{typeof(===), Int64}(===, 5)], Any[-1, -5])"
+          "Replace(selectors: ColumnSelector[all, all], preds: Function[Fix2{typeof(===), Int64}(===, 1), Fix2{typeof(===), Int64}(===, 5)], news: Any[-1, -5])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Replace transform
-    ├─ selectors = ColumnSelectors.ColumnSelector[all, all]
-    ├─ preds = Function[Base.Fix2{typeof(===), Int64}(===, 1), Base.Fix2{typeof(===), Int64}(===, 5)]
-    └─ news = Any[-1, -5]"""
+    ├─ selectors: ColumnSelectors.ColumnSelector[all, all]
+    ├─ preds: Function[Base.Fix2{typeof(===), Int64}(===, 1), Base.Fix2{typeof(===), Int64}(===, 5)]
+    └─ news: Any[-1, -5]"""
   end
 
   @testset "Coalesce" begin
@@ -297,14 +297,14 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Coalesce(all, 0)"
+    @test iostr == "Coalesce(selector: all, value: 0)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Coalesce transform
-    ├─ selector = all
-    └─ value = 0"""
+    ├─ selector: all
+    └─ value: 0"""
   end
 
   @testset "Coerce" begin
@@ -312,14 +312,14 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Coerce([:a, :b], DataType[DataScienceTraits.Continuous, DataScienceTraits.Categorical])"
+    @test iostr == "Coerce(selector: [:a, :b], scitypes: DataType[Continuous, Categorical])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Coerce transform
-    ├─ selector = [:a, :b]
-    └─ scitypes = DataType[DataScienceTraits.Continuous, DataScienceTraits.Categorical]"""
+    ├─ selector: [:a, :b]
+    └─ scitypes: DataType[DataScienceTraits.Continuous, DataScienceTraits.Categorical]"""
   end
 
   @testset "Levels" begin
@@ -327,15 +327,15 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Levels([:a, :b], r\"[ab]\", ([\"n\", \"y\"], 1:3))"
+    @test iostr == "Levels(selector: [:a, :b], ordered: r\"[ab]\", levels: ([\"n\", \"y\"], 1:3))"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Levels transform
-    ├─ selector = [:a, :b]
-    ├─ ordered = r"[ab]"
-    └─ levels = (["n", "y"], 1:3)"""
+    ├─ selector: [:a, :b]
+    ├─ ordered: r"[ab]"
+    └─ levels: (["n", "y"], 1:3)"""
   end
 
   @testset "OneHot" begin
@@ -343,14 +343,14 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "OneHot(:a, false)"
+    @test iostr == "OneHot(selector: :a, categ: false)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     OneHot transform
-    ├─ selector = :a
-    └─ categ = false"""
+    ├─ selector: :a
+    └─ categ: false"""
   end
 
   @testset "Identity" begin
@@ -370,13 +370,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Center(all)"
+    @test iostr == "Center(selector: all)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Center transform
-    └─ selector = all"""
+    └─ selector: all"""
   end
 
   @testset "LowHigh" begin
@@ -384,15 +384,15 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "LowHigh(all, 0.25, 0.75)"
+    @test iostr == "LowHigh(selector: all, low: 0.25, high: 0.75)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     LowHigh transform
-    ├─ selector = all
-    ├─ low = 0.25
-    └─ high = 0.75"""
+    ├─ selector: all
+    ├─ low: 0.25
+    └─ high: 0.75"""
   end
 
   @testset "ZScore" begin
@@ -400,13 +400,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "ZScore(all)"
+    @test iostr == "ZScore(selector: all)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     ZScore transform
-    └─ selector = all"""
+    └─ selector: all"""
   end
 
   @testset "Quantile" begin
@@ -414,14 +414,14 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Quantile(all, Normal{Float64}(μ=0.0, σ=1.0))"
+    @test iostr == "Quantile(selector: all, dist: Normal{Float64}(μ=0.0, σ=1.0))"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Quantile transform
-    ├─ selector = all
-    └─ dist = Normal{Float64}(μ=0.0, σ=1.0)"""
+    ├─ selector: all
+    └─ dist: Normal{Float64}(μ=0.0, σ=1.0)"""
   end
 
   @testset "Functional" begin
@@ -429,14 +429,14 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Functional(all, log)"
+    @test iostr == "Functional(selector: all, fun: log)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Functional transform
-    ├─ selector = all
-    └─ fun = log"""
+    ├─ selector: all
+    └─ fun: log"""
   end
 
   @testset "EigenAnalysis" begin
@@ -444,15 +444,15 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "EigenAnalysis(:VDV, nothing, 1.0)"
+    @test iostr == "EigenAnalysis(proj: :VDV, maxdim: nothing, pratio: 1.0)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     EigenAnalysis transform
-    ├─ proj = :VDV
-    ├─ maxdim = nothing
-    └─ pratio = 1.0"""
+    ├─ proj: :VDV
+    ├─ maxdim: nothing
+    └─ pratio: 1.0"""
   end
 
   @testset "Closure" begin
@@ -472,13 +472,13 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Remainder(nothing)"
+    @test iostr == "Remainder(total: nothing)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Remainder transform
-    └─ total = nothing"""
+    └─ total: nothing"""
   end
 
   @testset "Compose" begin
@@ -486,14 +486,14 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Compose([:a, :b, :c], :CODA)"
+    @test iostr == "Compose(selector: [:a, :b, :c], as: :CODA)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Compose transform
-    ├─ selector = [:a, :b, :c]
-    └─ as = :CODA"""
+    ├─ selector: [:a, :b, :c]
+    └─ as: :CODA"""
   end
 
   @testset "RowTable" begin
@@ -528,15 +528,15 @@
 
     # compact mode
     iostr = sprint(show, pipeline)
-    @test iostr == "Select([:x, :z], nothing) → ZScore(all) → LowHigh(all, 0, 1)"
+    @test iostr == "Select(selector: [:x, :z], newnames: nothing) → ZScore(selector: all) → LowHigh(selector: all, low: 0, high: 1)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
     @test iostr == """
     SequentialTransform
-    ├─ Select([:x, :z], nothing)
-    ├─ ZScore(all)
-    └─ LowHigh(all, 0, 1)"""
+    ├─ Select(selector: [:x, :z], newnames: nothing)
+    ├─ ZScore(selector: all)
+    └─ LowHigh(selector: all, low: 0, high: 1)"""
   end
 
   @testset "ParallelTableTransform" begin
@@ -547,15 +547,15 @@
 
     # compact mode
     iostr = sprint(show, pipeline)
-    @test iostr == "LowHigh(all, 0.3, 0.6) ⊔ EigenAnalysis(:VDV, nothing, 1.0) ⊔ Functional(all, exp)"
+    @test iostr == "LowHigh(selector: all, low: 0.3, high: 0.6) ⊔ EigenAnalysis(proj: :VDV, maxdim: nothing, pratio: 1.0) ⊔ Functional(selector: all, fun: exp)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
     @test iostr == """
     ParallelTableTransform
-    ├─ LowHigh(all, 0.3, 0.6)
-    ├─ EigenAnalysis(:VDV, nothing, 1.0)
-    └─ Functional(all, exp)"""
+    ├─ LowHigh(selector: all, low: 0.3, high: 0.6)
+    ├─ EigenAnalysis(proj: :VDV, maxdim: nothing, pratio: 1.0)
+    └─ Functional(selector: all, fun: exp)"""
 
     # parallel and sequential
     f1 = ZScore()
@@ -566,17 +566,17 @@
 
     # compact mode
     iostr = sprint(show, pipeline)
-    @test iostr == "ZScore(all) → LowHigh(all, 0.25, 0.75) ⊔ Functional(all, exp) → LowHigh(all, 0.25, 0.75)"
+    @test iostr == "ZScore(selector: all) → LowHigh(selector: all, low: 0.25, high: 0.75) ⊔ Functional(selector: all, fun: exp) → LowHigh(selector: all, low: 0.25, high: 0.75)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
     @test iostr == """
     ParallelTableTransform
     ├─ SequentialTransform
-    │  ├─ ZScore(all)
-    │  └─ LowHigh(all, 0.25, 0.75)
+    │  ├─ ZScore(selector: all)
+    │  └─ LowHigh(selector: all, low: 0.25, high: 0.75)
     └─ SequentialTransform
-       ├─ Functional(all, exp)
-       └─ LowHigh(all, 0.25, 0.75)"""
+       ├─ Functional(selector: all, fun: exp)
+       └─ LowHigh(selector: all, low: 0.25, high: 0.75)"""
   end
 end
