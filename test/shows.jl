@@ -528,7 +528,8 @@
 
     # compact mode
     iostr = sprint(show, pipeline)
-    @test iostr == "Select(selector: [:x, :z], newnames: nothing) → ZScore(selector: all) → LowHigh(selector: all, low: 0, high: 1)"
+    @test iostr ==
+          "Select(selector: [:x, :z], newnames: nothing) → ZScore(selector: all) → LowHigh(selector: all, low: 0, high: 1)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
@@ -547,7 +548,8 @@
 
     # compact mode
     iostr = sprint(show, pipeline)
-    @test iostr == "LowHigh(selector: all, low: 0.3, high: 0.6) ⊔ EigenAnalysis(proj: :VDV, maxdim: nothing, pratio: 1.0) ⊔ Functional(selector: all, fun: exp)"
+    @test iostr ==
+          "LowHigh(selector: all, low: 0.3, high: 0.6) ⊔ EigenAnalysis(proj: :VDV, maxdim: nothing, pratio: 1.0) ⊔ Functional(selector: all, fun: exp)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
@@ -566,7 +568,8 @@
 
     # compact mode
     iostr = sprint(show, pipeline)
-    @test iostr == "ZScore(selector: all) → LowHigh(selector: all, low: 0.25, high: 0.75) ⊔ Functional(selector: all, fun: exp) → LowHigh(selector: all, low: 0.25, high: 0.75)"
+    @test iostr ==
+          "ZScore(selector: all) → LowHigh(selector: all, low: 0.25, high: 0.75) ⊔ Functional(selector: all, fun: exp) → LowHigh(selector: all, low: 0.25, high: 0.75)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), pipeline)
