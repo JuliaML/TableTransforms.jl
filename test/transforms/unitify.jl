@@ -42,4 +42,15 @@
   @test unit(eltype(n.a)) === NoUnits
   tₒ = revert(T, n, c)
   @test tₒ == t
+
+  # non-numeric columns
+  t = Table(; anm => a, :b => rand('a':'z', 10), :c => categorical(rand(["yes", "no"], 10)))
+  T = Unitify()
+  n, c = apply(T, t)
+  @test Tables.schema(n).names == (:a, :b, :c)
+  @test unit(eltype(n.a)) === u"m"
+  @test eltype(n.b) <: Char
+  @test eltype(n.c) <: CategoricalValue
+  tₒ = revert(T, n, c)
+  @test tₒ == t
 end
