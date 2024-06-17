@@ -45,7 +45,7 @@ function applyfeat(::Unitify, feat, prep)
   pairs = map(names) do name
     x = Tables.getcolumn(cols, name)
     newname, unit = _unitify(name)
-    newname => x * unit
+    newname => _addunit(x, unit)
   end
 
   newfeat = (; pairs...) |> Tables.materializer(feat)
@@ -59,7 +59,7 @@ function revertfeat(::Unitify, newfeat, fcache)
   onames = fcache
   ocolumns = map(names) do name
     x = Tables.getcolumn(cols, name)
-    ustrip.(x)
+    first(_dropunit(x))
   end
 
   𝒯 = (; zip(onames, ocolumns)...)
