@@ -5,9 +5,6 @@ using TransformsBase
 
 DocMeta.setdocmeta!(TableTransforms, :DocTestSetup, :(using TableTransforms); recursive=true)
 
-# Workaround for GR warnings
-ENV["GKSwstype"] = "100"
-
 makedocs(;
   warnonly=[:missing_docs, :cross_references],
   modules=[TableTransforms, TransformsBase],
