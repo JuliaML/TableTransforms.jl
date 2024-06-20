@@ -105,7 +105,9 @@ The branches are placed in parallel with the `⊔` (`\sqcup<tab>`) operator.
 
 ```@docs
 →
+TransformsBase.SequentialTransform
 ⊔
+TableTransforms.ParallelTableTransform
 ```
 
 ### Reverting transforms
