@@ -23,7 +23,7 @@ Unit(1 => u"km", :b => u"K", "c" => u"s")
 Unit([2, 3] => u"cm")
 Unit([:a, :c] => u"cm")
 Unit(["a", "c"] => u"cm")
-Unit(r"abc" => u"km")
+Unit(r"[abc]" => u"km")
 ```
 """
 struct Unit <: StatelessFeatureTransform
@@ -38,6 +38,10 @@ Unit(unit::Units) = Unit([AllSelector()], [unit])
 Unit(pairs::Pair...) = Unit(collect(selector.(first.(pairs))), collect(last.(pairs)))
 
 isrevertible(::Type{<:Unit}) = true
+
+_uconvert(u, x) = _uconvert(nonmissingtype(eltype(x)), u, x)
+_uconvert(::Type, _, x) = (x, nothing)
+_uconvert(::Type{Q}, u, x) where {Q<:AbstractQuantity} = (uconvert.(u, x), unit(Q))
 
 function applyfeat(transform::Unit, feat, prep)
   cols = Tables.columns(feat)
@@ -55,8 +59,7 @@ function applyfeat(transform::Unit, feat, prep)
     x = Tables.getcolumn(cols, name)
     if haskey(unitdict, name)
       u = unitdict[name]
-      y = uconvert.(u, x)
-      (y, unit(eltype(x)))
+      _uconvert(u, x)
     else
       (x, nothing)
     end
