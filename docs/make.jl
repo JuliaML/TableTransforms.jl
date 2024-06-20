@@ -17,8 +17,7 @@ makedocs(;
   format=Documenter.HTML(;
     prettyurls=get(ENV, "CI", "false") == "true",
     canonical="https://JuliaML.github.io/TableTransforms.jl",
-    repolink="https://github.com/JuliaML/TableTransforms.jl",
-    assets=["assets/favicon.ico"]
+    repolink="https://github.com/JuliaML/TableTransforms.jl"
   ),
   pages=[
     "Home" => "index.md",
