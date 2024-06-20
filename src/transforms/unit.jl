@@ -53,7 +53,7 @@ function applyfeat(transform::Unit, feat, prep)
     snames = selector(names)
     snames .=> u
   end
-  unitdict = Dict(pairs) 
+  unitdict = Dict(pairs)
 
   tuples = map(names) do name
     x = Tables.getcolumn(cols, name)
