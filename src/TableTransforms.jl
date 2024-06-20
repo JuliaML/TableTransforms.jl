@@ -67,6 +67,7 @@ export
   DropUnits,
   AbsoluteUnits,
   Unitify,
+  Unit,
   Map,
   Replace,
   Coalesce,

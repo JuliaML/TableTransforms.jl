@@ -257,6 +257,21 @@
     @test iostr == "Unitify transform"
   end
 
+  @testset "Unit" begin
+    T = Unit(:a => u"m", [:b, :c] => u"s")
+
+    # compact mode
+    iostr = sprint(show, T)
+    @test iostr == "Unit(selectors: ColumnSelector[:a, [:b, :c]], units: Units[m, s])"
+
+    # full mode
+    iostr = sprint(show, MIME("text/plain"), T)
+    @test iostr == """
+    Unit transform
+    ├─ selectors: ColumnSelectors.ColumnSelector[:a, [:b, :c]]
+    └─ units: Unitful.Units[m, s]"""
+  end
+
   @testset "Map" begin
     fun = (a, b) -> 2a + b
     T = Map(:a => sin, [:a, :b] => fun => :c)

@@ -15,6 +15,7 @@ transformfiles = [
   "dropconstant.jl",
   "absoluteunits.jl",
   "unitify.jl",
+  "unit.jl",
   "map.jl",
   "replace.jl",
   "coalesce.jl",

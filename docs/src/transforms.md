@@ -116,6 +116,12 @@ AbsoluteUnits
 Unitify
 ```
 
+## Unit
+
+```@docs
+Unit
+```
+
 ## Map
 
 ```@docs
