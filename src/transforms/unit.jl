@@ -41,7 +41,7 @@ isrevertible(::Type{<:Unit}) = true
 
 _uconvert(u, x) = _uconvert(nonmissingtype(eltype(x)), u, x)
 _uconvert(::Type, _, x) = (x, nothing)
-_uconvert(::Type{Q}, u, x) where {Q<:AbstractQuantity} = (uconvert.(u, x), unit(Q))
+_uconvert(::Type{Q}, u, x) where {Q<:AbstractQuantity} = (map(v -> uconvert(u, v), x), unit(Q))
 
 function applyfeat(transform::Unit, feat, prep)
   cols = Tables.columns(feat)
@@ -80,7 +80,7 @@ function revertfeat(::Unit, newfeat, fcache)
   ounits = fcache
   columns = map(names, ounits) do name, u
     x = Tables.getcolumn(cols, name)
-    isnothing(u) ? x : uconvert.(u, x)
+    isnothing(u) ? x : map(v -> uconvert(u, v), x)
   end
 
   𝒯 = (; zip(names, columns)...)
