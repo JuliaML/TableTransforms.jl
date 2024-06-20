@@ -5,15 +5,25 @@
 """
     Unit(unit)
 
-TODO
+Converts the units of all columns in the table to `unit`.
 
     Unit(cols₁ => unit₁, cols₂ => unit₂, ..., colsₙ => unitₙ)
 
-TODO
+Converts the units of selected columns `cols₁`, `cols₂`, ..., `colsₙ`
+to `unit₁`, `unit₂`, ... `unitₙ`.
+
+The column selection can be a single column identifier (index or name),
+a collection of identifiers or a regular expression (regex).
 
 # Examples
 
 ```julia
+Unit(u"m")
+Unit(1 => u"km", :b => u"K", "c" => u"s")
+Unit([2, 3] => u"cm")
+Unit([:a, :c] => u"cm")
+Unit(["a", "c"] => u"cm")
+Unit(r"abc" => u"km")
 ```
 """
 struct Unit <: StatelessFeatureTransform
