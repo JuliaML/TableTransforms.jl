@@ -7,6 +7,3 @@ PairPlots = "43a3c2be-4208-490b-832a-a21dcd55d7da"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 TableTransforms = "0d432bfd-3ee1-4ac1-886a-39f05cc69a3e"
 TransformsBase = "28dd2a49-a57a-4bfb-84ca-1a49db9b96b8"
-
-[compat]
-Documenter = "0.27"
