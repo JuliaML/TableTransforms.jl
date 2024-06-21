@@ -150,6 +150,39 @@ Using the cache we can revert the transform:
 original = revert(transform, newtable, cache)
 ```
 
+### Inverting transforms
+
+Some transforms have an inverse that can be created with the [`inverse`](@ref) function.
+The function [`isinvertible`](@ref) can be used to check if a transform is invertible.
+
+```@docs
+inverse
+isinvertible
+```
+
+Let's exemplify this:
+
+```@example usage
+a = [5.1, 1.5, 9.4, 2.4]
+b = [7.6, 6.2, 5.8, 3.0]
+c = [6.3, 7.9, 7.6, 8.4]
+table = (; a, b, c)
+```
+
+Choose a transform and check that it is invertible:
+
+```@example usage
+transform = Functional(exp)
+isinvertible(transform)
+```
+
+Now, let's test the inverse transform:
+
+```@example usage
+invtransform = inverse(transform)
+invtransform(transform(table))
+```
+
 ### Reapplying transforms
 
 Finally, it is sometimes useful to [`reapply`](@ref) a transform that was

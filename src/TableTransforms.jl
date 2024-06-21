@@ -43,9 +43,11 @@ export
 
   # interface
   isrevertible,
+  isinvertible,
   apply,
   revert,
   reapply,
+  inverse,
 
   # built-in
   Assert,

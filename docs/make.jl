@@ -6,7 +6,7 @@ using TransformsBase
 DocMeta.setdocmeta!(TableTransforms, :DocTestSetup, :(using TableTransforms); recursive=true)
 
 makedocs(;
-  warnonly=[:missing_docs, :cross_references],
+  warnonly=[:missing_docs],
   modules=[TableTransforms, TransformsBase],
   authors="Júlio Hoffimann <julio.hoffimann@gmail.com> and contributors",
   repo="https://github.com/JuliaML/TableTransforms.jl/blob/{commit}{path}#{line}",
