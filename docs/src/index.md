@@ -176,7 +176,7 @@ transform = Functional(exp)
 isinvertible(transform)
 ```
 
-New, let's test the inverse transform:
+Now, let's test the inverse transform:
 
 ```@example usage
 invtransform = inverse(transform)
