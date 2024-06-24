@@ -24,6 +24,7 @@ using Distributions: ContinuousUnivariateDistribution, Normal
 using InverseFunctions: NoInverse, inverse as invfun
 using StatsBase: AbstractWeights, Weights, sample
 using Transducers: tcollect
+using Distributed: pmap
 using NelderMead: optimise
 
 import Distributions: quantile, cdf
