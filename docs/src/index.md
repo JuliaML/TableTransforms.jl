@@ -25,9 +25,7 @@ missing transform, and contributions are very welcome.
   revertible when the individual transforms are revertible.
 
 - Branches of a pipeline and colwise transforms are run in parallel
-  using multiple threads with the awesome
-  [Transducers.jl](https://github.com/JuliaFolds/Transducers.jl)
-  framework.
+  using multiple processes with the Distributed standard library.
 
 - Pipelines can be reapplied to unseen "test" data using the same cache
   (e.g. constants) fitted with "training" data. For example, a `ZScore`
