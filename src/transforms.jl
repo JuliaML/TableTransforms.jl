@@ -185,7 +185,8 @@ function applyfeat(transform::ColwiseFeatureTransform, feat, prep)
   snames = transform.selector(names)
 
   # transform each column in parallel
-  vals = pmap(names) do n
+  pool = CachingPool(workers())
+  vals = pmap(pool, names) do n
     x = Tables.getcolumn(cols, n)
     if n ∈ snames
       c = colcache(transform, x)
@@ -216,7 +217,8 @@ function revertfeat(transform::ColwiseFeatureTransform, newfeat, fcache)
   caches, snames = fcache
 
   # revert each column in parallel
-  vals = pmap(names, caches) do n, c
+  pool = CachingPool(workers())
+  vals = pmap(pool, names, caches) do n, c
     y = Tables.getcolumn(cols, n)
     x = n ∈ snames ? colrevert(transform, y, c) : y
     n => x
@@ -237,7 +239,8 @@ function reapplyfeat(transform::ColwiseFeatureTransform, feat, fcache)
   _assert(length(names) == length(caches), "invalid caches for feat")
 
   # transform each column in parallel
-  vals = pmap(names, caches) do n, c
+  pool = CachingPool(workers())
+  vals = pmap(pool, names, caches) do n, c
     x = Tables.getcolumn(cols, n)
     y = n ∈ snames ? colapply(transform, x, c) : x
     n => y

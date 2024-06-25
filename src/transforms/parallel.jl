@@ -41,7 +41,8 @@ isrevertible(p::ParallelTableTransform) = any(isrevertible, p.transforms)
 
 function apply(p::ParallelTableTransform, table)
   # apply transforms in parallel
-  vals = pmap(t -> apply(t, table), p.transforms)
+  pool = CachingPool(workers())
+  vals = pmap(t -> apply(t, table), pool, p.transforms)
 
   # retrieve tables and caches
   tables = first.(vals)
@@ -121,7 +122,8 @@ function reapply(p::ParallelTableTransform, table, cache)
   caches = cache[1]
 
   # reapply transforms in parallel
-  tables = pmap((t, c) -> reapply(t, table, c), p.transforms, caches)
+  pool = CachingPool(workers())
+  tables = pmap((t, c) -> reapply(t, table, c), pool, p.transforms, caches)
 
   # features and metadata
   splits = divide.(tables)
