@@ -184,8 +184,8 @@ function applyfeat(transform::ColwiseFeatureTransform, feat, prep)
   names = Tables.columnnames(cols)
   snames = transform.selector(names)
 
-  # function to transform a single column
-  function colfunc(n)
+  # transform each column in parallel
+  vals = pmap(names) do n
     x = Tables.getcolumn(cols, n)
     if n ∈ snames
       c = colcache(transform, x)
@@ -196,9 +196,6 @@ function applyfeat(transform::ColwiseFeatureTransform, feat, prep)
     end
     (n => y), c
   end
-
-  # parallel map with multiple threads
-  vals = tcollect(colfunc(n) for n in names)
 
   # new table with transformed columns
   𝒯 = (; first.(vals)...)
@@ -218,17 +215,12 @@ function revertfeat(transform::ColwiseFeatureTransform, newfeat, fcache)
 
   caches, snames = fcache
 
-  # function to transform a single column
-  function colfunc(i)
-    n = names[i]
-    c = caches[i]
+  # revert each column in parallel
+  vals = pmap(names, caches) do n, c
     y = Tables.getcolumn(cols, n)
     x = n ∈ snames ? colrevert(transform, y, c) : y
     n => x
   end
-
-  # parallel map with multiple threads
-  vals = tcollect(colfunc(i) for i in 1:length(names))
 
   # new table with transformed columns
   (; vals...) |> Tables.materializer(newfeat)
@@ -244,17 +236,12 @@ function reapplyfeat(transform::ColwiseFeatureTransform, feat, fcache)
   # check that cache is valid
   _assert(length(names) == length(caches), "invalid caches for feat")
 
-  # function to transform a single column
-  function colfunc(i)
-    n = names[i]
-    c = caches[i]
+  # transform each column in parallel
+  vals = pmap(names, caches) do n, c
     x = Tables.getcolumn(cols, n)
     y = n ∈ snames ? colapply(transform, x, c) : x
     n => y
   end
-
-  # parallel map with multiple threads
-  vals = tcollect(colfunc(i) for i in 1:length(names))
 
   # new table with transformed columns
   (; vals...) |> Tables.materializer(feat)

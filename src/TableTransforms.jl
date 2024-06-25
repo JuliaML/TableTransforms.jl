@@ -23,9 +23,8 @@ using Unitful: AbstractQuantity, AffineQuantity, AffineUnits, Units
 using Distributions: ContinuousUnivariateDistribution, Normal
 using InverseFunctions: NoInverse, inverse as invfun
 using StatsBase: AbstractWeights, Weights, sample
-using Transducers: tcollect
-using Distributed: pmap
 using NelderMead: optimise
+using Distributed: pmap
 
 import Distributions: quantile, cdf
 import TransformsBase: assertions, parameters, isrevertible, isinvertible
