@@ -42,8 +42,9 @@ Selects the columns that have scientific type `S`.
 # Examples
 
 ```julia
-import DataScienceTraits as DST
-Only(DST.Continuous)
+using DataScienceTraits
+
+Only(Continuous)
 ```
 """
 Only(S::Type{<:SciType}) = Satisfies(x -> elscitype(x) <: S)
@@ -56,8 +57,9 @@ Selects the columns that don't have scientific type `S`.
 # Examples
 
 ```julia
-import DataScienceTraits as DST
-Except(DST.Categorical)
+using DataScienceTraits
+
+Except(Categorical)
 ```
 """
 Except(S::Type{<:SciType}) = Satisfies(x -> !(elscitype(x) <: S))
