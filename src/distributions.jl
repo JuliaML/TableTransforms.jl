@@ -20,7 +20,7 @@ EmpiricalDistribution(values) = EmpiricalDistribution{eltype(values)}(values)
 
 quantile(d::EmpiricalDistribution, p::Real) = quantile(d.values, p, sorted=true)
 
-function cdf(d::EmpiricalDistribution{T}, x::T) where {T}
+function cdf(d::EmpiricalDistribution, x)
   v = d.values
   n = length(v)
 
@@ -37,9 +37,9 @@ function cdf(d::EmpiricalDistribution{T}, x::T) where {T}
   l, u = v[head], v[tail]
 
   if x < l
-    return T(0)
+    return 0.0
   elseif x > u
-    return T(1)
+    return 1.0
   else
     if l == u
       return tail / n

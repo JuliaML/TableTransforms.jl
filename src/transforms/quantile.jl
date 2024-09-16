@@ -66,9 +66,8 @@ end
 # transform samples from original to target distribution
 function qtransform(samples, origin, target)
   # avoid evaluating the quantile at 0 or 1
-  T = eltype(samples)
-  pmin = T(0) + T(1e-3)
-  pmax = T(1) - T(1e-3)
+  pmin = 0.0 + 1e-3
+  pmax = 1.0 - 1e-3
   map(samples) do sample
     prob = cdf(origin, sample)
     quantile(target, clamp(prob, pmin, pmax))
