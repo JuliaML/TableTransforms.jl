@@ -81,7 +81,7 @@ end
 function qsmooth(values)
   permut = sortperm(values)
   sorted = float.(values[permut])
-  bounds = findall(>(0), diff(sorted))
+  bounds = findall(>(zero(eltype(sorted))), diff(sorted))
   if !isempty(bounds)
     i = 1
     j = first(bounds)
