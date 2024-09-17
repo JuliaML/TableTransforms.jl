@@ -48,11 +48,14 @@ Map() = throw(ArgumentError("cannot create Map transform without arguments"))
 const TargetName = Union{Symbol,AbstractString}
 const PairWithTarget = Pair{<:Any,<:Pair{<:Function,<:TargetName}}
 const PairWithoutTarget = Pair{<:Any,<:Function}
-const MapPair = Union{PairWithTarget,PairWithoutTarget}
+const PairFunctionTarget = Pair{<:Function,<:TargetName}
+const MapPair = Union{PairWithTarget,PairWithoutTarget,PairFunctionTarget,Function}
 
 # utility functions
 _extract(p::PairWithTarget) = selector(first(p)), first(last(p)), Symbol(last(last(p)))
 _extract(p::PairWithoutTarget) = selector(first(p)), last(p), nothing
+_extract(p::PairFunctionTarget) = AllSelector(), first(p), Symbol(last(p))
+_extract(p::Function) = AllSelector(), p, nothing
 
 function Map(pairs::MapPair...)
   tuples = map(_extract, pairs)
@@ -93,6 +96,10 @@ function applyfeat(transform::Map, feat, prep)
   mapped = map(selectors, funs, targets) do selector, fun, target
     snames = selector(names)
     newname = isnothing(target) ? _makename(snames, fun) : target
+    if selector isa AllSelector
+      newcolumn = map(fun, Tables.rows(cols))
+      return newname => newcolumn
+    end
     scolumns = (Tables.getcolumn(cols, nm) for nm in snames)
     newcolumn = map(fun, scolumns...)
     newname => newcolumn
