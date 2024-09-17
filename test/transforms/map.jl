@@ -98,4 +98,33 @@
 
   # error: cannot create Map transform without arguments
   @test_throws ArgumentError Map()
+
+  # row functions
+  ## no target
+  frow = row -> row.a + row.b - row.c
+  fname = replace(string(frow), "#" => "f")
+  colname = Symbol(fname, :_a,:_b,:_c,:_d)
+  T = Map(frow)
+  n, c = apply(T, t)
+  @test Tables.schema(n).names == (:a, :b, :c, :d, colname)
+  @test Tables.getcolumn(n, colname) == frow.(t)
+
+  ## no target with extra functions
+  T = Map(frow, :a => (a->a) => :A)
+  n, c = apply(T, t)
+  Tables.schema(n).names == (:a, :b, :c, :d, colname,:A)
+  Tables.getcolumn(n, colname) == frow.(t)
+
+  ## target column
+  T = Map((row -> sum(row)) => :summation)
+  n, c = apply(T, t)
+  @test Tables.schema(n).names == (:a, :b, :c, :d, :summation)
+  @test map(row->sum(row),t) == n.summation
+
+  ## target column with extra function
+  T = Map((row -> row.a + row.b) => :a_plus_b, :a => (a -> a) => :A)
+  n, c = apply(T, t)
+  @test Tables.schema(n).names == (:a, :b, :c, :d, :a_plus_b,:A)
+  @test map(row->row.a + row.b,t) == n.a_plus_b
+
 end
