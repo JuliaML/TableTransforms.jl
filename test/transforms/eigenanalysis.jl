@@ -2,8 +2,8 @@
   @test TT.parameters(EigenAnalysis(:V)) == (proj=:V, maxdim=nothing, pratio=1.0)
 
   # PCA test
-  x = rand(Normal(0, 10), 1500)
-  y = x + rand(Normal(0, 2), 1500)
+  x = rand(rng, Normal(0, 10), 1500)
+  y = x + rand(rng, Normal(0, 2), 1500)
   t = Table(; x, y)
   T = EigenAnalysis(:V)
   n, c = apply(T, t)
@@ -16,8 +16,8 @@
   @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
   # DRS test
-  x = rand(Normal(0, 10), 1500)
-  y = x + rand(Normal(0, 2), 1500)
+  x = rand(rng, Normal(0, 10), 1500)
+  y = x + rand(rng, Normal(0, 2), 1500)
   t = Table(; x, y)
   T = EigenAnalysis(:VD)
   n, c = apply(T, t)
@@ -30,8 +30,8 @@
   @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
   # SDS test
-  x = rand(Normal(0, 10), 1500)
-  y = x + rand(Normal(0, 2), 1500)
+  x = rand(rng, Normal(0, 10), 1500)
+  y = x + rand(rng, Normal(0, 2), 1500)
   t = Table(; x, y)
   T = EigenAnalysis(:VDV)
   n, c = apply(T, t)
@@ -73,8 +73,8 @@
   end
 
   # row table
-  x = rand(Normal(0, 10), 1500)
-  y = x + rand(Normal(0, 2), 1500)
+  x = rand(rng, Normal(0, 10), 1500)
+  y = x + rand(rng, Normal(0, 2), 1500)
   t = Table(; x, y)
   rt = Tables.rowtable(t)
   T = EigenAnalysis(:V)
@@ -84,9 +84,9 @@
   @test Tables.matrix(rt) ≈ Tables.matrix(rtₒ)
 
   # maxdim
-  x = randn(1000)
-  y = x + randn(1000)
-  z = 2x - y + randn(1000)
+  x = randn(rng, 1000)
+  y = x + randn(rng, 1000)
+  z = 2x - y + randn(rng, 1000)
   t = Table(; x, y, z)
 
   # PCA

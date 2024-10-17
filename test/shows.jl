@@ -143,7 +143,7 @@
     ├─ weights: nothing
     ├─ replace: false
     ├─ ordered: true
-    └─ rng: TaskLocalRNG()"""
+    └─ rng: Random.TaskLocalRNG()"""
   end
 
   @testset "Filter" begin

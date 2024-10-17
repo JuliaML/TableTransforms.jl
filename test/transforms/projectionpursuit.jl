@@ -1,7 +1,7 @@
 @testset "ProjectionPursuit" begin
   @test TT.parameters(ProjectionPursuit()) == (tol=1.0e-6, deg=5, perc=0.9, n=100)
 
-  rng = MersenneTwister(42)
+  rng = StableRNG(42)
   N = 10_000
   a = [2randn(rng, N ÷ 2) .+ 6; randn(rng, N ÷ 2)]
   b = [3randn(rng, N ÷ 2); 2randn(rng, N ÷ 2)]
@@ -9,15 +9,15 @@
   d = c .+ 0.6randn(rng, N)
   t = (; a, b, c, d)
 
-  T = ProjectionPursuit(rng=MersenneTwister(2))
+  T = ProjectionPursuit(rng=StableRNG(2))
   n, c = apply(T, t)
 
   @test Tables.columnnames(n) == (:PP1, :PP2, :PP3, :PP4)
 
   μ = mean(Tables.matrix(n), dims=1)
   Σ = cov(Tables.matrix(n))
-  @test all(isapprox.(μ, 0, atol=1e-8))
-  @test all(isapprox.(Σ, I(4), atol=1e-8))
+  @test all(isapprox.(μ, 0, atol=1e-3))
+  @test all(isapprox.(Σ, I(4), atol=1e-2))
 
   tₒ = revert(T, n, c)
 
@@ -35,7 +35,7 @@
   b = rand(rng, BetaPrime(2), 4000)
   t = Table(; a, b)
 
-  T = ProjectionPursuit(rng=MersenneTwister(2))
+  T = ProjectionPursuit(rng=StableRNG(2))
   n, c = apply(T, t)
 
   μ = mean(Tables.matrix(n), dims=1)

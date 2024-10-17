@@ -10,9 +10,9 @@ using StatsBase
 using Statistics
 using DelimitedFiles
 using ReferenceTests
+using StableRNGs
 using PairPlots
 using ImageIO
-using Random
 using Test
 
 import CairoMakie as Mke
@@ -30,9 +30,8 @@ islinux = Sys.islinux()
 visualtests = !isCI || (isCI && islinux)
 datadir = joinpath(@__DIR__, "data")
 
-# using MersenneTwister for backward
-# compatibility with old Julia versions
-rng = MersenneTwister(42)
+# using StableRNG for compatibility between Julia versions
+rng = StableRNG(42)
 
 # for functor tests in Functional testset
 struct Polynomial{T<:Real}
