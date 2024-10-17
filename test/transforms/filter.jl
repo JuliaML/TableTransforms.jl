@@ -104,7 +104,7 @@
   @test Tables.isrowtable(n)
 
   # performance tests
-  trng = MersenneTwister(2) # test rng
+  trng = StableRNG(2) # test rng
   x = rand(trng, 100_000)
   y = rand(trng, 100_000)
   c = CoDaArray((a=rand(trng, 100_000), b=rand(trng, 100_000), c=rand(trng, 100_000)))

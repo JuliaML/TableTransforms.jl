@@ -28,14 +28,14 @@
   @test n.c ⊆ t.c
   @test Tables.rowtable(n) == trows
 
-  T = Sample(8, replace=true, rng=MersenneTwister(2))
+  T = Sample(8, replace=true, rng=StableRNG(2))
   n, c = apply(T, t)
-  @test n.a == [3, 7, 8, 2, 2, 6, 2, 6]
-  @test n.b == [8, 2, 3, 1, 1, 5, 1, 5]
-  @test n.c == [1, 2, 9, 5, 5, 8, 5, 8]
+  @test n.a == [3, 3, 6, 3, 6, 6, 7, 3]
+  @test n.b == [4, 8, 5, 4, 5, 5, 2, 8]
+  @test n.c == [4, 1, 8, 4, 8, 8, 2, 1]
 
   w = pweights([0.1, 0.25, 0.15, 0.25, 0.1, 0.15])
-  T = Sample(10_000, w, replace=true, rng=MersenneTwister(2))
+  T = Sample(10_000, w, replace=true, rng=StableRNG(2))
   n, c = apply(T, t)
   nrows = Tables.rowtable(n)
   @test isapprox(count(==(trows[1]), nrows) / 10_000, 0.10, atol=0.01)
@@ -46,7 +46,7 @@
   @test isapprox(count(==(trows[6]), nrows) / 10_000, 0.15, atol=0.01)
 
   w = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
-  T = Sample(10_000, w, replace=true, rng=MersenneTwister(2))
+  T = Sample(10_000, w, replace=true, rng=StableRNG(2))
   n, c = apply(T, t)
   nrows = Tables.rowtable(n)
   @test isapprox(count(==(trows[1]), nrows) / 10_000, 1 / 21, atol=0.01)
@@ -57,7 +57,7 @@
   @test isapprox(count(==(trows[6]), nrows) / 10_000, 6 / 21, atol=0.01)
 
   # performance tests
-  trng = MersenneTwister(2) # test rng
+  trng = StableRNG(2) # test rng
   x = rand(trng, 100_000)
   y = rand(trng, 100_000)
   c = CoDaArray((a=rand(trng, 100_000), b=rand(trng, 100_000), c=rand(trng, 100_000)))
