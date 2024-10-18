@@ -1,7 +1,7 @@
 name = "TableTransforms"
 uuid = "0d432bfd-3ee1-4ac1-886a-39f05cc69a3e"
 authors = ["Júlio Hoffimann <julio.hoffimann@gmail.com> and contributors"]
-version = "1.33.6"
+version = "1.33.7"
 
 [deps]
 AbstractTrees = "1520ce14-60c1-5f80-bbc7-55ef81b5835c"
@@ -27,7 +27,7 @@ AbstractTrees = "0.4"
 CategoricalArrays = "0.10"
 CoDa = "1.2"
 ColumnSelectors = "1.0"
-DataScienceTraits = "0.4"
+DataScienceTraits = "1.0"
 Distributed = "1.9"
 Distributions = "0.25"
 InverseFunctions = "0.1"
