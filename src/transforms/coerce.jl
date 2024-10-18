@@ -16,10 +16,10 @@ This transform uses the `DataScienceTraits.coerce` function. Please see their do
 # Examples
 
 ```julia
-import DataScienceTraits as DST
-Coerce(1 => DST.Continuous, 2 => DST.Continuous)
-Coerce(:a => DST.Continuous, :b => DST.Continuous)
-Coerce("a" => DST.Continuous, "b" => DST.Continuous)
+using DataScienceTraits
+Coerce(1 => Continuous, 2 => Continuous)
+Coerce(:a => Continuous, :b => Continuous)
+Coerce("a" => Continuous, "b" => Continuous)
 ```
 """
 struct Coerce{S<:ColumnSelector,T} <: StatelessFeatureTransform
