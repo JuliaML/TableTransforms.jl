@@ -23,22 +23,27 @@ assertions(::LogRatio) = [scitypeassert(Continuous)]
 
 function applyfeat(transform::LogRatio, feat, prep)
   cols = Tables.columns(feat)
-  onames = Tables.columnnames(cols)
-  varnames = collect(onames)
+  names = Tables.columnnames(cols)
+  vars = collect(names)
+
+  # perform closure for full revertibility
+  cfeat, ccache = apply(Closure(), feat)
 
   # reference variable
-  rvar = refvar(transform, varnames)
-  _assert(rvar ∈ varnames, "invalid reference variable")
-  rind = findfirst(==(rvar), varnames)
+  rvar = refvar(transform, vars)
+  _assert(rvar ∈ vars, "invalid reference variable")
+
+  # reference index
+  rind = findfirst(==(rvar), vars)
 
   # permute columns if necessary
-  perm = rind ≠ lastindex(varnames)
+  perm = rind ≠ lastindex(vars)
   pfeat = if perm
-    popat!(varnames, rind)
-    push!(varnames, rvar)
-    feat |> Select(varnames)
+    popat!(vars, rind)
+    push!(vars, rvar)
+    cfeat |> Select(vars)
   else
-    feat
+    cfeat
   end
 
   # apply transform
@@ -46,33 +51,38 @@ function applyfeat(transform::LogRatio, feat, prep)
   Y = applymatrix(transform, X)
 
   # new variable names
-  newnames = newvars(transform, varnames)
+  newnames = newvars(transform, vars)
 
   # return same table type
   𝒯 = (; zip(newnames, eachcol(Y))...)
   newfeat = 𝒯 |> Tables.materializer(feat)
 
-  newfeat, (rind, perm, onames)
+  newfeat, (ccache, perm, rind, vars)
 end
 
 function revertfeat(transform::LogRatio, newfeat, fcache)
+  # retrieve cache
+  ccache, perm, rind, vars = fcache
+
   # revert transform
   Y = Tables.matrix(newfeat)
   X = revertmatrix(transform, Y)
-
-  # retrieve cache
-  rind, perm, onames = fcache
+  pfeat = (; zip(vars, eachcol(X))...)
 
   # revert the permutation if necessary
-  if perm
-    n = length(onames)
+  cfeat = if perm
+    n = length(vars)
     inds = collect(1:(n - 1))
     insert!(inds, rind, n)
-    X = X[:, inds]
+    pfeat |> Select(inds)
+  else
+    pfeat
   end
 
+  # revert closure for full revertibility
+  𝒯 = revert(Closure(), cfeat, ccache)
+
   # return same table type
-  𝒯 = (; zip(onames, eachcol(X))...)
   𝒯 |> Tables.materializer(newfeat)
 end
 
