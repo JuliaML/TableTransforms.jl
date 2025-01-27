@@ -13,7 +13,7 @@ See also [`Remainder`](@ref).
 """
 struct Closure <: StatelessFeatureTransform end
 
-isrevertible(::Type{Closure}) = true
+isrevertible(::Type{Closure}) = false
 
 assertions(::Closure) = [scitypeassert(Continuous)]
 
@@ -21,11 +21,11 @@ function applyfeat(::Closure, feat, prep)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
 
-  # table as matrix and get the sum acros dims 2
+  # convert table to matrix
   X = Tables.matrix(feat)
-  S = sum(X, dims=2)
 
-  # divides each row by its sum (closure operation)
+  # divide each row by its sum (closure operation)
+  S = sum(X, dims=2)
   Z = X ./ S
 
   # table with the old columns and the new values
@@ -33,22 +33,4 @@ function applyfeat(::Closure, feat, prep)
   newfeat = 𝒯 |> Tables.materializer(feat)
 
   newfeat, S
-end
-
-function revertfeat(::Closure, newfeat, fcache)
-  cols = Tables.columns(newfeat)
-  names = Tables.columnnames(cols)
-
-  # table as matrix
-  Z = Tables.matrix(newfeat)
-
-  # retrieve cache
-  S = fcache
-
-  # undo operation
-  X = Z .* S
-
-  # table with original columns
-  𝒯 = (; zip(names, eachcol(X))...)
-  𝒯 |> Tables.materializer(newfeat)
 end
