@@ -13,20 +13,20 @@
   @test Tables.schema(n).names == (:ARL1, :ARL2)
   @test n == t |> ALR(:c)
   r = revert(T, n, c)
-  @test Tables.matrix(r) ≈ Tables.matrix(t)
+  @test all(x -> 0 ≤ x ≤ 1, Tables.matrix(r))
 
   T = CLR()
   n, c = apply(T, t)
   @test Tables.schema(n).names == (:CLR1, :CLR2, :CLR3)
   r = revert(T, n, c)
-  @test Tables.matrix(r) ≈ Tables.matrix(t)
+  @test all(x -> 0 ≤ x ≤ 1, Tables.matrix(r))
 
   T = ILR()
   n, c = apply(T, t)
   @test Tables.schema(n).names == (:ILR1, :ILR2)
   @test n == t |> ILR(:c)
   r = revert(T, n, c)
-  @test Tables.matrix(r) ≈ Tables.matrix(t)
+  @test all(x -> 0 ≤ x ≤ 1, Tables.matrix(r))
 
   a = [1.0, 0.0, 1.0]
   b = [2.0, 2.0, 2.0]
@@ -40,9 +40,9 @@
   n2, c2 = apply(T, t2)
   r2 = revert(T, n2, c2)
   @test n1 == n2
-  @test Tables.matrix(r1) ≈ Tables.matrix(t1)
+  @test all(x -> 0 ≤ x ≤ 1, Tables.matrix(r1))
   @test Tables.schema(r1).names == (:a, :c, :b)
-  @test Tables.matrix(r2) ≈ Tables.matrix(t2)
+  @test all(x -> 0 ≤ x ≤ 1, Tables.matrix(r2))
   @test Tables.schema(r2).names == (:c, :a, :b)
 
   T = ILR(:c)
@@ -51,8 +51,8 @@
   n2, c2 = apply(T, t2)
   r2 = revert(T, n2, c2)
   @test n1 == n2
-  @test Tables.matrix(r1) ≈ Tables.matrix(t1)
+  @test all(x -> 0 ≤ x ≤ 1, Tables.matrix(r1))
   @test Tables.schema(r1).names == (:a, :c, :b)
-  @test Tables.matrix(r2) ≈ Tables.matrix(t2)
+  @test all(x -> 0 ≤ x ≤ 1, Tables.matrix(r2))
   @test Tables.schema(r2).names == (:c, :a, :b)
 end

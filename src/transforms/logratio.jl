@@ -26,9 +26,6 @@ function applyfeat(transform::LogRatio, feat, prep)
   names = Tables.columnnames(cols)
   vars = collect(names)
 
-  # perform closure for full revertibility
-  cfeat, ccache = apply(Closure(), feat)
-
   # reference variable
   rvar = refvar(transform, vars)
   _assert(rvar ∈ vars, "invalid reference variable")
@@ -41,9 +38,9 @@ function applyfeat(transform::LogRatio, feat, prep)
   pfeat = if perm
     popat!(vars, rind)
     push!(vars, rvar)
-    cfeat |> Select(vars)
+    feat |> Select(vars)
   else
-    cfeat
+    feat
   end
 
   # apply transform
@@ -57,20 +54,22 @@ function applyfeat(transform::LogRatio, feat, prep)
   𝒯 = (; zip(newnames, eachcol(Y))...)
   newfeat = 𝒯 |> Tables.materializer(feat)
 
-  newfeat, (ccache, perm, rind, vars)
+  newfeat, (perm, rind, vars)
 end
 
 function revertfeat(transform::LogRatio, newfeat, fcache)
   # retrieve cache
-  ccache, perm, rind, vars = fcache
+  perm, rind, vars = fcache
 
   # revert transform
   Y = Tables.matrix(newfeat)
   X = revertmatrix(transform, Y)
+
+  # reinsert variable names
   pfeat = (; zip(vars, eachcol(X))...)
 
   # revert the permutation if necessary
-  cfeat = if perm
+  feat = if perm
     n = length(vars)
     inds = collect(1:(n - 1))
     insert!(inds, rind, n)
@@ -79,11 +78,8 @@ function revertfeat(transform::LogRatio, newfeat, fcache)
     pfeat
   end
 
-  # revert closure for full revertibility
-  𝒯 = revert(Closure(), cfeat, ccache)
-
   # return same table type
-  𝒯 |> Tables.materializer(newfeat)
+  feat |> Tables.materializer(newfeat)
 end
 
 # ----------------
