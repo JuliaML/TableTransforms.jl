@@ -162,16 +162,19 @@
   a = [2.0, 2.0, 3.0] * u"m"
   b = [4.0, 5.0, 6.0]
   c = [7.0, 8.0, 9.0]
-  t = Table(; a, b, c)
+  d = ["no", "yes", "no"]
+  t = Table(; a, b, c, d)
   T = Unit("b" => u"kg")
   n, c = apply(T, t)
   @test unit(eltype(n.a)) == u"m"
   @test unit(eltype(n.b)) == u"kg"
   @test unit(eltype(n.c)) == NoUnits
+  @test eltype(n.d) <: String
   tₒ = revert(T, n, c)
   @test unit(eltype(tₒ.a)) == u"m"
   @test unit(eltype(tₒ.b)) == NoUnits
   @test unit(eltype(tₒ.c)) == NoUnits
+  @test eltype(tₒ.d) <: String
 
   # error: cannot create Unit transform without arguments
   @test_throws ArgumentError Unit()
