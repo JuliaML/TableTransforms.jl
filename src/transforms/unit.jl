@@ -5,15 +5,14 @@
 """
     Unit(unit)
 
-Converts the units of all columns in the table to `unit`.
+Converts the units of all columns in the table to `unit` from Unitful.jl.
 
     Unit(cols₁ => unit₁, cols₂ => unit₂, ..., colsₙ => unitₙ)
 
 Converts the units of selected columns `cols₁`, `cols₂`, ..., `colsₙ`
 to `unit₁`, `unit₂`, ... `unitₙ`.
 
-The column selection can be a single column identifier (index or name),
-a collection of identifiers or a regular expression (regex).
+Unitless columns become unitful if they are explicitly selected.
 
 # Examples
 
@@ -39,10 +38,6 @@ Unit(pairs::Pair...) = Unit(collect(selector.(first.(pairs))), collect(last.(pai
 
 isrevertible(::Type{<:Unit}) = true
 
-_uconvert(u, x) = _uconvert(nonmissingtype(eltype(x)), u, x)
-_uconvert(::Type, _, x) = (x, nothing)
-_uconvert(::Type{Q}, u, x) where {Q<:AbstractQuantity} = (map(v -> uconvert(u, v), x), unit(Q))
-
 function applyfeat(transform::Unit, feat, prep)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
@@ -59,7 +54,7 @@ function applyfeat(transform::Unit, feat, prep)
     x = Tables.getcolumn(cols, name)
     if haskey(unitdict, name)
       u = unitdict[name]
-      _uconvert(u, x)
+      _withunit(u, x)
     else
       (x, nothing)
     end
@@ -80,9 +75,22 @@ function revertfeat(::Unit, newfeat, fcache)
   ounits = fcache
   columns = map(names, ounits) do name, u
     x = Tables.getcolumn(cols, name)
-    isnothing(u) ? x : map(v -> uconvert(u, v), x)
+    _withoutunit(u, x)
   end
 
   𝒯 = (; zip(names, columns)...)
   𝒯 |> Tables.materializer(newfeat)
 end
+
+_withunit(u, x) = _withunit(nonmissingtype(eltype(x)), u, x)
+_withunit(::Type{Q}, u, x) where {Q<:AbstractQuantity} = (map(v -> uconvert(u, v), x), unit(Q))
+_withunit(::Type{Q}, u, x) where {Q<:Number} = (x * u, NoUnits)
+
+function _withoutunit(u, x)
+  if u === NoUnits
+    map(ustrip, x)
+  else
+    map(xᵢ -> uconvert(u, xᵢ), x)
+  end
+end
+_withoutunit(::Nothing, x) = x

@@ -5,25 +5,23 @@
   b = [300, 500, missing, 800, missing, 400] * u"cm"
   c = [8, 2, 5, 7, 9, 4] * u"km"
   d = [0.3, 0.1, 0.9, 0.2, 0.7, 0.4]
-  e = ["no", "no", "yes", "yes", "no", "yes"]
-  t = Table(; a, b, c, d, e)
+  t = Table(; a, b, c, d)
 
   T = Unit(u"m")
   n, c = apply(T, t)
   @test unit(eltype(n.a)) == u"m"
   @test unit(eltype(n.b)) == u"m"
   @test unit(eltype(n.c)) == u"m"
-  @test eltype(n.d) <: Float64
-  @test eltype(n.e) <: String
+  @test unit(eltype(n.d)) == u"m"
   tₒ = revert(T, n, c)
   @test unit(eltype(tₒ.a)) == u"m"
   @test unit(eltype(tₒ.b)) == u"cm"
   @test unit(eltype(tₒ.c)) == u"km"
+  @test unit(eltype(tₒ.d)) == NoUnits
   @test all(isapprox.(tₒ.a, t.a))
   @test all(isapprox.(skipmissing(tₒ.b), skipmissing(t.b)))
   @test all(isapprox.(tₒ.c, t.c))
   @test tₒ.d == t.d
-  @test tₒ.e == t.e
 
   a = [2.7, 2.9, 2.2, 1.4, 1.8, 3.3] * u"m"
   b = [300, 500, missing, 800, missing, 400] * u"cm"
@@ -159,6 +157,24 @@
   @test isequal(tₒ.d, t.d)
   @test tₒ.e == t.e
   @test tₒ.f == t.f
+
+  # table with unitless columns
+  a = [2.0, 2.0, 3.0] * u"m"
+  b = [4.0, 5.0, 6.0]
+  c = [7.0, 8.0, 9.0]
+  d = ["no", "yes", "no"]
+  t = Table(; a, b, c, d)
+  T = Unit("b" => u"kg")
+  n, c = apply(T, t)
+  @test unit(eltype(n.a)) == u"m"
+  @test unit(eltype(n.b)) == u"kg"
+  @test unit(eltype(n.c)) == NoUnits
+  @test eltype(n.d) <: String
+  tₒ = revert(T, n, c)
+  @test unit(eltype(tₒ.a)) == u"m"
+  @test unit(eltype(tₒ.b)) == NoUnits
+  @test unit(eltype(tₒ.c)) == NoUnits
+  @test eltype(tₒ.d) <: String
 
   # error: cannot create Unit transform without arguments
   @test_throws ArgumentError Unit()
