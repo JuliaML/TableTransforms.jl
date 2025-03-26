@@ -8,9 +8,9 @@
 
   T = Compose()
   n, c = apply(T, t)
-  @test Tables.schema(n).names == (:CODA,)
-  @test n.CODA isa CoDaArray
-  @test n.CODA == CoDaArray(t)
+  @test Tables.schema(n).names == (:coda,)
+  @test n.coda isa CoDaArray
+  @test n.coda == CoDaArray(t)
   tₒ = revert(T, n, c)
   @test tₒ == t
 
@@ -24,25 +24,25 @@
 
   T = Compose(1, 2)
   n, c = apply(T, t)
-  @test Tables.schema(n).names == (:c, :CODA)
-  @test n.CODA isa CoDaArray
-  @test n.CODA == CoDaArray((a=t.a, b=t.b))
+  @test Tables.schema(n).names == (:c, :coda)
+  @test n.coda isa CoDaArray
+  @test n.coda == CoDaArray((a=t.a, b=t.b))
   tₒ = revert(T, n, c)
   @test tₒ == t
 
   T = Compose([:a, :c])
   n, c = apply(T, t)
-  @test Tables.schema(n).names == (:b, :CODA)
-  @test n.CODA isa CoDaArray
-  @test n.CODA == CoDaArray((a=t.a, c=t.c))
+  @test Tables.schema(n).names == (:b, :coda)
+  @test n.coda isa CoDaArray
+  @test n.coda == CoDaArray((a=t.a, c=t.c))
   tₒ = revert(T, n, c)
   @test tₒ == t
 
   T = Compose(("b", "c"))
   n, c = apply(T, t)
-  @test Tables.schema(n).names == (:a, :CODA)
-  @test n.CODA isa CoDaArray
-  @test n.CODA == CoDaArray((b=t.b, c=t.c))
+  @test Tables.schema(n).names == (:a, :coda)
+  @test n.coda isa CoDaArray
+  @test n.coda == CoDaArray((b=t.b, c=t.c))
   tₒ = revert(T, n, c)
   @test tₒ == t
 

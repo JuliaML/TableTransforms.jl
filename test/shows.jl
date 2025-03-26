@@ -501,14 +501,14 @@
 
     # compact mode
     iostr = sprint(show, T)
-    @test iostr == "Compose(selector: [:a, :b, :c], as: :CODA)"
+    @test iostr == "Compose(selector: [:a, :b, :c], as: :coda)"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
     @test iostr == """
     Compose transform
     ├─ selector: [:a, :b, :c]
-    └─ as: :CODA"""
+    └─ as: :coda"""
   end
 
   @testset "RowTable" begin
