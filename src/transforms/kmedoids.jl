@@ -59,7 +59,7 @@ function applyfeat(transform::KMedoids, feat, prep)
   rng = transform.rng
 
   # number of observations
-  nobs = _nrow(feat)
+  nobs = _nrows(feat)
 
   # sanity checks
   k > nobs && throw(ArgumentError("requested number of clusters > number of observations"))
@@ -103,7 +103,7 @@ end
 
 function _updatelabels!(td, table, medoids, labels, dists)
   for (k, mₖ) in enumerate(medoids)
-    inds = 1:_nrow(table)
+    inds = 1:_nrows(table)
 
     X = Tables.subset(table, inds)
     μ = Tables.subset(table, [mₖ])
@@ -129,13 +129,6 @@ function _updatemedoids!(td, table, medoids, labels)
 
     @inbounds medoids[k] = inds[j]
   end
-end
-
-function _nrow(table)
-  cols = Tables.columns(table)
-  vars = Tables.columnnames(cols)
-  vals = Tables.getcolumn(cols, first(vars))
-  length(vals)
 end
 
 function _medoid(td, table)
