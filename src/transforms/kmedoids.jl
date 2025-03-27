@@ -73,9 +73,13 @@ function applyfeat(transform::KMedoids, feat, prep)
   # initialize medoids
   medoids = sample(rng, 1:nobs, k, replace=false)
 
+  # retrieve distance type
+  row = Tables.subset(stdfeat, 1:1)
+  D = eltype(pairwise(td, row))
+
   # pre-allocate memory for labels and distances
   labels = fill(0, nobs)
-  dists = fill(Inf, nobs)
+  dists = fill(typemax(D), nobs)
 
   # main loop
   iter = 0
