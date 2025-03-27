@@ -242,6 +242,12 @@ SDS
 ProjectionPursuit
 ```
 
+## KMedoids
+
+```@docs
+KMedoids
+```
+
 ## Closure
 
 ```@docs
