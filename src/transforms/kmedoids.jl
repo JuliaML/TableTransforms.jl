@@ -7,10 +7,10 @@
 
 Assign labels to rows of table using the `k`-medoids algorithm.
 
-The iterative algorithm is interrupted if the relative change of
-the average dissimilarity between successive iterations is smaller
-than a tolerance `tol` or if the number of iterations exceeds
-the maximum number of iterations `maxiter`.
+The iterative algorithm is interrupted if the relative change on
+the average distance to medoids is smaller than a tolerance `tol`
+or if the number of iterations exceeds the maximum number of
+iterations `maxiter`.
 
 Optionally, specify a dictionary of `weights` for each column to
 affect the underlying table distance from TableDistances.jl, and
@@ -74,8 +74,8 @@ function applyfeat(transform::KMedoids, feat, prep)
   medoids = sample(rng, 1:nobs, k, replace=false)
 
   # retrieve distance type
-  row = Tables.subset(stdfeat, 1:1)
-  D = eltype(pairwise(td, row))
+  s = Tables.subset(stdfeat, 1:1)
+  D = eltype(pairwise(td, s))
 
   # pre-allocate memory for labels and distances
   labels = fill(0, nobs)
@@ -89,7 +89,7 @@ function applyfeat(transform::KMedoids, feat, prep)
     _updatelabels!(td, stdfeat, medoids, labels, dists)
     _updatemedoids!(td, stdfeat, medoids, labels)
 
-    # average dissimilarity
+    # average distance to medoids
     δnew = mean(dists)
 
     # break upon convergence
