@@ -6,12 +6,13 @@ module TableTransforms
 
 using Tables
 using Unitful
-using Statistics
 using PrettyTables
 using AbstractTrees
-using LinearAlgebra
+using TableDistances
 using DataScienceTraits
 using CategoricalArrays
+using LinearAlgebra
+using Statistics
 using Random
 using CoDa
 
@@ -90,6 +91,7 @@ export
   DRS,
   SDS,
   ProjectionPursuit,
+  KMedoids,
   Closure,
   Remainder,
   Compose,
