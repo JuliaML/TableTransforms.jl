@@ -42,9 +42,9 @@ end
 
 function KMedoids(k; tol=1e-4, maxiter=10, weights=nothing, rng=Random.default_rng())
   # sanity checks
-  @assert k > 0 "number of clusters must be positive"
-  @assert tol > 0 "tolerance on relative change must be positive"
-  @assert maxiter > 0 "maximum number of iterations must be positive"
+  _assert(k > 0, "number of clusters must be positive")
+  _assert(tol > 0, "tolerance on relative change must be positive")
+  _assert(maxiter > 0, "maximum number of iterations must be positive")
   KMedoids(k, tol, maxiter, weights, rng)
 end
 
