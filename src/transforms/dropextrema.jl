@@ -52,8 +52,6 @@ DropExtrema(cols::C...; low=0.25, high=0.75) where {C<:Column} = DropExtrema(sel
 
 parameters(transform::DropExtrema) = (low=transform.low, high=transform.high)
 
-isrevertible(::Type{<:DropExtrema}) = false
-
 function preprocess(transform::DropExtrema, feat)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)

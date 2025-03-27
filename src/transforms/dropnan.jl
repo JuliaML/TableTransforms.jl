@@ -35,8 +35,6 @@ DropNaN() = DropNaN(AllSelector())
 DropNaN(cols) = DropNaN(selector(cols))
 DropNaN(cols::C...) where {C<:Column} = DropNaN(selector(cols))
 
-isrevertible(::Type{<:DropNaN}) = false
-
 _isnan(_) = false
 _isnan(x::Number) = isnan(x)
 

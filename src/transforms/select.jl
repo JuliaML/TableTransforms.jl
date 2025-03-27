@@ -45,8 +45,6 @@ Select(pairs::Pair{C,S}...) where {C<:Column,S<:AbstractString} =
 
 Select() = throw(ArgumentError("cannot create Select transform without arguments"))
 
-isrevertible(::Type{<:Select}) = false
-
 # utils
 _newnames(::Nothing, select) = select
 _newnames(names::Vector{Symbol}, select) = names
@@ -90,8 +88,6 @@ Reject(cols::C...) where {C<:Column} = Reject(selector(cols))
 # argument errors
 Reject() = throw(ArgumentError("cannot create Reject transform without arguments"))
 Reject(::AllSelector) = throw(ArgumentError("cannot reject all columns"))
-
-isrevertible(::Type{<:Reject}) = false
 
 function applyfeat(transform::Reject, feat, prep)
   cols = Tables.columns(feat)

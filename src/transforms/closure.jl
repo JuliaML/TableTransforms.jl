@@ -13,8 +13,6 @@ See also [`Remainder`](@ref).
 """
 struct Closure <: StatelessFeatureTransform end
 
-isrevertible(::Type{Closure}) = false
-
 assertions(::Closure) = [scitypeassert(Continuous)]
 
 function applyfeat(::Closure, feat, prep)

@@ -62,8 +62,6 @@ function Map(pairs::MapPair...)
   Map(selectors, funs, targets)
 end
 
-isrevertible(::Type{Map}) = false
-
 _funname(fun::Base.Fix1) = "fix1_" * _funname(fun.f)
 _funname(fun::Base.Fix2) = "fix2_" * _funname(fun.f)
 _funname(fun::ComposedFunction) = _funname(fun.outer) * "_" * _funname(fun.inner)

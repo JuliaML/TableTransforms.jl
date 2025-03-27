@@ -40,8 +40,6 @@ Sample(size::Int, weights::AbstractWeights; replace=false, ordered=false, rng=Ra
 
 Sample(size::Int, weights; kwargs...) = Sample(size, Weights(collect(weights)); kwargs...)
 
-isrevertible(::Type{<:Sample}) = false
-
 function preprocess(transform::Sample, feat)
   # retrieve valid indices
   inds = 1:_nrows(feat)

@@ -27,8 +27,6 @@ struct Filter{F} <: StatelessFeatureTransform
   pred::F
 end
 
-isrevertible(::Type{<:Filter}) = false
-
 function preprocess(transform::Filter, feat)
   # lazy row iterator
   rows = tablerows(feat)

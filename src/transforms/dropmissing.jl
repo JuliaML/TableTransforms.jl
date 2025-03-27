@@ -41,8 +41,6 @@ DropMissing() = DropMissing(AllSelector())
 DropMissing(cols) = DropMissing(selector(cols))
 DropMissing(cols::C...) where {C<:Column} = DropMissing(selector(cols))
 
-isrevertible(::Type{<:DropMissing}) = false
-
 function preprocess(transform::DropMissing, feat)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)

@@ -19,8 +19,6 @@ struct Satisfies{F} <: StatelessFeatureTransform
   pred::F
 end
 
-isrevertible(::Type{<:Satisfies}) = false
-
 function applyfeat(transform::Satisfies, feat, prep)
   pred = transform.pred
   cols = Tables.columns(feat)

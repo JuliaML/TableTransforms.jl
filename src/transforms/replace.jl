@@ -58,8 +58,6 @@ function Replace(pairs::Pair...)
   Replace(selectors, preds, news)
 end
 
-isrevertible(::Type{<:Replace}) = false
-
 function applyfeat(transform::Replace, feat, prep)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)

@@ -34,8 +34,6 @@ Sort(cols::C...; kwargs...) where {C<:Column} = Sort(selector(cols), values(kwar
 
 Sort(; kwargs...) = throw(ArgumentError("cannot create Sort transform without arguments"))
 
-isrevertible(::Type{<:Sort}) = false
-
 function preprocess(transform::Sort, feat)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)

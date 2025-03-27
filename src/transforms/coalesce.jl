@@ -44,8 +44,6 @@ Coalesce(cols::C...; value) where {C<:Column} = Coalesce(selector(cols), value)
 
 parameters(transform::Coalesce) = (; value=transform.value)
 
-isrevertible(::Type{<:Coalesce}) = false
-
 colcache(::Coalesce, x) = nothing
 
 colapply(transform::Coalesce, x, c) = coalesce.(x, transform.value)
