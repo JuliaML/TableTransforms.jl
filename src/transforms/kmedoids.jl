@@ -100,7 +100,7 @@ function applyfeat(transform::KMedoids, feat, prep)
     iter += 1
   end
 
-  newfeat = (; cluster=labels) |> Tables.materializer(feat)
+  newfeat = (; label=labels) |> Tables.materializer(feat)
 
   newfeat, nothing
 end
