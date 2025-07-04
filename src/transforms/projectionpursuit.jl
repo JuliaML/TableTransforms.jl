@@ -28,7 +28,7 @@ ProjectionPursuit(tol=1e-4, maxiter=250, deg=5, perc=0.95, n=100)
 
 # with rng
 using Random
-rng = MersenneTwister(2)
+rng = Xoshiro(123)
 ProjectionPursuit(perc=0.85, n=50, rng=rng)
 ```
 

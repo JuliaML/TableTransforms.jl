@@ -18,7 +18,7 @@ Sample(1000, replace=false, ordered=true)
 
 # with rng
 using Random
-rng = MersenneTwister(2)
+rng = Xoshiro(123)
 Sample(1000, rng=rng)
 
 # with weights
