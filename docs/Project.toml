@@ -2,7 +2,6 @@
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
-DocumenterTools = "35a29f4d-8980-5a13-9543-d66fff28ecb8"
 PairPlots = "43a3c2be-4208-490b-832a-a21dcd55d7da"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 TableTransforms = "0d432bfd-3ee1-4ac1-886a-39f05cc69a3e"

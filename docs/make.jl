@@ -1,5 +1,4 @@
 using Documenter, TableTransforms
-using DocumenterTools: Themes
 
 using TransformsBase
 
