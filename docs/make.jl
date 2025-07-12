@@ -2,8 +2,6 @@ using Documenter, TableTransforms
 
 using TransformsBase
 
-DocMeta.setdocmeta!(TableTransforms, :DocTestSetup, :(using TableTransforms); recursive=true)
-
 makedocs(;
   warnonly=[:missing_docs],
   modules=[TableTransforms, TransformsBase],
