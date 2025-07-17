@@ -11,65 +11,65 @@
 
   T = Select(:f, :d)
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:f, :d]
+  @test Tables.columnnames(n) == (:f, :d)
 
   T = Select(:f, :d, :b)
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:f, :d, :b]
+  @test Tables.columnnames(n) == (:f, :d, :b)
 
   T = Select(:d, :c, :b)
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:d, :c, :b]
+  @test Tables.columnnames(n) == (:d, :c, :b)
 
   T = Select(:e, :c, :b, :a)
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:e, :c, :b, :a]
+  @test Tables.columnnames(n) == (:e, :c, :b, :a)
 
   # selection with tuples
   T = Select((:e, :c, :b, :a))
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:e, :c, :b, :a]
+  @test Tables.columnnames(n) == (:e, :c, :b, :a)
 
   # selection with vectors
   T = Select([:e, :c, :b, :a])
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:e, :c, :b, :a]
+  @test Tables.columnnames(n) == (:e, :c, :b, :a)
 
   # selection with strings
   T = Select("d", "c", "b")
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:d, :c, :b]
+  @test Tables.columnnames(n) == (:d, :c, :b)
 
   # selection with tuple of strings
   T = Select(("d", "c", "b"))
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:d, :c, :b]
+  @test Tables.columnnames(n) == (:d, :c, :b)
 
   # selection with vector of strings
   T = Select(["d", "c", "b"])
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:d, :c, :b]
+  @test Tables.columnnames(n) == (:d, :c, :b)
 
   # selection with integers
   T = Select(4, 3, 2)
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:d, :c, :b]
+  @test Tables.columnnames(n) == (:d, :c, :b)
 
   # selection with tuple of integers
   T = Select((4, 3, 2))
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:d, :c, :b]
+  @test Tables.columnnames(n) == (:d, :c, :b)
 
   # selection with vector of integers
   T = Select([4, 3, 2])
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:d, :c, :b]
+  @test Tables.columnnames(n) == (:d, :c, :b)
 
   # reapply test
   T = Select(:b, :c, :d)
   n1, c1 = apply(T, t)
   n2 = reapply(T, t, c1)
-  @test n1 == n2
+  @test Table(n1) == Table(n2)
 
   # selection with renaming
   a = rand(10)
@@ -81,34 +81,34 @@
   # integer => symbol
   T = Select(1 => :x, 3 => :y)
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:x, :y]
+  @test Tables.columnnames(n) == (:x, :y)
   @test Tables.getcolumn(n, :x) == t.a
   @test Tables.getcolumn(n, :y) == t.c
 
   # integer => string
   T = Select(2 => "x", 4 => "y")
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:x, :y]
+  @test Tables.columnnames(n) == (:x, :y)
   @test Tables.getcolumn(n, :x) == t.b
   @test Tables.getcolumn(n, :y) == t.d
 
   # symbol => symbol
   T = Select(:a => :x, :c => :y)
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:x, :y]
+  @test Tables.columnnames(n) == (:x, :y)
   @test Tables.getcolumn(n, :x) == t.a
   @test Tables.getcolumn(n, :y) == t.c
 
   # symbol => string
   T = Select(:b => "x", :d => "y")
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:x, :y]
+  @test Tables.columnnames(n) == (:x, :y)
   @test Tables.getcolumn(n, :x) == t.b
   @test Tables.getcolumn(n, :y) == t.d
 
   T = Select(:a => :x1, :b => :x2, :c => :x3, :d => :x4)
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:x1, :x2, :x3, :x4]
+  @test Tables.columnnames(n) == (:x1, :x2, :x3, :x4)
   @test Tables.getcolumn(n, :x1) == t.a
   @test Tables.getcolumn(n, :x2) == t.b
   @test Tables.getcolumn(n, :x3) == t.c
@@ -117,20 +117,20 @@
   # string => symbol
   T = Select("a" => :x, "c" => :y)
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:x, :y]
+  @test Tables.columnnames(n) == (:x, :y)
   @test Tables.getcolumn(n, :x) == t.a
   @test Tables.getcolumn(n, :y) == t.c
 
   # string => string
   T = Select("b" => "x", "d" => "y")
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:x, :y]
+  @test Tables.columnnames(n) == (:x, :y)
   @test Tables.getcolumn(n, :x) == t.b
   @test Tables.getcolumn(n, :y) == t.d
 
   T = Select("a" => "x1", "b" => "x2", "c" => "x3", "d" => "x4")
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:x1, :x2, :x3, :x4]
+  @test Tables.columnnames(n) == (:x1, :x2, :x3, :x4)
   @test Tables.getcolumn(n, :x1) == t.a
   @test Tables.getcolumn(n, :x2) == t.b
   @test Tables.getcolumn(n, :x3) == t.c
@@ -142,20 +142,21 @@
 
   T = Select(:a => :x, :c => :y)
   n, c = apply(T, rt)
-  @test Tables.columnnames(n) == [:x, :y]
-  @test Tables.getcolumn(n, :x) == Tables.getcolumn(cols, :a)
-  @test Tables.getcolumn(n, :y) == Tables.getcolumn(cols, :c)
+  ncols = Tables.columns(n)
+  @test Tables.columnnames(ncols) == (:x, :y)
+  @test Tables.getcolumn(ncols, :x) == Tables.getcolumn(cols, :a)
+  @test Tables.getcolumn(ncols, :y) == Tables.getcolumn(cols, :c)
 
   # reapply test
   T = Select(:b => :x, :d => :y)
   n1, c1 = apply(T, t)
   n2 = reapply(T, t, c1)
-  @test n1 == n2
+  @test Table(n1) == Table(n2)
 
   # selection with Regex
   T = Select(r"[dcb]")
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:b, :c, :d] # the order of columns is preserved
+  @test Tables.columnnames(n) == (:b, :c, :d) # the order of columns is preserved
 
   x1 = rand(10)
   x2 = rand(10)
@@ -166,18 +167,18 @@
   # select columns whose names contain the character x
   T = Select(r"x")
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:x1, :x2]
+  @test Tables.columnnames(n) == (:x1, :x2)
 
   # select columns whose names contain the character y
   T = Select(r"y")
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:y1, :y2]
+  @test Tables.columnnames(n) == (:y1, :y2)
 
   # row table
   rt = Tables.rowtable(t)
   T = Select(r"y")
   n, c = apply(T, rt)
-  @test Tables.columnnames(n) == [:y1, :y2]
+  @test Tables.columnnames(Tables.columns(n)) == (:y1, :y2)
 
   # throws: Select without arguments
   @test_throws ArgumentError Select()
@@ -212,70 +213,70 @@ end
 
   T = Reject(:f, :d)
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:a, :b, :c, :e]
+  @test Tables.columnnames(n) == (:a, :b, :c, :e)
 
   T = Reject(:f, :d, :b)
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:a, :c, :e]
+  @test Tables.columnnames(n) == (:a, :c, :e)
 
   T = Reject(:d, :c, :b)
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:a, :e, :f]
+  @test Tables.columnnames(n) == (:a, :e, :f)
 
   T = Reject(:e, :c, :b, :a)
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:d, :f]
+  @test Tables.columnnames(n) == (:d, :f)
 
   # rejection with tuples
   T = Reject((:e, :c, :b, :a))
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:d, :f]
+  @test Tables.columnnames(n) == (:d, :f)
 
   # rejection with vectors
   T = Reject([:e, :c, :b, :a])
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:d, :f]
+  @test Tables.columnnames(n) == (:d, :f)
 
   # rejection with strings
   T = Reject("d", "c", "b")
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:a, :e, :f]
+  @test Tables.columnnames(n) == (:a, :e, :f)
 
   # rejection with tuple of strings
   T = Reject(("d", "c", "b"))
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:a, :e, :f]
+  @test Tables.columnnames(n) == (:a, :e, :f)
 
   # rejection with vector of strings
   T = Reject(["d", "c", "b"])
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:a, :e, :f]
+  @test Tables.columnnames(n) == (:a, :e, :f)
 
   # rejection with integers
   T = Reject(4, 3, 2)
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:a, :e, :f]
+  @test Tables.columnnames(n) == (:a, :e, :f)
 
   # rejection with tuple of integers
   T = Reject((4, 3, 2))
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:a, :e, :f]
+  @test Tables.columnnames(n) == (:a, :e, :f)
 
   # rejection with vector of integers
   T = Reject([4, 3, 2])
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:a, :e, :f]
+  @test Tables.columnnames(n) == (:a, :e, :f)
 
   # reapply test
   T = Reject(:b, :c, :d)
   n1, c1 = apply(T, t)
   n2 = reapply(T, t, c1)
-  @test n1 == n2
+  @test Table(n1) == Table(n2)
 
   # rejection with Regex
   T = Reject(r"[dcb]")
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:a, :e, :f] # the order of columns is preserved
+  @test Tables.columnnames(n) == (:a, :e, :f) # the order of columns is preserved
 
   x1 = rand(10)
   x2 = rand(10)
@@ -286,18 +287,18 @@ end
   # reject columns whose names contain the character x
   T = Reject(r"x")
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:y1, :y2]
+  @test Tables.columnnames(n) == (:y1, :y2)
 
   # reject columns whose names contain the character y
   T = Reject(r"y")
   n, c = apply(T, t)
-  @test Tables.columnnames(n) == [:x1, :x2]
+  @test Tables.columnnames(n) == (:x1, :x2)
 
   # row table
   rt = Tables.rowtable(t)
   T = Reject(r"y")
   n, c = apply(T, rt)
-  @test Tables.columnnames(n) == [:x1, :x2]
+  @test Tables.columnnames(n) == (:x1, :x2)
 
   # throws: Reject without arguments
   @test_throws ArgumentError Reject()
