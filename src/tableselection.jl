@@ -2,56 +2,47 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-struct TableSelection{T,C}
+"""
+    TableSelection(table, names)
+
+Stores a sub-`table` with given column `names`.
+"""
+struct TableSelection{T,N}
   table::T
-  cols::C
-  ncols::Int
-  names::Vector{Symbol}
-  onames::Vector{Symbol}
-  mapnames::Dict{Symbol,Symbol}
-
-  function TableSelection(table::T, names, onames) where {T}
-    cols = Tables.columns(table)
-    _assert(onames ⊆ Tables.columnnames(cols), "all selected columns must exist in the table")
-    ncols = length(names)
-    mapnames = Dict(zip(names, onames))
-    new{T,typeof(cols)}(table, cols, ncols, names, onames, mapnames)
-  end
+  names::NTuple{N,Symbol}
 end
 
-function Base.:(==)(a::TableSelection, b::TableSelection)
-  a.names != b.names && return false
-  a.onames != b.onames && return false
-  all(nm -> Tables.getcolumn(a, nm) == Tables.getcolumn(b, nm), a.names)
+function TableSelection(table, names)
+  cols = Tables.columns(table)
+  _assert(names ⊆ Tables.columnnames(cols), "invalid columns for table selection")
+  TableSelection(table, Tuple(names))
 end
 
-function Base.show(io::IO, t::TableSelection)
-  println(io, "TableSelection")
-  pretty_table(io, t, vcrop_mode=:middle, newline_at_end=false)
-end
-
-# Tables.jl interface
 Tables.istable(::Type{<:TableSelection}) = true
+
 Tables.columnaccess(::Type{<:TableSelection}) = true
+
 Tables.columns(t::TableSelection) = t
+
 Tables.columnnames(t::TableSelection) = t.names
 
-function Tables.getcolumn(t::TableSelection, i::Int)
-  1 ≤ i ≤ t.ncols || error("Table has no column with index $i.")
-  Tables.getcolumn(t.cols, t.mapnames[t.names[i]])
-end
+Tables.getcolumn(t::TableSelection, i::Int) = Tables.getcolumn(Tables.columns(t.table), t.names[i])
 
-function Tables.getcolumn(t::TableSelection, nm::Symbol)
-  nm ∉ t.names && error("Table has no column $nm.")
-  Tables.getcolumn(t.cols, t.mapnames[nm])
-end
+Tables.getcolumn(t::TableSelection, nm::Symbol) = Tables.getcolumn(Tables.columns(t.table), nm)
 
 Tables.materializer(t::TableSelection) = Tables.materializer(t.table)
 
 function Tables.schema(t::TableSelection)
-  schema = Tables.schema(t.cols)
-  names = schema.names
-  types = schema.types
-  inds = indexin(t.onames, collect(names))
-  Tables.Schema(t.names, types[inds])
+  schema = Tables.schema(t.table)
+  tnames = collect(t.names)
+  snames = collect(schema.names)
+  inds = indexin(tnames, snames)
+  names = schema.names[inds]
+  types = schema.types[inds]
+  Tables.Schema(names, types)
+end
+
+function Base.show(io::IO, t::TableSelection)
+  println(io, "TableSelection")
+  pretty_table(io, t, vcrop_mode=:bottom, newline_at_end=false)
 end

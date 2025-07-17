@@ -45,16 +45,19 @@ Select(pairs::Pair{C,S}...) where {C<:Column,S<:AbstractString} =
 
 Select() = throw(ArgumentError("cannot create Select transform without arguments"))
 
-# utils
-_newnames(::Nothing, select) = select
-_newnames(names::Vector{Symbol}, select) = names
-
 function applyfeat(transform::Select, feat, prep)
   cols = Tables.columns(feat)
   names = collect(Tables.columnnames(cols))
-  select = transform.selector(names)
-  newnames = _newnames(transform.newnames, select)
-  newfeat = TableSelection(feat, newnames, select)
+
+  # lazy selection of columns
+  snames = transform.selector(names)
+  stable = TableSelection(feat, snames)
+
+  # rename if necessary
+  nnames = transform.newnames
+  rename = isnothing(nnames) ? Identity() : Rename(nnames)
+  newfeat = stable |> rename
+
   newfeat, nothing
 end
 
@@ -92,9 +95,8 @@ Reject(::AllSelector) = throw(ArgumentError("cannot reject all columns"))
 function applyfeat(transform::Reject, feat, prep)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
-  reject = transform.selector(names)
-  select = setdiff(names, reject)
-  strans = Select(select)
-  newfeat, _ = applyfeat(strans, feat, prep)
+  snames = transform.selector(names)
+  select = Select(setdiff(names, snames))
+  newfeat, _ = applyfeat(select, feat, prep)
   newfeat, nothing
 end
