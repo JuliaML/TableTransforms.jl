@@ -10,15 +10,12 @@ Stores a sub-`table` with given column `names`.
 struct TableSelection{T,N}
   table::T
   names::NTuple{N,Symbol}
-  oinds::NTuple{N,Int}
 end
 
 function TableSelection(table, names)
   cols = Tables.columns(table)
-  onames = Tables.columnnames(cols)
-  _assert(names ⊆ onames, "invalid columns for table selection")
-  oinds = indexin(collect(names), collect(onames))
-  TableSelection(table, Tuple(names), Tuple(oinds))
+  _assert(names ⊆ Tables.columnnames(cols), "invalid columns for table selection")
+  TableSelection(table, Tuple(names))
 end
 
 Tables.istable(::Type{<:TableSelection}) = true
@@ -29,15 +26,19 @@ Tables.columns(t::TableSelection) = t
 
 Tables.columnnames(t::TableSelection) = t.names
 
-Tables.getcolumn(t::TableSelection, i::Int) = Tables.getcolumn(Tables.columns(t.table), t.oinds[i])
+Tables.getcolumn(t::TableSelection, i::Int) = Tables.getcolumn(Tables.columns(t.table), t.names[i])
 
 Tables.getcolumn(t::TableSelection, nm::Symbol) = Tables.getcolumn(Tables.columns(t.table), nm)
 
 Tables.materializer(t::TableSelection) = Tables.materializer(t.table)
+
 function Tables.schema(t::TableSelection)
   schema = Tables.schema(t.table)
-  names = [schema.names[i] for i in t.oinds]
-  types = [schema.types[i] for i in t.oinds]
+  tnames = collect(t.names)
+  snames = collect(schema.names)
+  inds = indexin(tnames, snames)
+  names = schema.names[inds]
+  types = schema.types[inds]
   Tables.Schema(names, types)
 end
 
