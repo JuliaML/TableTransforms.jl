@@ -16,7 +16,7 @@
   @test n.b ⊆ t.b
   @test n.c ⊆ t.c
 
-  T = Sample(30, replace=true, ordered=true)
+  T = Sample(30, replace=true, ordered=true, rng=StableRNG(1))
   n, c = apply(T, t)
   trows = Tables.rowtable(t)
   @test unique(Tables.rowtable(n)) == trows
