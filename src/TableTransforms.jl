@@ -25,6 +25,7 @@ using Distributions: ContinuousUnivariateDistribution, Normal
 using InverseFunctions: NoInverse, inverse as invfun
 using StatsBase: AbstractWeights, Weights, sample
 using Distributed: CachingPool, pmap, workers
+using SpectralIndices: indices, bands, compute
 using NelderMead: optimise
 
 import Distributions: quantile, cdf
@@ -91,6 +92,7 @@ export
   DRS,
   SDS,
   ProjectionPursuit,
+  SpectralIndex,
   KMedoids,
   Closure,
   Remainder,
@@ -101,6 +103,10 @@ export
   RowTable,
   ColTable,
   →,
-  ⊔
+  ⊔,
+
+  # utilities
+  spectralindices,
+  spectralbands
 
 end

@@ -31,6 +31,7 @@ transformfiles = [
   "functional.jl",
   "eigenanalysis.jl",
   "projectionpursuit.jl",
+  "spectralindex.jl",
   "kmedoids.jl",
   "closure.jl",
   "remainder.jl",
