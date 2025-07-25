@@ -34,13 +34,13 @@ struct SpectralIndex{B} <: StatelessFeatureTransform
 
   function SpectralIndex{B}(name, bands) where {B}
     sname = string(name)
-    @assert sname ∈ keys(indices) "$sname not found in SpectralIndices.jl"
+    _assert(sname ∈ keys(indices), "$sname not found in SpectralIndices.jl")
     sbands = if isempty(bands)
       nothing
     else
       skeys = string.(keys(bands))
       vkeys = Tuple(indices[sname].bands)
-      @assert skeys ⊆ vkeys "bands $skeys are not valid for spectral index $sname, please choose from $vkeys"
+      _assert(skeys ⊆ vkeys, "bands $skeys are not valid for spectral index $sname, please choose from $vkeys")
       svals = string.(values(values(bands)))
       (; zip(Symbol.(skeys), svals)...)
     end
