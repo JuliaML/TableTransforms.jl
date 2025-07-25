@@ -34,4 +34,8 @@
   t = Table(RED=[1,2,3], NIR=[4,5,6])
   T = SpectralIndex("NDVI", R=:RED, N=:NIR)
   @test T(t).NDVI ≈ [0.6, 0.42857142857142855, 0.3333333333333333]
+
+  # auxiliary functions
+  @test spectralindices() isa Dict
+  @test spectralbands("NDVI") isa Vector
 end
