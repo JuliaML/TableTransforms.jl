@@ -242,6 +242,12 @@ SDS
 ProjectionPursuit
 ```
 
+## SpectralIndex
+
+```@docs
+SpectralIndex
+```
+
 ## KMedoids
 
 ```@docs
