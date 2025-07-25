@@ -32,7 +32,7 @@ struct SpectralIndex{B} <: StatelessFeatureTransform
   name::String
   bands::B
 
-  function SpectralIndex{B}(name, bands) where {B}
+  function SpectralIndex(name, bands)
     sname = string(name)
     _assert(sname ∈ keys(indices), "$sname not found in SpectralIndices.jl")
     sbands = if isempty(bands)
@@ -48,7 +48,7 @@ struct SpectralIndex{B} <: StatelessFeatureTransform
   end
 end
 
-SpectralIndex(name; bands...) = SpectralIndex{typeof(bands)}(name, bands)
+SpectralIndex(name; bands...) = SpectralIndex(name, bands)
 
 function applyfeat(transform::SpectralIndex, feat, prep)
   # retrieve spectral index
