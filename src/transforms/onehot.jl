@@ -30,13 +30,6 @@ assertions(transform::OneHot) = [scitypeassert(Categorical, transform.selector)]
 
 isrevertible(::Type{<:OneHot}) = true
 
-_categ(x) = categorical(x), identity
-function _categ(x::CategoricalArray)
-  l, o = levels(x), isordered(x)
-  revfun = y -> categorical(y, levels=l, ordered=o)
-  x, revfun
-end
-
 function applyfeat(transform::OneHot, feat, prep)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols) |> collect
@@ -44,7 +37,7 @@ function applyfeat(transform::OneHot, feat, prep)
 
   name = selectsingle(transform.selector, names)
   ind = findfirst(==(name), names)
-  x, revfun = _categ(columns[ind])
+  x, revfun = _categorical(columns[ind])
 
   xlevels = levels(x)
   onehot = map(xlevels) do l
@@ -88,4 +81,11 @@ function revertfeat(::OneHot, newfeat, fcache)
 
   𝒯 = (; zip(names, columns)...)
   𝒯 |> Tables.materializer(newfeat)
+end
+
+_categorical(x) = x, identity
+function _categorical(x::CategoricalArray)
+  l, o = levels(x), isordered(x)
+  revfun = y -> categorical(y, levels=l, ordered=o)
+  x, revfun
 end
