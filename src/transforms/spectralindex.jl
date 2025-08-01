@@ -18,7 +18,7 @@ SpectralIndex("NDVI")
 # water index
 SpectralIndex("NDWI")
 
-# specify "R" (red) and "N" (near infra red) columns
+# specify R (red) and N (near infra red) columns
 SpectralIndex("NDVI", R="col1", N="col4")
 ```
 

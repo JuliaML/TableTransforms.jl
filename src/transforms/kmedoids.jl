@@ -16,7 +16,7 @@ Optionally, specify a dictionary of `weights` for each column to
 affect the underlying table distance from TableDistances.jl, and
 a random number generator `rng` to obtain reproducible results.
 
-## Examples
+# Examples
 
 ```julia
 KMedoids(3)
