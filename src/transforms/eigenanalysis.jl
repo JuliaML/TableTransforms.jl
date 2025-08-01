@@ -27,7 +27,7 @@ but the data is projected back to the basis of the original variables using the 
 See [https://geostatisticslessons.com/lessons/sphereingmaf](https://geostatisticslessons.com/lessons/sphereingmaf)
 for more details about these three variants of eigenanalysis.
 
-# Examples
+## Examples
 
 ```julia
 EigenAnalysis(:V)
@@ -169,7 +169,7 @@ Principal component analysis.
 See [`EigenAnalysis`](@ref) for detailed
 description of the available options.
 
-# Examples
+## Examples
 
 ```julia
 PCA(maxdim=2)
@@ -191,7 +191,7 @@ Dimension reduction sphering.
 See [`EigenAnalysis`](@ref) for detailed
 description of the available options.
 
-# Examples
+## Examples
 
 ```julia
 DRS(maxdim=3)
@@ -213,7 +213,7 @@ Standardized data sphering.
 See [`EigenAnalysis`](@ref) for detailed
 description of the available options.
 
-# Examples
+## Examples
 
 ```julia
 SDS()

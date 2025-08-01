@@ -7,7 +7,7 @@
 
 Selects the columns where `pred(column)` returns `true`.
 
-# Examples
+## Examples
 
 ```julia
 Satisfies(allunique)
@@ -37,7 +37,7 @@ end
 
 Selects the columns that have scientific type `S`.
 
-# Examples
+## Examples
 
 ```julia
 using DataScienceTraits
@@ -52,7 +52,7 @@ Only(S::Type{<:SciType}) = Satisfies(x -> elscitype(x) <: S)
 
 Selects the columns that don't have scientific type `S`.
 
-# Examples
+## Examples
 
 ```julia
 using DataScienceTraits

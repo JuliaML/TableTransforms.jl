@@ -11,7 +11,7 @@ It [`isrevertible`](@ref) if any of the constituent
 [`revert`](@ref) is performed with the first
 revertible transform in the list.
 
-# Examples
+## Examples
 
 ```julia
 LowHigh(low=0.3, high=0.6) ⊔ EigenAnalysis(:VDV)

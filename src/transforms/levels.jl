@@ -8,7 +8,7 @@
 Convert columns `col₁`, `col₂`, ..., `colₙ` to categorical arrays with given levels `levels₁`, `levels₂`, ..., `levelsₙ`.
 Optionally, specify which columns are `ordered`.
 
-# Examples
+## Examples
 
 ```julia
 Levels(1 => 1:3, 2 => ["a", "b"], ordered=r"a")

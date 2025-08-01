@@ -18,7 +18,7 @@ Drop units from selected columns `col₁`, `col₂`, ..., `colₙ`.
 
 Drop units from columns that match with `regex`.
 
-# Examples
+## Examples
 
 ```julia
 DropUnits()

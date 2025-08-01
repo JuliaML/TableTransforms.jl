@@ -19,7 +19,7 @@ Applies the LowHigh transform on columns `col₁`, `col₂`, ..., `colₙ`.
 
 Applies the LowHigh transform on columns that match with `regex`.
 
-# Examples
+## Examples
 
 ```julia
 LowHigh()
@@ -82,7 +82,7 @@ Applies the MinMax transform on columns `col₁`, `col₂`, ..., `colₙ`.
 
 Applies the MinMax transform on columns that match with `regex`.
 
-# Examples
+## Examples
 
 ```julia
 MinMax(1, 3, 5)
@@ -111,7 +111,7 @@ Applies the Interquartile transform on columns `col₁`, `col₂`, ..., `colₙ`
 
 Applies the Interquartile transform on columns that match with `regex`.
 
-# Examples
+## Examples
 
 ```julia
 Interquartile(1, 3, 5)

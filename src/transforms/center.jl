@@ -19,7 +19,8 @@ Applies the Center transform on columns `col₁`, `col₂`, ..., `colₙ`.
 
 Applies the Center transform on columns that match with `regex`.
 
-# Examples
+## Examples
+
 ```julia
 Center(1, 3, 5)
 Center([:a, :c, :e])

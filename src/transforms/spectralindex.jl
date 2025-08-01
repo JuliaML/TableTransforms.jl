@@ -9,7 +9,7 @@ Compute the spectral index of given `name` from SpectralIndices.jl.
 Optionally, specify the column names corresponding to spectral `bands`
 as keyword arguments.
 
-# Examples
+## Examples
 
 ```julia
 # vegetation index

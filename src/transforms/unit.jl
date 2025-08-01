@@ -14,7 +14,7 @@ to `unit₁`, `unit₂`, ... `unitₙ`.
 
 Unitless columns become unitful if they are explicitly selected.
 
-# Examples
+## Examples
 
 ```julia
 Unit(u"m")

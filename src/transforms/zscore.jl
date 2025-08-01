@@ -19,7 +19,7 @@ Applies the ZScore transform on columns `col₁`, `col₂`, ..., `colₙ`.
 
 Applies the ZScore transform on columns that match with `regex`.
 
-# Examples
+## Examples
 
 ```julia
 ZScore(1, 3, 5)

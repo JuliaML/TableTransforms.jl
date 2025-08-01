@@ -18,7 +18,7 @@ Drop all rows with NaN values in selected columns `col₁`, `col₂`, ..., `col�
 
 Drop all rows with NaN values in columns that match with `regex`.
 
-# Examples
+## Examples
 
 ```julia
 DropNaN(2, 3, 4)

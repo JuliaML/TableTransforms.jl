@@ -20,7 +20,7 @@ are outside the interval.
 Drops rows where any of the values in columns that match with `regex`
 are outside the interval.
 
-# Examples
+## Examples
 
 ```julia
 DropExtrema(low=0.3, high=0.7)

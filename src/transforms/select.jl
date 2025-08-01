@@ -18,7 +18,7 @@ and rename them to `newcol₁`, `newcol₂`, ..., `newcolₙ`.
 
 Selects the columns that match with `regex`.
 
-# Examples
+## Examples
 
 ```julia
 Select(1, 3, 5)
@@ -72,7 +72,7 @@ The transform that discards columns `col₁`, `col₂`, ..., `colₙ`.
 
 Discards the columns that match with `regex`.
 
-# Examples
+## Examples
 
 ```julia
 Reject(:b, :d, :f)

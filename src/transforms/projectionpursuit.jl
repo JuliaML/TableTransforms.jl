@@ -18,7 +18,7 @@ process terminates whenever the transformed samples are "more Gaussian" than `pe
 randomly generated samples from the standard multivariate Gaussian distribution, or when the 
 number of iterations reaches a maximum `maxiter`.
 
-# Examples
+## Examples
 
 ```julia
 ProjectionPursuit()

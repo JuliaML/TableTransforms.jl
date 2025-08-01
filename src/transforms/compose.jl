@@ -18,7 +18,7 @@ Converts the selected columns `col₁`, `col₂`, ..., `colₙ` into parts of a 
 
 Converts the columns that match with `regex` into parts of a composition.
 
-# Examples
+## Examples
 
 ```julia
 Compose(as=:composition)

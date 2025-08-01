@@ -13,7 +13,7 @@ Coerce all columns of the table with scientific type `S`.
 
 This transform uses the `DataScienceTraits.coerce` function. Please see their docstring for more details.
 
-# Examples
+## Examples
 
 ```julia
 using DataScienceTraits

@@ -21,7 +21,7 @@ Asserts the selected columns `col₁`, `col₂`, ..., `colₙ`.
 
 Asserts the columns that match with `regex`.
 
-# Examples
+## Examples
 
 ```julia
 Assert(cond=allunique, msg="assertion error")

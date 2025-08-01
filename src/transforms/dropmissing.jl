@@ -18,7 +18,7 @@ Drop all rows with missing values in selected columns `col₁`, `col₂`, ..., `
 
 Drop all rows with missing values in columns that match with `regex`.
 
-# Examples
+## Examples
 
 ```julia
 DropMissing()

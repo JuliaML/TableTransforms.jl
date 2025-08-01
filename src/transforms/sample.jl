@@ -9,7 +9,7 @@ Sample `size` rows of table using `weights` with or without replacement dependin
 on the option `replace`. The option `ordered` can be used to return samples in
 the same order of the original table.
 
-# Examples
+## Examples
 
 ```julia
 Sample(1000)

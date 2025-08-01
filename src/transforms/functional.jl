@@ -11,7 +11,7 @@ The transform that applies a `fun` elementwise.
 
 Apply the corresponding `funᵢ` function to each `colᵢ` column.
 
-# Examples
+## Examples
 
 ```julia
 Functional(exp)

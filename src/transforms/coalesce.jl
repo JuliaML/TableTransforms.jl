@@ -19,7 +19,7 @@ Replaces all missing values from the columns
 Replaces all missing values from the columns
 that match with `regex` with `value`.
 
-# Examples
+## Examples
 
 ```julia
 Coalesce(value=0)

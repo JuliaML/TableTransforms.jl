@@ -16,7 +16,7 @@ The predicate can be a function that accepts a single argument
 and returns a boolean, or a value. If the predicate is a value,
 it will be transformed into the following function: `x -> x === value`.
 
-# Examples
+## Examples
 
 ```julia
 Replace(1 => -1, 5 => -5)

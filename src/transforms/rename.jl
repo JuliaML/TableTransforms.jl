@@ -13,7 +13,7 @@ Renames the columns `col₁`, `col₂`, ..., `colₙ` to `newcol₁`, `newcol₂
 Renames the table columns using the modification function `fun` that takes a 
 string as input and returns another string with the new name.
 
-# Examples
+## Examples
 
 ```julia
 Rename(1 => :x, 3 => :y)

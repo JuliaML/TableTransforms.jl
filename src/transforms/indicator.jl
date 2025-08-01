@@ -17,7 +17,7 @@ transform converts a continuous variable `Z` into a sequence of `k` variables
   with a linear range of probabilities.
 * `:linear` - threshold values are calculated using a linear range.
 
-# Examples
+## Examples
 
 ```julia
 Indicator(1, k=3)

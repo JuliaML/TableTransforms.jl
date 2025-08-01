@@ -18,7 +18,7 @@ Converts the units of selected columns `col₁`, `col₂`, ..., `colₙ` to abso
 
 Converts the units of columns that match with `regex` to absolute units.
 
-# Examples
+## Examples
 
 ```julia
 AbsoluteUnits()

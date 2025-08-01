@@ -10,7 +10,7 @@ returned by the `levels` function of CategoricalArrays.jl.
 The `categ` option can be used to convert resulting
 columns to categorical arrays as opposed to boolean vectors.
 
-# Examples
+## Examples
 
 ```julia
 OneHot(1)

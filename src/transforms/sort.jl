@@ -14,7 +14,7 @@ the `kwargs` to the `sortperm` function.
 
 Sort the rows of columns that match with `regex`.
 
-# Examples
+## Examples
 
 ```julia
 Sort(:a)
