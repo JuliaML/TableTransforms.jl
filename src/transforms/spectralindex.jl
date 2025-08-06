@@ -100,7 +100,7 @@ end
 
 List of spectral indices supported by SpectralIndices.jl.
 """
-spectralindices() = indices
+spectralindices() = collect(values(indices))
 
 """
     spectralbands(name)

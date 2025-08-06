@@ -36,6 +36,6 @@
   @test T(t).NDVI ≈ [0.6, 0.42857142857142855, 0.3333333333333333]
 
   # auxiliary functions
-  @test spectralindices() isa Dict
+  @test spectralindices() isa Vector
   @test spectralbands("NDVI") isa Vector
 end
