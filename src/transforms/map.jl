@@ -64,7 +64,7 @@ function applyfeat(transform::Map, feat, prep)
   targets = transform.targets
 
   mapped = map(selectors, funs, targets) do selector, fun, target
-    snames = selector(collect(names))
+    snames = selector(names)
     newname = isnothing(target) ? _makename(snames, fun) : target
     scolumns = (Tables.getcolumn(cols, nm) for nm in snames)
     newcolumn = map(fun, scolumns...)
