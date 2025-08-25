@@ -44,5 +44,5 @@ end
 
 function Base.show(io::IO, t::TableSelection)
   println(io, "TableSelection")
-  pretty_table(io, t, vcrop_mode=:bottom, newline_at_end=false)
+  pretty_table(io, t, new_line_at_end=false)
 end
