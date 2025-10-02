@@ -1,4 +1,6 @@
-const SCALES = [:quantile, :linear]
+# ------------------------------------------------------------------
+# Licensed under the MIT License. See LICENSE in the project root.
+# ------------------------------------------------------------------
 
 """
     Indicator(col; k=10, scale=:quantile, categ=false)
@@ -34,7 +36,7 @@ struct Indicator{S<:SingleColumnSelector} <: StatelessFeatureTransform
       throw(ArgumentError("`k` must be greater than or equal to 1"))
     end
 
-    if scale ∉ SCALES
+    if scale ∉ (:quantile, :linear)
       throw(ArgumentError("invalid `scale` option, use `:quantile` or `:linear`"))
     end
 
