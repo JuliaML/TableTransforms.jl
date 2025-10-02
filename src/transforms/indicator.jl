@@ -3,19 +3,17 @@ const SCALES = [:quantile, :linear]
 """
     Indicator(col; k=10, scale=:quantile, categ=false)
 
-Transforms continuous variable into `k` indicator variables defined by
-half-intervals of `col` values in a given `scale`. Optionally, specify the `categ`
-option to return binary categorical values as opposed to raw 1s and 0s.
+Given a sequence of `k` increasing threshold values `t1 < t2 < ... < tk`,
+the transform converts a continuous variable `z` into a sequence of `k`
+variables `z <= t1`, `z <= t2`, ..., `z <= tk`.
 
-Given a sequence of increasing threshold values `t1 < t2 < ... < tk`, the indicator
-transform converts a continuous variable `Z` into a sequence of `k` variables
-`Z_1 = Z <= t1`, `Z_2 = Z <= t2`, ..., `Z_k = Z <= tk`.
+The threshold values are a function of the `scale` option, which can be:
 
-## Scales:
+* `:quantile` - thresholds are calculated using `quantile`s
+* `:linear` - thresholds are calculated using direct values
 
-* `:quantile` - threshold values are calculated using the `quantile(Z, p)` function
-  with a linear range of probabilities.
-* `:linear` - threshold values are calculated using a linear range.
+The `categ` option can be used to enforce binary categorical values
+instead of raw `1` and `0` integer values.
 
 ## Examples
 
