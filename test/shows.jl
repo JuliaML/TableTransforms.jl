@@ -279,7 +279,7 @@
     # compact mode
     iostr = sprint(show, T)
     @test iostr ==
-          "Map(selectors: ColumnSelector[:a, [:a, :b]], funs: Union{Function, Type}[sin, #13], targets: Union{Nothing, Symbol}[nothing, :c])"
+          "Map(selectors: ColumnSelector[:a, [:a, :b]], funs: Union{Function, Type}[sin, $(nameof(fun))], targets: Union{Nothing, Symbol}[nothing, :c])"
 
     # full mode
     iostr = sprint(show, MIME("text/plain"), T)
