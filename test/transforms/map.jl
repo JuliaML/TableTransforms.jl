@@ -113,14 +113,24 @@
   @test Tables.getcolumn(n, colname) == f.(t.a, t.b, t.c, t.d)
 
   # type and target
-  struct Foo a; b; c; d end
+  struct Foo
+    a::Any
+    b::Any
+    c::Any
+    d::Any
+  end
   T = Map(Foo => "target")
   n, c = apply(T, t)
   @test Tables.schema(n).names == (:target,)
   @test n.target == Foo.(t.a, t.b, t.c, t.d)
 
   # type alone
-  struct Bar a; b; c; d end
+  struct Bar
+    a::Any
+    b::Any
+    c::Any
+    d::Any
+  end
   T = Map(Bar)
   n, c = apply(T, t)
   @test Tables.schema(n).names == (:Bar_a_b_c_d,)
