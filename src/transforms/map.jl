@@ -15,6 +15,8 @@ const MapArg = Union{ColsCallableTarget,ColsCallable,CallableTarget,Callable}
 
 Applies the `funᵢ` function to the columns selected by `colsᵢ` using 
 the `map` function and saves the result in a new column named `targetᵢ`.
+Types are also allowed in place of functions to construct objects with
+arguments from the columns.
 
 The column selection can be a single column identifier (index or name),
 a collection of identifiers or a regular expression (regex). It can also
