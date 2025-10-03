@@ -2,10 +2,13 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-const TargetName = Union{Symbol,AbstractString}
-const PairWithTarget = Pair{<:Any,<:Pair{<:Function,<:TargetName}}
-const PairWithoutTarget = Pair{<:Any,<:Function}
-const MapPair = Union{PairWithTarget,PairWithoutTarget}
+# supported argument types
+const Callable = Union{Function,Type}
+const Target = Union{Symbol,AbstractString}
+const ColsCallableTarget = Pair{<:Any,<:Pair{<:Callable,<:Target}}
+const ColsCallable = Pair{<:Any,<:Callable}
+const CallableTarget = Pair{<:Callable,<:Target}
+const MapArg = Union{ColsCallableTarget,ColsCallable,CallableTarget,Callable}
 
 """
     Map(cols₁ => fun₁ => target₁, cols₂ => fun₂, ..., colsₙ => funₙ => targetₙ)
@@ -32,7 +35,8 @@ Map(r"[abc]" => ((a, b, c) -> a^2 - 2b + c) => "col1")
 
 ## Notes
 
-* Anonymous functions must be passed with parentheses as in the examples above;
+* Anonymous functions must be passed with parentheses as in the examples above
+
 * Some function names are treated in a special way, they are:
   * Anonymous functions: `#1` -> `f1`;
   * Composed functions: `outer ∘ inner` -> `outer_inner`;
@@ -41,19 +45,19 @@ Map(r"[abc]" => ((a, b, c) -> a^2 - 2b + c) => "col1")
 """
 struct Map <: StatelessFeatureTransform
   selectors::Vector{ColumnSelector}
-  funs::Vector{Function}
+  funs::Vector{Callable}
   targets::Vector{Union{Nothing,Symbol}}
 end
 
-Map() = throw(ArgumentError("cannot create Map transform without arguments"))
-
-function Map(pairs::MapPair...)
-  tuples = map(_extract, pairs)
-  selectors = [t[1] for t in tuples]
-  funs = [t[2] for t in tuples]
-  targets = [t[3] for t in tuples]
-  Map(selectors, funs, targets)
+function Map(args::MapArg...)
+  tups = map(_extract, args)
+  sels = [t[1] for t in tups]
+  funs = [t[2] for t in tups]
+  tars = [t[3] for t in tups]
+  Map(sels, funs, tars)
 end
+
+Map() = throw(ArgumentError("cannot create Map transform without arguments"))
 
 function applyfeat(transform::Map, feat, prep)
   cols = Tables.columns(feat)
@@ -76,13 +80,10 @@ function applyfeat(transform::Map, feat, prep)
   newfeat, nothing
 end
 
-_extract(p::PairWithTarget) = selector(first(p)), first(last(p)), Symbol(last(last(p)))
-_extract(p::PairWithoutTarget) = selector(first(p)), last(p), nothing
-
-_funname(fun::Base.Fix1) = "fix1_" * _funname(fun.f)
-_funname(fun::Base.Fix2) = "fix2_" * _funname(fun.f)
-_funname(fun::ComposedFunction) = _funname(fun.outer) * "_" * _funname(fun.inner)
-_funname(fun) = string(fun)
+_extract(arg::ColsCallableTarget) = selector(first(arg)), first(last(arg)), Symbol(last(last(arg)))
+_extract(arg::ColsCallable) = selector(first(arg)), last(arg), nothing
+_extract(arg::CallableTarget) = AllSelector(), first(arg), Symbol(last(arg))
+_extract(arg::Callable) = AllSelector(), arg, nothing
 
 function _makename(snames, fun)
   funname = _funname(fun)
@@ -91,3 +92,8 @@ function _makename(snames, fun)
   end
   Symbol(funname, :_, join(snames, "_"))
 end
+
+_funname(fun::Base.Fix1) = "fix1_" * _funname(fun.f)
+_funname(fun::Base.Fix2) = "fix2_" * _funname(fun.f)
+_funname(fun::ComposedFunction) = _funname(fun.outer) * "_" * _funname(fun.inner)
+_funname(fun) = string(fun)
