@@ -96,6 +96,36 @@
   @test Tables.schema(n).names == (:fix2_hypot_a,)
   @test n.fix2_hypot_a == f.(t.a)
 
+  # function and target
+  f = (a, b, c, d) -> a + b + c + d
+  T = Map(f => "target")
+  n, c = apply(T, t)
+  @test Tables.schema(n).names == (:target,)
+  @test n.target == f.(t.a, t.b, t.c, t.d)
+
+  # function alone
+  f = (a, b, c, d) -> a + b + c + d
+  fname = replace(string(f), "#" => "f")
+  colname = Symbol(fname, :_a, :_b, :_c, :_d)
+  T = Map(f)
+  n, c = apply(T, t)
+  @test Tables.schema(n).names == (colname,)
+  @test Tables.getcolumn(n, colname) == f.(t.a, t.b, t.c, t.d)
+
+  # type and target
+  struct Foo a; b; c; d end
+  T = Map(Foo => "target")
+  n, c = apply(T, t)
+  @test Tables.schema(n).names == (:target,)
+  @test n.target == Foo.(t.a, t.b, t.c, t.d)
+
+  # type alone
+  struct Bar a; b; c; d end
+  T = Map(Bar)
+  n, c = apply(T, t)
+  @test Tables.schema(n).names == (:Bar_a_b_c_d,)
+  @test n.Bar_a_b_c_d == Bar.(t.a, t.b, t.c, t.d)
+
   # error: cannot create Map transform without arguments
   @test_throws ArgumentError Map()
 end
