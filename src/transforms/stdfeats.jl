@@ -18,8 +18,8 @@ isrevertible(::Type{StdFeats}) = true
 _stdfun(x) = _stdfun(elscitype(x), x)
 _stdfun(::Type, x) = identity, identity
 function _stdfun(::Type{Continuous}, x)
-  μ = mean(x)
-  σ = std(x, mean=μ)
+  μ = mean(skipmissing(x))
+  σ = std(skipmissing(x), mean=μ)
   stdfun = x -> zscore(x, μ, σ)
   revfun = y -> revzscore(y, μ, σ)
   stdfun, revfun

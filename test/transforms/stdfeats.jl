@@ -23,4 +23,14 @@
   @test tₒ.c == t.c
   @test tₒ.d ≈ t.d
   @test tₒ.e == t.e
+
+  # missing values
+  a = [rand(1:10, 99); missing]
+  b = [rand(Normal(7, 10), 99); missing]
+  t = Table(; a, b)
+  T = StdFeats()
+  n, c = apply(T, t)
+  @test isequal(n.a, t.a)
+  @test isapprox(mean(skipmissing(n.b)), 0; atol=1e-6)
+  @test isapprox(std(skipmissing(n.b)), 1; atol=1e-6)
 end
