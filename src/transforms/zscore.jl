@@ -41,8 +41,8 @@ assertions(transform::ZScore) = [scitypeassert(Continuous, transform.selector)]
 isrevertible(::Type{<:ZScore}) = true
 
 function colcache(::ZScore, x)
-  μ = mean(x)
-  σ = std(x, mean=μ)
+  μ = mean(skipmissing(x))
+  σ = std(skipmissing(x), mean=μ)
   (μ=μ, σ=σ)
 end
 
