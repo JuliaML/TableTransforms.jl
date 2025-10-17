@@ -87,4 +87,24 @@
   @test isapprox(std(n.b), 1; atol=1e-6)
   tₒ = revert(T, n, c)
   @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
+
+  # missing values
+  a = [rand(Normal(7, 10), 99); missing]
+  t = Table(; a)
+  T = ZScore()
+  n, c = apply(T, t)
+  @test isapprox(mean(skipmissing(n.a)), 0; atol=1e-6)
+  @test isapprox(std(skipmissing(n.a)), 1; atol=1e-6)
+  tₒ = revert(T, n, c)
+  @test t.a[begin:(end - 1)] ≈ tₒ.a[begin:(end - 1)]
+  @test ismissing(tₒ.a[end])
+
+  # constant values
+  a = fill(2.0, 100)
+  t = Table(; a)
+  T = ZScore()
+  n, c = apply(T, t)
+  @test all(==(0), n.a)
+  tₒ = revert(T, n, c)
+  @test all(==(2), tₒ.a)
 end
