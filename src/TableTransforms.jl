@@ -32,6 +32,7 @@ import Distributions: quantile, cdf
 import TransformsBase: assertions, parameters, isrevertible, isinvertible
 import TransformsBase: apply, revert, reapply, preprocess, inverse
 
+include("utils.jl")
 include("tabletraits.jl")
 include("distributions.jl")
 include("tableselection.jl")

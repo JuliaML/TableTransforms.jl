@@ -38,10 +38,6 @@ DropUnits(cols::C...) where {C<:Column} = DropUnits(selector(cols))
 
 isrevertible(::Type{<:DropUnits}) = true
 
-_dropunit(x) = _dropunit(x, nonmissingtype(eltype(x)))
-_dropunit(x, ::Type{Q}) where {Q<:AbstractQuantity} = (map(ustrip, x), unit(Q))
-_dropunit(x, ::Type) = (x, NoUnits)
-
 function applyfeat(transform::DropUnits, feat, prep)
   cols = Tables.columns(feat)
   names = Tables.columnnames(cols)
@@ -60,9 +56,6 @@ function applyfeat(transform::DropUnits, feat, prep)
   newfeat, (snames, units)
 end
 
-_addunit(x, ::typeof(NoUnits)) = x
-_addunit(x, u::Units) = map(v -> v * u, x)
-
 function revertfeat(::DropUnits, newfeat, fcache)
   cols = Tables.columns(newfeat)
   names = Tables.columnnames(cols)
@@ -70,7 +63,7 @@ function revertfeat(::DropUnits, newfeat, fcache)
   snames, units = fcache
   columns = map(names, units) do name, unit
     x = Tables.getcolumn(cols, name)
-    name ∈ snames ? _addunit(x, unit) : x
+    name ∈ snames ? _withunit(x, unit) : x
   end
 
   𝒯 = (; zip(names, columns)...)

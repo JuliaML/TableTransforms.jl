@@ -45,7 +45,7 @@ function applyfeat(::Unitify, feat, prep)
   pairs = map(names) do name
     x = Tables.getcolumn(cols, name)
     newname, unit = _unitify(name)
-    newname => _addunit(x, unit)
+    newname => _withunit(x, unit)
   end
 
   newfeat = (; pairs...) |> Tables.materializer(feat)
