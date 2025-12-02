@@ -12,7 +12,6 @@ using DelimitedFiles
 using ReferenceTests
 using StableRNGs
 using PairPlots
-using ImageIO
 using Test
 
 import CairoMakie as Mke
