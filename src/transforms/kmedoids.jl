@@ -74,7 +74,7 @@ function applyfeat(transform::KMedoids, feat, prep)
   medoids = sample(rng, 1:nobs, k, replace=false)
 
   # retrieve distance type
-  s = Tables.subset(stdfeat, 1:1)
+  s = Tables.subset(stdfeat, 1:1, viewhint=true)
   D = eltype(pairwise(td, s))
 
   # pre-allocate memory for labels and distances
@@ -109,8 +109,8 @@ function _updatelabels!(td, table, medoids, labels, dists)
   for (k, mₖ) in enumerate(medoids)
     inds = 1:_nrows(table)
 
-    X = Tables.subset(table, inds)
-    μ = Tables.subset(table, [mₖ])
+    X = Tables.subset(table, inds, viewhint=true)
+    μ = Tables.subset(table, [mₖ], viewhint=true)
 
     δ = pairwise(td, X, μ)
 
@@ -127,7 +127,7 @@ function _updatemedoids!(td, table, medoids, labels)
   for k in eachindex(medoids)
     inds = findall(isequal(k), labels)
 
-    X = Tables.subset(table, inds)
+    X = Tables.subset(table, inds, viewhint=true)
 
     j = _medoid(td, X)
 
