@@ -55,7 +55,7 @@ struct Map <: StatelessFeatureTransform
 end
 
 function Map(args::MapArg...)
-  tups = map(_extract, args)
+  tups = map(_mapargs, args)
   sels = [t[1] for t in tups]
   funs = [t[2] for t in tups]
   tars = [t[3] for t in tups]
@@ -85,10 +85,10 @@ function applyfeat(transform::Map, feat, prep)
   newfeat, nothing
 end
 
-_extract(arg::ColsCallableTarget) = selector(first(arg)), first(last(arg)), Symbol(last(last(arg)))
-_extract(arg::ColsCallable) = selector(first(arg)), last(arg), nothing
-_extract(arg::CallableTarget) = AllSelector(), first(arg), Symbol(last(arg))
-_extract(arg::Callable) = AllSelector(), arg, nothing
+_mapargs(arg::ColsCallableTarget) = selector(first(arg)), first(last(arg)), Symbol(last(last(arg)))
+_mapargs(arg::ColsCallable) = selector(first(arg)), last(arg), nothing
+_mapargs(arg::CallableTarget) = AllSelector(), first(arg), Symbol(last(arg))
+_mapargs(arg::Callable) = AllSelector(), arg, nothing
 
 function _makename(snames, fun)
   funname = _funname(fun)
