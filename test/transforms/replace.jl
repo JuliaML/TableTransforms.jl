@@ -136,6 +136,12 @@
   n, c = apply(T, rt)
   @test Tables.isrowtable(n)
 
+  # string replacement
+  t = Table(a=["A", "B", "C"])
+  T = Replace("a" => ==("C") => "R")
+  n, c = apply(T, t)
+  @test n.a == ["A", "B", "R"]
+
   # throws
   @test_throws ArgumentError Replace()
 end

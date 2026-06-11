@@ -44,14 +44,14 @@ end
 Replace() = throw(ArgumentError("cannot create Replace transform without arguments"))
 
 # utility functions
-_extract(p::Pair) = AllSelector(), _pred(first(p)), last(p)
-_extract(p::Pair{<:Any,<:Pair}) = selector(first(p)), _pred(first(last(p))), last(last(p))
+_replaceargs(p::Pair) = AllSelector(), _pred(first(p)), last(p)
+_replaceargs(p::Pair{<:Any,<:Pair}) = selector(first(p)), _pred(first(last(p))), last(last(p))
 
 _pred(f::Function) = f
 _pred(v) = Base.Fix2(===, v)
 
 function Replace(pairs::Pair...)
-  tuples = map(_extract, pairs)
+  tuples = map(_replaceargs, pairs)
   selectors = [t[1] for t in tuples]
   preds = [t[2] for t in tuples]
   news = Any[t[3] for t in tuples]
