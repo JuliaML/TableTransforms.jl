@@ -5,14 +5,9 @@ using TransformsBase
 makedocs(;
   warnonly=[:missing_docs],
   modules=[TableTransforms, TransformsBase],
-  authors="Júlio Hoffimann, Elias Carvalho",
-  repo="https://github.com/JuliaML/TableTransforms.jl/blob/{commit}{path}#{line}",
+  format=Documenter.HTML(prettyurls=get(ENV, "CI", "false") == "true"),
   sitename="TableTransforms.jl",
-  format=Documenter.HTML(;
-    prettyurls=get(ENV, "CI", "false") == "true",
-    canonical="https://JuliaML.github.io/TableTransforms.jl",
-    repolink="https://github.com/JuliaML/TableTransforms.jl"
-  ),
+  authors="Júlio Hoffimann, Elias Carvalho",
   pages=[
     "Home" => "index.md",
     "Transforms" => "transforms.md",
