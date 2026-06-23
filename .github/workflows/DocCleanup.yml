@@ -22,9 +22,9 @@ jobs:
             git rm -rf --ignore-unmatch v[0-9]*.[0-9]*
             git checkout HEAD -- "$keep"
             if git diff --cached --quiet; then
-              echo "No old docs to delete."
+              echo "No old docs to delete"
             else
-              git commit -m "keep latest docs only"
+              git commit -m "Keep latest docs only"
               git branch gh-pages-new $(echo "delete history" | git commit-tree HEAD^{tree})
               git push --force origin gh-pages-new:gh-pages
             fi
