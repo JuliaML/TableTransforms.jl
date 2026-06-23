@@ -19,12 +19,12 @@ jobs:
             keep="$(readlink stable)"
             git config user.name "Documenter.jl"
             git config user.email "documenter@juliadocs.github.io"
-            git rm -rf --ignore-unmatch v[0-9]*.[0-9]*
+            git rm -rf --ignore-unmatch "v[0-9]*.[0-9]*" "previews/*"
             git checkout HEAD -- "$keep"
             if git diff --cached --quiet; then
-              echo "No old docs to delete"
+              echo "No old docs or previews to delete"
             else
-              git commit -m "Keep latest docs only"
+              git commit -m "Delete old docs and previews"
               git branch gh-pages-new $(echo "delete history" | git commit-tree HEAD^{tree})
               git push --force origin gh-pages-new:gh-pages
             fi
