@@ -5,7 +5,7 @@ using TransformsBase
 makedocs(;
   warnonly=[:missing_docs],
   modules=[TableTransforms, TransformsBase],
-  authors="Júlio Hoffimann <julio.hoffimann@gmail.com> and contributors",
+  authors="Júlio Hoffimann, Elias Carvalho",
   repo="https://github.com/JuliaML/TableTransforms.jl/blob/{commit}{path}#{line}",
   sitename="TableTransforms.jl",
   format=Documenter.HTML(;
@@ -23,7 +23,5 @@ makedocs(;
 
 deploydocs(;
   repo="github.com/JuliaML/TableTransforms.jl",
-  versions=["stable" => "v^", "dev" => "dev"],
-  devbranch="master",
-  push_preview=true
+  versions=["stable" => "v^", "dev" => "dev"]
 )
