@@ -1,0 +1,24 @@
+name: Doc Cleanup
+on:
+  # runs on the 1st day of every month at 03:00 UTC
+  schedule:
+    - cron: '0 3 1 * *'
+  workflow_dispatch:
+jobs:
+  doc-cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v7
+        with:
+          ref: gh-pages
+      - name: Delete old docs
+        run: |
+            keep=$(readlink stable)
+            git config user.name "Documenter.jl"
+            git config user.email "documenter@juliadocs.github.io"
+            git rm -rf v[0-9]*.[0-9]* && git checkout HEAD -- $keep
+            if git commit -m "keep latest docs only" ; then
+              git branch gh-pages-new $(echo "delete history" | git commit-tree HEAD^{tree})
+              git push --force origin gh-pages-new:gh-pages
+            fi
