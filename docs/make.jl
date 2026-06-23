@@ -16,7 +16,4 @@ makedocs(;
   ]
 )
 
-deploydocs(;
-  repo="github.com/JuliaML/TableTransforms.jl",
-  versions=["stable" => "v^", "dev" => "dev"]
-)
+deploydocs(; repo="github.com/JuliaML/TableTransforms.jl", versions=["stable" => "v^", "dev" => "dev"])
