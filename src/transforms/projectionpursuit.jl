@@ -18,6 +18,10 @@ process terminates whenever the transformed samples are "more Gaussian" than `pe
 randomly generated samples from the standard multivariate Gaussian distribution, or when the 
 number of iterations reaches a maximum `maxiter`.
 
+The degree of the Legendre polynomial used to approximate the projection index is controlled
+by `deg`. The random number generator `rng` is used to generate the random samples from the
+standard multivariate Gaussian distribution.
+
 ## Examples
 
 ```julia
