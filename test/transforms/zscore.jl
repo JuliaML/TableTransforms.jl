@@ -1,4 +1,5 @@
 @testset "ZScore" begin
+  rng = StableRNG(2026)
   x = rand(rng, Normal(7, 10), 4000)
   y = rand(rng, Normal(15, 2), 4000)
   t = Table(; x, y)

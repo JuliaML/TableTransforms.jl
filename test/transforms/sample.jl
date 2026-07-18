@@ -57,10 +57,10 @@
   @test isapprox(count(==(trows[6]), nrows) / 10_000, 6 / 21, atol=0.01)
 
   # performance tests
-  trng = StableRNG(2) # test rng
-  x = rand(trng, 100_000)
-  y = rand(trng, 100_000)
-  c = CoDaArray((a=rand(trng, 100_000), b=rand(trng, 100_000), c=rand(trng, 100_000)))
+  rng = StableRNG(2)
+  x = rand(rng, 100_000)
+  y = rand(rng, 100_000)
+  c = CoDaArray((a=rand(rng, 100_000), b=rand(rng, 100_000), c=rand(rng, 100_000)))
   t = (; x, y, c)
 
   T = Sample(10_000)

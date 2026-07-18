@@ -2,6 +2,7 @@
   @test TT.parameters(EigenAnalysis(:V)) == (proj=:V, maxdim=nothing, pratio=1.0)
 
   # PCA test
+  rng = StableRNG(2026)
   x = rand(rng, Normal(0, 10), 1500)
   y = x + rand(rng, Normal(0, 2), 1500)
   t = Table(; x, y)
@@ -16,6 +17,7 @@
   @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
   # DRS test
+  rng = StableRNG(2026)
   x = rand(rng, Normal(0, 10), 1500)
   y = x + rand(rng, Normal(0, 2), 1500)
   t = Table(; x, y)
@@ -30,6 +32,7 @@
   @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
   # SDS test
+  rng = StableRNG(2026)
   x = rand(rng, Normal(0, 10), 1500)
   y = x + rand(rng, Normal(0, 2), 1500)
   t = Table(; x, y)
@@ -43,6 +46,7 @@
   tₒ = revert(T, n, c)
   @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
+  rng = StableRNG(2026)
   x = rand(rng, Normal(0, 10), 4000)
   y = x + rand(rng, Normal(0, 2), 4000)
   t₁ = Table(; x, y)
@@ -73,6 +77,7 @@
   end
 
   # row table
+  rng = StableRNG(2026)
   x = rand(rng, Normal(0, 10), 1500)
   y = x + rand(rng, Normal(0, 2), 1500)
   t = Table(; x, y)
@@ -84,6 +89,7 @@
   @test Tables.matrix(rt) ≈ Tables.matrix(rtₒ)
 
   # maxdim
+  rng = StableRNG(2026)
   x = randn(rng, 1000)
   y = x + randn(rng, 1000)
   z = 2x - y + randn(rng, 1000)
@@ -118,6 +124,7 @@
   @test isapprox(Σ[2, 2], 1; atol=1e-6)
 
   # pratio
+  rng = StableRNG(2026)
   a = randn(rng, 1000)
   b = randn(rng, 1000)
   c = a + randn(rng, 1000)

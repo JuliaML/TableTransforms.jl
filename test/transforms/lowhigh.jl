@@ -12,6 +12,7 @@
   tₒ = revert(T, n, c)
   @test Tables.matrix(t) ≈ Tables.matrix(tₒ)
 
+  rng = StableRNG(2026)
   x = rand(rng, Normal(4, 3), 4000)
   y = rand(rng, Normal(7, 5), 4000)
   t = Table(; x, y)

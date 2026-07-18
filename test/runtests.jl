@@ -29,9 +29,6 @@ islinux = Sys.islinux()
 visualtests = !isCI || (isCI && islinux)
 datadir = joinpath(@__DIR__, "data")
 
-# using StableRNG for compatibility between Julia versions
-rng = StableRNG(42)
-
 # for functor tests in Functional testset
 struct Polynomial{T<:Real}
   coeffs::Vector{T}

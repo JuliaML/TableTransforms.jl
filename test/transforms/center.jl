@@ -1,4 +1,5 @@
 @testset "Center" begin
+  rng = StableRNG(2026)
   x = rand(rng, Normal(2, 1), 4000)
   y = rand(rng, Normal(5, 1), 4000)
   t = Table(; x, y)
