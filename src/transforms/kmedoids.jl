@@ -171,12 +171,11 @@ function _interp(labels, inds, table, td)
 
   ilabels = fill(0, nobs)
   ilabels[inds] .= labels
+
+  X = Tables.subset(table, inds, viewhint=true)
   for i in setdiff(1:nobs, inds)
-    X = Tables.subset(table, inds, viewhint=true)
     x = Tables.subset(table, [i], viewhint=true)
-
     δ = pairwise(td, X, x)
-
     _, j = findmin(δ)
     ilabels[i] = labels[j]
   end
