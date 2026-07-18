@@ -27,7 +27,7 @@ Mke.activate!(type="png")
 isCI = "CI" ∈ keys(ENV)
 islinux = Sys.islinux()
 islatest = VERSION.major == 1 && VERSION.minor > 10
-visualtests = !isCI || (isCI && islinux && islts)
+visualtests = !isCI || (isCI && islinux && islatest)
 datadir = joinpath(@__DIR__, "data")
 
 # for functor tests in Functional testset
