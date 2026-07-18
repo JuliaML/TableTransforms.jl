@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    KMedoids(k; tol=1e-4, maxiter=10, weights=nothing, rng=Random.default_rng())
+    KMedoids(k; tol=1e-4, maxiter=10, weights=nothing, nmax=2000, rng=Random.default_rng())
 
 Assign labels to rows of table using the `k`-medoids algorithm.
 
@@ -13,8 +13,9 @@ or if the number of iterations exceeds the maximum number of
 iterations `maxiter`.
 
 Optionally, specify a dictionary of `weights` for each column to
-affect the underlying table distance from TableDistances.jl, and
-a random number generator `rng` to obtain reproducible results.
+affect the underlying table distance from TableDistances.jl, a
+maximum number of observations `nmax` to avoid out-of-memory issues,
+and a random number generator `rng` to obtain reproducible results.
 
 ## Examples
 
@@ -26,26 +27,28 @@ KMedoids(5, weights=Dict(:col1 => 1.0, :col2 => 2.0))
 
 ## References
 
-* Kaufman, L. & Rousseeuw, P. J. 1990. [Partitioning Around Medoids (Program PAM)]
-  (https://onlinelibrary.wiley.com/doi/10.1002/9780470316801.ch2)
+* Kaufman, L. & Rousseeuw, P. J. 1990. [Partitioning Around Medoids
+  (Program PAM)](https://onlinelibrary.wiley.com/doi/10.1002/9780470316801.ch2)
 
-* Kaufman, L. & Rousseeuw, P. J. 1991. [Finding Groups in Data: An Introduction to Cluster Analysis]
-  (https://www.jstor.org/stable/2532178)
+* Kaufman, L. & Rousseeuw, P. J. 1991. [Finding Groups in Data:
+  An Introduction to Cluster Analysis](https://www.jstor.org/stable/2532178)
 """
 struct KMedoids{W,RNG} <: StatelessFeatureTransform
   k::Int
   tol::Float64
   maxiter::Int
   weights::W
+  nmax::Int
   rng::RNG
 end
 
-function KMedoids(k; tol=1e-4, maxiter=10, weights=nothing, rng=Random.default_rng())
+function KMedoids(k; tol=1e-4, maxiter=10, weights=nothing, nmax=2000, rng=Random.default_rng())
   # sanity checks
   _assert(k > 0, "number of clusters must be positive")
   _assert(tol > 0, "tolerance on relative change must be positive")
   _assert(maxiter > 0, "maximum number of iterations must be positive")
-  KMedoids(k, tol, maxiter, weights, rng)
+  _assert(nmax > 0, "maximum number of observations must be positive")
+  KMedoids(k, tol, maxiter, weights, nmax, rng)
 end
 
 parameters(transform::KMedoids) = (; k=transform.k)
@@ -56,16 +59,20 @@ function applyfeat(transform::KMedoids, feat, prep)
   tol = transform.tol
   maxiter = transform.maxiter
   weights = transform.weights
+  nmax = transform.nmax
   rng = transform.rng
 
-  # number of observations
-  nobs = _nrows(feat)
-
   # sanity checks
-  k > nobs && throw(ArgumentError("requested number of clusters > number of observations"))
+  k > _nrows(feat) && throw(ArgumentError("requested number of clusters > number of observations"))
 
   # normalize variables
   stdfeat = feat |> StdFeats()
+
+  # subsample table to avoid out-of-memory issues
+  subfeat, inds = _subsample(rng, stdfeat, nmax)
+
+  # number of observations
+  nobs = _nrows(subfeat)
 
   # define table distance
   td = TableDistance(normalize=false, weights=weights)
@@ -74,7 +81,7 @@ function applyfeat(transform::KMedoids, feat, prep)
   medoids = sample(rng, 1:nobs, k, replace=false)
 
   # retrieve distance type
-  s = Tables.subset(stdfeat, 1:1, viewhint=true)
+  s = Tables.subset(subfeat, [1], viewhint=true)
   D = eltype(pairwise(td, s))
 
   # pre-allocate memory for labels and distances
@@ -86,8 +93,8 @@ function applyfeat(transform::KMedoids, feat, prep)
   δcur = mean(dists)
   while iter < maxiter
     # update labels and medoids
-    _updatelabels!(td, stdfeat, medoids, labels, dists)
-    _updatemedoids!(td, stdfeat, medoids, labels)
+    _updatelabels!(td, subfeat, medoids, labels, dists)
+    _updatemedoids!(td, subfeat, medoids, labels)
 
     # average distance to medoids
     δnew = mean(dists)
@@ -100,9 +107,24 @@ function applyfeat(transform::KMedoids, feat, prep)
     iter += 1
   end
 
-  newfeat = (; label=labels) |> Tables.materializer(feat)
+  # interpolate in case of subsampling
+  ilabels = if nobs < _nrows(feat)
+    _interp(labels, inds, stdfeat, td)
+  else
+    labels
+  end
+
+  newfeat = (; label=ilabels) |> Tables.materializer(feat)
 
   newfeat, nothing
+end
+
+function _subsample(rng, table, nmax)
+  nobs = _nrows(table)
+  inds = nobs > nmax ? sample(rng, 1:nobs, nmax, replace=false) : 1:nobs
+  rows = Tables.subset(table, inds, viewhint=true)
+  stab = rows |> Tables.materializer(table)
+  stab, inds
 end
 
 function _updatelabels!(td, table, medoids, labels, dists)
@@ -127,6 +149,9 @@ function _updatemedoids!(td, table, medoids, labels)
   for k in eachindex(medoids)
     inds = findall(isequal(k), labels)
 
+    # if cluster is empty, then no medoid to update
+    isempty(inds) && continue
+
     X = Tables.subset(table, inds, viewhint=true)
 
     j = _medoid(td, X)
@@ -139,4 +164,22 @@ function _medoid(td, table)
   Δ = pairwise(td, table)
   _, j = findmin(sum, eachcol(Δ))
   j
+end
+
+function _interp(labels, inds, table, td)
+  nobs = _nrows(table)
+
+  ilabels = fill(0, nobs)
+  ilabels[inds] .= labels
+  for i in setdiff(1:nobs, inds)
+    X = Tables.subset(table, inds, viewhint=true)
+    x = Tables.subset(table, [i], viewhint=true)
+
+    δ = pairwise(td, X, x)
+
+    _, j = findmin(δ)
+    ilabels[i] = labels[j]
+  end
+
+  ilabels
 end

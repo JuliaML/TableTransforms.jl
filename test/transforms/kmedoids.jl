@@ -22,4 +22,12 @@
   t = Table(; a, b, c)
   n = t |> KMedoids(3; rng=StableRNG(2))
   @test sort(n.label) == [1, 2, 3]
+
+  # test with large table
+  rng = StableRNG(2026)
+  a = rand(rng, 10000)
+  b = rand(rng, 10000)
+  t = Table(; a, b)
+  n = t |> KMedoids(5; rng=rng)
+  @test length(unique(n.label)) == 5
 end
