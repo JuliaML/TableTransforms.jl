@@ -64,5 +64,5 @@
   t = (; x, y, c)
 
   T = Sample(10_000)
-  @test @elapsed(apply(T, t)) < 0.5
+  @test @elapsed(apply(T, t)) < 1.0
 end

@@ -129,14 +129,9 @@ end
 
 function _updatelabels!(td, table, medoids, labels, dists)
   for (k, mₖ) in enumerate(medoids)
-    inds = 1:_nrows(table)
-
-    X = Tables.subset(table, inds, viewhint=true)
     μ = Tables.subset(table, [mₖ], viewhint=true)
-
-    δ = pairwise(td, X, μ)
-
-    @inbounds for i in inds
+    δ = pairwise(td, table, μ) |> vec
+    @inbounds for i in eachindex(δ)
       if δ[i] < dists[i]
         dists[i] = δ[i]
         labels[i] = k
@@ -152,18 +147,12 @@ function _updatemedoids!(td, table, medoids, labels)
     # if cluster is empty, then no medoid to update
     isempty(inds) && continue
 
-    X = Tables.subset(table, inds, viewhint=true)
-
-    j = _medoid(td, X)
+    # compute new medoid for cluster k
+    clust = Tables.subset(table, inds, viewhint=true)
+    _, j = findmin(sum, eachcol(pairwise(td, clust)))
 
     @inbounds medoids[k] = inds[j]
   end
-end
-
-function _medoid(td, table)
-  Δ = pairwise(td, table)
-  _, j = findmin(sum, eachcol(Δ))
-  j
 end
 
 function _interp(labels, inds, table, td)
@@ -173,12 +162,35 @@ function _interp(labels, inds, table, td)
   ilabels[inds] .= labels
 
   X = Tables.subset(table, inds, viewhint=true)
+  s = _searcher(X, td)
+
   for i in setdiff(1:nobs, inds)
     x = Tables.subset(table, [i], viewhint=true)
-    δ = pairwise(td, X, x)
-    _, j = findmin(δ)
+    j = _search(s, x)
     ilabels[i] = labels[j]
   end
 
   ilabels
 end
+
+function _searcher(X, td)
+  # check if all variables are continuous
+  cols = Tables.columns(X)
+  vars = Tables.columnnames(cols)
+  allcont = all(vars) do var
+    x = Tables.getcolumn(cols, var)
+    elscitype(x) <: Continuous
+  end
+
+  # use KDTree if all variables are continuous
+  if allcont
+    data = Tables.matrix(X)
+    KDTree(transpose(data))
+  else
+    X, td
+  end
+end
+
+_search(s::KDTree, x) = nn(s, Tables.matrix(x) |> vec) |> first
+
+_search((X, td), x) = pairwise(td, X, x) |> vec |> argmin
