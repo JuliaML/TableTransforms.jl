@@ -26,6 +26,7 @@ using InverseFunctions: NoInverse, inverse as invfun
 using StatsBase: AbstractWeights, Weights, sample
 using Distributed: CachingPool, pmap, workers
 using SpectralIndices: indices, bands, compute
+using NearestNeighbors: KDTree, nn
 using NelderMead: optimise
 
 import Distributions: quantile, cdf

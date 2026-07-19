@@ -1,7 +1,7 @@
 name = "TableTransforms"
 uuid = "0d432bfd-3ee1-4ac1-886a-39f05cc69a3e"
-authors = ["Júlio Hoffimann <julio.hoffimann@gmail.com> and contributors"]
 version = "1.38.9"
+authors = ["Júlio Hoffimann <julio.hoffimann@gmail.com> and contributors"]
 
 [deps]
 AbstractTrees = "1520ce14-60c1-5f80-bbc7-55ef81b5835c"
@@ -13,6 +13,7 @@ Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 InverseFunctions = "3587e190-3f89-42d0-90ee-14403ec27112"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+NearestNeighbors = "b8a86587-4115-5ab1-83bc-aa920d37bbce"
 NelderMead = "2f6b4ddb-b4ff-44c0-b59b-2ab99302f970"
 PrettyTables = "08abe8d2-0d0c-5749-adfa-8a2ac140af0d"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
@@ -34,6 +35,7 @@ Distributed = "1.10"
 Distributions = "0.25"
 InverseFunctions = "0.1"
 LinearAlgebra = "1.10"
+NearestNeighbors = "0.4"
 NelderMead = "0.4"
 PrettyTables = "3.0"
 Random = "1.10"
