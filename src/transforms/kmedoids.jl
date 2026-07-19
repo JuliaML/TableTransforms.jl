@@ -191,10 +191,6 @@ function _searcher(X, td)
   end
 end
 
-function _search(s::KDTree, x)
-  c = Tables.columns(x)
-  v = Tables.getcolumn(c, 1)
-  nn(s, v) |> first
-end
+_search(s::KDTree, x) = nn(s, Tables.matrix(x) |> vec) |> first
 
 _search((X, td), x) = pairwise(td, X, x) |> vec |> argmin
