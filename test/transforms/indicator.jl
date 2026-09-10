@@ -29,7 +29,11 @@
   n, c = apply(T, t)
   @test Tables.columnnames(n) == (:a, :b, :c_1, :c_2, :c_3, :d)
   @test n.c_1 == categorical(Bool[1, 1, 0, 0, 1, 0, 1, 0, 0, 0])
-  @test n.c_2 == categorical(Bool[1, 1, 1, 0, 1, 0, 1, 0, 1, 0])
+  if VERSION.minor < 13
+    @test n.c_2 == categorical(Bool[1, 1, 1, 0, 1, 0, 1, 0, 1, 0])
+  else
+    @test n.c_2 == categorical(Bool[1, 1, 1, 1, 1, 0, 1, 0, 1, 0])
+  end
   @test n.c_3 == categorical(Bool[1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
   @test n.c_1 isa CategoricalVector{Bool}
   @test n.c_2 isa CategoricalVector{Bool}
